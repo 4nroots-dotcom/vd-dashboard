@@ -1086,7 +1086,7 @@ async function loadCases() {
     query = sb.from('queue_unreviewed').select('*');
   } else {
     query = sb.from('triage_cases')
-      .select('id, created_at, vapi_call_id, severity, severity_reason, patient_name, patient_phone, structured_output, clinical_note, transcript, duration_seconds, extraction_source, review_status, review_notes, action_taken, reviewed_at, reviewed_by, prescription_issued, contacted_patient_at, final_disposition, triage_tag, percussion_sensitivity, bad_taste_or_drainage, trauma_mechanism, nocturnal_pain, heat_sensitivity, avulsed_tooth, recent_extraction, immunocompromised, pericoronitis_signs')
+      .select('*')
       .order('created_at', { ascending: false })
       .limit(200);
   }
@@ -1118,6 +1118,12 @@ function updateUrgentBadge() {
 
 // ── TABS ──
 function switchTab(tab) {
+  // On mobile, if a case is open go back to queue list first
+  if (isMobile && currentCase) {
+    document.getElementById('queue-column').style.display = 'flex';
+    document.getElementById('detail-column').style.display = 'none';
+  }
+
   currentTab = tab;
   selectedCaseId = null;
   currentCase = null;
@@ -1132,7 +1138,7 @@ function switchTab(tab) {
   ['all','urgent','emergency','routine'].forEach(c => {
     document.getElementById('chip-' + c).classList.toggle('active', c === 'all');
   });
-  // Clear detail pane on desktop
+  // Clear detail pane on desktop on desktop
   if (!isMobile) {
     const panel = document.getElementById('detail-panel');
     panel.innerHTML = `<div class="detail-placeholder" id="detail-placeholder">
