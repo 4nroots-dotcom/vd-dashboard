@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>VirtualDentist.ai — Metrics</title>
+<title>VirtualDentist.ai - Metrics</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -44,7 +44,7 @@ font-size: 14px;
 line-height: 1.5;
 }
 
-/* ── AUTH ── */
+/* – AUTH – */
 #auth-screen {
 min-height: 100vh;
 display: flex;
@@ -98,10 +98,10 @@ border-radius: var(–radius-sm); color: #ff8080; font-size: 13px;
 padding: 10px 12px; margin-top: 12px; display: none;
 }
 
-/* ── APP ── */
+/* – APP – */
 #app { display: none; flex-direction: column; min-height: 100vh; }
 
-/* ── HEADER ── */
+/* – HEADER – */
 .header {
 background: var(–navy-mid); border-bottom: 1px solid var(–border);
 padding: 0 16px; height: 56px; display: flex; align-items: center;
@@ -124,7 +124,7 @@ padding: 6px 12px; cursor: pointer; transition: border-color 0.2s, color 0.2s;
 }
 .btn-signout:hover { border-color: var(–border-active); color: var(–cyan); }
 
-/* ── PAGE ── */
+/* – PAGE – */
 .page { padding: 20px 16px; max-width: 900px; margin: 0 auto; }
 
 .page-title {
@@ -134,7 +134,7 @@ background: linear-gradient(135deg, var(–text-primary), var(–cyan));
 }
 .page-sub { font-size: 13px; color: var(–text-muted); margin-bottom: 20px; }
 
-/* ── PERIOD FILTER ── */
+/* – PERIOD FILTER – */
 .period-row {
 display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap;
 }
@@ -147,7 +147,7 @@ padding: 6px 14px; cursor: pointer; transition: all 0.2s;
 }
 .period-chip.active { background: var(–cyan-faint); border-color: var(–border-active); color: var(–cyan); }
 
-/* ── KPI GRID ── */
+/* – KPI GRID – */
 .kpi-grid {
 display: grid;
 grid-template-columns: repeat(2, 1fr);
@@ -178,7 +178,7 @@ bottom: 0; left: 0; right: 0; height: 2px;
 .kpi-value { font-family: ‘DM Mono’, monospace; font-size: 26px; font-weight: 500; color: var(–text-primary); line-height: 1; margin-bottom: 4px; }
 .kpi-sub { font-size: 11px; color: var(–text-muted); }
 
-/* ── SECTION ── */
+/* – SECTION – */
 .metrics-section { margin-bottom: 20px; }
 
 .section-title {
@@ -186,7 +186,7 @@ font-size: 11px; font-weight: 600; text-transform: uppercase;
 letter-spacing: 0.08em; color: var(–text-secondary); margin-bottom: 10px;
 }
 
-/* ── BAR CHART ── */
+/* – BAR CHART – */
 .bar-card {
 background: var(–surface); border: 1px solid var(–border);
 border-radius: var(–radius); padding: 16px;
@@ -203,11 +203,11 @@ margin-bottom: 10px;
 .bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
 .bar-val { font-family: ‘DM Mono’, monospace; font-size: 12px; color: var(–text-secondary); min-width: 50px; text-align: right; flex-shrink: 0; }
 
-/* ── TWO COL ── */
+/* – TWO COL – */
 .two-col { display: grid; grid-template-columns: 1fr; gap: 10px; }
 @media (min-width: 600px) { .two-col { grid-template-columns: 1fr 1fr; } }
 
-/* ── DISTRIBUTION PIE (CSS only) ── */
+/* – DISTRIBUTION PIE (CSS only) – */
 .donut-card {
 background: var(–surface); border: 1px solid var(–border);
 border-radius: var(–radius); padding: 16px;
@@ -230,14 +230,14 @@ justify-content: center; flex-direction: column;
 .legend-label { font-size: 12px; color: var(–text-secondary); flex: 1; }
 .legend-val { font-family: ‘DM Mono’, monospace; font-size: 12px; color: var(–text-primary); }
 
-/* ── TIME METRICS ── */
+/* – TIME METRICS – */
 .time-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(–border); border-radius: var(–radius); overflow: hidden; }
 .time-cell { background: var(–navy); padding: 14px 16px; }
 .time-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: var(–text-muted); margin-bottom: 6px; }
 .time-value { font-family: ‘DM Mono’, monospace; font-size: 22px; font-weight: 500; color: var(–text-primary); }
 .time-sub { font-size: 11px; color: var(–text-muted); margin-top: 2px; }
 
-/* ── NULL FIELD RATES ── */
+/* – NULL FIELD RATES – */
 .null-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
 .null-row { display: flex; align-items: center; gap: 10px; }
 .null-label { font-size: 12px; color: var(–text-secondary); min-width: 140px; flex-shrink: 0; }
@@ -248,12 +248,12 @@ justify-content: center; flex-direction: column;
 .null-fill.low { background: var(–routine); }
 .null-pct { font-family: ‘DM Mono’, monospace; font-size: 11px; color: var(–text-muted); min-width: 36px; text-align: right; }
 
-/* ── LOADING ── */
+/* – LOADING – */
 .loading { padding: 60px; text-align: center; color: var(–text-muted); font-size: 13px; }
 .loading-dots::after { content: ‘…’; animation: dots 1.2s steps(4, end) infinite; }
 @keyframes dots { 0%,100% { content: ‘.’; } 33% { content: ‘..’; } 66% { content: ‘…’; } }
 
-/* ── BACK LINK ── */
+/* – BACK LINK – */
 .back-link {
 display: inline-flex; align-items: center; gap: 6px;
 color: var(–text-muted); font-size: 12px; text-decoration: none;
@@ -284,7 +284,7 @@ margin-bottom: 16px; transition: color 0.2s;
         <polyline points="28,58 42,58 50,40 60,76 70,50 78,58 92,58" stroke="url(#ag)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       <div class="auth-logo-text">VirtualDentist.ai</div></div>
-    <div class="auth-title">Metrics — Secure Access</div>
+    <div class="auth-title">Metrics - Secure Access</div>
     <label class="field-label">Email</label>
     <input class="field-input" type="email" id="auth-email" placeholder="you@example.com" autocomplete="email">
     <label class="field-label">Password</label>
@@ -346,7 +346,7 @@ const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentPeriod = 30;
 
-// ── AUTH ──
+// -- AUTH --
 async function handleLogin() {
   const email = document.getElementById('auth-email').value.trim();
   const pw = document.getElementById('auth-password').value;
@@ -378,7 +378,7 @@ function showApp() {
   loadMetrics();
 }
 
-// ── PERIOD ──
+// -- PERIOD --
 function setPeriod(days) {
   currentPeriod = days;
   document.querySelectorAll('.period-chip').forEach((c, i) => {
@@ -387,7 +387,7 @@ function setPeriod(days) {
   loadMetrics();
 }
 
-// ── LOAD ──
+// -- LOAD --
 async function loadMetrics() {
   const since = currentPeriod === 365
     ? new Date(0).toISOString()
@@ -589,17 +589,17 @@ function renderMetrics(cases) {
       <div class="time-grid">
         <div class="time-cell">
           <div class="time-label">Avg Time to Review</div>
-          <div class="time-value">${avgReview != null ? fmtMinutes(avgReview) : '—'}</div>
+          <div class="time-value">${avgReview != null ? fmtMinutes(avgReview) : '-'}</div>
           <div class="time-sub">${reviewTimes.length} reviewed cases</div>
         </div>
         <div class="time-cell">
           <div class="time-label">Avg Time to Contact</div>
-          <div class="time-value">${avgContact != null ? fmtMinutes(avgContact) : '—'}</div>
+          <div class="time-value">${avgContact != null ? fmtMinutes(avgContact) : '-'}</div>
           <div class="time-sub">${contactTimes.length} contacted cases</div>
         </div>
         <div class="time-cell">
           <div class="time-label">Avg Call Duration</div>
-          <div class="time-value">${avgDur != null ? avgDur + 'm' : '—'}</div>
+          <div class="time-value">${avgDur != null ? avgDur + 'm' : '-'}</div>
           <div class="time-sub">${durations.length} calls with duration</div>
         </div>
         <div class="time-cell">
@@ -630,7 +630,7 @@ function renderMetrics(cases) {
 
     <!-- NULL FIELD RATES -->
     <div class="metrics-section">
-      <div class="section-title">Null Field Rates — Data Completeness</div>
+      <div class="section-title">Null Field Rates - Data Completeness</div>
       <div class="bar-card">
         <div class="null-grid">
           ${nullFields.map(f => {
@@ -650,7 +650,7 @@ function renderMetrics(cases) {
   `;
 }
 
-// ── HELPERS ──
+// -- HELPERS --
 function pct(n, total) { return total ? Math.round(n / total * 100) : 0; }
 function avg(arr) { return arr.reduce((a, b) => a + b, 0) / arr.length; }
 
