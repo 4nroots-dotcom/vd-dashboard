@@ -1429,7 +1429,7 @@ body.classList.toggle(‘open’);
 // ── UTILS ──
 function escHtml(s) {
 if (!s) return ‘’;
-return String(s).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>’).replace(/”/g,’"’);
+var t=String(s);t=t.split(’&’).join(’&’);t=t.split(’<’).join(’<’);t=t.split(’>’).join(’>’);t=t.split(’”’).join(’"’);return t;
 }
 
 function formatPhone(p) {
