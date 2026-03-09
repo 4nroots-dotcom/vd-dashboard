@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>VirtualDentist.ai — Dashboard</title>
+<title>VirtualDentist.ai - Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -45,7 +45,7 @@ line-height: 1.5;
 overscroll-behavior: none;
 }
 
-/* ── AUTH SCREEN ── */
+/* – AUTH SCREEN – */
 #auth-screen {
 min-height: 100vh;
 display: flex;
@@ -147,10 +147,10 @@ margin-top: 12px;
 display: none;
 }
 
-/* ── APP SHELL ── */
+/* – APP SHELL – */
 #app { display: none; flex-direction: column; min-height: 100vh; }
 
-/* ── HEADER ── */
+/* – HEADER – */
 .header {
 background: var(–navy-mid);
 border-bottom: 1px solid var(–border);
@@ -201,7 +201,7 @@ transition: border-color 0.2s, color 0.2s;
 
 .btn-signout:hover { border-color: var(–border-active); color: var(–cyan); }
 
-/* ── NAV TABS ── */
+/* – NAV TABS – */
 .nav-tabs {
 background: var(–navy-mid);
 border-bottom: 1px solid var(–border);
@@ -241,10 +241,10 @@ min-width: 18px;
 text-align: center;
 }
 
-/* ── MAIN CONTENT ── */
+/* – MAIN CONTENT – */
 .main { flex: 1; display: flex; flex-direction: column; }
 
-/* ── FILTER BAR ── */
+/* – FILTER BAR – */
 .filter-bar {
 padding: 12px 16px;
 display: flex;
@@ -288,10 +288,10 @@ line-height: 1;
 .refresh-btn.spinning { animation: spin 0.6s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── QUEUE PANEL ── */
+/* – QUEUE PANEL – */
 #queue-panel { display: flex; flex-direction: column; flex: 1; }
 
-/* ── CASE CARD ── */
+/* – CASE CARD – */
 .case-list { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
 
 .case-card {
@@ -380,7 +380,7 @@ color: var(–text-muted);
 .case-meta-item { display: flex; align-items: center; gap: 4px; }
 .reviewed-dot { width: 6px; height: 6px; border-radius: 50%; background: var(–routine); margin-left: auto; }
 
-/* ── EMPTY STATE ── */
+/* – EMPTY STATE – */
 .empty-state {
 padding: 60px 24px;
 text-align: center;
@@ -391,12 +391,12 @@ color: var(–text-muted);
 .empty-title { font-size: 15px; font-weight: 500; margin-bottom: 6px; color: var(–text-secondary); }
 .empty-sub { font-size: 13px; }
 
-/* ── LOADING ── */
+/* – LOADING – */
 .loading-state { padding: 40px; text-align: center; color: var(–text-muted); font-size: 13px; }
 .loading-dots::after { content: ‘…’; animation: dots 1.2s steps(4, end) infinite; }
 @keyframes dots { 0%,100% { content: ‘.’; } 33% { content: ‘..’; } 66% { content: ‘…’; } }
 
-/* ── CASE DETAIL PANEL ── */
+/* – CASE DETAIL PANEL – */
 #detail-panel {
 display: none;
 flex-direction: column;
@@ -437,7 +437,7 @@ flex-shrink: 0;
 
 .detail-body { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
 
-/* ── DETAIL SECTIONS ── */
+/* – DETAIL SECTIONS – */
 .detail-section {
 background: var(–surface);
 border: 1px solid var(–border);
@@ -464,7 +464,7 @@ color: var(–text-secondary);
 
 .section-body { padding: 16px; }
 
-/* ── SEVERITY ROW ── */
+/* – SEVERITY ROW – */
 .severity-row {
 display: flex;
 align-items: flex-start;
@@ -510,7 +510,7 @@ color: var(–text-secondary);
 font-style: italic;
 }
 
-/* ── STATS GRID ── */
+/* – STATS GRID – */
 .stats-grid {
 display: grid;
 grid-template-columns: 1fr 1fr;
@@ -543,7 +543,7 @@ color: var(–text-primary);
 .stat-value.emergency { color: var(–emergency); }
 .stat-value.routine { color: var(–routine); }
 
-/* ── FLAGS ── */
+/* – FLAGS – */
 .flags-grid {
 display: grid;
 grid-template-columns: 1fr 1fr;
@@ -570,7 +570,7 @@ flex-shrink: 0;
 .flag-dot.absent { background: var(–text-muted); opacity: 0.4; }
 .flag-dot.moderate { background: var(–emergency); box-shadow: 0 0 6px rgba(240,165,0,0.4); }
 
-/* ── CLINICAL NOTE ── */
+/* – CLINICAL NOTE – */
 .clinical-note-text {
 font-family: ‘DM Mono’, monospace;
 font-size: 12px;
@@ -590,7 +590,7 @@ color: var(–text-muted);
 letter-spacing: 0.04em;
 }
 
-/* ── REVIEW FORM ── */
+/* – REVIEW FORM – */
 .review-form { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
 
 .form-label {
@@ -643,7 +643,7 @@ padding-right: 32px;
 
 .form-select option { background: var(–navy-mid); }
 
-/* ── TOGGLE ROW ── */
+/* – TOGGLE ROW – */
 .toggle-row {
 display: flex;
 align-items: center;
@@ -695,7 +695,7 @@ transition: transform 0.2s;
 
 .toggle input:checked + .toggle-track::after { transform: translateY(-50%) translateX(20px); }
 
-/* ── ACTION BUTTONS ── */
+/* – ACTION BUTTONS – */
 .action-row {
 display: flex;
 gap: 10px;
@@ -748,7 +748,7 @@ min-height: 18px;
 .save-status.success { color: var(–routine); }
 .save-status.error { color: var(–urgent); }
 
-/* ── TRANSCRIPT ── */
+/* – TRANSCRIPT – */
 .transcript-text {
 font-family: ‘DM Mono’, monospace;
 font-size: 12px;
@@ -764,7 +764,7 @@ overflow-y: auto;
 .transcript-text::-webkit-scrollbar-track { background: transparent; }
 .transcript-text::-webkit-scrollbar-thumb { background: var(–navy-light); border-radius: 2px; }
 
-/* ── COLLAPSIBLE ── */
+/* – COLLAPSIBLE – */
 .collapsible-toggle {
 background: none;
 border: none;
@@ -783,7 +783,7 @@ transition: color 0.2s;
 .collapsible-body { display: none; padding: 16px; padding-top: 0; }
 .collapsible-body.open { display: block; }
 
-/* ── TOAST ── */
+/* – TOAST – */
 #toast {
 position: fixed;
 bottom: 24px;
@@ -803,7 +803,7 @@ box-shadow: 0 8px 32px rgba(0,0,0,0.4);
 
 #toast.show { transform: translateX(-50%) translateY(0); }
 
-/* ── METRICS LINK ── */
+/* – METRICS LINK – */
 .metrics-link {
 display: block;
 text-align: center;
@@ -816,12 +816,12 @@ transition: color 0.2s;
 
 .metrics-link:hover { color: var(–cyan); }
 
-/* ── SCROLLBAR ── */
+/* – SCROLLBAR – */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(–navy-light); border-radius: 2px; }
 
-/* ── DESKTOP SPLIT ── */
+/* – DESKTOP SPLIT – */
 @media (min-width: 768px) {
 #app { flex-direction: column; }
 
@@ -887,7 +887,7 @@ transition: color 0.2s;
         <polyline points="28,58 42,58 50,40 60,76 70,50 78,58 92,58" stroke="url(#ag)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
       <div class="auth-logo-text">VirtualDentist.ai</div></div>
-    <div class="auth-title">Dentist Dashboard — Secure Access</div>
+    <div class="auth-title">Dentist Dashboard - Secure Access</div>
     <label class="field-label">Email</label>
     <input class="field-input" type="email" id="auth-email" placeholder="you@example.com" autocomplete="email">
     <label class="field-label">Password</label>
@@ -1129,8 +1129,8 @@ function renderQueue() {
 function renderCaseCard(c) {
   const so = c.structured_output || {};
   const name = c.patient_name || 'Unknown Patient';
-  const phone = c.patient_phone ? formatPhone(c.patient_phone) : '—';
-  const complaint = so.chief_complaint || so.chief_complaint_quote || '—';
+  const phone = c.patient_phone ? formatPhone(c.patient_phone) : '-';
+  const complaint = so.chief_complaint || so.chief_complaint_quote || '-';
   const pain = typeof so.pain_score === 'number' ? `Pain ${so.pain_score}/10` : '';
   const time = formatTime(c.created_at);
   const reviewed = c.review_status === 'reviewed';
@@ -1175,7 +1175,7 @@ function renderDetail(c) {
   const panel = document.getElementById('detail-panel');
   const so = c.structured_output || {};
   const name = c.patient_name || 'Unknown Patient';
-  const phone = c.patient_phone ? formatPhone(c.patient_phone) : '—';
+  const phone = c.patient_phone ? formatPhone(c.patient_phone) : '-';
   const reviewedAt = c.reviewed_at ? formatDatetime(c.reviewed_at) : null;
 
   const sevColor = c.severity === 'urgent' ? 'var(--urgent)' : c.severity === 'emergency' ? 'var(--emergency)' : 'var(--routine)';
@@ -1221,25 +1221,25 @@ function renderDetail(c) {
           <div>
             <div class="severity-detail-label">Triage Classification</div>
             <div class="severity-detail-value" style="color:${sevColor}">${c.severity.toUpperCase()}</div>
-            <div class="severity-reason">${escHtml(c.severity_reason || '—')}</div>
+            <div class="severity-reason">${escHtml(c.severity_reason || '-')}</div>
           </div>
         </div>
         <div class="stats-grid">
           <div class="stat-cell">
             <div class="stat-label">Pain Score</div>
-            <div class="stat-value">${typeof so.pain_score === 'number' ? so.pain_score + '/10' : '—'}</div>
+            <div class="stat-value">${typeof so.pain_score === 'number' ? so.pain_score + '/10' : '-'}</div>
           </div>
           <div class="stat-cell">
             <div class="stat-label">Duration</div>
-            <div class="stat-value">${c.duration_seconds ? Math.round(c.duration_seconds / 60) + 'm ' + (c.duration_seconds % 60) + 's' : '—'}</div>
+            <div class="stat-value">${c.duration_seconds ? Math.round(c.duration_seconds / 60) + 'm ' + (c.duration_seconds % 60) + 's' : '-'}</div>
           </div>
           <div class="stat-cell">
             <div class="stat-label">Location</div>
-            <div class="stat-value" style="font-size:13px">${[so.jaw, so.side].filter(Boolean).join(' / ') || '—'}</div>
+            <div class="stat-value" style="font-size:13px">${[so.jaw, so.side].filter(Boolean).join(' / ') || '-'}</div>
           </div>
           <div class="stat-cell">
             <div class="stat-label">Extraction</div>
-            <div class="stat-value" style="font-size:12px">${c.extraction_source || '—'}</div>
+            <div class="stat-value" style="font-size:12px">${c.extraction_source || '-'}</div>
           </div>
         </div>
       </div>
@@ -1263,7 +1263,7 @@ function renderDetail(c) {
       <div class="detail-section">
         <div class="section-header">
           <span class="section-title">AI Clinical Note</span>
-          <span class="note-lock-badge">🔒 Draft — Read Only</span>
+          <span class="note-lock-badge">🔒 Draft - Read Only</span>
         </div>
         <div class="section-body">
           <div class="clinical-note-text">${escHtml(c.clinical_note || 'No clinical note generated.')}</div>
@@ -1286,7 +1286,7 @@ function renderDetail(c) {
       <div>
         <label class="form-label">Final Disposition</label>
         <select class="form-select" id="field-disposition">
-          <option value="">— Select —</option>
+          <option value="">- Select -</option>
           <option value="booked" ${c.final_disposition === 'booked' ? 'selected' : ''}>Booked appointment</option>
           <option value="referred_er" ${c.final_disposition === 'referred_er' ? 'selected' : ''}>Referred to ER</option>
           <option value="rx_only" ${c.final_disposition === 'rx_only' ? 'selected' : ''}>Prescription only</option>
@@ -1338,11 +1338,11 @@ function renderDetail(c) {
     <div class="stats-grid">
       <div class="stat-cell" style="grid-column:1/-1">
         <div class="stat-label">Call ID</div>
-        <div class="stat-value" style="font-size:11px;word-break:break-all">${escHtml(c.vapi_call_id || '—')}</div>
+        <div class="stat-value" style="font-size:11px;word-break:break-all">${escHtml(c.vapi_call_id || '-')}</div>
       </div>
       <div class="stat-cell">
         <div class="stat-label">Triage Tag</div>
-        <div class="stat-value" style="font-size:11px">${escHtml(c.triage_tag || '—')}</div>
+        <div class="stat-value" style="font-size:11px">${escHtml(c.triage_tag || '-')}</div>
       </div>
       <div class="stat-cell">
         <div class="stat-label">Created</div>
@@ -1398,7 +1398,7 @@ update.reviewed_by = currentUser?.email || null;
 const { error } = await sb.from(‘triage_cases’).update(update).eq(‘id’, id);
 
 if (error) {
-statusEl.textContent = ’Error saving — ’ + error.message;
+statusEl.textContent = ’Error saving - ’ + error.message;
 statusEl.className = ‘save-status error’;
 return;
 }
@@ -1433,14 +1433,14 @@ return String(s).replace(/&/g,’&’).replace(/</g,’<’).replace(/>/g,’>�
 }
 
 function formatPhone(p) {
-if (!p) return ‘—’;
+if (!p) return ‘-’;
 const d = String(p).replace(/\D/g,’’);
 if (d.length === 10) return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
 return p;
 }
 
 function formatTime(iso) {
-if (!iso) return ‘—’;
+if (!iso) return ‘-’;
 const d = new Date(iso);
 const now = new Date();
 const diffMs = now - d;
@@ -1451,7 +1451,7 @@ return d.toLocaleDateString(‘en-CA’, { month: ‘short’, day: ‘numeric�
 }
 
 function formatDatetime(iso) {
-if (!iso) return ‘—’;
+if (!iso) return ‘-’;
 const d = new Date(iso);
 return d.toLocaleDateString(‘en-CA’, { month: ‘short’, day: ‘numeric’ }) + ’ ’ +
 d.toLocaleTimeString(‘en-CA’, { hour: ‘2-digit’, minute: ‘2-digit’, hour12: true });
