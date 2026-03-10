@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>VirtualDentist.ai - Operational Metrics</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  html { background: #060f1e !important; }
+  :root {
+    --navy: #060f1e;
+    --navy-mid: #0a1830;
+    --navy-light: #112040;
+    --teal: #00e5c8;
+    --teal-dim: #00b09c;
+    --urgent: #e84545;
+    --emergency: #f0a500;
+    --routine: #00c87a;
+    --text-primary: #e8f4fe;
+    --text-secondary: #7b9cbd;
+    --text-muted: #3d5570;
+    --border: rgba(255,255,255,0.06);
+    --surface: rgba(255,255,255,0.025);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #060f1e; color: #e8f4fe; min-height: 100vh; font-size: 14px; line-height: 1.5; overscroll-behavior: none; }
+
+/* AUTH */
+#auth-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: radial-gradient(ellipse at 50% 0%, #0a2040 0%, #060f1e 70%); }
+.auth-card { width: 100%; max-width: 380px; background: #0a1830; border: 1px solid rgba(0,229,200,0.12); border-radius: 16px; padding: 40px 32px; box-shadow: 0 32px 80px rgba(0,0,0,0.6); }
+.auth-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.auth-logo-text { font-size: 18px; font-weight: 600; background: linear-gradient(135deg, #00b09c, #00e5c8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.auth-subtitle { font-size: 11px; color: #3d5570; margin-bottom: 28px; letter-spacing: 0.08em; text-transform: uppercase; }
+.field-label { display: block; font-size: 11px; font-weight: 500; color: #7b9cbd; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+.field-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.07); border-radius: 6px; color: #e8f4fe; font-size: 14px; padding: 12px 14px; outline: none; transition: border-color 0.2s; margin-bottom: 16px; font-family: inherit; }
+.field-input:focus { border-color: rgba(0,229,200,0.3); }
+.field-input::placeholder { color: #3d5570; }
+.btn-primary { width: 100%; background: linear-gradient(135deg, #00b09c, #00e5c8); color: #060f1e; border: none; border-radius: 6px; font-size: 14px; font-weight: 700; padding: 14px; cursor: pointer; transition: opacity 0.2s, transform 0.1s; margin-top: 4px; font-family: inherit; }
+.btn-primary:active { transform: scale(0.98); opacity: 0.9; }
+.btn-primary:disabled { opacity: 0.5; }
+.auth-error { background: rgba(232,69,69,0.1); border: 1px solid rgba(232,69,69,0.3); border-radius: 6px; color: #ff8080; font-size: 13px; padding: 10px 12px; margin-top: 12px; display: none; }
+
+/* APP */
+#app { display: none; flex-direction: column; min-height: 100vh; }
+
+/* HEADER — teal accent to distinguish from dashboard */
+.header { background: #0a1830; border-bottom: 2px solid rgba(0,229,200,0.2); padding: 0 20px; height: 56px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.header-left { display: flex; align-items: center; gap: 14px; }
+.header-logo { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; background: linear-gradient(135deg, #00b09c, #00e5c8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.page-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #060f1e; background: linear-gradient(135deg, #00b09c, #00e5c8); border-radius: 4px; padding: 3px 9px; }
+.header-right { display: flex; align-items: center; gap: 12px; }
+.header-user { font-size: 12px; color: #7b9cbd; display: none; }
+@media (min-width: 480px) { .header-user { display: block; } }
+.btn-signout { background: transparent; border: 1px solid rgba(255,255,255,0.07); border-radius: 6px; color: #7b9cbd; font-size: 12px; padding: 6px 12px; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+.btn-signout:hover { border-color: rgba(0,229,200,0.3); color: #00e5c8; }
+
+/* TOOLBAR */
+.toolbar { background: rgba(10,24,48,0.9); border-bottom: 1px solid rgba(255,255,255,0.06); padding: 10px 20px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.toolbar-label { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: #3d5570; margin-right: 2px; }
+.period-chip { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 20px; color: #7b9cbd; font-size: 12px; font-weight: 500; padding: 5px 14px; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+.period-chip.active { background: rgba(0,229,200,0.08); border-color: rgba(0,229,200,0.3); color: #00e5c8; }
+.toolbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.refresh-btn { background: transparent; border: 1px solid rgba(255,255,255,0.07); border-radius: 6px; color: #3d5570; padding: 5px 10px; cursor: pointer; font-size: 16px; transition: color 0.2s; line-height: 1; }
+.refresh-btn:hover { color: #00e5c8; }
+.refresh-btn.spinning { animation: spin 0.6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.last-updated { font-size: 11px; color: #3d5570; font-family: ‘SF Mono’, monospace; }
+.back-link { font-size: 12px; color: #3d5570; text-decoration: none; transition: color 0.2s; }
+.back-link:hover { color: #00e5c8; }
+
+/* MAIN */
+.main { flex: 1; padding: 20px; max-width: 1100px; margin: 0 auto; width: 100%; }
+
+/* SECTION */
+.section-head { display: flex; align-items: center; gap: 10px; margin: 28px 0 14px; }
+.section-head:first-child { margin-top: 0; }
+.section-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #3d5570; white-space: nowrap; }
+.section-line { flex: 1; height: 1px; background: rgba(255,255,255,0.06); }
+
+/* STAT CARDS */
+.stat-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 10px; }
+@media (min-width: 600px) { .stat-row { grid-template-columns: repeat(4, 1fr); } }
+.stat-card { background: var(–surface); border: 1px solid var(–border); border-radius: 12px; padding: 16px; position: relative; overflow: hidden; transition: border-color 0.2s; }
+.stat-card::after { content: ‘’; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(–accent, rgba(0,229,200,0.3)); }
+.stat-card:hover { border-color: rgba(0,229,200,0.15); }
+.sc-label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; color: #3d5570; margin-bottom: 10px; }
+.sc-value { font-family: ‘SF Mono’, ‘Monaco’, ‘Menlo’, monospace; font-size: 26px; font-weight: 500; color: var(–accent-color, #e8f4fe); line-height: 1; margin-bottom: 4px; }
+.sc-sub { font-size: 11px; color: #3d5570; }
+
+/* SEVERITY BARS */
+.sev-panel { background: var(–surface); border: 1px solid var(–border); border-radius: 12px; overflow: hidden; margin-bottom: 10px; }
+.sev-panel-head { padding: 12px 18px; border-bottom: 1px solid var(–border); display: flex; align-items: center; justify-content: space-between; }
+.sev-panel-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #3d5570; }
+.sev-panel-total { font-family: ‘SF Mono’, monospace; font-size: 12px; color: #7b9cbd; }
+.sev-body { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.sev-row-label { display: flex; justify-content: space-between; margin-bottom: 6px; }
+.sev-name { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; }
+.sev-name.urgent { color: #e84545; }
+.sev-name.emergency { color: #f0a500; }
+.sev-name.routine { color: #00c87a; }
+.sev-stats { font-family: ‘SF Mono’, monospace; font-size: 12px; color: #7b9cbd; }
+.sev-track { height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }
+.sev-fill { height: 100%; border-radius: 4px; transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
+.sev-fill.urgent { background: linear-gradient(90deg, #8b2020, #e84545); }
+.sev-fill.emergency { background: linear-gradient(90deg, #8b6000, #f0a500); }
+.sev-fill.routine { background: linear-gradient(90deg, #007040, #00c87a); }
+
+/* TWO COL */
+.two-col { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 10px; }
+@media (min-width: 700px) { .two-col { grid-template-columns: 1fr 1fr; } }
+
+/* PANEL */
+.panel { background: var(–surface); border: 1px solid var(–border); border-radius: 12px; overflow: hidden; }
+.panel-head { padding: 12px 18px; border-bottom: 1px solid var(–border); }
+.panel-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #3d5570; }
+.panel-body { padding: 16px; }
+
+/* TIME OF DAY */
+.tod-chart { display: flex; align-items: flex-end; gap: 2px; height: 72px; }
+.tod-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; justify-content: flex-end; }
+.tod-bar { width: 100%; border-radius: 2px 2px 0 0; min-height: 2px; transition: height 0.6s cubic-bezier(0.4,0,0.2,1); }
+.tod-bar.biz { background: rgba(0,229,200,0.2); border: 1px solid rgba(0,229,200,0.15); border-bottom: none; }
+.tod-bar.after { background: rgba(240,165,0,0.22); border: 1px solid rgba(240,165,0,0.18); border-bottom: none; }
+.tod-bar:hover { opacity: 0.7; }
+.tod-tick { font-size: 8px; color: #3d5570; font-family: ‘SF Mono’, monospace; }
+.tod-legend { display: flex; gap: 14px; margin-top: 10px; }
+.tod-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #3d5570; }
+.tod-legend-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+/* MINI LIST */
+.mini-list { display: flex; flex-direction: column; }
+.mini-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.mini-row:last-child { border-bottom: none; }
+.mini-row-label { font-size: 13px; color: #7b9cbd; }
+.mini-row-val { font-family: ‘SF Mono’, monospace; font-size: 13px; font-weight: 500; color: #e8f4fe; }
+.mini-row-val.ok { color: #00c87a; }
+.mini-row-val.warn { color: #f0a500; }
+.mini-row-val.danger { color: #e84545; }
+.mini-row-val.teal { color: #00e5c8; }
+
+/* EXTRACTION */
+.ext-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.ext-row:last-child { border-bottom: none; }
+.ext-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.ext-label { font-size: 13px; color: #7b9cbd; flex: 1; }
+.ext-bar-wrap { width: 70px; }
+.ext-bar-track { height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; }
+.ext-bar-fill { height: 100%; border-radius: 2px; transition: width 0.6s; }
+.ext-count { font-family: ‘SF Mono’, monospace; font-size: 13px; color: #e8f4fe; width: 28px; text-align: right; }
+.ext-pct { font-family: ‘SF Mono’, monospace; font-size: 11px; color: #3d5570; width: 36px; text-align: right; }
+
+/* FLAGS */
+.flag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.flag-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 12px; display: flex; align-items: center; gap: 10px; }
+.flag-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.flag-label { font-size: 12px; color: #7b9cbd; flex: 1; }
+.flag-count { font-family: ‘SF Mono’, monospace; font-size: 16px; font-weight: 500; }
+
+/* DISPO */
+.dispo-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.dispo-row:last-child { border-bottom: none; }
+.dispo-label { font-size: 13px; color: #7b9cbd; flex: 1; }
+.dispo-bar-wrap { width: 90px; }
+.dispo-bar-track { height: 5px; background: rgba(255,255,255,0.05); border-radius: 3px; }
+.dispo-bar-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #00b09c, #00e5c8); transition: width 0.7s; }
+.dispo-count { font-family: ‘SF Mono’, monospace; font-size: 12px; color: #e8f4fe; width: 24px; text-align: right; }
+.dispo-pct { font-family: ‘SF Mono’, monospace; font-size: 11px; color: #3d5570; width: 34px; text-align: right; }
+
+/* DIVIDER */
+.panel-divider { height: 1px; background: rgba(255,255,255,0.05); margin: 14px 0; }
+.panel-sub-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: #3d5570; margin-bottom: 10px; }
+
+/* LOADING */
+.loading-overlay { padding: 60px 24px; text-align: center; color: #3d5570; font-size: 13px; }
+.loading-dots::after { content: ‘.’; animation: dots 1.2s steps(4,end) infinite; }
+@keyframes dots { 0%,100% { content: ‘.’; } 33% { content: ‘..’; } 66% { content: ‘…’; } }
+.no-data { color: #3d5570; font-size: 13px; text-align: center; padding: 20px; }
+
+/* TOAST */
+#toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #0a1830; border: 1px solid rgba(0,229,200,0.3); border-radius: 10px; padding: 12px 20px; font-size: 13px; color: #00e5c8; z-index: 1000; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); white-space: nowrap; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+#toast.show { transform: translateX(-50%) translateY(0); }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #112040; border-radius: 2px; }
+</style>
+
+</head>
+<body>
+
+<!-- AUTH -->
+
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <svg width="40" height="40" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs><linearGradient id="ag" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00b09c"/><stop offset="100%" stop-color="#00e5c8"/></linearGradient></defs>
+        <path d="M30 20 Q30 10 40 10 L80 10 Q90 10 90 20 L95 60 Q97 80 85 90 L70 108 Q65 115 60 115 Q55 115 50 108 L35 90 Q23 80 25 60 Z" stroke="url(#ag)" stroke-width="7" fill="none" stroke-linejoin="round"/>
+        <polyline points="28,58 42,58 50,40 60,76 70,50 78,58 92,58" stroke="url(#ag)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="auth-logo-text">VirtualDentist.ai</div>
+    </div>
+    <div class="auth-subtitle">Operational Metrics</div>
+    <label class="field-label">Email</label>
+    <input class="field-input" type="email" id="auth-email" placeholder="you@example.com" autocomplete="email">
+    <label class="field-label">Password</label>
+    <input class="field-input" type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password">
+    <button class="btn-primary" id="auth-btn" onclick="handleLogin()">Sign In</button>
+    <div class="auth-error" id="auth-error"></div>
+  </div>
+</div>
+
+<!-- APP -->
+
+<div id="app">
+  <header class="header">
+    <div class="header-left">
+      <div class="header-logo">
+        <svg width="24" height="24" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00b09c"/><stop offset="100%" stop-color="#00e5c8"/></linearGradient></defs>
+          <path d="M30 20 Q30 10 40 10 L80 10 Q90 10 90 20 L95 60 Q97 80 85 90 L70 108 Q65 115 60 115 Q55 115 50 108 L35 90 Q23 80 25 60 Z" stroke="url(#hg)" stroke-width="8" fill="none" stroke-linejoin="round"/>
+          <polyline points="28,58 42,58 50,40 60,76 70,50 78,58 92,58" stroke="url(#hg)" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        VirtualDentist.ai
+      </div>
+      <span class="page-badge">Metrics</span>
+    </div>
+    <div class="header-right">
+      <span class="header-user" id="header-user-email"></span>
+      <button class="btn-signout" onclick="handleSignOut()">Sign out</button>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <span class="toolbar-label">Period</span>
+    <button class="period-chip active" id="chip-7" onclick="setPeriod(7)">7 days</button>
+    <button class="period-chip" id="chip-30" onclick="setPeriod(30)">30 days</button>
+    <button class="period-chip" id="chip-90" onclick="setPeriod(90)">90 days</button>
+    <button class="period-chip" id="chip-0" onclick="setPeriod(0)">All time</button>
+    <div class="toolbar-right">
+      <span class="last-updated" id="last-updated"></span>
+      <button class="refresh-btn" id="refresh-btn" onclick="loadMetrics()" title="Refresh">↻</button>
+      <a class="back-link" href="dashboard.html">← Dashboard</a>
+    </div>
+  </div>
+
+  <div class="main" id="main-content">
+    <div class="loading-overlay"><span class="loading-dots">Loading metrics</span></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://zjwnqryeefegqfmamaqd.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let currentPeriod = 7;
+let currentUser = null;
+
+// AUTH
+async function handleLogin() {
+  const email = document.getElementById('auth-email').value.trim();
+  const pw = document.getElementById('auth-password').value;
+  const btn = document.getElementById('auth-btn');
+  const errEl = document.getElementById('auth-error');
+  errEl.style.display = 'none';
+  btn.disabled = true; btn.textContent = 'Signing in\u2026';
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pw });
+  if (error) {
+    errEl.textContent = error.message; errEl.style.display = 'block';
+    btn.disabled = false; btn.textContent = 'Sign In'; return;
+  }
+  showApp(data.user);
+}
+document.getElementById('auth-email').addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+document.getElementById('auth-password').addEventListener('keydown', e => { if (e.key === 'Enter') handleLogin(); });
+async function handleSignOut() { await sb.auth.signOut(); location.reload(); }
+
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session?.user) showApp(session.user);
+})();
+
+function showApp(user) {
+  currentUser = user;
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+  document.getElementById('header-user-email').textContent = user.email;
+  loadMetrics();
+}
+
+function setPeriod(days) {
+  currentPeriod = days;
+  [7,30,90,0].forEach(d => document.getElementById('chip-' + d).classList.toggle('active', d === days));
+  loadMetrics();
+}
+
+async function loadMetrics() {
+  const btn = document.getElementById('refresh-btn');
+  btn.classList.add('spinning');
+
+  let query = sb.from('triage_cases').select(
+    'id, created_at, severity, extraction_source, review_status, reviewed_at, ' +
+    'contacted_patient_at, final_disposition, er_referral, prescription_issued, ' +
+    'duration_seconds, structured_output, triage_tag'
+  ).order('created_at', { ascending: true });
+
+  if (currentPeriod > 0) {
+    const since = new Date();
+    since.setDate(since.getDate() - currentPeriod);
+    query = query.gte('created_at', since.toISOString());
+  }
+
+  const { data, error } = await query;
+  btn.classList.remove('spinning');
+
+  if (error) { showToast('Error loading data'); console.error(error); return; }
+
+  const now = new Date();
+  document.getElementById('last-updated').textContent =
+    'Updated ' + now.toLocaleTimeString('en-CA', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+  renderMetrics(data || []);
+}
+
+function renderMetrics(cases) {
+  const total = cases.length;
+  const urgent   = cases.filter(c => c.severity === 'urgent').length;
+  const emergency= cases.filter(c => c.severity === 'emergency').length;
+  const routine  = cases.filter(c => c.severity === 'routine').length;
+  const reviewed = cases.filter(c => c.review_status === 'reviewed').length;
+  const unreviewed = cases.filter(c => c.review_status === 'new').length;
+  const erRef    = cases.filter(c => c.er_referral === true).length;
+  const rxIssued = cases.filter(c => c.prescription_issued === true).length;
+  const contacted= cases.filter(c => c.contacted_patient_at).length;
+
+  const durations = cases.filter(c => c.duration_seconds > 0).map(c => c.duration_seconds);
+  const avgDur = durations.length ? Math.round(durations.reduce((a,b)=>a+b,0)/durations.length) : null;
+
+  const ttrVals = cases.filter(c => c.reviewed_at && c.created_at)
+    .map(c => (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000);
+  const avgTTR = ttrVals.length ? Math.round(ttrVals.reduce((a,b)=>a+b,0)/ttrVals.length) : null;
+
+  const afterHours = cases.filter(c => {
+    const d = new Date(c.created_at); const h = d.getHours(); const dow = d.getDay();
+    return dow === 0 || dow === 6 || h < 8 || h >= 18;
+  }).length;
+
+  const hourCounts = new Array(24).fill(0);
+  cases.forEach(c => { hourCounts[new Date(c.created_at).getHours()]++; });
+  const maxHour = Math.max(...hourCounts, 1);
+
+  const extCounts = {};
+  cases.forEach(c => { const s = c.extraction_source || 'none'; extCounts[s] = (extCounts[s]||0)+1; });
+
+  const dispoCounts = {};
+  cases.forEach(c => { if (c.final_disposition) dispoCounts[c.final_disposition] = (dispoCounts[c.final_disposition]||0)+1; });
+
+  const flags = { fever:0, trauma:0, swelling:0, airway:0, bleeding:0, nocturnal:0, cold_lingers:0, immunocompromised:0 };
+  cases.forEach(c => {
+    const so = c.structured_output || {};
+    if (so.fever) flags.fever++;
+    if (so.trauma) flags.trauma++;
+    if (so.swelling_present || so.swelling) flags.swelling++;
+    if (so.difficulty_breathing_or_swallowing) flags.airway++;
+    if (so.uncontrolled_bleeding) flags.bleeding++;
+    if (so.nocturnal_pain) flags.nocturnal++;
+    if (so.cold_pain_lingers_over_10_seconds) flags.cold_lingers++;
+    if (so.immunocompromised) flags.immunocompromised++;
+  });
+
+  const nullPain = cases.filter(c => c.structured_output?.pain_score == null).length;
+  const nullOnset = cases.filter(c => !c.structured_output?.onset).length;
+  const nullLoc = cases.filter(c => !c.structured_output?.jaw && !c.structured_output?.side).length;
+
+  const p = (n,d) => d > 0 ? Math.round(n/d*100) : 0;
+  const fmtDur = s => s != null ? `${Math.floor(s/60)}m ${s%60}s` : '\u2014';
+  const fmtMin = m => m != null ? (m >= 60 ? `${Math.floor(m/60)}h ${Math.round(m%60)}m` : `${Math.round(m)} min`) : '\u2014';
+
+  const dispoLabels = { booked:'Appointment booked', referred_er:'Referred to ER', rx_only:'Prescription only', declined:'Patient declined', no_response:'No response' };
+
+  let html = '';
+
+  // OVERVIEW
+  html += secHead('Overview');
+  html += `<div class="stat-row">
+    ${sc('Total Calls', total, '', 'rgba(0,229,200,0.35)', '#e8f4fe')}
+    ${sc('Unreviewed', unreviewed, 'pending review', unreviewed > 0 ? 'rgba(240,165,0,0.4)' : 'rgba(0,200,122,0.35)', unreviewed > 0 ? '#f0a500' : '#00c87a')}
+    ${sc('ER Referrals', erRef, p(erRef,total)+'% of calls', 'rgba(232,69,69,0.35)', erRef > 0 ? '#e84545' : '#e8f4fe')}
+    ${sc('Rx Issued', rxIssued, p(rxIssued,total)+'% of calls', 'rgba(167,139,250,0.35)', '#e8f4fe')}
+  </div>
+  <div class="stat-row">
+    ${sc('Avg Call Duration', fmtDur(avgDur), 'per call', 'rgba(0,229,200,0.35)', '#00e5c8')}
+    ${sc('Avg Time to Review', fmtMin(avgTTR), 'call \u2192 reviewed', 'rgba(0,229,200,0.35)', '#00e5c8')}
+    ${sc('Patients Contacted', contacted, p(contacted,reviewed)+'% of reviewed', 'rgba(0,200,122,0.35)', '#00c87a')}
+    ${sc('After-Hours', afterHours, p(afterHours,total)+'% of total', 'rgba(240,165,0,0.35)', '#f0a500')}
+  </div>`;
+
+  // SEVERITY
+  html += secHead('Severity Distribution');
+  html += `<div class="sev-panel">
+    <div class="sev-panel-head">
+      <span class="sev-panel-title">Classification Breakdown</span>
+      <span class="sev-panel-total">${total} call${total!==1?'s':''}</span>
+    </div>
+    <div class="sev-body">
+      ${sevBar('urgent','Urgent',urgent,total)}
+      ${sevBar('emergency','Emergency',emergency,total)}
+      ${sevBar('routine','Routine',routine,total)}
+    </div>
+  </div>`;
+
+  // CALL VOLUME + EXTRACTION
+  html += secHead('Call Volume & Data Quality');
+  html += `<div class="two-col">`;
+
+  // Time of day
+  html += `<div class="panel">
+    <div class="panel-head"><div class="panel-title">Calls by Hour of Day</div></div>
+    <div class="panel-body">
+      <div class="tod-chart">`;
+  for (let h = 0; h < 24; h++) {
+    const cnt = hourCounts[h];
+    const ht = Math.max(cnt / maxHour * 100, cnt > 0 ? 6 : 0);
+    const after = h < 8 || h >= 18;
+    const lbl = h === 0 ? '12a' : h === 6 ? '6a' : h === 12 ? '12p' : h === 18 ? '6p' : '';
+    html += `<div class="tod-col">
+      <div class="tod-bar ${after?'after':'biz'}" style="height:${ht}%" title="${cnt} call${cnt!==1?'s':''} at ${h}:00"></div>
+      <div class="tod-tick">${lbl}</div>
+    </div>`;
+  }
+  html += `</div>
+      <div class="tod-legend">
+        <div class="tod-legend-item"><div class="tod-legend-dot" style="background:rgba(0,229,200,0.2);border:1px solid rgba(0,229,200,0.15)"></div>Business hours (8am\u20136pm)</div>
+        <div class="tod-legend-item"><div class="tod-legend-dot" style="background:rgba(240,165,0,0.22);border:1px solid rgba(240,165,0,0.18)"></div>After hours</div>
+      </div>
+    </div>
+  </div>`;
+
+  // Extraction + null rates
+  html += `<div class="panel">
+    <div class="panel-head"><div class="panel-title">Extraction Source</div></div>
+    <div class="panel-body">`;
+  [['vapi','#00e5c8','Vapi (primary)'],['openai','#a78bfa','OpenAI (fallback)'],['none','#3d5570','None / unknown']].forEach(([src,color,label]) => {
+    const cnt = extCounts[src] || 0;
+    const pp = p(cnt, total);
+    html += `<div class="ext-row">
+      <div class="ext-dot" style="background:${color}"></div>
+      <div class="ext-label">${label}</div>
+      <div class="ext-bar-wrap"><div class="ext-bar-track"><div class="ext-bar-fill" style="width:${pp}%;background:${color}"></div></div></div>
+      <div class="ext-count">${cnt}</div>
+      <div class="ext-pct">${pp}%</div>
+    </div>`;
+  });
+  html += `<div class="panel-divider"></div>
+    <div class="panel-sub-label">Null Field Rates</div>
+    <div class="mini-list">
+      ${nullRow('Pain score missing', nullPain, total)}
+      ${nullRow('Onset missing', nullOnset, total)}
+      ${nullRow('Location missing', nullLoc, total)}
+    </div>
+  </div></div>`;
+
+  html += `</div>`; // end two-col
+
+  // FLAGS + DISPOSITION
+  html += secHead('Clinical Flags & Outcomes');
+  html += `<div class="two-col">`;
+
+  html += `<div class="panel">
+    <div class="panel-head"><div class="panel-title">Red Flag Frequency</div></div>
+    <div class="panel-body">
+      <div class="flag-grid">
+        ${flagCard('Fever', flags.fever, '#f0a500')}
+        ${flagCard('Swelling', flags.swelling, '#e84545')}
+        ${flagCard('Trauma', flags.trauma, '#e84545')}
+        ${flagCard('Nocturnal pain', flags.nocturnal, '#f0a500')}
+        ${flagCard('Cold lingers', flags.cold_lingers, '#00e5c8')}
+        ${flagCard('Airway concern', flags.airway, '#e84545')}
+        ${flagCard('Bleeding', flags.bleeding, '#e84545')}
+        ${flagCard('Immunocomp.', flags.immunocompromised, '#f0a500')}
+      </div>
+    </div>
+  </div>`;
+
+  html += `<div class="panel">
+    <div class="panel-head"><div class="panel-title">Final Disposition</div></div>
+    <div class="panel-body">`;
+  const dispoTotal = Object.values(dispoCounts).reduce((a,b)=>a+b,0);
+  if (dispoTotal === 0) {
+    html += `<div class="no-data">No dispositions recorded yet</div>`;
+  } else {
+    Object.entries(dispoCounts).sort((a,b)=>b[1]-a[1]).forEach(([key,cnt]) => {
+      const pp = p(cnt, dispoTotal);
+      html += `<div class="dispo-row">
+        <div class="dispo-label">${dispoLabels[key]||key}</div>
+        <div class="dispo-bar-wrap"><div class="dispo-bar-track"><div class="dispo-bar-fill" style="width:${pp}%"></div></div></div>
+        <div class="dispo-count">${cnt}</div>
+        <div class="dispo-pct">${pp}%</div>
+      </div>`;
+    });
+  }
+  html += `<div class="panel-divider"></div>
+    <div class="panel-sub-label">Review Status</div>
+    <div class="mini-list">
+      <div class="mini-row"><span class="mini-row-label">Reviewed</span><span class="mini-row-val teal">${reviewed} / ${total} (${p(reviewed,total)}%)</span></div>
+      <div class="mini-row"><span class="mini-row-label">Pending review</span><span class="mini-row-val ${unreviewed>0?'warn':'ok'}">${unreviewed}</span></div>
+      <div class="mini-row"><span class="mini-row-label">Patients contacted</span><span class="mini-row-val">${contacted}</span></div>
+    </div>
+  </div></div>`;
+
+  html += `</div>`; // end two-col
+  html += `<div style="height:40px"></div>`;
+
+  document.getElementById('main-content').innerHTML = html;
+}
+
+function secHead(label) {
+  return `<div class="section-head"><span class="section-label">${label}</span><div class="section-line"></div></div>`;
+}
+function sc(label, value, sub, accent, accentColor) {
+  return `<div class="stat-card" style="--accent:linear-gradient(90deg,${accent},transparent);--accent-color:${accentColor}">
+    <div class="sc-label">${label}</div>
+    <div class="sc-value">${value}</div>
+    ${sub ? `<div class="sc-sub">${sub}</div>` : ''}
+  </div>`;
+}
+function sevBar(cls, label, count, total) {
+  const pp = total > 0 ? Math.round(count/total*100) : 0;
+  return `<div><div class="sev-row-label"><span class="sev-name ${cls}">${label}</span><span class="sev-stats">${count} &nbsp;\u00b7&nbsp; ${pp}%</span></div><div class="sev-track"><div class="sev-fill ${cls}" style="width:${pp}%"></div></div></div>`;
+}
+function flagCard(label, count, color) {
+  const active = count > 0;
+  return `<div class="flag-card">
+    <div class="flag-dot" style="background:${color};${active?'box-shadow:0 0 5px '+color+'80':'opacity:0.25'}"></div>
+    <div class="flag-label">${label}</div>
+    <div class="flag-count" style="color:${active?color:'#3d5570'}">${count}</div>
+  </div>`;
+}
+function nullRow(label, count, total) {
+  const pp = total > 0 ? Math.round(count/total*100) : 0;
+  const cls = pp > 20 ? 'danger' : pp > 10 ? 'warn' : 'ok';
+  return `<div class="mini-row"><span class="mini-row-label">${label}</span><span class="mini-row-val ${cls}">${count} (${pp}%)</span></div>`;
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+
+</body>
+</html>
