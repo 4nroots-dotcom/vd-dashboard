@@ -1253,14 +1253,13 @@
       }
 
       .detail-placeholder {
-        position: sticky;
+        position: absolute;
         top: 0;
         left: 0;
         right: 0;
-        align-items: center;
-        justify-content: flex-start;
-        min-height: 0;
+        bottom: 0;
         padding-top: 56px;
+        pointer-events: none;
       }
 
       .back-btn {
@@ -1638,15 +1637,20 @@
       updateSortChipState();
 
       if (!isMobile) {
-        document.getElementById("detail-panel").innerHTML = `
-          <div class="detail-placeholder">
-            <div class="detail-placeholder-icon">🦷</div>
-            <div class="detail-placeholder-text">Select a case to review</div>
-          </div>
-        `;
+        renderEmptyDetailPane();
       }
 
       loadCases();
+    }
+
+    function renderEmptyDetailPane() {
+      const panel = document.getElementById("detail-panel");
+      panel.innerHTML = `
+        <div class="detail-placeholder" id="detail-placeholder">
+          <div class="detail-placeholder-icon">🦷</div>
+          <div class="detail-placeholder-text">Select a case to review</div>
+        </div>
+      `;
     }
 
     function setSort(sortKey) {
