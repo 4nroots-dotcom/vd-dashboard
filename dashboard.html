@@ -22,11 +22,8 @@
       --cyan-dim: #0097b2;
       --cyan-faint: rgba(0, 200, 232, 0.08);
       --urgent: #e84545;
-      --urgent-bg: rgba(232, 69, 69, 0.12);
       --emergency: #f0a500;
-      --emergency-bg: rgba(240, 165, 0, 0.12);
       --routine: #00c87a;
-      --routine-bg: rgba(0, 200, 122, 0.1);
       --text-primary: #e8f0fe;
       --text-secondary: #a8bdd8;
       --text-muted: #6a80a0;
@@ -34,8 +31,6 @@
       --border-active: rgba(0, 200, 232, 0.3);
       --surface: rgba(255, 255, 255, 0.03);
       --surface-hover: rgba(255, 255, 255, 0.06);
-      --radius: 10px;
-      --radius-sm: 6px;
     }
 
     * {
@@ -190,7 +185,7 @@
       justify-content: space-between;
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 120;
       backdrop-filter: blur(8px);
     }
 
@@ -209,7 +204,7 @@
     .header-right {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .header-user {
@@ -218,10 +213,34 @@
       display: none;
     }
 
-    @media (min-width: 480px) {
+    @media (min-width: 560px) {
       .header-user {
         display: block;
       }
+    }
+
+    .header-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 34px;
+      padding: 0 12px;
+      text-decoration: none;
+      border: 1px solid rgba(0, 200, 232, 0.18);
+      background: rgba(0, 200, 232, 0.08);
+      color: var(--cyan);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      transition: border-color 0.2s, background 0.2s, color 0.2s;
+      white-space: nowrap;
+    }
+
+    .header-link:hover {
+      border-color: rgba(0, 200, 232, 0.35);
+      background: rgba(0, 200, 232, 0.12);
     }
 
     .btn-signout {
@@ -240,12 +259,21 @@
       color: var(--cyan);
     }
 
-    .nav-tabs {
+    .tabs-shell {
+      position: sticky;
+      top: 56px;
+      z-index: 110;
       background: #0f2044;
       border-bottom: 1px solid var(--border);
+    }
+
+    .nav-tabs {
+      background: #0f2044;
       display: flex;
-      padding: 0 16px;
-      gap: 4px;
+      padding: 0 12px;
+      gap: 2px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     .nav-tab {
@@ -254,7 +282,7 @@
       color: var(--text-muted);
       font-size: 13px;
       font-weight: 500;
-      padding: 12px 14px;
+      padding: 12px 12px;
       cursor: pointer;
       border-bottom: 2px solid transparent;
       transition: color 0.2s, border-color 0.2s;
@@ -262,6 +290,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      flex-shrink: 0;
     }
 
     .nav-tab.active {
@@ -284,12 +313,21 @@
       text-align: center;
     }
 
+    .queue-controls {
+      position: sticky;
+      top: 103px;
+      z-index: 100;
+      background: #0f2044;
+      border-bottom: 1px solid var(--border);
+    }
+
     .desktop-layout {
       display: flex;
       flex-direction: column;
       flex: 1;
       overflow: hidden;
       position: relative;
+      min-height: 0;
     }
 
     .queue-column {
@@ -298,6 +336,7 @@
       flex: 1;
       overflow-y: auto;
       width: 100%;
+      min-height: 0;
     }
 
     #detail-column {
@@ -309,6 +348,7 @@
       inset: 0;
       background: var(--navy);
       z-index: 10;
+      min-height: 0;
     }
 
     #queue-panel,
@@ -316,6 +356,7 @@
       display: flex;
       flex-direction: column;
       flex: 1;
+      min-height: 0;
     }
 
     .filter-bar {
@@ -323,7 +364,6 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      border-bottom: 1px solid var(--border);
       background: rgba(0, 0, 0, 0.2);
       flex-wrap: wrap;
     }
@@ -346,6 +386,14 @@
       background: var(--cyan-faint);
       border-color: var(--border-active);
       color: var(--cyan);
+    }
+
+    .sort-chip.disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      color: var(--text-muted);
+      border-color: var(--border);
+      background: rgba(255, 255, 255, 0.02);
     }
 
     .filter-right {
@@ -386,7 +434,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      border-bottom: 1px solid var(--border);
+      border-top: 1px solid rgba(255,255,255,0.04);
       background: rgba(0, 0, 0, 0.15);
       flex-wrap: wrap;
     }
@@ -411,7 +459,7 @@
       border-radius: 10px;
       padding: 14px 16px;
       cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
+      transition: border-color 0.2s, background 0.2s, opacity 0.2s;
       position: relative;
       overflow: hidden;
     }
@@ -448,8 +496,12 @@
     }
 
     .case-card.reviewed {
-      opacity: 0.55;
-      border-left: 3px solid #2a4060;
+      opacity: 0.58;
+    }
+
+    .case-card.draft {
+      border-color: rgba(0, 200, 232, 0.18);
+      background: rgba(0, 200, 232, 0.04);
     }
 
     .case-card.removing {
@@ -458,19 +510,28 @@
       transition: opacity 0.3s ease, transform 0.3s ease;
     }
 
-    .reviewed-badge {
+    .status-badge {
       display: inline-block;
       font-size: 10px;
       font-weight: 600;
       letter-spacing: 0.05em;
-      color: #3a5070;
-      background: rgba(58, 80, 112, 0.2);
-      border: 1px solid #2a4060;
       border-radius: 4px;
       padding: 1px 5px;
       margin-left: 6px;
       vertical-align: middle;
       text-transform: uppercase;
+    }
+
+    .status-badge.reviewed {
+      color: #3a5070;
+      background: rgba(58, 80, 112, 0.2);
+      border: 1px solid #2a4060;
+    }
+
+    .status-badge.draft {
+      color: var(--cyan);
+      background: rgba(0, 200, 232, 0.08);
+      border: 1px solid rgba(0, 200, 232, 0.22);
     }
 
     .case-row1 {
@@ -557,6 +618,15 @@
       border-radius: 50%;
       background: var(--routine);
       margin-left: auto;
+    }
+
+    .draft-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--cyan);
+      margin-left: auto;
+      box-shadow: 0 0 6px rgba(0, 200, 232, 0.4);
     }
 
     .empty-state,
@@ -661,6 +731,7 @@
       align-items: center;
       justify-content: space-between;
       background: rgba(255, 255, 255, 0.02);
+      gap: 10px;
     }
 
     .section-title {
@@ -754,6 +825,35 @@
       font-size: 15px;
       font-weight: 500;
       color: var(--text-primary);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      padding: 16px;
+    }
+
+    .summary-item {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .summary-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #8ab0d0;
+      margin-bottom: 6px;
+    }
+
+    .summary-value {
+      font-size: 13px;
+      color: #dbe8fb;
+      line-height: 1.5;
     }
 
     .flags-grid {
@@ -995,6 +1095,19 @@
       color: var(--urgent);
     }
 
+    .detail-state-text {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .detail-state-text.reviewed {
+      color: var(--routine);
+    }
+
+    .detail-state-text.draft {
+      color: var(--cyan);
+    }
+
     .collapsible-toggle {
       background: none;
       border: none;
@@ -1033,7 +1146,7 @@
       padding: 12px 20px;
       font-size: 13px;
       color: var(--cyan);
-      z-index: 1000;
+      z-index: 140;
       transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       white-space: nowrap;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
@@ -1044,7 +1157,7 @@
     }
 
     .metrics-link {
-      display: block;
+      display: none;
       text-align: center;
       color: var(--text-muted);
       font-size: 12px;
@@ -1083,24 +1196,25 @@
     }
 
     .detail-placeholder {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 100%;
       color: var(--text-muted);
-      flex-direction: column;
-      gap: 12px;
-      padding: 24px;
       text-align: center;
+      padding: 56px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
     }
 
     .detail-placeholder-icon {
-      font-size: 42px;
-      opacity: 0.3;
+      font-size: 36px;
+      opacity: 0.28;
     }
 
     .detail-placeholder-text {
       font-size: 14px;
+      max-width: 240px;
     }
 
     @media (min-width: 768px) {
@@ -1109,26 +1223,59 @@
         flex: 1;
         overflow: hidden;
         flex-direction: row;
+        min-height: 0;
       }
 
       .queue-column {
-        width: 380px;
-        min-width: 320px;
-        max-width: 420px;
+        width: 390px;
+        min-width: 330px;
+        max-width: 430px;
         flex-shrink: 0;
         border-right: 1px solid var(--border);
         overflow-y: auto;
+        min-height: 0;
       }
 
       #detail-column {
         display: flex !important;
-        position: static;
+        position: relative;
         flex: 1;
         overflow-y: auto;
+        min-height: 0;
+      }
+
+      #detail-panel {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 100%;
+        position: relative;
+      }
+
+      .detail-placeholder {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding-top: 56px;
+        pointer-events: none;
       }
 
       .back-btn {
         display: none;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .header-right {
+        gap: 8px;
+      }
+
+      .header-link,
+      .btn-signout {
+        padding-left: 10px;
+        padding-right: 10px;
       }
     }
   </style>
@@ -1181,18 +1328,21 @@
 
       <div class="header-right">
         <span class="header-user" id="header-user-email"></span>
+        <a class="header-link" href="metrics.html">Metrics</a>
         <button class="btn-signout" id="signout-btn" type="button">Sign out</button>
       </div>
     </header>
 
-    <nav class="nav-tabs">
-      <button class="nav-tab active" id="tab-queue" type="button">Queue <span class="tab-badge" id="urgent-count" style="display:none">0</span></button>
-      <button class="nav-tab" id="tab-unreviewed" type="button">Unreviewed</button>
-      <button class="nav-tab" id="tab-all" type="button">All Cases</button>
-    </nav>
+    <div class="tabs-shell">
+      <nav class="nav-tabs">
+        <button class="nav-tab active" id="tab-queue" type="button">Queue <span class="tab-badge" id="urgent-count" style="display:none">0</span></button>
+        <button class="nav-tab" id="tab-new" type="button">New</button>
+        <button class="nav-tab" id="tab-drafts" type="button">Drafts</button>
+        <button class="nav-tab" id="tab-reviewed" type="button">Reviewed</button>
+        <button class="nav-tab" id="tab-all" type="button">All Cases</button>
+      </nav>
 
-    <div class="desktop-layout">
-      <div class="queue-column" id="queue-column">
+      <div class="queue-controls">
         <div class="filter-bar" id="filter-bar">
           <button class="filter-chip active" id="chip-all" type="button">All</button>
           <button class="filter-chip" id="chip-urgent" type="button">Urgent</button>
@@ -1210,7 +1360,11 @@
           <button class="sort-chip" id="sort-newest" type="button">Newest</button>
           <button class="sort-chip" id="sort-oldest" type="button">Oldest</button>
         </div>
+      </div>
+    </div>
 
+    <div class="desktop-layout">
+      <div class="queue-column" id="queue-column">
         <div id="queue-panel"></div>
       </div>
 
@@ -1224,7 +1378,7 @@
       </div>
     </div>
 
-    <a class="metrics-link" href="https://vd-dashboard-iota.vercel.app/metrics.html">View Operational Metrics →</a>
+    <a class="metrics-link" href="metrics.html">View Operational Metrics →</a>
   </div>
 
   <div id="toast"></div>
@@ -1275,7 +1429,9 @@
     });
 
     document.getElementById("tab-queue").addEventListener("click", () => switchTab("queue"));
-    document.getElementById("tab-unreviewed").addEventListener("click", () => switchTab("unreviewed"));
+    document.getElementById("tab-new").addEventListener("click", () => switchTab("new"));
+    document.getElementById("tab-drafts").addEventListener("click", () => switchTab("drafts"));
+    document.getElementById("tab-reviewed").addEventListener("click", () => switchTab("reviewed"));
     document.getElementById("tab-all").addEventListener("click", () => switchTab("all"));
 
     document.getElementById("chip-all").addEventListener("click", () => setFilter("all"));
@@ -1283,7 +1439,9 @@
     document.getElementById("chip-emergency").addEventListener("click", () => setFilter("emergency"));
     document.getElementById("chip-routine").addEventListener("click", () => setFilter("routine"));
 
-    document.getElementById("sort-severity").addEventListener("click", () => setSort("severity"));
+    document.getElementById("sort-severity").addEventListener("click", () => {
+      if (!isUrgencySortRedundant()) setSort("severity");
+    });
     document.getElementById("sort-newest").addEventListener("click", () => setSort("newest"));
     document.getElementById("sort-oldest").addEventListener("click", () => setSort("oldest"));
 
@@ -1381,27 +1539,47 @@
 
         if (currentTab === "queue") {
           query = sb.from("queue_today").select("*");
-        } else if (currentTab === "unreviewed") {
-          query = sb.from("queue_unreviewed").select("*");
+        } else if (currentTab === "new") {
+          query = sb
+            .from("triage_cases")
+            .select("*")
+            .or("review_status.eq.new,review_status.is.null")
+            .order("created_at", { ascending: false })
+            .limit(300);
+        } else if (currentTab === "drafts") {
+          query = sb
+            .from("triage_cases")
+            .select("*")
+            .eq("review_status", "draft")
+            .order("created_at", { ascending: false })
+            .limit(300);
+        } else if (currentTab === "reviewed") {
+          query = sb
+            .from("triage_cases")
+            .select("*")
+            .eq("review_status", "reviewed")
+            .order("created_at", { ascending: false })
+            .limit(300);
         } else {
           query = sb
             .from("triage_cases")
             .select("*")
             .order("created_at", { ascending: false })
-            .limit(200);
+            .limit(300);
         }
 
         const { data, error } = await query;
 
         if (error) {
           console.error("Load error:", error);
-          showToast("Error loading cases");
+          showToast("Error loading cases: " + (error.message || "unknown"));
           return;
         }
 
         allCases = Array.isArray(data) ? data : [];
         renderQueue();
         updateUrgentBadge();
+        updateSortChipState();
       } catch (err) {
         console.error("Load exception:", err);
         showToast("Unexpected load error");
@@ -1416,7 +1594,7 @@
 
       const urgentCount = allCases.filter((c) => {
         const severityMatch = c.severity === "urgent" || c.severity === "emergency";
-        const reviewMatch = c.review_status === "new";
+        const reviewMatch = c.review_status !== "reviewed";
         const created = c.created_at ? new Date(c.created_at) : null;
         return severityMatch && reviewMatch && created && created >= todayStart;
       }).length;
@@ -1440,12 +1618,11 @@
       selectedCaseId = null;
       currentCase = null;
 
-      ["queue", "unreviewed", "all"].forEach((t) => {
+      ["queue", "new", "drafts", "reviewed", "all"].forEach((t) => {
         document.getElementById("tab-" + t).classList.toggle("active", t === tab);
       });
 
-      document.getElementById("filter-bar").style.display = tab === "queue" ? "flex" : "none";
-      document.getElementById("sort-bar").style.display = tab !== "queue" ? "flex" : "none";
+      document.getElementById("sort-bar").style.display = tab === "queue" ? "none" : "flex";
 
       currentFilter = "all";
       ["all", "urgent", "emergency", "routine"].forEach((c) => {
@@ -1457,16 +1634,23 @@
         document.getElementById("sort-" + k).classList.toggle("active", k === "severity");
       });
 
+      updateSortChipState();
+
       if (!isMobile) {
-        document.getElementById("detail-panel").innerHTML = `
-          <div class="detail-placeholder">
-            <div class="detail-placeholder-icon">🦷</div>
-            <div class="detail-placeholder-text">Select a case to review</div>
-          </div>
-        `;
+        renderEmptyDetailPane();
       }
 
       loadCases();
+    }
+
+    function renderEmptyDetailPane() {
+      const panel = document.getElementById("detail-panel");
+      panel.innerHTML = `
+        <div class="detail-placeholder" id="detail-placeholder">
+          <div class="detail-placeholder-icon">🦷</div>
+          <div class="detail-placeholder-text">Select a case to review</div>
+        </div>
+      `;
     }
 
     function setSort(sortKey) {
@@ -1474,6 +1658,7 @@
       ["severity", "newest", "oldest"].forEach((k) => {
         document.getElementById("sort-" + k).classList.toggle("active", k === sortKey);
       });
+      updateSortChipState();
       renderQueue();
     }
 
@@ -1482,12 +1667,44 @@
       ["all", "urgent", "emergency", "routine"].forEach((k) => {
         document.getElementById("chip-" + k).classList.toggle("active", k === filterKey);
       });
+
+      if (isUrgencySortRedundant() && currentSort === "severity") {
+        currentSort = "newest";
+        ["severity", "newest", "oldest"].forEach((k) => {
+          document.getElementById("sort-" + k).classList.toggle("active", k === "newest");
+        });
+      }
+
+      updateSortChipState();
       renderQueue();
+    }
+
+    function isUrgencySortRedundant() {
+      return currentFilter !== "all";
+    }
+
+    function updateSortChipState() {
+      const severityChip = document.getElementById("sort-severity");
+      if (!severityChip) return;
+
+      const redundant = isUrgencySortRedundant() || currentTab === "queue";
+      severityChip.classList.toggle("disabled", redundant);
+
+      if (redundant && currentSort === "severity" && currentTab !== "queue") {
+        currentSort = "newest";
+        ["severity", "newest", "oldest"].forEach((k) => {
+          document.getElementById("sort-" + k).classList.toggle("active", k === "newest");
+        });
+      }
     }
 
     function renderQueue() {
       const panel = document.getElementById("queue-panel");
       let cases = [...allCases];
+
+      if (currentTab === "queue") {
+        cases = cases.filter((c) => c.review_status !== "reviewed");
+      }
 
       if (currentFilter !== "all") {
         cases = cases.filter((c) => c.severity === currentFilter);
@@ -1495,7 +1712,7 @@
 
       const sevOrder = { urgent: 1, emergency: 2, routine: 3 };
 
-      if (currentSort === "severity") {
+      if (currentSort === "severity" && !isUrgencySortRedundant()) {
         cases.sort((a, b) => {
           const aOrder = sevOrder[a.severity] ?? 9;
           const bOrder = sevOrder[b.severity] ?? 9;
@@ -1508,11 +1725,7 @@
       }
 
       if (!cases.length) {
-        const emptyTitle = currentTab === "queue" ? "No calls today" : "All clear";
-        const emptySub =
-          currentTab === "queue"
-            ? "No triage calls have come in today yet"
-            : "No cases match this filter";
+        const { emptyTitle, emptySub } = getEmptyStateCopy();
 
         panel.innerHTML = `
           <div class="empty-state">
@@ -1531,15 +1744,48 @@
       });
     }
 
+    function getEmptyStateCopy() {
+      if (currentTab === "queue") {
+        return {
+          emptyTitle: "No active calls today",
+          emptySub: "No new or draft cases are waiting in today’s queue"
+        };
+      }
+      if (currentTab === "new") {
+        return {
+          emptyTitle: "No new cases",
+          emptySub: "No untouched cases match this filter"
+        };
+      }
+      if (currentTab === "drafts") {
+        return {
+          emptyTitle: "No drafts",
+          emptySub: "No cases are currently in draft status"
+        };
+      }
+      if (currentTab === "reviewed") {
+        return {
+          emptyTitle: "No reviewed cases",
+          emptySub: "No reviewed cases match this filter"
+        };
+      }
+      return {
+        emptyTitle: "All clear",
+        emptySub: "No cases match this filter"
+      };
+    }
+
     function renderCaseCard(c) {
       const so = c.structured_output || {};
       const name = c.patient_name || "Unknown Patient";
       const phone = c.patient_phone ? formatPhone(c.patient_phone) : "-";
       const phoneRaw = c.patient_phone || "";
-      const complaint = so.chief_complaint || so.chief_complaint_quote || "-";
+      const complaint = so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-";
       const pain = typeof so.pain_score === "number" ? `Pain ${so.pain_score}/10` : "";
       const time = formatTime(c.created_at);
-      const reviewed = c.review_status === "reviewed";
+      const reviewStatus = c.review_status || "new";
+      const reviewed = reviewStatus === "reviewed";
+      const draft = reviewStatus === "draft";
       const isActive = c.id === selectedCaseId;
 
       const phoneEl = phoneRaw
@@ -1548,7 +1794,7 @@
 
       return `
         <div
-          class="case-card ${escAttr(c.severity || "")}${reviewed ? " reviewed" : ""}${isActive ? " active" : ""}"
+          class="case-card ${escAttr(c.severity || "")}${reviewed ? " reviewed" : ""}${draft ? " draft" : ""}${isActive ? " active" : ""}"
           id="card-${escAttr(c.id)}"
           data-case-id="${escAttr(c.id)}"
         >
@@ -1556,7 +1802,8 @@
             <span class="severity-badge badge-${escAttr(c.severity || "routine")}">${escHtml(c.severity || "unknown")}</span>
             <span class="case-name">
               ${escHtml(name)}
-              ${reviewed ? '<span class="reviewed-badge">Reviewed</span>' : ""}
+              ${reviewed ? '<span class="status-badge reviewed">Reviewed</span>' : ""}
+              ${draft ? '<span class="status-badge draft">Draft</span>' : ""}
             </span>
             <span class="case-time">${escHtml(time)}</span>
           </div>
@@ -1565,6 +1812,7 @@
             <span class="case-meta-item">${phoneEl}</span>
             ${pain ? `<span class="case-meta-item">${escHtml(pain)}</span>` : ""}
             ${reviewed ? '<span class="reviewed-dot" title="Reviewed"></span>' : ""}
+            ${draft ? '<span class="draft-dot" title="Draft"></span>' : ""}
           </div>
         </div>
       `;
@@ -1616,6 +1864,9 @@
         ? `<a class="tel-link" href="tel:${escAttr(phoneRaw)}">${escHtml(phone)}</a>`
         : '<span style="color:#6a80a0">No phone</span>';
       const reviewedAt = c.reviewed_at ? formatDatetime(c.reviewed_at) : null;
+      const reviewStatus = c.review_status || "new";
+      const isReviewed = reviewStatus === "reviewed";
+      const isDraft = reviewStatus === "draft";
 
       const sevColor =
         c.severity === "urgent" ? "#e84545" :
@@ -1689,6 +1940,98 @@
 
           <div class="detail-section">
             <div class="section-header">
+              <span class="section-title">Quick Summary</span>
+            </div>
+            <div class="summary-grid">
+              <div class="summary-item">
+                <div class="summary-label">Chief Complaint</div>
+                <div class="summary-value">${escHtml(so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-")}</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-label">Onset</div>
+                <div class="summary-value">${escHtml(so.onset || c.onset || "-")}</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-label">Reason for Current Severity</div>
+                <div class="summary-value">${escHtml(c.severity_reason || "-")}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <div class="section-header">
+              <span class="section-title">Dentist Review</span>
+              ${
+                isReviewed
+                  ? `<span class="detail-state-text reviewed">✓ Reviewed ${escHtml(reviewedAt || "")}</span>`
+                  : isDraft
+                    ? `<span class="detail-state-text draft">Draft saved</span>`
+                    : `<span class="detail-state-text">Not reviewed yet</span>`
+              }
+            </div>
+
+            <div class="review-form">
+              <div>
+                <label class="form-label" for="field-notes">Clinical Addendum</label>
+                <textarea
+                  class="form-textarea"
+                  id="field-notes"
+                  placeholder="Add clinical notes, observations, or follow-up instructions..."
+                  ${isReviewed ? 'readonly style="opacity:0.6"' : ""}
+                >${escHtml(c.review_notes || "")}</textarea>
+              </div>
+
+              <div>
+                <label class="form-label" for="field-disposition">Final Disposition</label>
+                <select
+                  class="form-select"
+                  id="field-disposition"
+                  ${isReviewed ? 'disabled style="opacity:0.6"' : ""}
+                >
+                  <option value="">- Select -</option>
+                  <option value="booked" ${c.final_disposition === "booked" ? "selected" : ""}>Booked appointment</option>
+                  <option value="referred_er" ${c.final_disposition === "referred_er" ? "selected" : ""}>Referred to ER</option>
+                  <option value="rx_only" ${c.final_disposition === "rx_only" ? "selected" : ""}>Prescription only</option>
+                  <option value="declined" ${c.final_disposition === "declined" ? "selected" : ""}>Patient declined care</option>
+                  <option value="no_response" ${c.final_disposition === "no_response" ? "selected" : ""}>No response from patient</option>
+                </select>
+              </div>
+
+              <div>
+                <div class="toggle-row">
+                  <span class="toggle-label">Prescription issued</span>
+                  <label class="toggle">
+                    <input type="checkbox" id="field-rx" ${c.prescription_issued ? "checked" : ""} ${isReviewed ? "disabled" : ""}>
+                    <div class="toggle-track"></div>
+                  </label>
+                </div>
+
+                <div class="toggle-row">
+                  <span class="toggle-label">Patient contacted</span>
+                  <label class="toggle">
+                    <input type="checkbox" id="field-contacted" ${c.contacted_patient_at ? "checked" : ""} ${isReviewed ? "disabled" : ""}>
+                    <div class="toggle-track"></div>
+                  </label>
+                </div>
+              </div>
+
+              <div class="action-row">
+                ${
+                  isReviewed
+                    ? `<div style="text-align:center;padding:10px 0;color:#00c87a;font-size:13px;font-weight:600">✓ This case has been reviewed</div>`
+                    : `
+                      <button class="btn-mark-reviewed" id="mark-reviewed-btn" type="button">✓ Mark Reviewed</button>
+                      <button class="btn-action" id="save-draft-btn" type="button">Save Draft</button>
+                    `
+                }
+              </div>
+
+              <div class="save-status" id="save-status"></div>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <div class="section-header">
               <span class="section-title">Clinical Flags</span>
             </div>
             <div class="flags-grid">
@@ -1708,72 +2051,6 @@
             </div>
             <div class="section-body">
               <div class="clinical-note-text">${escHtml(c.clinical_note || "No clinical note generated.")}</div>
-            </div>
-          </div>
-
-          <div class="detail-section">
-            <div class="section-header">
-              <span class="section-title">Dentist Review</span>
-              ${reviewedAt ? `<span style="font-size:11px;color:#00c87a">✓ Reviewed ${escHtml(reviewedAt)}</span>` : ""}
-            </div>
-
-            <div class="review-form">
-              <div>
-                <label class="form-label" for="field-notes">Clinical Addendum</label>
-                <textarea
-                  class="form-textarea"
-                  id="field-notes"
-                  placeholder="Add clinical notes, observations, or follow-up instructions..."
-                  ${c.review_status === "reviewed" ? 'readonly style="opacity:0.6"' : ""}
-                >${escHtml(c.review_notes || "")}</textarea>
-              </div>
-
-              <div>
-                <label class="form-label" for="field-disposition">Final Disposition</label>
-                <select
-                  class="form-select"
-                  id="field-disposition"
-                  ${c.review_status === "reviewed" ? 'disabled style="opacity:0.6"' : ""}
-                >
-                  <option value="">- Select -</option>
-                  <option value="booked" ${c.final_disposition === "booked" ? "selected" : ""}>Booked appointment</option>
-                  <option value="referred_er" ${c.final_disposition === "referred_er" ? "selected" : ""}>Referred to ER</option>
-                  <option value="rx_only" ${c.final_disposition === "rx_only" ? "selected" : ""}>Prescription only</option>
-                  <option value="declined" ${c.final_disposition === "declined" ? "selected" : ""}>Patient declined care</option>
-                  <option value="no_response" ${c.final_disposition === "no_response" ? "selected" : ""}>No response from patient</option>
-                </select>
-              </div>
-
-              <div>
-                <div class="toggle-row">
-                  <span class="toggle-label">Prescription issued</span>
-                  <label class="toggle">
-                    <input type="checkbox" id="field-rx" ${c.prescription_issued ? "checked" : ""} ${c.review_status === "reviewed" ? "disabled" : ""}>
-                    <div class="toggle-track"></div>
-                  </label>
-                </div>
-
-                <div class="toggle-row">
-                  <span class="toggle-label">Patient contacted</span>
-                  <label class="toggle">
-                    <input type="checkbox" id="field-contacted" ${c.contacted_patient_at ? "checked" : ""} ${c.review_status === "reviewed" ? "disabled" : ""}>
-                    <div class="toggle-track"></div>
-                  </label>
-                </div>
-              </div>
-
-              <div class="action-row">
-                ${
-                  c.review_status === "reviewed"
-                    ? `<div style="text-align:center;padding:10px 0;color:#00c87a;font-size:13px;font-weight:600">✓ This case has been reviewed</div>`
-                    : `
-                      <button class="btn-mark-reviewed" id="mark-reviewed-btn" type="button">✓ Mark Reviewed</button>
-                      <button class="btn-action" id="save-draft-btn" type="button">Save Draft</button>
-                    `
-                }
-              </div>
-
-              <div class="save-status" id="save-status"></div>
             </div>
           </div>
 
@@ -1892,6 +2169,8 @@
         update.review_status = "reviewed";
         update.reviewed_at = new Date().toISOString();
         update.reviewed_by = currentUser?.email || null;
+      } else {
+        update.review_status = "draft";
       }
 
       try {
@@ -1923,15 +2202,21 @@
             setTimeout(() => {
               renderQueue();
               updateUrgentBadge();
+              renderDetail(currentCase);
             }, 350);
           } else {
             renderQueue();
             updateUrgentBadge();
+            renderDetail(currentCase);
           }
 
-          if (isMobile) {
+          if (isMobile && currentTab === "queue") {
             setTimeout(goBack, 1200);
           }
+        } else {
+          renderQueue();
+          updateUrgentBadge();
+          renderDetail(currentCase);
         }
 
         setTimeout(() => {
