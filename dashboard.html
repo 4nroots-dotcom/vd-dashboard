@@ -1196,25 +1196,25 @@
     }
 
     .detail-placeholder {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text-muted);
-      flex-direction: column;
-      gap: 12px;
-      padding: 24px;
-      text-align: center;
-      min-height: calc(100vh - 103px);
       width: 100%;
+      color: var(--text-muted);
+      text-align: center;
+      padding: 56px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
     }
 
     .detail-placeholder-icon {
-      font-size: 42px;
-      opacity: 0.3;
+      font-size: 36px;
+      opacity: 0.28;
     }
 
     .detail-placeholder-text {
       font-size: 14px;
+      max-width: 240px;
     }
 
     @media (min-width: 768px) {
@@ -1223,6 +1223,7 @@
         flex: 1;
         overflow: hidden;
         flex-direction: row;
+        min-height: 0;
       }
 
       .queue-column {
@@ -1232,11 +1233,12 @@
         flex-shrink: 0;
         border-right: 1px solid var(--border);
         overflow-y: auto;
+        min-height: 0;
       }
 
       #detail-column {
         display: flex !important;
-        position: static;
+        position: relative;
         flex: 1;
         overflow-y: auto;
         min-height: 0;
@@ -1247,11 +1249,18 @@
         flex-direction: column;
         flex: 1;
         min-height: 100%;
+        position: relative;
       }
 
       .detail-placeholder {
-        flex: 1;
-        min-height: 100%;
+        position: sticky;
+        top: 0;
+        left: 0;
+        right: 0;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 0;
+        padding-top: 56px;
       }
 
       .back-btn {
