@@ -327,6 +327,7 @@
       flex: 1;
       overflow: hidden;
       position: relative;
+      min-height: 0;
     }
 
     .queue-column {
@@ -335,6 +336,7 @@
       flex: 1;
       overflow-y: auto;
       width: 100%;
+      min-height: 0;
     }
 
     #detail-column {
@@ -346,6 +348,7 @@
       inset: 0;
       background: var(--navy);
       z-index: 10;
+      min-height: 0;
     }
 
     #queue-panel,
@@ -353,6 +356,7 @@
       display: flex;
       flex-direction: column;
       flex: 1;
+      min-height: 0;
     }
 
     .filter-bar {
@@ -1192,7 +1196,6 @@
     }
 
     .detail-placeholder {
-      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1201,7 +1204,8 @@
       gap: 12px;
       padding: 24px;
       text-align: center;
-      min-height: 100%;
+      min-height: calc(100vh - 103px);
+      width: 100%;
     }
 
     .detail-placeholder-icon {
@@ -1235,16 +1239,19 @@
         position: static;
         flex: 1;
         overflow-y: auto;
+        min-height: 0;
       }
 
       #detail-panel {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
         min-height: 100%;
       }
 
       .detail-placeholder {
-        position: sticky;
-        top: 0;
-        min-height: calc(100vh - 56px - 47px);
+        flex: 1;
+        min-height: 100%;
       }
 
       .back-btn {
@@ -1370,14 +1377,7 @@
 
   <script>
     const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
-
-    // Replace with your working key if this line was altered while copying.
-    // The rest of the file assumes the same anon key already used in your live dashboard.
-  </script>
-
-  <script>
-    const REAL_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
 
     if (!window.supabase || !window.supabase.createClient) {
       document.getElementById("auth-error").style.display = "block";
@@ -1386,7 +1386,7 @@
       throw new Error("Supabase library missing");
     }
 
-    const sb = window.supabase.createClient(SUPABASE_URL, REAL_SUPABASE_ANON_KEY);
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let currentTab = "queue";
     let currentFilter = "all";
