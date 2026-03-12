@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>VirtualDentist.ai - Operational Metrics</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    html { background: #060f1e !important; }
+
+    :root {
+      --navy: #060f1e;
+      --navy-mid: #0a1830;
+      --navy-light: #112040;
+      --teal: #00e5c8;
+      --teal-dim: #00b09c;
+      --urgent: #e84545;
+      --emergency: #f0a500;
+      --routine: #00c87a;
+      --text-primary: #e8f4fe;
+      --text-secondary: #7b9cbd;
+      --text-muted: #3d5570;
+      --border: rgba(255,255,255,0.06);
+      --surface: rgba(255,255,255,0.025);
+      --surface-2: rgba(255,255,255,0.018);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #060f1e;
+      color: #e8f4fe;
+      min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.5;
+      overscroll-behavior: none;
+    }
+
+    button, input {
+      font: inherit;
+    }
+
+    /* AUTH */
+    #auth-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: radial-gradient(ellipse at 50% 0%, #0a2040 0%, #060f1e 70%);
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 380px;
+      background: #0a1830;
+      border: 1px solid rgba(0,229,200,0.12);
+      border-radius: 16px;
+      padding: 40px 32px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+    }
+
+    .auth-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .auth-logo-text {
+      font-size: 18px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #00b09c, #00e5c8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .auth-subtitle {
+      font-size: 11px;
+      color: #3d5570;
+      margin-bottom: 28px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: #7b9cbd;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    .field-input {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 6px;
+      color: #e8f4fe;
+      font-size: 14px;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 0.2s;
+      margin-bottom: 16px;
+    }
+
+    .field-input:focus {
+      border-color: rgba(0,229,200,0.3);
+    }
+
+    .field-input::placeholder {
+      color: #3d5570;
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: linear-gradient(135deg, #00b09c, #00e5c8);
+      color: #060f1e;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 14px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      margin-top: 4px;
+    }
+
+    .btn-primary:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+    }
+
+    .auth-error {
+      background: rgba(232,69,69,0.1);
+      border: 1px solid rgba(232,69,69,0.3);
+      border-radius: 6px;
+      color: #ff8080;
+      font-size: 13px;
+      padding: 10px 12px;
+      margin-top: 12px;
+      display: none;
+      white-space: pre-wrap;
+    }
+
+    /* APP */
+    #app {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: #0a1830;
+      border-bottom: 2px solid rgba(0,229,200,0.2);
+      padding: 0 20px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #00b09c, #00e5c8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .page-badge {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #060f1e;
+      background: linear-gradient(135deg, #00b09c, #00e5c8);
+      border-radius: 4px;
+      padding: 3px 9px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-user {
+      font-size: 12px;
+      color: #7b9cbd;
+      display: none;
+    }
+
+    @media (min-width: 480px) {
+      .header-user {
+        display: block;
+      }
+    }
+
+    .btn-signout {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 6px;
+      color: #7b9cbd;
+      font-size: 12px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-signout:hover {
+      border-color: rgba(0,229,200,0.3);
+      color: #00e5c8;
+    }
+
+    /* TOOLBAR */
+    .toolbar {
+      background: rgba(10,24,48,0.9);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-label {
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #3d5570;
+      margin-right: 2px;
+    }
+
+    .period-chip {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 20px;
+      color: #7b9cbd;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 5px 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .period-chip.active {
+      background: rgba(0,229,200,0.08);
+      border-color: rgba(0,229,200,0.3);
+      color: #00e5c8;
+    }
+
+    .toolbar-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .refresh-btn {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 6px;
+      color: #3d5570;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: color 0.2s;
+      line-height: 1;
+    }
+
+    .refresh-btn:hover {
+      color: #00e5c8;
+    }
+
+    .refresh-btn.spinning {
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .last-updated {
+      font-size: 11px;
+      color: #3d5570;
+      font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .back-link {
+      font-size: 12px;
+      color: #3d5570;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: #00e5c8;
+    }
+
+    /* MAIN */
+    .main {
+      flex: 1;
+      padding: 18px;
+      max-width: 1120px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* SECTION */
+    .section-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 22px 0 12px;
+    }
+
+    .section-head:first-child {
+      margin-top: 0;
+    }
+
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #3d5570;
+      white-space: nowrap;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    /* STAT CARDS */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    @media (min-width: 680px) {
+      .stat-row {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      position: relative;
+      overflow: hidden;
+      min-height: 106px;
+    }
+
+    .stat-card::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent, rgba(0,229,200,0.3));
+    }
+
+    .sc-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: #3d5570;
+      margin-bottom: 8px;
+    }
+
+    .sc-value {
+      font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--accent-color, #e8f4fe);
+      line-height: 1.05;
+      margin-bottom: 6px;
+      word-break: break-word;
+    }
+
+    .sc-sub {
+      font-size: 11px;
+      color: #3d5570;
+    }
+
+    /* PANEL */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .panel-head {
+      padding: 12px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .panel-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #3d5570;
+    }
+
+    .panel-subtle {
+      font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11px;
+      color: #7b9cbd;
+    }
+
+    .panel-body {
+      padding: 16px;
+    }
+
+    .panel-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.05);
+      margin: 14px 0;
+    }
+
+    .panel-sub-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      color: #3d5570;
+      margin-bottom: 10px;
+    }
+
+    /* TWO COL */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    @media (min-width: 760px) {
+      .two-col {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    /* MINI LIST */
+    .mini-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .mini-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .mini-row:last-child {
+      border-bottom: none;
+    }
+
+    .mini-row-label {
+      font-size: 13px;
+      color: #7b9cbd;
+    }
+
+    .mini-row-val {
+      font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px;
+      font-weight: 500;
+      color: #e8f4fe;
+      text-align: right;
+    }
+
+    .mini-row-val.ok { color: #00c87a; }
+    .mini-row-val.warn { color: #f0a500; }
+    .mini-row-val.danger { color: #e84545; }
+    .mini-row-val.teal { color: #00e5c8; }
+
+    /* SEVERITY / DISPOSITION BARS */
+    .stack-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .stack-row-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      gap: 10px;
+    }
+
+    .stack-name {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    .stack-name.urgent { color: #e84545; }
+    .stack-name.emergency { color: #f0a500; }
+    .stack-name.routine { color: #00c87a; }
+
+    .stack-stats {
+      font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      color: #7b9cbd;
+    }
+
+    .stack-track {
+      height: 8px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .stack-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.7s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .stack-fill.urgent {
+      background: linear-gradient(90deg, #8b2020, #e84545);
+    }
+
+    .stack-fill.emergency {
+      background: linear-gradient(90deg, #8b6000, #f0a500);
+    }
+
+    .stack-fill.routine {
+      background: linear-gradient(90deg, #007040, #00c87a);
+    }
+
+    .stack-fill.teal {
+      background: linear-gradient(90deg, #00b09c, #00e5c8);
+    }
+
+    /* DURATION HISTOGRAM */
+    .histogram {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      align-items: end;
+      height: 150px;
+      margin-top: 8px;
+    }
+
+    .hist-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: end;
+      gap: 8px;
+      height: 100%;
+    }
+
+    .hist-bar-wrap {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      align-items: end;
+    }
+
+    .hist-bar {
+      width: 100%;
+      min-height: 8px;
+      border-radius: 8px 8px 3px 3px;
+      background: linear-gradient(180deg, rgba(0,229,200,0.9), rgba(0,176,156,0.55));
+      transition: height 0.7s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .hist-label {
+      font-size: 10px;
+      color: #7b9cbd;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    .hist-count {
+      font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11px;
+      color: #e8f4fe;
+    }
+
+    /* HOUR OF DAY */
+    .tod-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+      height: 72px;
+    }
+
+    .tod-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .tod-bar {
+      width: 100%;
+      border-radius: 2px 2px 0 0;
+      min-height: 2px;
+      transition: height 0.6s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .tod-bar.biz {
+      background: rgba(0,229,200,0.2);
+      border: 1px solid rgba(0,229,200,0.15);
+      border-bottom: none;
+    }
+
+    .tod-bar.after {
+      background: rgba(240,165,0,0.22);
+      border: 1px solid rgba(240,165,0,0.18);
+      border-bottom: none;
+    }
+
+    .tod-tick {
+      font-size: 8px;
+      color: #3d5570;
+      font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .tod-legend {
+      display: flex;
+      gap: 14px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .tod-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: #3d5570;
+    }
+
+    .tod-legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+    }
+
+    /* GRID CARDS */
+    .flag-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .flag-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .flag-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .flag-label {
+      font-size: 12px;
+      color: #7b9cbd;
+      flex: 1;
+    }
+
+    .flag-count {
+      font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    /* EXTRACTION */
+    .ext-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .ext-row:last-child {
+      border-bottom: none;
+    }
+
+    .ext-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .ext-label {
+      font-size: 13px;
+      color: #7b9cbd;
+      flex: 1;
+    }
+
+    .ext-bar-wrap {
+      width: 70px;
+    }
+
+    .ext-bar-track {
+      height: 4px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 2px;
+    }
+
+    .ext-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 0.6s;
+    }
+
+    .ext-count {
+      font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px;
+      color: #e8f4fe;
+      width: 28px;
+      text-align: right;
+    }
+
+    .ext-pct {
+      font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 11px;
+      color: #3d5570;
+      width: 36px;
+      text-align: right;
+    }
+
+    .loading-overlay {
+      padding: 60px 24px;
+      text-align: center;
+      color: #3d5570;
+      font-size: 13px;
+    }
+
+    .loading-dots::after {
+      content: ".";
+      animation: dots 1.2s steps(4,end) infinite;
+    }
+
+    @keyframes dots {
+      0%,100% { content: "."; }
+      33% { content: ".."; }
+      66% { content: "..."; }
+    }
+
+    .no-data {
+      color: #3d5570;
+      font-size: 13px;
+      text-align: center;
+      padding: 20px;
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #0a1830;
+      border: 1px solid rgba(0,229,200,0.3);
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-size: 13px;
+      color: #00e5c8;
+      z-index: 1000;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      white-space: nowrap;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    #toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb {
+      background: #112040;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="auth-screen">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <svg width="40" height="40" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="ag" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#00b09c"/>
+              <stop offset="100%" stop-color="#00e5c8"/>
+            </linearGradient>
+          </defs>
+          <path d="M30 20 Q30 10 40 10 L80 10 Q90 10 90 20 L95 60 Q97 80 85 90 L70 108 Q65 115 60 115 Q55 115 50 108 L35 90 Q23 80 25 60 Z" stroke="url(#ag)" stroke-width="7" fill="none" stroke-linejoin="round"/>
+          <polyline points="28,58 42,58 50,40 60,76 70,50 78,58 92,58" stroke="url(#ag)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="auth-logo-text">VirtualDentist.ai</div>
+      </div>
+      <div class="auth-subtitle">Operational Metrics</div>
+
+      <label class="field-label" for="auth-email">Email</label>
+      <input class="field-input" type="email" id="auth-email" placeholder="you@example.com" autocomplete="email" />
+
+      <label class="field-label" for="auth-password">Password</label>
+      <input class="field-input" type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password" />
+
+      <button class="btn-primary" id="auth-btn" type="button">Sign In</button>
+      <div class="auth-error" id="auth-error"></div>
+    </div>
+  </div>
+
+  <div id="app">
+    <header class="header">
+      <div class="header-left">
+        <div class="header-logo">
+          <svg width="24" height="24" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="hg" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#00b09c"/>
+                <stop offset="100%" stop-color="#00e5c8"/>
+              </linearGradient>
+            </defs>
+            <path d="M30 20 Q30 10 40 10 L80 10 Q90 10 90 20 L95 60 Q97 80 85 90 L70 108 Q65 115 60 115 Q55 115 50 108 L35 90 Q23 80 25 60 Z" stroke="url(#hg)" stroke-width="8" fill="none" stroke-linejoin="round"/>
+            <polyline points="28,58 42,58 50,40 60,76 70,50 78,58 92,58" stroke="url(#hg)" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          VirtualDentist.ai
+        </div>
+        <span class="page-badge">Metrics</span>
+      </div>
+      <div class="header-right">
+        <span class="header-user" id="header-user-email"></span>
+        <button class="btn-signout" id="signout-btn" type="button">Sign out</button>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <span class="toolbar-label">Period</span>
+      <button class="period-chip active" id="chip-7" type="button">7 days</button>
+      <button class="period-chip" id="chip-30" type="button">30 days</button>
+      <button class="period-chip" id="chip-90" type="button">90 days</button>
+      <button class="period-chip" id="chip-0" type="button">All time</button>
+
+      <div class="toolbar-right">
+        <span class="last-updated" id="last-updated"></span>
+        <button class="refresh-btn" id="refresh-btn" type="button" title="Refresh">↻</button>
+        <a class="back-link" href="dashboard.html">← Dashboard</a>
+      </div>
+    </div>
+
+    <div class="main" id="main-content">
+      <div class="loading-overlay"><span class="loading-dots">Loading metrics</span></div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+
+    if (!window.supabase || !window.supabase.createClient) {
+      document.getElementById("auth-error").style.display = "block";
+      document.getElementById("auth-error").textContent =
+        "Supabase library failed to load. Check network / CDN blocking.";
+      throw new Error("Supabase library missing");
+    }
+
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let currentPeriod = 7;
+    let currentUser = null;
+
+    document.getElementById("auth-btn").addEventListener("click", handleLogin);
+    document.getElementById("signout-btn").addEventListener("click", handleSignOut);
+    document.getElementById("refresh-btn").addEventListener("click", loadMetrics);
+
+    document.getElementById("chip-7").addEventListener("click", () => setPeriod(7));
+    document.getElementById("chip-30").addEventListener("click", () => setPeriod(30));
+    document.getElementById("chip-90").addEventListener("click", () => setPeriod(90));
+    document.getElementById("chip-0").addEventListener("click", () => setPeriod(0));
+
+    document.getElementById("auth-email").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleLogin();
+    });
+
+    document.getElementById("auth-password").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleLogin();
+    });
+
+    async function handleLogin() {
+      const email = document.getElementById("auth-email").value.trim();
+      const password = document.getElementById("auth-password").value;
+      const btn = document.getElementById("auth-btn");
+      const errEl = document.getElementById("auth-error");
+
+      errEl.style.display = "none";
+      errEl.textContent = "";
+
+      if (!email || !password) {
+        errEl.textContent = "Enter both email and password.";
+        errEl.style.display = "block";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Signing in...";
+
+      try {
+        const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
+        if (error) {
+          errEl.textContent = error.message || "Sign-in failed.";
+          errEl.style.display = "block";
+          return;
+        }
+
+        if (!data || !data.user) {
+          errEl.textContent = "Sign-in returned no user.";
+          errEl.style.display = "block";
+          return;
+        }
+
+        showApp(data.user);
+      } catch (err) {
+        errEl.textContent = err?.message || "Unexpected sign-in error.";
+        errEl.style.display = "block";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Sign In";
+      }
+    }
+
+    async function handleSignOut() {
+      try {
+        await sb.auth.signOut();
+      } catch (err) {
+        console.error("Sign-out error:", err);
+      }
+      window.location.reload();
+    }
+
+    async function init() {
+      try {
+        const { data, error } = await sb.auth.getSession();
+        if (error) {
+          console.error("Session error:", error);
+          return;
+        }
+        if (data?.session?.user) {
+          showApp(data.session.user);
+        }
+      } catch (err) {
+        console.error("Init error:", err);
+      }
+    }
+
+    function showApp(user) {
+      currentUser = user;
+      document.getElementById("auth-screen").style.display = "none";
+      document.getElementById("app").style.display = "flex";
+      document.getElementById("header-user-email").textContent = user.email || "";
+      loadMetrics();
+    }
+
+    function setPeriod(days) {
+      currentPeriod = days;
+      [7, 30, 90, 0].forEach((d) => {
+        document.getElementById("chip-" + d).classList.toggle("active", d === days);
+      });
+      loadMetrics();
+    }
+
+    async function loadMetrics() {
+      const btn = document.getElementById("refresh-btn");
+      btn.classList.add("spinning");
+
+      try {
+        let query = sb
+          .from("triage_cases")
+          .select(`
+            id,
+            created_at,
+            severity,
+            extraction_source,
+            review_status,
+            reviewed_at,
+            reviewed_by,
+            contacted_patient_at,
+            final_disposition,
+            prescription_issued,
+            duration_seconds,
+            structured_output,
+            triage_tag
+          `)
+          .order("created_at", { ascending: true });
+
+        if (currentPeriod > 0) {
+          const since = new Date();
+          since.setDate(since.getDate() - currentPeriod);
+          query = query.gte("created_at", since.toISOString());
+        }
+
+        const { data, error } = await query;
+        btn.classList.remove("spinning");
+
+        if (error) {
+          console.error("Metrics load error:", error);
+          showToast("Error loading data: " + (error.message || "unknown"));
+          return;
+        }
+
+        const now = new Date();
+        document.getElementById("last-updated").textContent =
+          "Updated " +
+          now.toLocaleTimeString("en-CA", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true
+          });
+
+        renderMetrics(Array.isArray(data) ? data : []);
+      } catch (err) {
+        btn.classList.remove("spinning");
+        console.error("Metrics exception:", err);
+        showToast("Unexpected metrics error: " + (err?.message || "unknown"));
+      }
+    }
+
+    function renderMetrics(cases) {
+      const total = cases.length;
+
+      const urgent = cases.filter((c) => c.severity === "urgent").length;
+      const emergency = cases.filter((c) => c.severity === "emergency").length;
+      const routine = cases.filter((c) => c.severity === "routine").length;
+
+      const pendingReview = cases.filter((c) => c.review_status !== "reviewed").length;
+      const clinicallyReviewed = cases.filter((c) => !!c.reviewed_by).length;
+      const clearedReviewed = cases.filter((c) => c.review_status === "reviewed").length;
+      const pendingUrgentEmergency = cases.filter(
+        (c) =>
+          (c.severity === "urgent" || c.severity === "emergency") &&
+          !c.reviewed_by
+      ).length;
+
+      const contacted = cases.filter((c) => !!c.contacted_patient_at).length;
+      const erRef = cases.filter((c) => c.final_disposition === "referred_er").length;
+      const rxIssued = cases.filter((c) => c.prescription_issued === true).length;
+
+      const reviewMinutes = cases
+        .filter((c) => c.created_at && c.reviewed_at && c.reviewed_by)
+        .map((c) => (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000)
+        .filter((n) => Number.isFinite(n) && n >= 0);
+
+      const contactMinutes = cases
+        .filter((c) => c.created_at && c.contacted_patient_at)
+        .map((c) => (new Date(c.contacted_patient_at) - new Date(c.created_at)) / 60000)
+        .filter((n) => Number.isFinite(n) && n >= 0);
+
+      const avgTTR = reviewMinutes.length
+        ? Math.round(reviewMinutes.reduce((a, b) => a + b, 0) / reviewMinutes.length)
+        : null;
+
+      const avgTTC = contactMinutes.length
+        ? Math.round(contactMinutes.reduce((a, b) => a + b, 0) / contactMinutes.length)
+        : null;
+
+      const durations = cases
+        .map((c) => c.duration_seconds)
+        .filter((n) => Number.isFinite(n) && n > 0);
+
+      const avgDur = durations.length
+        ? Math.round(durations.reduce((a, b) => a + b, 0) / durations.length)
+        : null;
+
+      const durationBuckets = [
+        { label: "<30s", count: 0 },
+        { label: "30-60s", count: 0 },
+        { label: "1-2m", count: 0 },
+        { label: "2-4m", count: 0 },
+        { label: ">4m", count: 0 }
+      ];
+
+      durations.forEach((d) => {
+        if (d < 30) durationBuckets[0].count++;
+        else if (d < 60) durationBuckets[1].count++;
+        else if (d < 120) durationBuckets[2].count++;
+        else if (d < 240) durationBuckets[3].count++;
+        else durationBuckets[4].count++;
+      });
+
+      const maxDurationBucket = Math.max(...durationBuckets.map((b) => b.count), 1);
+
+      const usableCalls = cases.filter(isUsableCall).length;
+      const incompleteCalls = total - usableCalls;
+
+      const afterHours = cases.filter((c) => {
+        const d = new Date(c.created_at);
+        const h = d.getHours();
+        const dow = d.getDay();
+        return dow === 0 || dow === 6 || h < 8 || h >= 18;
+      }).length;
+
+      const hourCounts = new Array(24).fill(0);
+      cases.forEach((c) => {
+        const hour = new Date(c.created_at).getHours();
+        hourCounts[hour]++;
+      });
+      const maxHour = Math.max(...hourCounts, 1);
+
+      const extCounts = {};
+      cases.forEach((c) => {
+        const s = c.extraction_source || "none";
+        extCounts[s] = (extCounts[s] || 0) + 1;
+      });
+
+      const dispoCounts = {};
+      cases.forEach((c) => {
+        if (c.final_disposition) {
+          dispoCounts[c.final_disposition] = (dispoCounts[c.final_disposition] || 0) + 1;
+        }
+      });
+
+      const flags = {
+        fever: 0,
+        trauma: 0,
+        swelling: 0,
+        airway: 0,
+        bleeding: 0,
+        nocturnal: 0,
+        cold_lingers: 0,
+        immunocompromised: 0
+      };
+
+      cases.forEach((c) => {
+        const so = c.structured_output || {};
+        if (so.fever) flags.fever++;
+        if (so.trauma) flags.trauma++;
+        if (so.swelling_present || so.swelling) flags.swelling++;
+        if (so.difficulty_breathing_or_swallowing) flags.airway++;
+        if (so.uncontrolled_bleeding) flags.bleeding++;
+        if (so.nocturnal_pain) flags.nocturnal++;
+        if (so.cold_pain_lingers_over_10_seconds) flags.cold_lingers++;
+        if (so.immunocompromised) flags.immunocompromised++;
+      });
+
+      const nullPain = cases.filter((c) => c.structured_output?.pain_score == null).length;
+      const nullComplaint = cases.filter((c) => !c.structured_output?.chief_complaint).length;
+      const nullOnset = cases.filter((c) => !c.structured_output?.onset).length;
+      const nullLoc = cases.filter(
+        (c) => !c.structured_output?.jaw && !c.structured_output?.side
+      ).length;
+
+      const dispoLabels = {
+        booked: "Appointment booked",
+        referred_er: "Referred to ER",
+        rx_only: "Prescription only",
+        declined: "Patient declined",
+        no_response: "No response"
+      };
+
+      const p = (n, d) => (d > 0 ? Math.round((n / d) * 100) : 0);
+      const fmtDur = (s) =>
+        s != null ? `${Math.floor(s / 60)}m ${s % 60}s` : "—";
+      const fmtMin = (m) =>
+        m != null
+          ? m >= 60
+            ? `${Math.floor(m / 60)}h ${Math.round(m % 60)}m`
+            : `${Math.round(m)} min`
+          : "—";
+
+      let html = "";
+
+      html += secHead("Can the clinic handle this?");
+      html += `<div class="stat-row">
+        ${sc("Total Calls", total, "all captured calls", "rgba(0,229,200,0.35)", "#e8f4fe")}
+        ${sc("Usable Calls", usableCalls, `${p(usableCalls, total)}% appear clinically usable`, "rgba(0,200,122,0.35)", "#00c87a")}
+        ${sc("Pending Review", pendingReview, "not yet clinically reviewed", pendingReview > 0 ? "rgba(240,165,0,0.4)" : "rgba(0,200,122,0.35)", pendingReview > 0 ? "#f0a500" : "#00c87a")}
+        ${sc("Pending Urgent / Emergency", pendingUrgentEmergency, "high-priority cases awaiting review", pendingUrgentEmergency > 0 ? "rgba(232,69,69,0.4)" : "rgba(0,200,122,0.35)", pendingUrgentEmergency > 0 ? "#e84545" : "#00c87a")}
+      </div>`;
+
+      html += secHead("How fast are we responding?");
+      html += `<div class="stat-row">
+        ${sc("Clinically Reviewed", `${clinicallyReviewed} / ${total}`, `${p(clinicallyReviewed, total)}% with reviewed_by present`, "rgba(0,229,200,0.35)", "#00e5c8")}
+        ${sc("Avg Time to Review", fmtMin(avgTTR), "created → reviewed", "rgba(0,229,200,0.35)", "#00e5c8")}
+        ${sc("Avg Time to Contact", fmtMin(avgTTC), "created → contacted", "rgba(0,229,200,0.35)", "#00e5c8")}
+        ${sc("Contact Rate", `${contacted} / ${clinicallyReviewed || 0}`, clinicallyReviewed > 0 ? `${p(contacted, clinicallyReviewed)}% of clinically reviewed` : "no clinically reviewed cases yet", "rgba(0,200,122,0.35)", "#00c87a")}
+      </div>`;
+
+      html += secHead("What happened?");
+      html += `<div class="two-col">`;
+
+      html += `<div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Final Disposition</div>
+          <div class="panel-subtle">${Object.values(dispoCounts).reduce((a, b) => a + b, 0)} recorded</div>
+        </div>
+        <div class="panel-body">`;
+
+      const dispoTotal = Object.values(dispoCounts).reduce((a, b) => a + b, 0);
+      if (dispoTotal === 0) {
+        html += `<div class="no-data">No dispositions recorded yet</div>`;
+      } else {
+        html += `<div class="stack-list">`;
+        Object.entries(dispoCounts)
+          .sort((a, b) => b[1] - a[1])
+          .forEach(([key, count]) => {
+            const pp = p(count, dispoTotal);
+            html += `
+              <div>
+                <div class="stack-row-label">
+                  <span class="stack-name" style="color:#00e5c8">${escHtml(dispoLabels[key] || key)}</span>
+                  <span class="stack-stats">${count} · ${pp}%</span>
+                </div>
+                <div class="stack-track">
+                  <div class="stack-fill teal" style="width:${pp}%"></div>
+                </div>
+              </div>
+            `;
+          });
+        html += `</div>`;
+      }
+
+      html += `
+          <div class="panel-divider"></div>
+          <div class="panel-sub-label">Review Status</div>
+          <div class="mini-list">
+            <div class="mini-row"><span class="mini-row-label">Clinically reviewed</span><span class="mini-row-val teal">${clinicallyReviewed} / ${total} (${p(clinicallyReviewed, total)}%)</span></div>
+            <div class="mini-row"><span class="mini-row-label">Cleared / reviewed flag</span><span class="mini-row-val">${clearedReviewed}</span></div>
+            <div class="mini-row"><span class="mini-row-label">Patients contacted</span><span class="mini-row-val">${contacted}</span></div>
+          </div>
+        </div>
+      </div>`;
+
+      html += `<div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Severity Distribution</div>
+          <div class="panel-subtle">${total} call${total !== 1 ? "s" : ""}</div>
+        </div>
+        <div class="panel-body">
+          <div class="stack-list">
+            ${stackBar("urgent", "Urgent", urgent, total)}
+            ${stackBar("emergency", "Emergency", emergency, total)}
+            ${stackBar("routine", "Routine", routine, total)}
+          </div>
+        </div>
+      </div>`;
+
+      html += `</div>`;
+
+      html += secHead("System quality & diagnostics");
+      html += `<div class="two-col">`;
+
+      html += `<div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Call Duration Distribution</div>
+          <div class="panel-subtle">Avg ${fmtDur(avgDur)}</div>
+        </div>
+        <div class="panel-body">`;
+
+      if (!durations.length) {
+        html += `<div class="no-data">No duration data available</div>`;
+      } else {
+        html += `<div class="histogram">`;
+        durationBuckets.forEach((bucket) => {
+          const height = Math.max((bucket.count / maxDurationBucket) * 100, bucket.count > 0 ? 8 : 0);
+          html += `
+            <div class="hist-col">
+              <div class="hist-bar-wrap">
+                <div class="hist-bar" style="height:${height}%"></div>
+              </div>
+              <div class="hist-count">${bucket.count}</div>
+              <div class="hist-label">${bucket.label}</div>
+            </div>
+          `;
+        });
+        html += `</div>`;
+      }
+
+      html += `
+          <div class="panel-divider"></div>
+          <div class="panel-sub-label">Data Quality</div>
+          <div class="mini-list">
+            ${nullRow("Pain score missing", nullPain, total)}
+            ${nullRow("Chief complaint missing", nullComplaint, total)}
+            ${nullRow("Onset missing", nullOnset, total)}
+            ${nullRow("Location missing", nullLoc, total)}
+            <div class="mini-row"><span class="mini-row-label">Incomplete / likely partial</span><span class="mini-row-val ${p(incompleteCalls, total) > 15 ? "warn" : "ok"}">${incompleteCalls} (${p(incompleteCalls, total)}%)</span></div>
+          </div>
+        </div>
+      </div>`;
+
+      html += `<div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Calls by Hour of Day</div>
+          <div class="panel-subtle">${afterHours} after-hours</div>
+        </div>
+        <div class="panel-body">
+          <div class="tod-chart">`;
+
+      for (let h = 0; h < 24; h++) {
+        const cnt = hourCounts[h];
+        const ht = Math.max((cnt / maxHour) * 100, cnt > 0 ? 6 : 0);
+        const after = h < 8 || h >= 18;
+        const lbl = h === 0 ? "12a" : h === 6 ? "6a" : h === 12 ? "12p" : h === 18 ? "6p" : "";
+        html += `
+          <div class="tod-col">
+            <div class="tod-bar ${after ? "after" : "biz"}" style="height:${ht}%" title="${cnt} call${cnt !== 1 ? "s" : ""} at ${h}:00"></div>
+            <div class="tod-tick">${lbl}</div>
+          </div>
+        `;
+      }
+
+      html += `</div>
+          <div class="tod-legend">
+            <div class="tod-legend-item"><div class="tod-legend-dot" style="background:rgba(0,229,200,0.2);border:1px solid rgba(0,229,200,0.15)"></div>Business hours (8am–6pm)</div>
+            <div class="tod-legend-item"><div class="tod-legend-dot" style="background:rgba(240,165,0,0.22);border:1px solid rgba(240,165,0,0.18)"></div>After hours</div>
+          </div>
+          <div class="panel-divider"></div>
+          <div class="panel-sub-label">Operational Signals</div>
+          <div class="mini-list">
+            <div class="mini-row"><span class="mini-row-label">After-hours share</span><span class="mini-row-val ${p(afterHours, total) > 40 ? "warn" : "teal"}">${afterHours} (${p(afterHours, total)}%)</span></div>
+            <div class="mini-row"><span class="mini-row-label">ER referrals</span><span class="mini-row-val">${erRef}</span></div>
+            <div class="mini-row"><span class="mini-row-label">Rx issued</span><span class="mini-row-val">${rxIssued}</span></div>
+          </div>
+        </div>
+      </div>`;
+
+      html += `</div>`;
+
+      html += secHead("Clinical & technical diagnostics");
+      html += `<div class="two-col">`;
+
+      html += `<div class="panel">
+        <div class="panel-head"><div class="panel-title">Red Flag Frequency</div></div>
+        <div class="panel-body">
+          <div class="flag-grid">
+            ${flagCard("Fever", flags.fever, "#f0a500")}
+            ${flagCard("Swelling", flags.swelling, "#e84545")}
+            ${flagCard("Trauma", flags.trauma, "#e84545")}
+            ${flagCard("Nocturnal pain", flags.nocturnal, "#f0a500")}
+            ${flagCard("Cold lingers", flags.cold_lingers, "#00e5c8")}
+            ${flagCard("Airway concern", flags.airway, "#e84545")}
+            ${flagCard("Bleeding", flags.bleeding, "#e84545")}
+            ${flagCard("Immunocomp.", flags.immunocompromised, "#f0a500")}
+          </div>
+        </div>
+      </div>`;
+
+      html += `<div class="panel">
+        <div class="panel-head"><div class="panel-title">Extraction Source</div></div>
+        <div class="panel-body">
+          ${extractionRow("Vapi (primary)", extCounts["vapi"] || 0, total, "#00e5c8")}
+          ${extractionRow("OpenAI (fallback)", extCounts["openai"] || 0, total, "#a78bfa")}
+          ${extractionRow("None / unknown", extCounts["none"] || 0, total, "#3d5570")}
+        </div>
+      </div>`;
+
+      html += `</div>`;
+      html += `<div style="height:40px"></div>`;
+
+      document.getElementById("main-content").innerHTML = html;
+    }
+
+    function isUsableCall(c) {
+      const so = c.structured_output || {};
+      const hasComplaint = !!so.chief_complaint;
+      const hasPain = so.pain_score != null;
+      const hasOnset = !!so.onset;
+      const hasLocation = !!so.jaw || !!so.side;
+      const hasFlags =
+        !!so.swelling ||
+        !!so.swelling_present ||
+        !!so.trauma ||
+        !!so.fever ||
+        !!so.uncontrolled_bleeding ||
+        !!so.difficulty_breathing_or_swallowing ||
+        !!so.nocturnal_pain ||
+        !!so.cold_pain_lingers_over_10_seconds;
+
+      return hasComplaint || hasPain || hasOnset || hasLocation || hasFlags;
+    }
+
+    function secHead(label) {
+      return `<div class="section-head"><span class="section-label">${escHtml(label)}</span><div class="section-line"></div></div>`;
+    }
+
+    function sc(label, value, sub, accent, accentColor) {
+      return `
+        <div class="stat-card" style="--accent:${accent};--accent-color:${accentColor}">
+          <div class="sc-label">${escHtml(label)}</div>
+          <div class="sc-value">${escHtml(String(value))}</div>
+          ${sub ? `<div class="sc-sub">${escHtml(sub)}</div>` : ""}
+        </div>
+      `;
+    }
+
+    function stackBar(cls, label, count, total) {
+      const pp = total > 0 ? Math.round((count / total) * 100) : 0;
+      return `
+        <div>
+          <div class="stack-row-label">
+            <span class="stack-name ${cls}">${escHtml(label)}</span>
+            <span class="stack-stats">${count} · ${pp}%</span>
+          </div>
+          <div class="stack-track">
+            <div class="stack-fill ${cls}" style="width:${pp}%"></div>
+          </div>
+        </div>
+      `;
+    }
+
+    function flagCard(label, count, color) {
+      const active = count > 0;
+      return `
+        <div class="flag-card">
+          <div class="flag-dot" style="background:${color};${active ? `box-shadow:0 0 5px ${color}80` : "opacity:0.25"}"></div>
+          <div class="flag-label">${escHtml(label)}</div>
+          <div class="flag-count" style="color:${active ? color : "#3d5570"}">${count}</div>
+        </div>
+      `;
+    }
+
+    function nullRow(label, count, total) {
+      const pp = total > 0 ? Math.round((count / total) * 100) : 0;
+      const cls = pp > 20 ? "danger" : pp > 10 ? "warn" : "ok";
+      return `<div class="mini-row"><span class="mini-row-label">${escHtml(label)}</span><span class="mini-row-val ${cls}">${count} (${pp}%)</span></div>`;
+    }
+
+    function extractionRow(label, count, total, color) {
+      const pp = total > 0 ? Math.round((count / total) * 100) : 0;
+      return `
+        <div class="ext-row">
+          <div class="ext-dot" style="background:${color}"></div>
+          <div class="ext-label">${escHtml(label)}</div>
+          <div class="ext-bar-wrap">
+            <div class="ext-bar-track">
+              <div class="ext-bar-fill" style="width:${pp}%;background:${color}"></div>
+            </div>
+          </div>
+          <div class="ext-count">${count}</div>
+          <div class="ext-pct">${pp}%</div>
+        </div>
+      `;
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2800);
+    }
+
+    function escHtml(value) {
+      if (value === null || value === undefined) return "";
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    init();
+  </script>
+</body>
+</html>
