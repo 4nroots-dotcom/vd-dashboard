@@ -11,31 +11,30 @@
 
   <style>
     :root {
-      --navy: #0a1628;
-      --navy-deep: #081326;
-      --navy-mid: #0f2044;
-      --navy-light: #17305e;
+      --navy-0: #071323;
+      --navy-1: #0a1628;
+      --navy-2: #0f2044;
+      --navy-3: #17305e;
       --cyan: #00c8e8;
-      --cyan-soft: #61ccef;
+      --cyan-soft: #73d7f3;
       --cyan-dim: #0097b2;
-      --cyan-faint: rgba(0, 200, 232, 0.08);
-      --urgent: #e84545;
-      --urgent-faint: rgba(232, 69, 69, 0.14);
+      --white: #f5f9ff;
       --text-primary: #e8f0fe;
-      --text-secondary: #b3c6e1;
+      --text-secondary: #b4c7e2;
       --text-muted: #7f96b8;
       --border: rgba(255, 255, 255, 0.08);
       --border-soft: rgba(255, 255, 255, 0.05);
       --border-active: rgba(0, 200, 232, 0.32);
       --surface: rgba(255, 255, 255, 0.04);
-      --surface-2: rgba(255, 255, 255, 0.025);
+      --urgent: #e46a85;
+      --urgent-bg: rgba(120, 43, 67, 0.28);
       --success: #00c87a;
-      --shadow: 0 26px 70px rgba(0, 0, 0, 0.34);
-      --maxw: 900px;
-      --radius-xl: 28px;
-      --radius-lg: 20px;
-      --radius-md: 14px;
-      --radius-sm: 10px;
+      --shadow-lg: 0 30px 80px rgba(0, 0, 0, 0.36);
+      --radius-xl: 30px;
+      --radius-lg: 22px;
+      --radius-md: 16px;
+      --radius-sm: 12px;
+      --maxw: 980px;
     }
 
     * {
@@ -49,21 +48,23 @@
     body {
       min-height: 100%;
       background:
-        radial-gradient(circle at top center, rgba(43, 94, 172, 0.24), transparent 34%),
-        linear-gradient(180deg, var(--navy-deep) 0%, var(--navy) 100%);
+        radial-gradient(circle at top center, rgba(51, 108, 190, 0.18), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(0, 200, 232, 0.08), transparent 24%),
+        linear-gradient(180deg, var(--navy-0) 0%, var(--navy-1) 100%);
       color: var(--text-primary);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       line-height: 1.5;
     }
 
     body {
-      padding: 22px 16px 36px;
+      padding: 20px 14px 36px;
     }
 
     button,
     input,
     textarea,
-    select {
+    select,
+    a {
       font: inherit;
     }
 
@@ -78,103 +79,113 @@
       align-items: center;
       justify-content: center;
       gap: 14px;
-      margin: 6px 0 22px;
+      margin: 4px 0 20px;
     }
 
     .brand-mark {
-      width: 44px;
-      height: 44px;
-      flex-shrink: 0;
+      width: 46px;
+      height: 46px;
       display: block;
+      flex-shrink: 0;
     }
 
     .brand-text {
       font-size: 18px;
       font-weight: 700;
       letter-spacing: 0.01em;
-      color: #7fc4f3;
+      color: #79c8f3;
     }
 
     .card {
-      background: rgba(15, 32, 68, 0.88);
+      background: linear-gradient(180deg, rgba(18, 39, 81, 0.92) 0%, rgba(11, 27, 58, 0.92) 100%);
       border: 1px solid var(--border);
-      border-radius: 20px;
-      box-shadow: var(--shadow);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
       backdrop-filter: blur(10px);
     }
 
-    /* ===== SCREEN 1 ===== */
+    /* HERO */
 
-    .hero-card {
-      padding: 24px 22px 24px;
-      border-radius: var(--radius-xl);
-      overflow: hidden;
+    .hero {
       position: relative;
+      overflow: hidden;
+      padding: 24px 20px 24px;
     }
 
-    .hero-card::before {
+    .hero::before {
       content: "";
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(circle at top right, rgba(0, 200, 232, 0.08), transparent 34%),
-        radial-gradient(circle at bottom left, rgba(26, 127, 196, 0.1), transparent 30%);
+        radial-gradient(circle at top right, rgba(0, 200, 232, 0.08), transparent 30%),
+        radial-gradient(circle at bottom left, rgba(26, 127, 196, 0.10), transparent 34%);
       pointer-events: none;
     }
 
-    .hero-content {
+    .hero-inner {
       position: relative;
       z-index: 1;
+      display: grid;
+      gap: 18px;
+    }
+
+    .hero-copy-block {
+      display: grid;
+      gap: 16px;
     }
 
     .hero-kicker {
       font-size: 11px;
       font-weight: 800;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: #8fd4f8;
-      margin-bottom: 10px;
+      color: #9adcf9;
     }
 
     .hero-title {
-      font-size: clamp(31px, 6.2vw, 46px);
-      line-height: 1.03;
+      font-size: clamp(34px, 8vw, 56px);
+      line-height: 0.98;
+      letter-spacing: -0.045em;
       font-weight: 800;
-      letter-spacing: -0.03em;
-      color: #f4f8ff;
-      margin-bottom: 12px;
+      color: var(--white);
       max-width: 8.5em;
     }
 
     .hero-sub {
-      font-size: 17px;
-      line-height: 1.58;
+      font-size: 18px;
+      line-height: 1.56;
       color: var(--text-secondary);
-      margin-bottom: 10px;
-      max-width: 32ch;
+      max-width: 34ch;
+      margin-top: 2px;
     }
 
     .hero-cost {
-      font-size: 17px;
+      font-size: 18px;
       line-height: 1.5;
-      font-weight: 700;
+      font-weight: 750;
       color: #edf6ff;
-      margin-bottom: 16px;
+      margin-top: 4px;
     }
 
-    .hero-image-wrap {
+    .hero-image-block {
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero-image-shell {
       position: relative;
-      margin: 0 -6px 16px;
+      margin: 2px -2px 0;
+      border-radius: 24px;
       overflow: hidden;
-      border-radius: 22px;
       background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
     }
 
-    .hero-image-wrap::after {
+    .hero-image-shell::after {
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, rgba(8, 19, 38, 0.02), rgba(8, 19, 38, 0.14));
+      background: linear-gradient(180deg, rgba(7, 19, 35, 0.00) 0%, rgba(7, 19, 35, 0.10) 100%);
       pointer-events: none;
     }
 
@@ -184,99 +195,16 @@
       aspect-ratio: 4 / 3;
       object-fit: cover;
       object-position: center 18%;
-      transform: scale(1.02);
+      transform: scale(1.025);
     }
 
-    .trust-strip {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin: 0 0 16px;
-      padding: 10px 2px 4px;
-      border-top: 1px solid var(--border-soft);
-      border-bottom: 1px solid var(--border-soft);
-    }
-
-    .trust-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: #d7e6fa;
-      font-size: 15px;
-      line-height: 1.42;
-    }
-
-    .trust-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: var(--cyan-soft);
-      box-shadow: 0 0 0 4px rgba(86, 208, 242, 0.12);
-      flex-shrink: 0;
-      margin-left: 2px;
-    }
-
-    .warning-strip {
-      margin-bottom: 18px;
-      padding: 16px 16px;
-      border-radius: 18px;
-      background: rgba(103, 44, 61, 0.24);
-      border: 1px solid rgba(214, 96, 122, 0.36);
-      color: #ffdbe4;
-      font-size: 15px;
-      line-height: 1.58;
-      font-weight: 620;
-    }
-
-    .expect-wrap {
-      margin-bottom: 22px;
-      padding: 4px 2px 0;
-    }
-
-    .expect-title {
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: #d7e3f7;
-      margin-bottom: 16px;
-    }
-
-    .expect-list {
+    .hero-cta-block {
       display: grid;
       gap: 14px;
+      margin-top: 2px;
     }
 
-    .expect-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      color: #d8e6fa;
-      font-size: 18px;
-      line-height: 1.38;
-    }
-
-    .expect-step {
-      width: 36px;
-      height: 36px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--cyan-soft);
-      background: rgba(59, 137, 217, 0.1);
-      border: 1px solid rgba(97, 204, 239, 0.22);
-    }
-
-    .hero-actions {
-      display: grid;
-      gap: 12px;
-    }
-
-    .hero-start-btn {
+    .hero-primary-btn {
       appearance: none;
       width: 100%;
       border: none;
@@ -285,37 +213,126 @@
       font-size: 21px;
       font-weight: 800;
       letter-spacing: -0.01em;
-      color: #ffffff;
+      color: #fff;
+      background: linear-gradient(135deg, #4c8fd2 0%, #69cbe7 100%);
+      box-shadow: 0 16px 34px rgba(49, 128, 212, 0.24);
       cursor: pointer;
-      background: linear-gradient(135deg, #4287cb 0%, #52bddc 100%);
-      box-shadow: 0 14px 30px rgba(45, 126, 214, 0.22);
       transition: transform 0.12s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
+      text-align: center;
     }
 
-    .hero-start-btn:hover {
-      box-shadow: 0 18px 34px rgba(45, 126, 214, 0.28);
+    .hero-primary-btn:hover {
+      box-shadow: 0 18px 38px rgba(49, 128, 212, 0.3);
     }
 
-    .hero-start-btn:active {
-      transform: scale(0.985);
-      opacity: 0.94;
+    .hero-primary-btn:active {
+      transform: scale(0.986);
+      opacity: 0.95;
     }
 
-    .hero-start-btn:disabled {
+    .hero-primary-btn:disabled {
       opacity: 0.62;
       cursor: not-allowed;
+    }
+
+    .trust-row {
+      display: grid;
+      gap: 10px;
+      padding-top: 2px;
+      border-top: 1px solid var(--border-soft);
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #d8e7fa;
+      font-size: 15px;
+      line-height: 1.42;
+    }
+
+    .trust-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--cyan-soft);
+      box-shadow: 0 0 0 4px rgba(115, 215, 243, 0.12);
+      flex-shrink: 0;
+      margin-left: 2px;
+    }
+
+    .hero-secondary {
+      display: grid;
+      gap: 18px;
+      margin-top: 2px;
+      padding-top: 4px;
+    }
+
+    .warning-panel {
+      padding: 16px 16px;
+      border-radius: 18px;
+      background: var(--urgent-bg);
+      border: 1px solid rgba(228, 106, 133, 0.42);
+      color: #ffdbe5;
+      font-size: 15px;
+      line-height: 1.56;
+      font-weight: 660;
+    }
+
+    .flow-block {
+      display: grid;
+      gap: 14px;
+      padding-top: 2px;
+    }
+
+    .flow-title {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #d7e3f7;
+    }
+
+    .flow-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .flow-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: #dbe7fa;
+      font-size: 18px;
+      line-height: 1.38;
+    }
+
+    .flow-step {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--cyan-soft);
+      background: rgba(59, 137, 217, 0.10);
+      border: 1px solid rgba(97, 204, 239, 0.22);
     }
 
     .legal-note {
       text-align: center;
       font-size: 12px;
-      line-height: 1.55;
+      line-height: 1.56;
       color: var(--text-muted);
       max-width: 760px;
       margin: 0 auto;
     }
 
-    /* ===== FORM ===== */
+    /* FORM */
 
     .form-card {
       margin-top: 18px;
@@ -336,8 +353,8 @@
     }
 
     .form-title {
-      font-size: 26px;
-      font-weight: 700;
+      font-size: 27px;
+      font-weight: 750;
       line-height: 1.1;
       margin-bottom: 6px;
     }
@@ -558,48 +575,59 @@
       white-space: pre-wrap;
     }
 
-    /* ===== SUCCESS ===== */
+    /* HANDOFF */
 
-    .success-card {
+    .handoff-card {
       display: none;
       margin-top: 18px;
-      padding: 24px 20px;
+      padding: 26px 20px;
       text-align: center;
     }
 
-    .success-card.show {
+    .handoff-card.show {
       display: block;
     }
 
-    .success-icon {
-      width: 58px;
-      height: 58px;
+    .handoff-icon {
+      width: 60px;
+      height: 60px;
       border-radius: 999px;
       background: rgba(0, 200, 122, 0.1);
       border: 1px solid rgba(0, 200, 122, 0.24);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      font-size: 30px;
       color: var(--success);
       margin-bottom: 14px;
     }
 
-    .success-title {
-      font-size: 26px;
-      font-weight: 700;
+    .handoff-title {
+      font-size: 28px;
+      font-weight: 750;
+      line-height: 1.08;
       margin-bottom: 8px;
     }
 
-    .success-sub {
+    .handoff-sub {
       color: var(--text-secondary);
-      max-width: 640px;
-      margin: 0 auto 14px;
+      max-width: 680px;
+      margin: 0 auto 12px;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .handoff-note {
+      color: #dbe8fb;
+      max-width: 700px;
+      margin: 0 auto 16px;
+      font-size: 16px;
+      line-height: 1.6;
     }
 
     .case-id {
       display: inline-block;
-      margin-top: 4px;
+      margin: 4px auto 18px;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       background: rgba(255,255,255,0.05);
       border: 1px solid var(--border);
@@ -610,42 +638,123 @@
       word-break: break-word;
     }
 
-    @media (min-width: 680px) {
+    .call-actions {
+      display: grid;
+      gap: 14px;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .call-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      border: none;
+      border-radius: 18px;
+      padding: 19px 20px;
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: #fff;
+      background: linear-gradient(135deg, #4c8fd2 0%, #69cbe7 100%);
+      box-shadow: 0 16px 34px rgba(49, 128, 212, 0.24);
+      text-decoration: none;
+      transition: transform 0.12s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .call-btn:hover {
+      box-shadow: 0 18px 38px rgba(49, 128, 212, 0.3);
+    }
+
+    .call-btn:active {
+      transform: scale(0.986);
+      opacity: 0.95;
+    }
+
+    .call-number {
+      font-size: 18px;
+      font-weight: 700;
+      color: #eaf4ff;
+    }
+
+    .call-fallback {
+      font-size: 13px;
+      line-height: 1.56;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 760px) {
       body {
         padding: 28px 20px 44px;
       }
 
-      .hero-card {
-        padding: 28px 28px 26px;
+      .brand {
+        margin-bottom: 24px;
+      }
+
+      .hero {
+        padding: 30px 30px 28px;
+      }
+
+      .hero-inner {
+        grid-template-columns: minmax(0, 1.02fr) minmax(360px, 0.98fr);
+        grid-template-areas:
+          "copy media"
+          "secondary secondary"
+          "legal legal";
+        column-gap: 26px;
+        row-gap: 18px;
+        align-items: start;
+      }
+
+      .hero-copy-block {
+        grid-area: copy;
       }
 
       .hero-title {
-        max-width: 9em;
+        max-width: 8em;
       }
 
       .hero-sub {
-        max-width: 36ch;
+        max-width: 31ch;
       }
 
-      .hero-image-wrap {
-        margin: 4px -8px 18px;
-        border-radius: 24px;
+      .hero-image-block {
+        grid-area: media;
+      }
+
+      .hero-image-shell {
+        margin: 0;
+        border-radius: 26px;
       }
 
       .hero-image {
-        aspect-ratio: 16 / 9;
-        object-position: center 22%;
+        aspect-ratio: 4 / 5;
+        object-position: center 24%;
       }
 
-      .trust-strip {
+      .trust-row {
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 16px;
-        padding: 12px 4px 4px;
       }
 
       .trust-item {
-        font-size: 14px;
         align-items: flex-start;
+        font-size: 14px;
+      }
+
+      .hero-secondary {
+        grid-area: secondary;
+        grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+        align-items: start;
+        gap: 22px;
+      }
+
+      .legal-note {
+        grid-area: legal;
       }
     }
 
@@ -690,75 +799,74 @@
       <div class="brand-text">VirtualDentist.ai</div>
     </div>
 
-    <section id="screen-welcome" class="card hero-card">
-      <div class="hero-content">
-        <div class="hero-kicker">Ontario Dental Emergency Triage</div>
-
-        <div class="hero-title">
-          Are you having a dental emergency?
-        </div>
-
-        <div class="hero-sub">
-          Tell us what is happening, and we’ll help assess the situation and guide next steps.
-        </div>
-
-        <div class="hero-cost">
-          This service is available at no cost.
-        </div>
-
-        <div class="hero-image-wrap">
-          <img
-            class="hero-image"
-            src="intake-hero.png"
-            alt="Person holding jaw in dental discomfort"
-          />
-        </div>
-
-        <div class="trust-strip">
-          <div class="trust-item">
-            <span class="trust-dot"></span>
-            <span>Secure and private</span>
+    <section id="screen-welcome" class="card hero">
+      <div class="hero-inner">
+        <div class="hero-copy-block">
+          <div class="hero-kicker">Ontario Dental Emergency Triage</div>
+          <div class="hero-title">Are you having a dental emergency?</div>
+          <div class="hero-sub">
+            Tell us what is happening, and we’ll help assess the situation and guide next steps.
           </div>
-          <div class="trust-item">
-            <span class="trust-dot"></span>
-            <span>Reviewed by a licensed Ontario dentist</span>
-          </div>
-          <div class="trust-item">
-            <span class="trust-dot"></span>
-            <span>Takes only a few minutes</span>
-          </div>
-        </div>
+          <div class="hero-cost">This service is available at no cost.</div>
 
-        <div class="warning-strip">
-          If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, seek emergency care immediately.
-        </div>
+          <div class="hero-cta-block">
+            <button class="hero-primary-btn" id="start-assessment-btn" type="button">
+              Start assessment
+            </button>
 
-        <div class="expect-wrap">
-          <div class="expect-title">What to expect</div>
-          <div class="expect-list">
-            <div class="expect-item">
-              <span class="expect-step">1</span>
-              <span>Share a few details</span>
-            </div>
-            <div class="expect-item">
-              <span class="expect-step">2</span>
-              <span>Answer guided questions</span>
-            </div>
-            <div class="expect-item">
-              <span class="expect-step">3</span>
-              <span>Receive next-step guidance</span>
+            <div class="trust-row">
+              <div class="trust-item">
+                <span class="trust-dot"></span>
+                <span>Secure and private</span>
+              </div>
+              <div class="trust-item">
+                <span class="trust-dot"></span>
+                <span>Speak first with Sam, our AI triage assistant</span>
+              </div>
+              <div class="trust-item">
+                <span class="trust-dot"></span>
+                <span>Reviewed by a licensed Ontario dentist</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="hero-actions">
-          <button class="hero-start-btn" id="start-assessment-btn" type="button">
-            Start assessment
-          </button>
-
-          <div class="legal-note">
-            This service provides dental triage guidance and does not replace emergency medical care or an in-person dental examination.
+        <div class="hero-image-block">
+          <div class="hero-image-shell">
+            <img
+              class="hero-image"
+              src="intake-hero.png"
+              alt="Person holding jaw in dental discomfort"
+            />
           </div>
+        </div>
+
+        <div class="hero-secondary">
+          <div class="warning-panel">
+            If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, seek emergency care immediately.
+          </div>
+
+          <div class="flow-block">
+            <div class="flow-title">What to expect</div>
+            <div class="flow-list">
+              <div class="flow-item">
+                <span class="flow-step">1</span>
+                <span>Share a few details</span>
+              </div>
+              <div class="flow-item">
+                <span class="flow-step">2</span>
+                <span>Speak with Sam, our AI dental triage assistant</span>
+              </div>
+              <div class="flow-item">
+                <span class="flow-step">3</span>
+                <span>A licensed Ontario dentist reviews the case and next steps</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="legal-note">
+          This service provides dental triage guidance and does not replace emergency medical care or an in-person dental examination.
         </div>
       </div>
     </section>
@@ -768,7 +876,7 @@
         <div>
           <div class="form-title">Before we begin</div>
           <div class="form-sub">
-            Please share a few details so we can better understand your concern and guide next steps.
+            Please share a few details so we can better understand your concern and prepare the next triage step with Sam.
           </div>
         </div>
         <div class="step-pill">Step 1 of 2</div>
@@ -939,7 +1047,7 @@
       <label class="ack">
         <input type="checkbox" id="intake-acknowledge" />
         <span>
-          By continuing, you understand that this service provides dental triage guidance and does not replace emergency or in-person dental care.
+          By continuing, you understand that you will next speak with Sam, our AI dental triage assistant, and that this service does not replace emergency or in-person dental care.
         </span>
       </label>
 
@@ -951,22 +1059,33 @@
       </div>
     </section>
 
-    <section id="screen-success" class="card success-card">
-      <div class="success-icon">✓</div>
-      <div class="success-title">Your information has been received</div>
-      <div class="success-sub">
-        A case record has been created successfully. This is the point where the next triage step can be connected.
+    <section id="screen-handoff" class="card handoff-card">
+      <div class="handoff-icon">✓</div>
+      <div class="handoff-title">Your intake has been received</div>
+      <div class="handoff-sub">
+        Your case has been created successfully.
       </div>
       <div class="case-id" id="success-case-id"></div>
-      <div class="legal-note" style="margin-top:16px;">
-        For now, this page stops after record creation so you can confirm the database write is working correctly.
+
+      <div class="handoff-note">
+        Next, you’ll speak with <strong>Sam</strong>, our AI dental triage assistant, who will ask a few guided questions to help assess your dental concern. A <strong>licensed Ontario dentist</strong> reviews the case and next-step guidance.
+      </div>
+
+      <div class="call-actions">
+        <a class="call-btn" id="call-sam-btn" href="tel:+12193016594">
+          Call Sam now
+        </a>
+        <div class="call-number">1 (219) 301-6594</div>
+        <div class="call-fallback">
+          If tapping the button does not work, call the number above directly. This is a temporary patient access number and will be replaced with a Canadian number before launch.
+        </div>
       </div>
     </section>
   </div>
 
   <script>
     const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+    const SUPABASE_ANON_KEY = "YOUR_ANON_KEY_HERE";
 
     if (!window.supabase || !window.supabase.createClient) {
       alert("Supabase library failed to load.");
@@ -977,7 +1096,7 @@
 
     const welcomeScreen = document.getElementById("screen-welcome");
     const formScreen = document.getElementById("screen-form");
-    const successScreen = document.getElementById("screen-success");
+    const handoffScreen = document.getElementById("screen-handoff");
 
     document.getElementById("start-assessment-btn").addEventListener("click", () => {
       welcomeScreen.style.display = "none";
@@ -1108,9 +1227,11 @@
 
         const payload = buildIntakePayload(formData);
 
-        const { error } = await sb
+        const { data, error } = await sb
           .from("triage_cases")
-          .insert(payload);
+          .insert(payload)
+          .select("id")
+          .single();
 
         if (error) {
           console.error("Supabase insert error:", error);
@@ -1118,7 +1239,7 @@
           return;
         }
 
-        showSuccess("Record created successfully");
+        showHandoff(data?.id || "Case created successfully");
       } catch (err) {
         console.error("Unexpected intake submit error:", err);
         showIntakeError(err?.message || "Unexpected error while saving your information.");
@@ -1233,10 +1354,10 @@
       };
     }
 
-    function showSuccess(message) {
+    function showHandoff(caseIdText) {
       formScreen.classList.remove("show");
-      successScreen.classList.add("show");
-      document.getElementById("success-case-id").textContent = message;
+      handoffScreen.classList.add("show");
+      document.getElementById("success-case-id").textContent = caseIdText;
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
