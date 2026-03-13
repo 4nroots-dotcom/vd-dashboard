@@ -26,7 +26,6 @@
       --border-soft: rgba(255, 255, 255, 0.05);
       --border-active: rgba(0, 200, 232, 0.32);
       --surface: rgba(255, 255, 255, 0.04);
-      --urgent: #e46a85;
       --urgent-bg: rgba(120, 43, 67, 0.28);
       --success: #00c87a;
       --shadow-lg: 0 30px 80px rgba(0, 0, 0, 0.36);
@@ -167,37 +166,6 @@
       margin-top: 4px;
     }
 
-    .hero-image-block {
-      display: grid;
-      gap: 16px;
-    }
-
-    .hero-image-shell {
-      position: relative;
-      margin: 2px -2px 0;
-      border-radius: 24px;
-      overflow: hidden;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-    }
-
-    .hero-image-shell::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(7, 19, 35, 0.00) 0%, rgba(7, 19, 35, 0.10) 100%);
-      pointer-events: none;
-    }
-
-    .hero-image {
-      display: block;
-      width: 100%;
-      aspect-ratio: 4 / 3;
-      object-fit: cover;
-      object-position: center 18%;
-      transform: scale(1.025);
-    }
-
     .hero-cta-block {
       display: grid;
       gap: 14px;
@@ -262,6 +230,37 @@
       margin-left: 2px;
     }
 
+    .hero-image-block {
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero-image-shell {
+      position: relative;
+      margin: 2px -2px 0;
+      border-radius: 24px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .hero-image-shell::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(7, 19, 35, 0.00) 0%, rgba(7, 19, 35, 0.10) 100%);
+      pointer-events: none;
+    }
+
+    .hero-image {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+      object-position: center 18%;
+      transform: scale(1.025);
+    }
+
     .hero-secondary {
       display: grid;
       gap: 18px;
@@ -270,7 +269,7 @@
     }
 
     .warning-panel {
-      padding: 16px 16px;
+      padding: 16px;
       border-radius: 18px;
       background: var(--urgent-bg);
       border: 1px solid rgba(228, 106, 133, 0.42);
@@ -282,7 +281,7 @@
 
     .flow-block {
       display: grid;
-      gap: 14px;
+      gap: 12px;
       padding-top: 2px;
     }
 
@@ -294,33 +293,11 @@
       color: #d7e3f7;
     }
 
-    .flow-list {
-      display: grid;
-      gap: 14px;
-    }
-
-    .flow-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
+    .flow-copy {
       color: #dbe7fa;
-      font-size: 18px;
-      line-height: 1.38;
-    }
-
-    .flow-step {
-      width: 38px;
-      height: 38px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--cyan-soft);
-      background: rgba(59, 137, 217, 0.10);
-      border: 1px solid rgba(97, 204, 239, 0.22);
+      font-size: 16px;
+      line-height: 1.65;
+      max-width: 52ch;
     }
 
     .legal-note {
@@ -609,33 +586,38 @@
       margin-bottom: 8px;
     }
 
-    .handoff-sub {
+    .handoff-copy {
       color: var(--text-secondary);
-      max-width: 680px;
-      margin: 0 auto 12px;
-      font-size: 16px;
-      line-height: 1.6;
-    }
-
-    .handoff-note {
-      color: #dbe8fb;
       max-width: 700px;
-      margin: 0 auto 16px;
+      margin: 0 auto 18px;
       font-size: 16px;
-      line-height: 1.6;
+      line-height: 1.65;
     }
 
-    .case-id {
-      display: inline-block;
-      margin: 4px auto 18px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      background: rgba(255,255,255,0.05);
+    .handoff-panel {
+      margin: 0 auto 18px;
+      max-width: 720px;
+      text-align: left;
+      background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 10px 12px;
-      color: #d8ecff;
-      font-size: 13px;
-      word-break: break-word;
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .handoff-panel-title {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #d7e3f7;
+    }
+
+    .handoff-panel-copy {
+      color: #dbe8fb;
+      font-size: 15px;
+      line-height: 1.65;
     }
 
     .call-actions {
@@ -684,6 +666,19 @@
       color: var(--text-muted);
       max-width: 600px;
       margin: 0 auto;
+    }
+
+    .case-status {
+      display: inline-block;
+      margin: 4px auto 18px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      color: #d8ecff;
+      font-size: 13px;
+      word-break: break-word;
     }
 
     @media (min-width: 760px) {
@@ -847,20 +842,9 @@
           </div>
 
           <div class="flow-block">
-            <div class="flow-title">What to expect</div>
-            <div class="flow-list">
-              <div class="flow-item">
-                <span class="flow-step">1</span>
-                <span>Share a few details</span>
-              </div>
-              <div class="flow-item">
-                <span class="flow-step">2</span>
-                <span>Speak with Sam, our AI dental triage assistant</span>
-              </div>
-              <div class="flow-item">
-                <span class="flow-step">3</span>
-                <span>A licensed Ontario dentist reviews the case and next steps</span>
-              </div>
+            <div class="flow-title">Next step: speak with Sam</div>
+            <div class="flow-copy">
+              Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case with follow-up recommendations as appropriate.
             </div>
           </div>
         </div>
@@ -876,7 +860,7 @@
         <div>
           <div class="form-title">Before we begin</div>
           <div class="form-sub">
-            Please share a few details so we can better understand your concern and prepare the next triage step with Sam.
+            Please share a few details so we can better understand your concern before connecting you to Sam.
           </div>
         </div>
         <div class="step-pill">Step 1 of 2</div>
@@ -1061,15 +1045,19 @@
 
     <section id="screen-handoff" class="card handoff-card">
       <div class="handoff-icon">✓</div>
-      <div class="handoff-title">Your intake has been received</div>
-      <div class="handoff-sub">
-        Your case has been created successfully.
+      <div class="handoff-title">Next step: speak with Sam</div>
+      <div class="handoff-copy">
+        Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case with follow-up recommendations as appropriate.
       </div>
-      <div class="case-id" id="success-case-id"></div>
 
-      <div class="handoff-note">
-        Next, you’ll speak with <strong>Sam</strong>, our AI dental triage assistant, who will ask a few guided questions to help assess your dental concern. A <strong>licensed Ontario dentist</strong> reviews the case and next-step guidance.
+      <div class="handoff-panel">
+        <div class="handoff-panel-title">What happens now</div>
+        <div class="handoff-panel-copy">
+          Your intake has been received. Tap the button below to call Sam now. If tap-to-call does not work on your device, you can manually dial the number shown underneath.
+        </div>
       </div>
+
+      <div class="case-status" id="success-case-id">Intake submitted successfully</div>
 
       <div class="call-actions">
         <a class="call-btn" id="call-sam-btn" href="tel:+12193016594">
@@ -1077,7 +1065,7 @@
         </a>
         <div class="call-number">1 (219) 301-6594</div>
         <div class="call-fallback">
-          If tapping the button does not work, call the number above directly. This is a temporary patient access number and will be replaced with a Canadian number before launch.
+          This is a temporary patient access number and will be replaced with a Canadian number before launch.
         </div>
       </div>
     </section>
@@ -1085,7 +1073,7 @@
 
   <script>
     const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+    const SUPABASE_ANON_KEY = "YOUR_ANON_KEY_HERE";
 
     if (!window.supabase || !window.supabase.createClient) {
       alert("Supabase library failed to load.");
@@ -1227,11 +1215,9 @@
 
         const payload = buildIntakePayload(formData);
 
-        const { data, error } = await sb
+        const { error } = await sb
           .from("triage_cases")
-          .insert(payload)
-          .select("id")
-          .single();
+          .insert(payload);
 
         if (error) {
           console.error("Supabase insert error:", error);
@@ -1239,7 +1225,7 @@
           return;
         }
 
-        showHandoff(data?.id || "Case created successfully");
+        showHandoff();
       } catch (err) {
         console.error("Unexpected intake submit error:", err);
         showIntakeError(err?.message || "Unexpected error while saving your information.");
@@ -1354,10 +1340,10 @@
       };
     }
 
-    function showHandoff(caseIdText) {
+    function showHandoff() {
       formScreen.classList.remove("show");
       handoffScreen.classList.add("show");
-      document.getElementById("success-case-id").textContent = caseIdText;
+      document.getElementById("success-case-id").textContent = "Intake submitted successfully";
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
