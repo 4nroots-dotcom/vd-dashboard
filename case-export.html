@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+  />
+  <title>VirtualDentist.ai - Case Export</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bg: #eef3f8;
+      --paper: #ffffff;
+      --ink: #16263a;
+      --muted: #5d6b7b;
+      --line: #d8e0e8;
+      --line-strong: #b8c4d1;
+      --accent: #1f78c8;
+      --urgent: #d84b4b;
+      --emergency: #d59a18;
+      --routine: #23915a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      line-height: 1.45;
+    }
+
+    body {
+      padding: 24px;
+    }
+
+    .app-shell {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn,
+    .link-btn {
+      appearance: none;
+      border: 1px solid #c8d3df;
+      background: #fff;
+      color: #203246;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .btn:hover,
+    .link-btn:hover {
+      background: #f5f8fb;
+      border-color: #aebccd;
+    }
+
+    .btn-primary {
+      border-color: #1f78c8;
+      background: #1f78c8;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #1667ae;
+      border-color: #1667ae;
+    }
+
+    .case-paper {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(16, 36, 62, 0.06);
+      overflow: hidden;
+    }
+
+    .paper-header {
+      padding: 24px 28px 20px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .brand-block {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      height: 30px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+    }
+
+    .record-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .record-subtitle {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .header-meta {
+      text-align: right;
+      min-width: 220px;
+    }
+
+    .header-meta-row {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .severity-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border: 1px solid transparent;
+      margin-top: 4px;
+    }
+
+    .severity-pill.urgent {
+      color: var(--urgent);
+      background: rgba(216, 75, 75, 0.08);
+      border-color: rgba(216, 75, 75, 0.18);
+    }
+
+    .severity-pill.emergency {
+      color: var(--emergency);
+      background: rgba(213, 154, 24, 0.1);
+      border-color: rgba(213, 154, 24, 0.22);
+    }
+
+    .severity-pill.routine {
+      color: var(--routine);
+      background: rgba(35, 145, 90, 0.08);
+      border-color: rgba(35, 145, 90, 0.18);
+    }
+
+    .paper-body {
+      padding: 24px 28px 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .section {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .section-head {
+      padding: 12px 16px;
+      background: #f7fafc;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #3a4c60;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .section-note {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .section-body {
+      padding: 16px;
+    }
+
+    .grid-2,
+    .grid-3,
+    .grid-4 {
+      display: grid;
+      gap: 12px;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .field {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+      background: #fbfdff;
+      min-height: 72px;
+    }
+
+    .field-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #688097;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .field-value {
+      font-size: 14px;
+      color: var(--ink);
+      word-break: break-word;
+    }
+
+    .field-value.mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .narrative {
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 14px;
+      color: var(--ink);
+    }
+
+    .narrative.mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .flags-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px 18px;
+    }
+
+    .flag-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 24px;
+    }
+
+    .flag-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .flag-dot.present {
+      background: var(--urgent);
+      box-shadow: 0 0 0 3px rgba(216, 75, 75, 0.1);
+    }
+
+    .flag-dot.absent {
+      background: #c5d0db;
+    }
+
+    .flag-label {
+      font-size: 14px;
+      color: var(--ink);
+    }
+
+    .flag-label.muted {
+      color: var(--muted);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border: 1px solid var(--line-strong);
+      color: #38516a;
+      background: #f4f8fb;
+    }
+
+    .status-pill.reviewed {
+      color: var(--routine);
+      border-color: rgba(35, 145, 90, 0.25);
+      background: rgba(35, 145, 90, 0.08);
+    }
+
+    .status-pill.draft {
+      color: var(--accent);
+      border-color: rgba(31, 120, 200, 0.22);
+      background: rgba(31, 120, 200, 0.08);
+    }
+
+    .status-pill.new {
+      color: #8a5b00;
+      border-color: rgba(213, 154, 24, 0.22);
+      background: rgba(213, 154, 24, 0.1);
+    }
+
+    .footer-note {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .loading-box,
+    .error-box {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 28px;
+      text-align: center;
+      color: var(--muted);
+      box-shadow: 0 10px 30px rgba(16, 36, 62, 0.06);
+    }
+
+    .error-box {
+      color: #8b2f2f;
+      border-color: rgba(216, 75, 75, 0.18);
+      background: #fffafa;
+    }
+
+    .print-only {
+      display: none;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 12px;
+      }
+
+      .paper-header {
+        flex-direction: column;
+      }
+
+      .header-meta {
+        text-align: left;
+        min-width: auto;
+      }
+
+      .grid-2,
+      .grid-3,
+      .grid-4,
+      .flags-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .toolbar-left,
+      .toolbar-right {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+
+    @media print {
+      @page {
+        size: auto;
+        margin: 14mm;
+      }
+
+      html,
+      body {
+        background: #fff !important;
+      }
+
+      body {
+        padding: 0;
+      }
+
+      .toolbar {
+        display: none !important;
+      }
+
+      .case-paper {
+        box-shadow: none;
+        border: 1px solid #cfd8e2;
+        border-radius: 0;
+      }
+
+      .section,
+      .field {
+        break-inside: avoid;
+      }
+
+      .print-only {
+        display: block;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <div class="toolbar no-print">
+      <div class="toolbar-left">
+        <a class="link-btn" href="dashboard.html">← Back to Dashboard</a>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn" id="reload-btn" type="button">Reload</button>
+        <button class="btn btn-primary" id="print-btn" type="button">Print / Save PDF</button>
+      </div>
+    </div>
+
+    <div id="loading-state" class="loading-box">Loading case export…</div>
+    <div id="error-state" class="error-box" style="display:none;"></div>
+    <div id="export-root" style="display:none;"></div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+
+    if (!window.supabase || !window.supabase.createClient) {
+      throw new Error("Supabase library missing");
+    }
+
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const loadingEl = document.getElementById("loading-state");
+    const errorEl = document.getElementById("error-state");
+    const rootEl = document.getElementById("export-root");
+
+    document.getElementById("reload-btn").addEventListener("click", () => {
+      loadExport();
+    });
+
+    document.getElementById("print-btn").addEventListener("click", () => {
+      window.print();
+    });
+
+    async function loadExport() {
+      loadingEl.style.display = "block";
+      errorEl.style.display = "none";
+      rootEl.style.display = "none";
+      errorEl.textContent = "";
+
+      try {
+        const { data: sessionData, error: sessionError } = await sb.auth.getSession();
+        if (sessionError) {
+          throw new Error(sessionError.message || "Session error");
+        }
+
+        if (!sessionData?.session?.user) {
+          throw new Error("Not signed in. Open this page after signing into the dashboard.");
+        }
+
+        const caseId = getCaseIdFromUrl();
+        if (!caseId) {
+          throw new Error("Missing case id in URL. Use case-export.html?id=YOUR_CASE_ID");
+        }
+
+        const { data, error } = await sb
+          .from("triage_cases")
+          .select("*")
+          .eq("id", caseId)
+          .single();
+
+        if (error) {
+          throw new Error(error.message || "Unable to load case");
+        }
+
+        if (!data) {
+          throw new Error("Case not found");
+        }
+
+        renderExport(data);
+        loadingEl.style.display = "none";
+        rootEl.style.display = "block";
+      } catch (err) {
+        loadingEl.style.display = "none";
+        errorEl.style.display = "block";
+        errorEl.textContent = err?.message || "Unexpected export error";
+      }
+    }
+
+    function getCaseIdFromUrl() {
+      const url = new URL(window.location.href);
+      return url.searchParams.get("id");
+    }
+
+    function renderExport(c) {
+      const so = c.structured_output || {};
+      const severity = (c.severity || "unknown").toLowerCase();
+      const reviewStatus = (c.review_status || "new").toLowerCase();
+
+      const flags = [
+        { label: "Airway / swallowing difficulty", val: so.difficulty_breathing_or_swallowing },
+        { label: "Uncontrolled bleeding", val: so.uncontrolled_bleeding },
+        { label: "Rapidly spreading swelling", val: so.feels_very_unwell_or_rapidly_increasing_swelling },
+        { label: "Avulsed tooth", val: so.avulsed_tooth },
+        { label: "Jaw fracture signs", val: so.jaw_fracture_signs },
+        { label: "Fever", val: so.fever },
+        { label: "Swelling", val: so.swelling || so.swelling_present },
+        { label: "Trauma", val: so.trauma },
+        { label: "Nocturnal pain", val: so.nocturnal_pain || c.nocturnal_pain },
+        { label: "Cold lingers >10s", val: so.cold_pain_lingers_over_10_seconds },
+        { label: "Heat sensitivity", val: so.heat_sensitivity || c.heat_sensitivity },
+        { label: "Percussion sensitivity", val: so.percussion_sensitivity || c.percussion_sensitivity },
+        { label: "Bad taste / drainage", val: so.bad_taste_or_drainage || c.bad_taste_or_drainage },
+        { label: "Immunocompromised", val: so.immunocompromised || c.immunocompromised },
+        { label: "Pericoronitis signs", val: so.pericoronitis_signs || c.pericoronitis_signs },
+        { label: "Recent extraction", val: so.recent_extraction || c.recent_extraction }
+      ];
+
+      rootEl.innerHTML = `
+        <div class="case-paper">
+          <div class="paper-header">
+            <div class="brand-block">
+              <img
+                class="brand-logo"
+                src="virtualdentist-logo.png"
+                alt="VirtualDentist.ai"
+                onerror="this.style.display='none';"
+              />
+              <div class="record-title">Clinical Triage Record</div>
+              <div class="record-subtitle">Generated for documentation / export</div>
+            </div>
+
+            <div class="header-meta">
+              <div class="header-meta-row"><strong>Case ID:</strong> ${escHtml(c.id || "-")}</div>
+              <div class="header-meta-row"><strong>Call date:</strong> ${escHtml(formatDatetime(c.created_at))}</div>
+              <div class="header-meta-row"><strong>Exported:</strong> ${escHtml(formatDatetime(new Date().toISOString()))}</div>
+              <div class="severity-pill ${escAttr(severity)}">${escHtml((c.severity || "unknown").toUpperCase())}</div>
+            </div>
+          </div>
+
+          <div class="paper-body">
+            <div class="section">
+              <div class="section-head">
+                <div class="section-title">Patient & Call Information</div>
+              </div>
+              <div class="section-body">
+                <div class="grid-4">
+                  <div class="field">
+                    <div class="field-label">Patient Name</div>
+                    <div class="field-value">${escHtml(c.patient_name || "Unknown Patient")}</div>
+                  </div>
+                  <div class="field">
+                    <div class="field-label">Phone</div>
+                    <div class="field-value">${escHtml(formatPhone(c.patient_phone) || "-")}</div>
+                  </div>
+                  <div class="field">
+                    <div class="field-label">Call Duration</div>
+                    <div class="field-value">${escHtml(formatDuration(c.duration_seconds))}</div>
+                  </div>
+                  <div class="field">
+                    <div class="field-label">Review Status</div>
+                    <div class="field-value">
+                      <span class="status-pill ${escAttr(reviewStatus)}">${escHtml(reviewStatus)}</span>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <div class="field-label">Triage Tag</div>
+                    <div class="field-value">${escHtml(formatTag(c.triage_tag))}</div>
+                  </div>
+                  <div class="field">
+                    <div class="field-label">Extraction Source</div>
+                    <div class="field-value">${escHtml(c.extraction_source || "-")}</div>
+                  </div>
+                  <div class="field">
+                    <div class="field-label">Call ID</div>
+                    <div class="field-value mono">${escHtml(c.vapi_call_id || "-")}</div>
+                  </div>
+                  <div class="field">
+                    <div class="field-label">Created At</div>
+                    <div class="field-value">${escHtml(formatDatetime(c.created_at))}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-head">
+                <div class="section-title">Clinical Triage Summary</div>
+              </div>
+              <div class="section-body">
+                <div class="grid-3">
+                  <div class="field">
+                    <div class="field-label">Chief Complaint</div>
+                    <div class="field-value">${escHtml(so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-")}</div>
+                  </div>
+                  <div class="field">
+                    <div class="field-label">Onset</div>
+                    <div class="field-value">${escHtml(so.onset || c.onset || "-")}</div>
+                  </div>
+                  <div class="field">
+                    <div class="field-label">Pain Score</div>
+                    <div class="field-value">${escHtml(formatPain(so.pain_score, c.pain_score))}</div>
+                  </div>
+                  <div class="field">
+                    <div class="field-label">Location</div>
+                    <div class="field-value">${escHtml([so.jaw, so.side].filter(Boolean).join(" / ") || "-")}</div>
+                  </div>
+                  <div class="field">
+                    <div class="field-label">Severity</div>
+                    <div class="field-value">${escHtml((c.severity || "unknown").toUpperCase())}</div>
+                  </div>
+                  <div class="field">
+                    <div class="field-label">Severity Reason</div>
+                    <div class="field-value">${escHtml(c.severity_reason || "-")}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-head">
+                <div class="section-title">Clinical Flags</div>
+              </div>
+              <div class="section-body">
+                <div class="flags-grid">
+                  ${flags.map(renderFlagRow).join("")}
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-head">
+                <div class="section-title">AI Clinical Note</div>
+                <div class="section-note">System-generated triage note</div>
+              </div>
+              <div class="section-body">
+                <div class="narrative mono">${escHtml(c.clinical_note || "No clinical note generated.")}</div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-head">
+                <div class="section-title">Dentist Review</div>
+              </div>
+              <div class="section-body">
+                <div class="grid-3">
+                  <div class="field">
+                    <div class="field-label">Reviewed By</div>
+                    <div class="field-value">${escHtml(c.reviewed_by || "-")}</div>
+                  </div>
+                  <div class="field">
+                    <div class="field-label">Reviewed At</div>
+                    <div class="field-value">${escHtml(formatDatetime(c.reviewed_at))}</div>
+                  </div>
+                  <div class="field">
+                    <div class="field-label">Final Disposition</div>
+                    <div class="field-value">${escHtml(formatDisposition(c.final_disposition))}</div>
+                  </div>
+                  <div class="field">
+                    <div class="field-label">Prescription Issued</div>
+                    <div class="field-value">${escHtml(formatBoolean(c.prescription_issued))}</div>
+                  </div>
+                  <div class="field">
+                    <div class="field-label">Patient Contacted At</div>
+                    <div class="field-value">${escHtml(formatDatetime(c.contacted_patient_at))}</div>
+                  </div>
+                  <div class="field">
+                    <div class="field-label">Action Taken</div>
+                    <div class="field-value">${escHtml(formatDisposition(c.action_taken))}</div>
+                  </div>
+                </div>
+
+                <div style="height:12px;"></div>
+
+                <div class="field" style="min-height:120px;">
+                  <div class="field-label">Clinical Addendum</div>
+                  <div class="field-value narrative">${escHtml(c.review_notes || "-")}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="section">
+              <div class="section-head">
+                <div class="section-title">Audit & Metadata</div>
+              </div>
+              <div class="section-body">
+                <div class="grid-2">
+                  <div class="field">
+                    <div class="field-label">Case ID</div>
+                    <div class="field-value mono">${escHtml(c.id || "-")}</div>
+                  </div>
+                  <div class="field">
+                    <div class="field-label">Created Timestamp</div>
+                    <div class="field-value">${escHtml(formatDatetime(c.created_at))}</div>
+                  </div>
+                </div>
+                <div class="footer-note">
+                  Transcript omitted by default in this export format.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderFlagRow(flag) {
+      const present = flag.val === true;
+      return `
+        <div class="flag-row">
+          <div class="flag-dot ${present ? "present" : "absent"}"></div>
+          <div class="flag-label ${present ? "" : "muted"}">${escHtml(flag.label)}</div>
+        </div>
+      `;
+    }
+
+    function formatDatetime(value) {
+      if (!value) return "-";
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return "-";
+      return d.toLocaleDateString("en-CA", {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+      }) + " " + d.toLocaleTimeString("en-CA", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+      });
+    }
+
+    function formatDuration(seconds) {
+      if (seconds === null || seconds === undefined || Number.isNaN(Number(seconds))) return "-";
+      const s = Number(seconds);
+      const mins = Math.floor(s / 60);
+      const secs = s % 60;
+      return `${mins}m ${secs}s`;
+    }
+
+    function formatPhone(p) {
+      if (!p) return "-";
+      const d = String(p).replace(/\D/g, "");
+      if (d.length === 10) return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
+      return String(p);
+    }
+
+    function formatTag(tag) {
+      if (!tag || tag === "-") return "-";
+      return String(tag)
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, (l) => l.toUpperCase())
+        .replace(/ And /g, " & ");
+    }
+
+    function formatDisposition(value) {
+      if (!value) return "-";
+      const map = {
+        booked: "Booked appointment",
+        referred_er: "Referred to ER",
+        rx_only: "Prescription only",
+        declined: "Patient declined care",
+        no_response: "No response"
+      };
+      return map[value] || formatTag(value);
+    }
+
+    function formatBoolean(value) {
+      if (value === true) return "Yes";
+      if (value === false) return "No";
+      return "-";
+    }
+
+    function formatPain(primary, fallback) {
+      const pain = primary ?? fallback;
+      if (pain === null || pain === undefined || pain === "") return "-";
+      return `${pain}/10`;
+    }
+
+    function escHtml(value) {
+      if (value === null || value === undefined) return "";
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function escAttr(value) {
+      return escHtml(value);
+    }
+
+    loadExport();
+  </script>
+</body>
+</html>
