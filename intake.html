@@ -557,7 +557,7 @@
     .handoff-card {
       display: none;
       margin-top: 18px;
-      padding: 26px 20px;
+      padding: 24px 20px 26px;
       text-align: center;
     }
 
@@ -566,36 +566,38 @@
     }
 
     .handoff-icon {
-      width: 60px;
-      height: 60px;
+      width: 56px;
+      height: 56px;
       border-radius: 999px;
       background: rgba(0, 200, 122, 0.1);
       border: 1px solid rgba(0, 200, 122, 0.24);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 30px;
+      font-size: 28px;
       color: var(--success);
       margin-bottom: 14px;
     }
 
     .handoff-title {
-      font-size: 28px;
-      font-weight: 750;
-      line-height: 1.08;
-      margin-bottom: 8px;
+      font-size: clamp(30px, 7vw, 40px);
+      font-weight: 780;
+      line-height: 1.04;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+      color: var(--white);
     }
 
     .handoff-copy {
       color: var(--text-secondary);
       max-width: 700px;
-      margin: 0 auto 18px;
+      margin: 0 auto 16px;
       font-size: 16px;
       line-height: 1.65;
     }
 
     .handoff-panel {
-      margin: 0 auto 18px;
+      margin: 0 auto 14px;
       max-width: 720px;
       text-align: left;
       background: var(--surface);
@@ -620,9 +622,22 @@
       line-height: 1.65;
     }
 
+    .case-status {
+      display: inline-block;
+      margin: 2px auto 16px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      color: #d8ecff;
+      font-size: 13px;
+      word-break: break-word;
+    }
+
     .call-actions {
       display: grid;
-      gap: 14px;
+      gap: 12px;
       max-width: 520px;
       margin: 0 auto;
     }
@@ -658,6 +673,12 @@
       font-size: 18px;
       font-weight: 700;
       color: #eaf4ff;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .call-number:hover {
+      color: #ffffff;
     }
 
     .call-fallback {
@@ -666,19 +687,6 @@
       color: var(--text-muted);
       max-width: 600px;
       margin: 0 auto;
-    }
-
-    .case-status {
-      display: inline-block;
-      margin: 4px auto 18px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 10px 12px;
-      color: #d8ecff;
-      font-size: 13px;
-      word-break: break-word;
     }
 
     @media (min-width: 760px) {
@@ -844,7 +852,7 @@
           <div class="flow-block">
             <div class="flow-title">Next step: speak with Sam</div>
             <div class="flow-copy">
-              Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case with follow-up recommendations as appropriate.
+              Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow-up with recommendations as appropriate.
             </div>
           </div>
         </div>
@@ -901,7 +909,7 @@
 
           <div class="field">
             <label for="patient-phone">Phone number</label>
-            <input class="input" id="patient-phone" type="tel" placeholder="Best number to reach you" />
+            <input class="input" id="patient-phone" type="tel" placeholder="10-digit number" />
           </div>
 
           <div class="field full">
@@ -1047,7 +1055,7 @@
       <div class="handoff-icon">✓</div>
       <div class="handoff-title">Next step: speak with Sam</div>
       <div class="handoff-copy">
-        Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case with follow-up recommendations as appropriate.
+        Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow-up with recommendations as appropriate.
       </div>
 
       <div class="handoff-panel">
@@ -1063,7 +1071,7 @@
         <a class="call-btn" id="call-sam-btn" href="tel:+12193016594">
           Call Sam now
         </a>
-        <div class="call-number">1 (219) 301-6594</div>
+        <a class="call-number" href="tel:+12193016594">1 (219) 301-6594</a>
         <div class="call-fallback">
           This is a temporary patient access number and will be replaced with a Canadian number before launch.
         </div>
@@ -1073,7 +1081,7 @@
 
   <script>
     const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+    const SUPABASE_ANON_KEY = "YOUR_ANON_KEY_HERE";
 
     if (!window.supabase || !window.supabase.createClient) {
       alert("Supabase library failed to load.");
@@ -1294,7 +1302,9 @@
       if (!data.patientDob) return "Please enter your date of birth.";
       if (!isValidDateInput(data.patientDob)) return "Please enter a valid date of birth.";
       if (!data.patientPhone) return "Please enter your phone number.";
-      if (!looksLikePhone(data.patientPhone)) return "Please enter a valid phone number.";
+      if (!looksLikeNorthAmericanPhone(data.patientPhone)) {
+        return "Please enter a valid 10-digit phone number, or 11 digits starting with 1.";
+      }
       if (!data.patientCity) return "Please enter your city.";
       if (!data.chiefComplaint) return "Please describe what’s been bothering you today.";
       if (!data.onsetBucket) return "Please tell us when this started.";
@@ -1325,7 +1335,7 @@
       return {
         patient_name: data.patientName,
         patient_dob: data.patientDob,
-        patient_phone: data.patientPhone,
+        patient_phone: formatPhoneForStorage(data.patientPhone),
         patient_city: data.patientCity,
         patient_province: "Ontario",
         chief_complaint: data.chiefComplaint,
@@ -1365,12 +1375,22 @@
     }
 
     function normalizePhone(value) {
-      return value.replace(/[^\d+]/g, "");
+      return value.replace(/\D/g, "");
     }
 
-    function looksLikePhone(value) {
+    function looksLikeNorthAmericanPhone(value) {
       const digits = value.replace(/\D/g, "");
-      return digits.length >= 10;
+      if (digits.length === 10) return true;
+      if (digits.length === 11 && digits.startsWith("1")) return true;
+      return false;
+    }
+
+    function formatPhoneForStorage(value) {
+      const digits = value.replace(/\D/g, "");
+      if (digits.length === 11 && digits.startsWith("1")) {
+        return digits.slice(1);
+      }
+      return digits;
     }
 
     function isValidDateInput(value) {
