@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+  />
+  <title>VirtualDentist.ai - Intake</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --navy: #0a1628;
+      --navy-mid: #0f2044;
+      --navy-light: #1a3260;
+      --cyan: #00c8e8;
+      --cyan-dim: #0097b2;
+      --cyan-faint: rgba(0, 200, 232, 0.08);
+      --urgent: #e84545;
+      --urgent-faint: rgba(232, 69, 69, 0.12);
+      --text-primary: #e8f0fe;
+      --text-secondary: #a8bdd8;
+      --text-muted: #6a80a0;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-active: rgba(0, 200, 232, 0.32);
+      --surface: rgba(255, 255, 255, 0.04);
+      --surface-hover: rgba(255, 255, 255, 0.06);
+      --success: #00c87a;
+      --radius: 14px;
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.32);
+      --maxw: 960px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top, #13325e 0%, #0a1628 52%),
+        var(--navy);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    body {
+      padding: 22px 16px 36px;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    .shell {
+      max-width: var(--maxw);
+      margin: 0 auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      justify-content: center;
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+    }
+
+    .brand-text {
+      font-size: 19px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #1a7fc4, #00c8e8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .card {
+      background: rgba(15, 32, 68, 0.82);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-card {
+      padding: 28px 22px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at top right, rgba(0, 200, 232, 0.12), transparent 34%),
+        radial-gradient(circle at bottom left, rgba(26, 127, 196, 0.12), transparent 28%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 18px;
+    }
+
+    .hero-title {
+      font-size: clamp(28px, 4.4vw, 42px);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+      max-width: 760px;
+    }
+
+    .hero-sub {
+      font-size: 18px;
+      color: var(--text-secondary);
+      max-width: 720px;
+    }
+
+    .hero-cost {
+      font-size: 15px;
+      color: #d7ecff;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    .warning-strip {
+      background: var(--urgent-faint);
+      border: 1px solid rgba(232, 69, 69, 0.28);
+      border-radius: 12px;
+      padding: 14px 15px;
+      color: #ffd7d7;
+      font-size: 14px;
+    }
+
+    .trust-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .trust-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 12px;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 13px;
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .expect-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 18px;
+    }
+
+    .expect-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #c0d4f0;
+      margin-bottom: 10px;
+    }
+
+    .expect-list {
+      display: grid;
+      gap: 10px;
+      color: var(--text-secondary);
+      font-size: 15px;
+    }
+
+    .expect-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .expect-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 200, 232, 0.12);
+      border: 1px solid rgba(0, 200, 232, 0.22);
+      color: var(--cyan);
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .primary-row {
+      display: flex;
+      justify-content: center;
+      margin-top: 4px;
+    }
+
+    .btn-primary {
+      min-width: 220px;
+      background: linear-gradient(135deg, #1a7fc4, #0097b2);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 15px 22px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      letter-spacing: 0.01em;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.96;
+    }
+
+    .btn-primary:active {
+      transform: scale(0.985);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.62;
+      cursor: not-allowed;
+    }
+
+    .legal-note {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .form-card {
+      margin-top: 18px;
+      padding: 24px 18px 20px;
+      display: none;
+    }
+
+    .form-card.show {
+      display: block;
+    }
+
+    .form-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .form-title {
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .form-sub {
+      color: var(--text-secondary);
+      font-size: 15px;
+      max-width: 640px;
+    }
+
+    .step-pill {
+      flex-shrink: 0;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      background: rgba(0, 200, 232, 0.08);
+      border: 1px solid rgba(0, 200, 232, 0.2);
+      border-radius: 999px;
+      padding: 8px 12px;
+    }
+
+    .section {
+      margin-top: 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+    }
+
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #c0d4f0;
+      margin-bottom: 12px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field label {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .helper {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: -1px;
+    }
+
+    .input,
+    .select,
+    .textarea {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .input,
+    .select {
+      padding: 13px 14px;
+      min-height: 48px;
+    }
+
+    .textarea {
+      padding: 13px 14px;
+      min-height: 96px;
+      resize: vertical;
+    }
+
+    .input:focus,
+    .select:focus,
+    .textarea:focus {
+      border-color: var(--border-active);
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .input::placeholder,
+    .textarea::placeholder {
+      color: var(--text-muted);
+    }
+
+    .select option {
+      background: #0f2044;
+    }
+
+    .radio-group,
+    .check-group {
+      display: grid;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .choice {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 12px;
+      color: var(--text-secondary);
+    }
+
+    .choice input {
+      margin-top: 2px;
+      accent-color: var(--cyan);
+      flex-shrink: 0;
+    }
+
+    .choice span {
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .conditional-field {
+      display: none;
+      margin-top: 12px;
+    }
+
+    .ack {
+      margin-top: 16px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    .ack input {
+      accent-color: var(--cyan);
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .action-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      border-radius: 10px;
+      padding: 13px 18px;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--border-active);
+      color: var(--text-primary);
+    }
+
+    .error-box {
+      display: none;
+      margin-top: 14px;
+      background: rgba(232, 69, 69, 0.12);
+      border: 1px solid rgba(232, 69, 69, 0.28);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: #ffb3b3;
+      font-size: 13px;
+      white-space: pre-wrap;
+    }
+
+    .success-card {
+      display: none;
+      margin-top: 18px;
+      padding: 24px 20px;
+      text-align: center;
+    }
+
+    .success-card.show {
+      display: block;
+    }
+
+    .success-icon {
+      width: 58px;
+      height: 58px;
+      border-radius: 999px;
+      background: rgba(0, 200, 122, 0.1);
+      border: 1px solid rgba(0, 200, 122, 0.24);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: var(--success);
+      margin-bottom: 14px;
+    }
+
+    .success-title {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .success-sub {
+      color: var(--text-secondary);
+      max-width: 640px;
+      margin: 0 auto 14px;
+    }
+
+    .case-id {
+      display: inline-block;
+      margin-top: 4px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      color: #d8ecff;
+      font-size: 13px;
+      word-break: break-all;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 16px 12px 28px;
+      }
+
+      .trust-row,
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .form-top {
+        flex-direction: column;
+      }
+
+      .step-pill {
+        align-self: flex-start;
+      }
+
+      .primary-row .btn-primary {
+        width: 100%;
+      }
+
+      .action-bar {
+        flex-direction: column-reverse;
+        align-items: stretch;
+      }
+
+      .action-bar .btn-primary,
+      .action-bar .btn-secondary {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="intakeLogoGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#1a4fa0" />
+            <stop offset="100%" stop-color="#00c8e8" />
+          </linearGradient>
+        </defs>
+        <path d="M30 20 Q30 10 40 10 L80 10 Q90 10 90 20 L95 60 Q97 80 85 90 L70 108 Q65 115 60 115 Q55 115 50 108 L35 90 Q23 80 25 60 Z" stroke="url(#intakeLogoGrad)" stroke-width="7" fill="none" stroke-linejoin="round" />
+        <polyline points="28,58 42,58 50,40 60,76 70,50 78,58 92,58" stroke="url(#intakeLogoGrad)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <div class="brand-text">VirtualDentist.ai</div>
+    </div>
+
+    <section id="screen-welcome" class="card hero-card">
+      <div class="hero-content">
+        <div class="hero-title">Concerned you may be having a dental emergency?</div>
+        <div class="hero-sub">
+          Tell us what’s been bothering you, and we’ll help assess the situation and guide next steps.
+        </div>
+        <div class="hero-cost">This service is available at no cost.</div>
+
+        <div class="warning-strip">
+          <strong>If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, seek emergency care immediately.</strong>
+        </div>
+
+        <div class="trust-row">
+          <div class="trust-item">Secure and private</div>
+          <div class="trust-item">Reviewed by a licensed Ontario dentist</div>
+          <div class="trust-item">Takes only a few minutes</div>
+        </div>
+
+        <div class="expect-card">
+          <div class="expect-title">What to expect</div>
+          <div class="expect-list">
+            <div class="expect-step"><span class="expect-num">1</span><span>Share a few details</span></div>
+            <div class="expect-step"><span class="expect-num">2</span><span>Answer guided questions</span></div>
+            <div class="expect-step"><span class="expect-num">3</span><span>Receive next-step guidance</span></div>
+          </div>
+        </div>
+
+        <div class="primary-row">
+          <button class="btn-primary" id="start-assessment-btn" type="button">Start assessment</button>
+        </div>
+
+        <div class="legal-note">
+          This service provides dental triage guidance and does not replace emergency medical care or an in-person dental examination.
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-form" class="card form-card">
+      <div class="form-top">
+        <div>
+          <div class="form-title">Before we begin</div>
+          <div class="form-sub">
+            Please share a few details so we can better understand your concern and guide next steps.
+          </div>
+        </div>
+        <div class="step-pill">Step 1 of 2</div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">About you</div>
+
+        <div class="field">
+          <label>Are you currently in Ontario?</label>
+          <div class="helper">This service is currently available only to patients in Ontario.</div>
+          <div class="radio-group" style="margin-top:10px;">
+            <label class="choice">
+              <input type="radio" name="in-ontario" id="in-ontario-yes" value="yes" />
+              <span>Yes</span>
+            </label>
+            <label class="choice">
+              <input type="radio" name="in-ontario" id="in-ontario-no" value="no" />
+              <span>No</span>
+            </label>
+          </div>
+        </div>
+
+        <div id="ontario-warning" class="error-box" style="margin-bottom:0;">
+          This service is currently available only to patients in Ontario. If you are outside Ontario, please contact a local licensed dental provider or emergency service as appropriate.
+        </div>
+
+        <div class="grid-2" style="margin-top:14px;">
+          <div class="field full">
+            <label for="patient-name">Full name</label>
+            <input class="input" id="patient-name" type="text" placeholder="First and last name" />
+          </div>
+
+          <div class="field">
+            <label for="patient-dob">Date of birth</label>
+            <input class="input" id="patient-dob" type="date" />
+          </div>
+
+          <div class="field">
+            <label for="patient-phone">Phone number</label>
+            <input class="input" id="patient-phone" type="tel" placeholder="Best number to reach you" />
+          </div>
+
+          <div class="field full">
+            <label for="patient-city">City</label>
+            <input class="input" id="patient-city" type="text" placeholder="City" />
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Today’s concern</div>
+
+        <div class="field">
+          <label for="chief-complaint">What’s been bothering you today?</label>
+          <textarea class="textarea" id="chief-complaint" placeholder="Describe your dental concern in a few words"></textarea>
+        </div>
+
+        <div class="field" style="margin-top:14px;">
+          <label for="onset-bucket">When did this start?</label>
+          <select class="select" id="onset-bucket">
+            <option value="">Select one</option>
+            <option value="today">Today</option>
+            <option value="last_few_days">Within the last few days</option>
+            <option value="about_a_week">About a week ago</option>
+            <option value="more_than_a_week">More than a week ago</option>
+            <option value="not_sure">Not sure</option>
+          </select>
+        </div>
+
+        <div class="field" style="margin-top:14px;">
+          <label>Are any of these happening right now?</label>
+          <div class="check-group">
+            <label class="choice">
+              <input type="checkbox" id="rf-breathing-swallowing" />
+              <span>Trouble breathing or swallowing</span>
+            </label>
+            <label class="choice">
+              <input type="checkbox" id="rf-uncontrolled-bleeding" />
+              <span>Uncontrolled bleeding</span>
+            </label>
+            <label class="choice">
+              <input type="checkbox" id="rf-facial-swelling" />
+              <span>Facial swelling</span>
+            </label>
+            <label class="choice">
+              <input type="checkbox" id="rf-fever-unwell" />
+              <span>Fever or feeling unwell</span>
+            </label>
+            <label class="choice">
+              <input type="checkbox" id="rf-trauma" />
+              <span>Injury to the teeth, jaw, or face</span>
+            </label>
+            <label class="choice">
+              <input type="checkbox" id="rf-none" />
+              <span>None of the above</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Relevant medical information</div>
+
+        <div class="helper" style="margin-bottom:10px;">Select any that apply.</div>
+
+        <div class="check-group">
+          <label class="choice">
+            <input type="checkbox" id="mh-allergy-antibiotics" />
+            <span>Allergy to antibiotics</span>
+          </label>
+          <label class="choice">
+            <input type="checkbox" id="mh-allergy-pain" />
+            <span>Allergy to pain medication</span>
+          </label>
+          <label class="choice">
+            <input type="checkbox" id="mh-blood-thinners" />
+            <span>Blood thinners</span>
+          </label>
+          <label class="choice">
+            <input type="checkbox" id="mh-diabetes" />
+            <span>Diabetes</span>
+          </label>
+          <label class="choice">
+            <input type="checkbox" id="mh-pregnancy" />
+            <span>Pregnancy</span>
+          </label>
+          <label class="choice">
+            <input type="checkbox" id="mh-immunocompromised" />
+            <span>Immunocompromised</span>
+          </label>
+          <label class="choice">
+            <input type="checkbox" id="mh-other" />
+            <span>Other important medical condition</span>
+          </label>
+          <label class="choice">
+            <input type="checkbox" id="mh-none" />
+            <span>None of the above</span>
+          </label>
+        </div>
+
+        <div class="conditional-field" id="mh-other-wrapper">
+          <div class="field">
+            <label for="mh-other-detail">Please tell us more</label>
+            <textarea class="textarea" id="mh-other-detail" placeholder="Anything important we should know"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Coverage information (optional)</div>
+        <div class="helper" style="margin-bottom:10px;">This helps with follow-up planning only.</div>
+
+        <div class="field">
+          <label for="coverage-status">Coverage information</label>
+          <select class="select" id="coverage-status">
+            <option value="">Select one</option>
+            <option value="private_insurance">Private dental insurance</option>
+            <option value="cdcp">CDCP</option>
+            <option value="odsp">ODSP</option>
+            <option value="ow">OW</option>
+            <option value="no_coverage">No dental coverage</option>
+            <option value="prefer_not_to_say">Prefer not to say</option>
+          </select>
+        </div>
+      </div>
+
+      <label class="ack">
+        <input type="checkbox" id="intake-acknowledge" />
+        <span>
+          By continuing, you understand that this service provides dental triage guidance and does not replace emergency or in-person dental care.
+        </span>
+      </label>
+
+      <div id="intake-error" class="error-box"></div>
+
+      <div class="action-bar">
+        <button class="btn-secondary" id="back-to-welcome-btn" type="button">Back</button>
+        <button class="btn-primary" id="intake-submit-btn" type="button">Continue</button>
+      </div>
+    </section>
+
+    <section id="screen-success" class="card success-card">
+      <div class="success-icon">✓</div>
+      <div class="success-title">Your information has been received</div>
+      <div class="success-sub">
+        A case record has been created successfully. This is the point where the next triage step can be connected.
+      </div>
+      <div class="case-id" id="success-case-id"></div>
+      <div class="legal-note" style="margin-top:16px;">
+        For now, this page stops after record creation so you can confirm the database write is working correctly.
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+
+    if (!window.supabase || !window.supabase.createClient) {
+      alert("Supabase library failed to load.");
+      throw new Error("Supabase library missing");
+    }
+
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const welcomeScreen = document.getElementById("screen-welcome");
+    const formScreen = document.getElementById("screen-form");
+    const successScreen = document.getElementById("screen-success");
+
+    document.getElementById("start-assessment-btn").addEventListener("click", () => {
+      welcomeScreen.style.display = "none";
+      formScreen.classList.add("show");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    document.getElementById("back-to-welcome-btn").addEventListener("click", () => {
+      formScreen.classList.remove("show");
+      welcomeScreen.style.display = "block";
+      clearIntakeError();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    setupExclusiveCheckboxes();
+    setupOntarioNotice();
+    setupIntakeSubmit();
+
+    function setupOntarioNotice() {
+      const yesEl = document.getElementById("in-ontario-yes");
+      const noEl = document.getElementById("in-ontario-no");
+      const warningEl = document.getElementById("ontario-warning");
+
+      function sync() {
+        if (noEl.checked) {
+          warningEl.style.display = "block";
+        } else {
+          warningEl.style.display = "none";
+        }
+      }
+
+      yesEl.addEventListener("change", sync);
+      noEl.addEventListener("change", sync);
+      sync();
+    }
+
+    function setupExclusiveCheckboxes() {
+      const redFlagNone = document.getElementById("rf-none");
+      const redFlagIds = [
+        "rf-breathing-swallowing",
+        "rf-uncontrolled-bleeding",
+        "rf-facial-swelling",
+        "rf-fever-unwell",
+        "rf-trauma"
+      ];
+
+      const medicalNone = document.getElementById("mh-none");
+      const medicalIds = [
+        "mh-allergy-antibiotics",
+        "mh-allergy-pain",
+        "mh-blood-thinners",
+        "mh-diabetes",
+        "mh-pregnancy",
+        "mh-immunocompromised",
+        "mh-other"
+      ];
+
+      const mhOther = document.getElementById("mh-other");
+
+      redFlagNone.addEventListener("change", () => {
+        if (redFlagNone.checked) {
+          redFlagIds.forEach((id) => {
+            const el = document.getElementById(id);
+            if (el) el.checked = false;
+          });
+        }
+      });
+
+      redFlagIds.forEach((id) => {
+        const el = document.getElementById(id);
+        el.addEventListener("change", () => {
+          if (el.checked) redFlagNone.checked = false;
+        });
+      });
+
+      medicalNone.addEventListener("change", () => {
+        if (medicalNone.checked) {
+          medicalIds.forEach((id) => {
+            const el = document.getElementById(id);
+            if (el) el.checked = false;
+          });
+          document.getElementById("mh-other-detail").value = "";
+          toggleOtherMedicalDetail();
+        }
+      });
+
+      medicalIds.forEach((id) => {
+        const el = document.getElementById(id);
+        el.addEventListener("change", () => {
+          if (el.checked) medicalNone.checked = false;
+          toggleOtherMedicalDetail();
+        });
+      });
+
+      mhOther.addEventListener("change", toggleOtherMedicalDetail);
+      toggleOtherMedicalDetail();
+    }
+
+    function toggleOtherMedicalDetail() {
+      const mhOther = document.getElementById("mh-other");
+      const wrapper = document.getElementById("mh-other-wrapper");
+      const detail = document.getElementById("mh-other-detail");
+
+      if (mhOther.checked) {
+        wrapper.style.display = "block";
+      } else {
+        wrapper.style.display = "none";
+        detail.value = "";
+      }
+    }
+
+    function setupIntakeSubmit() {
+      const submitBtn = document.getElementById("intake-submit-btn");
+      submitBtn.addEventListener("click", handleIntakeSubmit);
+    }
+
+    async function handleIntakeSubmit() {
+      const submitBtn = document.getElementById("intake-submit-btn");
+      clearIntakeError();
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Saving...";
+
+      try {
+        const formData = collectIntakeFormData();
+        const validationError = validateIntakeFormData(formData);
+
+        if (validationError) {
+          showIntakeError(validationError);
+          return;
+        }
+
+        const payload = buildIntakePayload(formData);
+
+        const { data, error } = await sb
+          .from("triage_cases")
+          .insert(payload)
+          .select("id")
+          .single();
+
+        if (error) {
+          console.error("Supabase insert error:", error);
+          showIntakeError(error.message || "Unable to save your information right now.");
+          return;
+        }
+
+        if (!data?.id) {
+          showIntakeError("The case was created but no case ID was returned.");
+          return;
+        }
+
+        showSuccess(data.id);
+      } catch (err) {
+        console.error("Unexpected intake submit error:", err);
+        showIntakeError(err?.message || "Unexpected error while saving your information.");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Continue";
+      }
+    }
+
+    function collectIntakeFormData() {
+      const inOntario = document.getElementById("in-ontario-yes").checked
+        ? "yes"
+        : document.getElementById("in-ontario-no").checked
+          ? "no"
+          : "";
+
+      const patientName = getValue("patient-name");
+      const patientDob = getValue("patient-dob");
+      const patientPhone = normalizePhone(getValue("patient-phone"));
+      const patientCity = getValue("patient-city");
+      const chiefComplaint = getValue("chief-complaint");
+      const onsetBucket = getValue("onset-bucket");
+      const coverageStatus = getOptionalValue("coverage-status");
+      const acknowledged = isChecked("intake-acknowledge");
+
+      const intakeRedFlags = {
+        trouble_breathing_or_swallowing: isChecked("rf-breathing-swallowing"),
+        uncontrolled_bleeding: isChecked("rf-uncontrolled-bleeding"),
+        facial_swelling: isChecked("rf-facial-swelling"),
+        fever_or_feeling_unwell: isChecked("rf-fever-unwell"),
+        injury_to_teeth_jaw_face: isChecked("rf-trauma"),
+        none_of_the_above: isChecked("rf-none")
+      };
+
+      const intakeMedicalFlags = {
+        allergy_antibiotics: isChecked("mh-allergy-antibiotics"),
+        allergy_pain_medication: isChecked("mh-allergy-pain"),
+        blood_thinners: isChecked("mh-blood-thinners"),
+        diabetes: isChecked("mh-diabetes"),
+        pregnancy: isChecked("mh-pregnancy"),
+        immunocompromised: isChecked("mh-immunocompromised"),
+        other_important_medical_condition: isChecked("mh-other"),
+        other_medical_detail: getOptionalValue("mh-other-detail"),
+        none_of_the_above: isChecked("mh-none")
+      };
+
+      return {
+        inOntario,
+        patientName,
+        patientDob,
+        patientPhone,
+        patientCity,
+        chiefComplaint,
+        onsetBucket,
+        coverageStatus,
+        acknowledged,
+        intakeRedFlags,
+        intakeMedicalFlags
+      };
+    }
+
+    function validateIntakeFormData(data) {
+      if (!data.inOntario) return "Please confirm whether you are currently in Ontario.";
+      if (data.inOntario !== "yes") return "This service is currently available only to patients in Ontario.";
+      if (!data.patientName) return "Please enter your full name.";
+      if (!data.patientDob) return "Please enter your date of birth.";
+      if (!isValidDateInput(data.patientDob)) return "Please enter a valid date of birth.";
+      if (!data.patientPhone) return "Please enter your phone number.";
+      if (!looksLikePhone(data.patientPhone)) return "Please enter a valid phone number.";
+      if (!data.patientCity) return "Please enter your city.";
+      if (!data.chiefComplaint) return "Please describe what’s been bothering you today.";
+      if (!data.onsetBucket) return "Please tell us when this started.";
+
+      if (!atLeastOneTrue(data.intakeRedFlags)) {
+        return "Please select at least one option under current symptoms, or choose 'None of the above.'";
+      }
+
+      if (!atLeastOneTrue(data.intakeMedicalFlags)) {
+        return "Please select at least one option under relevant medical information, or choose 'None of the above.'";
+      }
+
+      if (
+        data.intakeMedicalFlags.other_important_medical_condition &&
+        !data.intakeMedicalFlags.other_medical_detail
+      ) {
+        return "Please tell us more about the other important medical condition.";
+      }
+
+      if (!data.acknowledged) {
+        return "Please confirm the acknowledgement before continuing.";
+      }
+
+      return null;
+    }
+
+    function buildIntakePayload(data) {
+      return {
+        patient_name: data.patientName,
+        patient_dob: data.patientDob,
+        patient_phone: data.patientPhone,
+        patient_city: data.patientCity,
+        patient_province: "Ontario",
+        chief_complaint: data.chiefComplaint,
+        onset_bucket: data.onsetBucket,
+        coverage_status: data.coverageStatus,
+        intake_red_flags: data.intakeRedFlags,
+        intake_medical_flags: data.intakeMedicalFlags,
+        review_status: "new",
+        intake_completed_at: new Date().toISOString(),
+        intake_source: "web_form",
+        intake_version: "v1"
+      };
+    }
+
+    function showSuccess(caseId) {
+      formScreen.classList.remove("show");
+      successScreen.classList.add("show");
+      document.getElementById("success-case-id").textContent = `Case ID: ${caseId}`;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function getValue(id) {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : "";
+    }
+
+    function getOptionalValue(id) {
+      const el = document.getElementById(id);
+      if (!el) return null;
+      const value = el.value.trim();
+      return value || null;
+    }
+
+    function isChecked(id) {
+      const el = document.getElementById(id);
+      return !!(el && el.checked);
+    }
+
+    function normalizePhone(value) {
+      return value.replace(/[^\d+]/g, "");
+    }
+
+    function looksLikePhone(value) {
+      const digits = value.replace(/\D/g, "");
+      return digits.length >= 10;
+    }
+
+    function isValidDateInput(value) {
+      if (!value) return false;
+      const d = new Date(value);
+      return !Number.isNaN(d.getTime());
+    }
+
+    function atLeastOneTrue(obj) {
+      return Object.values(obj).some((value) => value === true);
+    }
+
+    function showIntakeError(message) {
+      const errEl = document.getElementById("intake-error");
+      errEl.textContent = message;
+      errEl.style.display = "block";
+      window.scrollTo({ top: errEl.getBoundingClientRect().top + window.scrollY - 80, behavior: "smooth" });
+    }
+
+    function clearIntakeError() {
+      const errEl = document.getElementById("intake-error");
+      errEl.textContent = "";
+      errEl.style.display = "none";
+    }
+  </script>
+</body>
+</html>
