@@ -69,6 +69,13 @@
       flex-wrap: wrap;
     }
 
+    .print-hint {
+      max-width: 980px;
+      margin: -6px auto 16px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
     .btn,
     .link-btn {
       appearance: none;
@@ -465,6 +472,10 @@
         <button class="btn" id="reload-btn" type="button">Reload</button>
         <button class="btn btn-primary" id="print-btn" type="button">Print / Save PDF</button>
       </div>
+    </div>
+
+    <div class="print-hint no-print">
+      For a clean clinical record, disable browser headers/footers in print settings.
     </div>
 
     <div id="loading-state" class="loading-box">Loading case export…</div>
