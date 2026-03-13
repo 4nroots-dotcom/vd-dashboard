@@ -1410,7 +1410,7 @@
 
   <script>
     const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI"
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
       if (!window.supabase || !window.supabase.createClient) {
       document.getElementById("auth-error").style.display = "block";
       document.getElementById("auth-error").textContent =
@@ -2042,14 +2042,17 @@
               <div class="action-row">
                 ${
                   isReviewed
-                    ? `<div style="text-align:center;padding:10px 0;color:#00c87a;font-size:13px;font-weight:600">✓ This case has been reviewed</div>`
+                    ? `
+                      <div style="text-align:center;padding:10px 0;color:#00c87a;font-size:13px;font-weight:600">✓ This case has been reviewed</div>
+                      <a class="btn-action" id="export-case-btn" target="_blank" rel="noopener">Export Clinical Record</a>
+                    `
                     : `
                       <button class="btn-mark-reviewed" id="mark-reviewed-btn" type="button">✓ Mark Reviewed</button>
                       <button class="btn-action" id="save-draft-btn" type="button">Save Draft</button>
+                      <a class="btn-action" id="export-case-btn" target="_blank" rel="noopener">Export Clinical Record</a>
                     `
                 }
               </div>
-
               <div class="save-status" id="save-status"></div>
             </div>
           </div>
@@ -2128,6 +2131,11 @@
       const markReviewedBtn = document.getElementById("mark-reviewed-btn");
       if (markReviewedBtn) markReviewedBtn.addEventListener("click", () => saveReview(c.id, true));
 
+      const exportBtn = document.getElementById("export-case-btn");
+      if (exportBtn) {
+        exportBtn.href = `case-export.html?id=${encodeURIComponent(c.id)}`;
+      }
+      
       const toggleTranscript = document.getElementById("toggle-transcript");
       if (toggleTranscript) {
         toggleTranscript.addEventListener("click", () => toggleCollapsible("transcript-body", toggleTranscript));
