@@ -1070,6 +1070,35 @@
       color: var(--text-primary);
     }
 
+    .btn-export-record {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      background: rgba(0, 200, 232, 0.1);
+      border: 1px solid rgba(0, 200, 232, 0.24);
+      color: var(--cyan);
+      font-weight: 600;
+    }
+
+    .btn-export-record:hover {
+      background: rgba(0, 200, 232, 0.16);
+      border-color: rgba(0, 200, 232, 0.34);
+      color: #7fe8ff;
+    }
+
+    .btn-export-record::before {
+      content: "↗";
+      margin-right: 8px;
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    .btn-export-record:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+    
     .btn-mark-reviewed {
       background: linear-gradient(135deg, #0a7a4a, #00a866);
       border: none;
@@ -1411,13 +1440,14 @@
   <script>
     const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
-      if (!window.supabase || !window.supabase.createClient) {
+
+    if (!window.supabase || !window.supabase.createClient) {
       document.getElementById("auth-error").style.display = "block";
       document.getElementById("auth-error").textContent =
         "Supabase library failed to load. Check network / CDN blocking.";
       throw new Error("Supabase library missing");
     }
-
+    
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let currentTab = "queue";
@@ -1876,277 +1906,294 @@
     }
 
     function renderDetail(c) {
-      const panel = document.getElementById("detail-panel");
-      const so = c.structured_output || {};
-      const name = c.patient_name || "Unknown Patient";
-      const nameNote = !c.patient_name
-        ? ' <span style="font-size:11px;color:#6a80a0;font-weight:400">(no intake form linked)</span>'
-        : "";
-      const phone = c.patient_phone ? formatPhone(c.patient_phone) : null;
-      const phoneRaw = c.patient_phone || "";
-      const phoneDisplay = phone
-        ? `<a class="tel-link" href="tel:${escAttr(phoneRaw)}">${escHtml(phone)}</a>`
-        : '<span style="color:#6a80a0">No phone</span>';
-      const reviewedAt = c.reviewed_at ? formatDatetime(c.reviewed_at) : null;
-      const reviewStatus = c.review_status || "new";
-      const isReviewed = reviewStatus === "reviewed";
-      const isDraft = reviewStatus === "draft";
+  const panel = document.getElementById("detail-panel");
+  const so = c.structured_output || {};
+  const name = c.patient_name || "Unknown Patient";
+  const nameNote = !c.patient_name
+    ? ' <span style="font-size:11px;color:#6a80a0;font-weight:400">(no intake form linked)</span>'
+    : "";
+  const phone = c.patient_phone ? formatPhone(c.patient_phone) : null;
+  const phoneRaw = c.patient_phone || "";
+  const phoneDisplay = phone
+    ? `<a class="tel-link" href="tel:${escAttr(phoneRaw)}">${escHtml(phone)}</a>`
+    : '<span style="color:#6a80a0">No phone</span>';
+  const reviewedAt = c.reviewed_at ? formatDatetime(c.reviewed_at) : null;
+  const reviewStatus = c.review_status || "new";
+  const isReviewed = reviewStatus === "reviewed";
+  const isDraft = reviewStatus === "draft";
 
-      const sevColor =
-        c.severity === "urgent" ? "#e84545" :
-        c.severity === "emergency" ? "#f0a500" :
-        "#00c87a";
+  const sevColor =
+    c.severity === "urgent" ? "#e84545" :
+    c.severity === "emergency" ? "#f0a500" :
+    "#00c87a";
 
-      const sevIcon =
-        c.severity === "urgent" ? "!" :
-        c.severity === "emergency" ? "⚠" :
-        "✓";
+  const sevIcon =
+    c.severity === "urgent" ? "!" :
+    c.severity === "emergency" ? "⚠" :
+    "✓";
 
-      const flags = [
-        { label: "Airway / swallowing", val: so.difficulty_breathing_or_swallowing },
-        { label: "Uncontrolled bleeding", val: so.uncontrolled_bleeding },
-        { label: "Rapidly spreading swelling", val: so.feels_very_unwell_or_rapidly_increasing_swelling },
-        { label: "Avulsed tooth", val: so.avulsed_tooth },
-        { label: "Jaw fracture signs", val: so.jaw_fracture_signs },
-        { label: "Fever", val: so.fever },
-        { label: "Swelling", val: so.swelling || so.swelling_present },
-        { label: "Trauma", val: so.trauma },
-        { label: "Nocturnal pain", val: so.nocturnal_pain || c.nocturnal_pain },
-        { label: "Cold lingers >10s", val: so.cold_pain_lingers_over_10_seconds },
-        { label: "Heat sensitivity", val: so.heat_sensitivity || c.heat_sensitivity },
-        { label: "Percussion sensitivity", val: so.percussion_sensitivity || c.percussion_sensitivity },
-        { label: "Bad taste / drainage", val: so.bad_taste_or_drainage || c.bad_taste_or_drainage },
-        { label: "Immunocompromised", val: so.immunocompromised || c.immunocompromised },
-        { label: "Pericoronitis signs", val: so.pericoronitis_signs || c.pericoronitis_signs },
-        { label: "Recent extraction", val: so.recent_extraction || c.recent_extraction }
-      ];
+  const flags = [
+    { label: "Airway / swallowing", val: so.difficulty_breathing_or_swallowing },
+    { label: "Uncontrolled bleeding", val: so.uncontrolled_bleeding },
+    { label: "Rapidly spreading swelling", val: so.feels_very_unwell_or_rapidly_increasing_swelling },
+    { label: "Avulsed tooth", val: so.avulsed_tooth },
+    { label: "Jaw fracture signs", val: so.jaw_fracture_signs },
+    { label: "Fever", val: so.fever },
+    { label: "Swelling", val: so.swelling || so.swelling_present },
+    { label: "Trauma", val: so.trauma },
+    { label: "Nocturnal pain", val: so.nocturnal_pain || c.nocturnal_pain },
+    { label: "Cold lingers >10s", val: so.cold_pain_lingers_over_10_seconds },
+    { label: "Heat sensitivity", val: so.heat_sensitivity || c.heat_sensitivity },
+    { label: "Percussion sensitivity", val: so.percussion_sensitivity || c.percussion_sensitivity },
+    { label: "Bad taste / drainage", val: so.bad_taste_or_drainage || c.bad_taste_or_drainage },
+    { label: "Immunocompromised", val: so.immunocompromised || c.immunocompromised },
+    { label: "Pericoronitis signs", val: so.pericoronitis_signs || c.pericoronitis_signs },
+    { label: "Recent extraction", val: so.recent_extraction || c.recent_extraction }
+  ];
 
-      panel.innerHTML = `
-        <div class="detail-header">
-          <button class="back-btn" id="back-btn" type="button">←</button>
-          <div class="detail-header-info">
-            <div class="detail-patient-name">${escHtml(name)}${nameNote}</div>
-            <div class="detail-patient-meta">${phoneDisplay} · ${escHtml(formatDatetime(c.created_at))}</div>
+  panel.innerHTML = `
+    <div class="detail-header">
+      <button class="back-btn" id="back-btn" type="button">←</button>
+      <div class="detail-header-info">
+        <div class="detail-patient-name">${escHtml(name)}${nameNote}</div>
+        <div class="detail-patient-meta">${phoneDisplay} · ${escHtml(formatDatetime(c.created_at))}</div>
+      </div>
+      <span class="severity-badge badge-${escAttr(c.severity || "routine")}">${escHtml(c.severity || "unknown")}</span>
+    </div>
+
+    <div class="detail-body">
+      <div class="detail-section">
+        <div class="severity-row">
+          <div class="severity-icon ${escAttr(c.severity || "routine")}">${escHtml(sevIcon)}</div>
+          <div>
+            <div class="severity-detail-label">Triage Classification</div>
+            <div class="severity-detail-value" style="color:${sevColor}">${escHtml((c.severity || "unknown").toUpperCase())}</div>
+            <div class="severity-reason">${escHtml(c.severity_reason || "-")}</div>
           </div>
-          <span class="severity-badge badge-${escAttr(c.severity || "routine")}">${escHtml(c.severity || "unknown")}</span>
         </div>
 
-        <div class="detail-body">
-          <div class="detail-section">
-            <div class="severity-row">
-              <div class="severity-icon ${escAttr(c.severity || "routine")}">${escHtml(sevIcon)}</div>
-              <div>
-                <div class="severity-detail-label">Triage Classification</div>
-                <div class="severity-detail-value" style="color:${sevColor}">${escHtml((c.severity || "unknown").toUpperCase())}</div>
-                <div class="severity-reason">${escHtml(c.severity_reason || "-")}</div>
-              </div>
-            </div>
-
-            <div class="stats-grid">
-              <div class="stat-cell">
-                <div class="stat-label">Pain Score</div>
-                <div class="stat-value">${typeof so.pain_score === "number" ? escHtml(String(so.pain_score) + "/10") : "-"}</div>
-              </div>
-              <div class="stat-cell">
-                <div class="stat-label">Duration</div>
-                <div class="stat-value">${formatDuration(c.duration_seconds)}</div>
-              </div>
-              <div class="stat-cell">
-                <div class="stat-label">Location</div>
-                <div class="stat-value" style="font-size:13px">${escHtml([so.jaw, so.side].filter(Boolean).join(" / ") || "-")}</div>
-              </div>
-              <div class="stat-cell">
-                <div class="stat-label">Extraction</div>
-                <div class="stat-value" style="font-size:12px">${escHtml(c.extraction_source || "-")}</div>
-              </div>
-            </div>
+        <div class="stats-grid">
+          <div class="stat-cell">
+            <div class="stat-label">Pain Score</div>
+            <div class="stat-value">${typeof so.pain_score === "number" ? escHtml(String(so.pain_score) + "/10") : "-"}</div>
           </div>
-
-          <div class="detail-section">
-            <div class="section-header">
-              <span class="section-title">Quick Summary</span>
-            </div>
-            <div class="summary-grid">
-              <div class="summary-item">
-                <div class="summary-label">Chief Complaint</div>
-                <div class="summary-value">${escHtml(so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-")}</div>
-              </div>
-              <div class="summary-item">
-                <div class="summary-label">Onset</div>
-                <div class="summary-value">${escHtml(so.onset || c.onset || "-")}</div>
-              </div>
-              <div class="summary-item">
-                <div class="summary-label">Reason for Current Severity</div>
-                <div class="summary-value">${escHtml(c.severity_reason || "-")}</div>
-              </div>
-            </div>
+          <div class="stat-cell">
+            <div class="stat-label">Duration</div>
+            <div class="stat-value">${formatDuration(c.duration_seconds)}</div>
           </div>
-
-          <div class="detail-section">
-            <div class="section-header">
-              <span class="section-title">Dentist Review</span>
-              ${
-                isReviewed
-                  ? `<span class="detail-state-text reviewed">✓ Reviewed ${escHtml(reviewedAt || "")}</span>`
-                  : isDraft
-                    ? `<span class="detail-state-text draft">Draft saved</span>`
-                    : `<span class="detail-state-text">Not reviewed yet</span>`
-              }
-            </div>
-
-            <div class="review-form">
-              <div>
-                <label class="form-label" for="field-notes">Clinical Addendum</label>
-                <textarea
-                  class="form-textarea"
-                  id="field-notes"
-                  placeholder="Add clinical notes, observations, or follow-up instructions..."
-                  ${isReviewed ? 'readonly style="opacity:0.6"' : ""}
-                >${escHtml(c.review_notes || "")}</textarea>
-              </div>
-
-              <div>
-                <label class="form-label" for="field-disposition">Final Disposition</label>
-                <select
-                  class="form-select"
-                  id="field-disposition"
-                  ${isReviewed ? 'disabled style="opacity:0.6"' : ""}
-                >
-                  <option value="">- Select -</option>
-                  <option value="booked" ${c.final_disposition === "booked" ? "selected" : ""}>Booked appointment</option>
-                  <option value="referred_er" ${c.final_disposition === "referred_er" ? "selected" : ""}>Referred to ER</option>
-                  <option value="rx_only" ${c.final_disposition === "rx_only" ? "selected" : ""}>Prescription only</option>
-                  <option value="declined" ${c.final_disposition === "declined" ? "selected" : ""}>Patient declined care</option>
-                  <option value="no_response" ${c.final_disposition === "no_response" ? "selected" : ""}>No response from patient</option>
-                </select>
-              </div>
-
-              <div>
-                <div class="toggle-row">
-                  <span class="toggle-label">Prescription issued</span>
-                  <label class="toggle">
-                    <input type="checkbox" id="field-rx" ${c.prescription_issued ? "checked" : ""} ${isReviewed ? "disabled" : ""}>
-                    <div class="toggle-track"></div>
-                  </label>
-                </div>
-
-                <div class="toggle-row">
-                  <span class="toggle-label">Patient contacted</span>
-                  <label class="toggle">
-                    <input type="checkbox" id="field-contacted" ${c.contacted_patient_at ? "checked" : ""} ${isReviewed ? "disabled" : ""}>
-                    <div class="toggle-track"></div>
-                  </label>
-                </div>
-              </div>
-
-              <div class="action-row">
-                ${
-                  isReviewed
-                    ? `
-                      <div style="text-align:center;padding:10px 0;color:#00c87a;font-size:13px;font-weight:600">✓ This case has been reviewed</div>
-                      <a class="btn-action" id="export-case-btn" target="_blank" rel="noopener">Export Clinical Record</a>
-                    `
-                    : `
-                      <button class="btn-mark-reviewed" id="mark-reviewed-btn" type="button">✓ Mark Reviewed</button>
-                      <button class="btn-action" id="save-draft-btn" type="button">Save Draft</button>
-                      <a class="btn-action" id="export-case-btn" target="_blank" rel="noopener">Export Clinical Record</a>
-                    `
-                }
-              </div>
-              <div class="save-status" id="save-status"></div>
-            </div>
+          <div class="stat-cell">
+            <div class="stat-label">Location</div>
+            <div class="stat-value" style="font-size:13px">${escHtml([so.jaw, so.side].filter(Boolean).join(" / ") || "-")}</div>
           </div>
-
-          <div class="detail-section">
-            <div class="section-header">
-              <span class="section-title">Clinical Flags</span>
-            </div>
-            <div class="flags-grid">
-              ${flags.map((f) => `
-                <div class="flag-item">
-                  <div class="flag-dot ${f.val === true ? "present" : "absent"}"></div>
-                  <span style="${f.val === true ? "color:#e8f0fe" : ""}">${escHtml(f.label)}</span>
-                </div>
-              `).join("")}
-            </div>
+          <div class="stat-cell">
+            <div class="stat-label">Extraction</div>
+            <div class="stat-value" style="font-size:12px">${escHtml(c.extraction_source || "-")}</div>
           </div>
+        </div>
+      </div>
 
-          <div class="detail-section">
-            <div class="section-header">
-              <span class="section-title">AI Clinical Note</span>
-              <span class="note-lock-badge">Draft - Read Only</span>
-            </div>
-            <div class="section-body">
-              <div class="clinical-note-text">${escHtml(c.clinical_note || "No clinical note generated.")}</div>
-            </div>
+      <div class="detail-section">
+        <div class="section-header">
+          <span class="section-title">Quick Summary</span>
+        </div>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="summary-label">Chief Complaint</div>
+            <div class="summary-value">${escHtml(so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-")}</div>
           </div>
+          <div class="summary-item">
+            <div class="summary-label">Onset</div>
+            <div class="summary-value">${escHtml(so.onset || c.onset || "-")}</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">Reason for Current Severity</div>
+            <div class="summary-value">${escHtml(c.severity_reason || "-")}</div>
+          </div>
+        </div>
+      </div>
 
+      <div class="detail-section">
+        <div class="section-header">
+          <span class="section-title">Dentist Review</span>
           ${
-            c.transcript
-              ? `
-              <div class="detail-section">
-                <div class="section-header">
-                  <span class="section-title">Call Transcript</span>
-                  <button class="collapsible-toggle" id="toggle-transcript" type="button">Show ▼</button>
-                </div>
-                <div class="collapsible-body" id="transcript-body">
-                  <div class="transcript-text" style="padding-top:16px">${escHtml(c.transcript)}</div>
-                </div>
-              </div>
-            `
-              : ""
+            isReviewed
+              ? `<span class="detail-state-text reviewed">✓ Reviewed ${escHtml(reviewedAt || "")}</span>`
+              : isDraft
+                ? `<span class="detail-state-text draft">Draft saved</span>`
+                : `<span class="detail-state-text">Not reviewed yet</span>`
           }
+        </div>
 
+        <div class="review-form">
+          <div>
+            <label class="form-label" for="field-notes">Clinical Addendum</label>
+            <textarea
+              class="form-textarea"
+              id="field-notes"
+              placeholder="Add clinical notes, observations, or follow-up instructions..."
+              ${isReviewed ? 'readonly style="opacity:0.6"' : ""}
+            >${escHtml(c.review_notes || "")}</textarea>
+          </div>
+
+          <div>
+            <label class="form-label" for="field-disposition">Final Disposition</label>
+            <select
+              class="form-select"
+              id="field-disposition"
+              ${isReviewed ? 'disabled style="opacity:0.6"' : ""}
+            >
+              <option value="">- Select -</option>
+              <option value="booked" ${c.final_disposition === "booked" ? "selected" : ""}>Booked appointment</option>
+              <option value="referred_er" ${c.final_disposition === "referred_er" ? "selected" : ""}>Referred to ER</option>
+              <option value="rx_only" ${c.final_disposition === "rx_only" ? "selected" : ""}>Prescription only</option>
+              <option value="declined" ${c.final_disposition === "declined" ? "selected" : ""}>Patient declined care</option>
+              <option value="no_response" ${c.final_disposition === "no_response" ? "selected" : ""}>No response from patient</option>
+            </select>
+          </div>
+
+          <div>
+            <div class="toggle-row">
+              <span class="toggle-label">Prescription issued</span>
+              <label class="toggle">
+                <input type="checkbox" id="field-rx" ${c.prescription_issued ? "checked" : ""} ${isReviewed ? "disabled" : ""}>
+                <div class="toggle-track"></div>
+              </label>
+            </div>
+
+            <div class="toggle-row">
+              <span class="toggle-label">Patient contacted</span>
+              <label class="toggle">
+                <input type="checkbox" id="field-contacted" ${c.contacted_patient_at ? "checked" : ""} ${isReviewed ? "disabled" : ""}>
+                <div class="toggle-track"></div>
+              </label>
+            </div>
+          </div>
+
+          <div class="action-row">
+            ${
+              isReviewed
+                ? `
+                  <div style="text-align:center;padding:10px 0;color:#00c87a;font-size:13px;font-weight:600">
+                    ✓ This case has been reviewed
+                  </div>
+                  <a
+                    class="btn-action btn-export-record"
+                    id="export-case-btn"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Export Clinical Record
+                  </a>
+                `
+                : `
+                  <button class="btn-mark-reviewed" id="mark-reviewed-btn" type="button">✓ Mark Reviewed</button>
+                  <button class="btn-action" id="save-draft-btn" type="button">Save Draft</button>
+                  <a
+                    class="btn-action btn-export-record"
+                    id="export-case-btn"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Export Clinical Record
+                  </a>
+                `
+            }
+          </div>
+
+          <div class="save-status" id="save-status"></div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <div class="section-header">
+          <span class="section-title">Clinical Flags</span>
+        </div>
+        <div class="flags-grid">
+          ${flags.map((f) => `
+            <div class="flag-item">
+              <div class="flag-dot ${f.val === true ? "present" : "absent"}"></div>
+              <span style="${f.val === true ? "color:#e8f0fe" : ""}">${escHtml(f.label)}</span>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <div class="section-header">
+          <span class="section-title">AI Clinical Note</span>
+          <span class="note-lock-badge">Draft - Read Only</span>
+        </div>
+        <div class="section-body">
+          <div class="clinical-note-text">${escHtml(c.clinical_note || "No clinical note generated.")}</div>
+        </div>
+      </div>
+
+      ${
+        c.transcript
+          ? `
           <div class="detail-section">
             <div class="section-header">
-              <span class="section-title">Call Details</span>
-              <button class="collapsible-toggle" id="toggle-call-meta" type="button">Show ▼</button>
+              <span class="section-title">Call Transcript</span>
+              <button class="collapsible-toggle" id="toggle-transcript" type="button">Show ▼</button>
             </div>
-            <div class="collapsible-body" id="call-meta-body">
-              <div class="stats-grid">
-                <div class="stat-cell" style="grid-column:1/-1">
-                  <div class="stat-label">Call ID</div>
-                  <div class="stat-value" style="font-size:11px;word-break:break-all">${escHtml(c.vapi_call_id || "-")}</div>
-                </div>
-                <div class="stat-cell">
-                  <div class="stat-label">Triage Tag</div>
-                  <div class="stat-value" style="font-size:12px">${escHtml(formatTag(c.triage_tag))}</div>
-                </div>
-                <div class="stat-cell">
-                  <div class="stat-label">Created</div>
-                  <div class="stat-value" style="font-size:11px">${escHtml(formatDatetime(c.created_at))}</div>
-                </div>
-              </div>
+            <div class="collapsible-body" id="transcript-body">
+              <div class="transcript-text" style="padding-top:16px">${escHtml(c.transcript)}</div>
+            </div>
+          </div>
+        `
+          : ""
+      }
+
+      <div class="detail-section">
+        <div class="section-header">
+          <span class="section-title">Call Details</span>
+          <button class="collapsible-toggle" id="toggle-call-meta" type="button">Show ▼</button>
+        </div>
+        <div class="collapsible-body" id="call-meta-body">
+          <div class="stats-grid">
+            <div class="stat-cell" style="grid-column:1/-1">
+              <div class="stat-label">Call ID</div>
+              <div class="stat-value" style="font-size:11px;word-break:break-all">${escHtml(c.vapi_call_id || "-")}</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-label">Triage Tag</div>
+              <div class="stat-value" style="font-size:12px">${escHtml(formatTag(c.triage_tag))}</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-label">Created</div>
+              <div class="stat-value" style="font-size:11px">${escHtml(formatDatetime(c.created_at))}</div>
             </div>
           </div>
         </div>
-      `;
+      </div>
+    </div>
+  `;
 
-      const backBtn = document.getElementById("back-btn");
-      if (backBtn) backBtn.addEventListener("click", goBack);
+  const backBtn = document.getElementById("back-btn");
+  if (backBtn) backBtn.addEventListener("click", goBack);
 
-      const saveDraftBtn = document.getElementById("save-draft-btn");
-      if (saveDraftBtn) saveDraftBtn.addEventListener("click", () => saveReview(c.id, false));
+  const saveDraftBtn = document.getElementById("save-draft-btn");
+  if (saveDraftBtn) saveDraftBtn.addEventListener("click", () => saveReview(c.id, false));
 
-      const markReviewedBtn = document.getElementById("mark-reviewed-btn");
-      if (markReviewedBtn) markReviewedBtn.addEventListener("click", () => saveReview(c.id, true));
+  const markReviewedBtn = document.getElementById("mark-reviewed-btn");
+  if (markReviewedBtn) markReviewedBtn.addEventListener("click", () => saveReview(c.id, true));
 
-      const exportBtn = document.getElementById("export-case-btn");
-      if (exportBtn) {
-        exportBtn.href = `case-export.html?id=${encodeURIComponent(c.id)}`;
-      }
-      
-      const toggleTranscript = document.getElementById("toggle-transcript");
-      if (toggleTranscript) {
-        toggleTranscript.addEventListener("click", () => toggleCollapsible("transcript-body", toggleTranscript));
-      }
+  const exportBtn = document.getElementById("export-case-btn");
+  if (exportBtn) {
+    exportBtn.href = `case-export.html?id=${encodeURIComponent(c.id)}`;
+  }
 
-      const toggleCallMeta = document.getElementById("toggle-call-meta");
-      if (toggleCallMeta) {
-        toggleCallMeta.addEventListener("click", () => toggleCollapsible("call-meta-body", toggleCallMeta));
-      }
-    }
+  const toggleTranscript = document.getElementById("toggle-transcript");
+  if (toggleTranscript) {
+    toggleTranscript.addEventListener("click", () => toggleCollapsible("transcript-body", toggleTranscript));
+  }
 
+  const toggleCallMeta = document.getElementById("toggle-call-meta");
+  if (toggleCallMeta) {
+    toggleCallMeta.addEventListener("click", () => toggleCollapsible("call-meta-body", toggleCallMeta));
+  }
+}    
+    
     function goBack() {
       currentCase = null;
       if (isMobile) {
