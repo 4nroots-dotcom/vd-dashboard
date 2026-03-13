@@ -955,11 +955,9 @@
 
         const payload = buildIntakePayload(formData);
 
-        const { data, error } = await sb
+        const { error } = await sb
           .from("triage_cases")
-          .insert(payload)
-          .select("id")
-          .single();
+          .insert(payload);
 
         if (error) {
           console.error("Supabase insert error:", error);
@@ -967,12 +965,7 @@
           return;
         }
 
-        if (!data?.id) {
-          showIntakeError("The case was created but no case ID was returned.");
-          return;
-        }
-
-        showSuccess(data.id);
+        showSuccess("Record created successfully");
       } catch (err) {
         console.error("Unexpected intake submit error:", err);
         showIntakeError(err?.message || "Unexpected error while saving your information.");
@@ -1087,13 +1080,13 @@
       };
     }
 
-    function showSuccess(caseId) {
+    function showSuccess(message) {
       formScreen.classList.remove("show");
       successScreen.classList.add("show");
-      document.getElementById("success-case-id").textContent = `Case ID: ${caseId}`;
+      document.getElementById("success-case-id").textContent = message;
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
-
+    
     function getValue(id) {
       const el = document.getElementById(id);
       return el ? el.value.trim() : "";
