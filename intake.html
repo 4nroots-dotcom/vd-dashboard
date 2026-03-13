@@ -20,14 +20,15 @@
       --cyan-dim: #0097b2;
       --cyan-faint: rgba(0, 200, 232, 0.08);
       --urgent: #e84545;
-      --urgent-faint: rgba(232, 69, 69, 0.12);
+      --urgent-faint: rgba(232, 69, 69, 0.14);
       --text-primary: #e8f0fe;
-      --text-secondary: #b2c6e2;
+      --text-secondary: #b3c6e1;
       --text-muted: #7f96b8;
       --border: rgba(255, 255, 255, 0.08);
+      --border-soft: rgba(255, 255, 255, 0.05);
       --border-active: rgba(0, 200, 232, 0.32);
       --surface: rgba(255, 255, 255, 0.04);
-      --surface-2: rgba(255, 255, 255, 0.03);
+      --surface-2: rgba(255, 255, 255, 0.025);
       --success: #00c87a;
       --shadow: 0 26px 70px rgba(0, 0, 0, 0.34);
       --maxw: 900px;
@@ -77,7 +78,7 @@
       align-items: center;
       justify-content: center;
       gap: 14px;
-      margin: 6px 0 24px;
+      margin: 6px 0 22px;
     }
 
     .brand-mark {
@@ -91,7 +92,7 @@
       font-size: 18px;
       font-weight: 700;
       letter-spacing: 0.01em;
-      color: #47b3ec;
+      color: #7fc4f3;
     }
 
     .card {
@@ -105,7 +106,7 @@
     /* ===== SCREEN 1 ===== */
 
     .hero-card {
-      padding: 24px 22px 26px;
+      padding: 24px 22px 24px;
       border-radius: var(--radius-xl);
       overflow: hidden;
       position: relative;
@@ -116,8 +117,8 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(circle at top right, rgba(0, 200, 232, 0.1), transparent 32%),
-        radial-gradient(circle at bottom left, rgba(26, 127, 196, 0.12), transparent 28%);
+        radial-gradient(circle at top right, rgba(0, 200, 232, 0.08), transparent 34%),
+        radial-gradient(circle at bottom left, rgba(26, 127, 196, 0.1), transparent 30%);
       pointer-events: none;
     }
 
@@ -131,98 +132,105 @@
       font-weight: 800;
       letter-spacing: 0.14em;
       text-transform: uppercase;
-      color: #7fcff5;
+      color: #8fd4f8;
       margin-bottom: 10px;
     }
 
     .hero-title {
       font-size: clamp(31px, 6.2vw, 46px);
-      line-height: 1.04;
+      line-height: 1.03;
       font-weight: 800;
       letter-spacing: -0.03em;
-      color: #f3f7ff;
-      margin-bottom: 14px;
+      color: #f4f8ff;
+      margin-bottom: 12px;
+      max-width: 8.5em;
     }
 
     .hero-sub {
-      font-size: 18px;
-      line-height: 1.55;
+      font-size: 17px;
+      line-height: 1.58;
       color: var(--text-secondary);
       margin-bottom: 10px;
+      max-width: 32ch;
     }
 
     .hero-cost {
       font-size: 17px;
       line-height: 1.5;
       font-weight: 700;
-      color: #eaf4ff;
-      margin-bottom: 18px;
+      color: #edf6ff;
+      margin-bottom: 16px;
     }
 
     .hero-image-wrap {
-      margin: 0 0 18px;
-      border-radius: 22px;
+      position: relative;
+      margin: 0 -6px 16px;
       overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      background: rgba(255, 255, 255, 0.03);
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .hero-image-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(8, 19, 38, 0.02), rgba(8, 19, 38, 0.14));
+      pointer-events: none;
     }
 
     .hero-image {
       display: block;
       width: 100%;
-      aspect-ratio: 5 / 4;
+      aspect-ratio: 4 / 3;
       object-fit: cover;
-      object-position: center 24%;
+      object-position: center 18%;
+      transform: scale(1.02);
     }
 
     .trust-strip {
       display: grid;
       grid-template-columns: 1fr;
       gap: 10px;
-      margin-bottom: 18px;
-      padding: 14px;
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      margin: 0 0 16px;
+      padding: 10px 2px 4px;
+      border-top: 1px solid var(--border-soft);
+      border-bottom: 1px solid var(--border-soft);
     }
 
     .trust-item {
       display: flex;
       align-items: center;
       gap: 10px;
-      min-height: 22px;
-      color: #d9e7fb;
+      color: #d7e6fa;
       font-size: 15px;
-      line-height: 1.4;
+      line-height: 1.42;
     }
 
     .trust-dot {
-      width: 8px;
-      height: 8px;
+      width: 6px;
+      height: 6px;
       border-radius: 999px;
       background: var(--cyan-soft);
       box-shadow: 0 0 0 4px rgba(86, 208, 242, 0.12);
       flex-shrink: 0;
+      margin-left: 2px;
     }
 
     .warning-strip {
       margin-bottom: 18px;
-      padding: 18px 18px;
+      padding: 16px 16px;
       border-radius: 18px;
-      background: rgba(103, 44, 61, 0.28);
-      border: 1px solid rgba(214, 96, 122, 0.45);
+      background: rgba(103, 44, 61, 0.24);
+      border: 1px solid rgba(214, 96, 122, 0.36);
       color: #ffdbe4;
-      font-size: 16px;
-      line-height: 1.55;
-      font-weight: 650;
+      font-size: 15px;
+      line-height: 1.58;
+      font-weight: 620;
     }
 
-    .expect-card {
+    .expect-wrap {
       margin-bottom: 22px;
-      padding: 20px 18px;
-      border-radius: 20px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 4px 2px 0;
     }
 
     .expect-title {
@@ -230,7 +238,7 @@
       font-weight: 800;
       letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: #d5e2f7;
+      color: #d7e3f7;
       margin-bottom: 16px;
     }
 
@@ -245,27 +253,27 @@
       gap: 14px;
       color: #d8e6fa;
       font-size: 18px;
-      line-height: 1.4;
+      line-height: 1.38;
     }
 
     .expect-step {
-      width: 42px;
-      height: 42px;
+      width: 36px;
+      height: 36px;
       border-radius: 999px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 800;
       color: var(--cyan-soft);
-      background: rgba(59, 137, 217, 0.12);
-      border: 1px solid rgba(97, 204, 239, 0.26);
+      background: rgba(59, 137, 217, 0.1);
+      border: 1px solid rgba(97, 204, 239, 0.22);
     }
 
     .hero-actions {
       display: grid;
-      gap: 14px;
+      gap: 12px;
     }
 
     .hero-start-btn {
@@ -300,8 +308,8 @@
 
     .legal-note {
       text-align: center;
-      font-size: 13px;
-      line-height: 1.6;
+      font-size: 12px;
+      line-height: 1.55;
       color: var(--text-muted);
       max-width: 760px;
       margin: 0 auto;
@@ -608,22 +616,36 @@
       }
 
       .hero-card {
-        padding: 28px 28px 30px;
+        padding: 28px 28px 26px;
+      }
+
+      .hero-title {
+        max-width: 9em;
+      }
+
+      .hero-sub {
+        max-width: 36ch;
+      }
+
+      .hero-image-wrap {
+        margin: 4px -8px 18px;
+        border-radius: 24px;
+      }
+
+      .hero-image {
+        aspect-ratio: 16 / 9;
+        object-position: center 22%;
       }
 
       .trust-strip {
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 14px;
+        gap: 16px;
+        padding: 12px 4px 4px;
       }
 
       .trust-item {
         font-size: 14px;
         align-items: flex-start;
-      }
-
-      .hero-image {
-        aspect-ratio: 16 / 9;
-        object-position: center 28%;
       }
     }
 
@@ -711,7 +733,7 @@
           If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, seek emergency care immediately.
         </div>
 
-        <div class="expect-card">
+        <div class="expect-wrap">
           <div class="expect-title">What to expect</div>
           <div class="expect-list">
             <div class="expect-item">
