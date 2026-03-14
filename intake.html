@@ -1078,196 +1078,139 @@
       </div>
     </section>
   </div>
+<script>
+  const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+  const INTAKE_TRIGGER_URL = SUPABASE_URL + "/functions/v1/intake-trigger";
 
-  <script>
-    const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
-    if (!window.supabase || !window.supabase.createClient) {
-      alert("Supabase library failed to load.");
-      throw new Error("Supabase library missing");
-    }
+  if (!window.supabase || !window.supabase.createClient) {
+    alert("Supabase library failed to load.");
+    throw new Error("Supabase library missing");
+  }
 
-    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const welcomeScreen = document.getElementById("screen-welcome");
+  const formScreen = document.getElementById("screen-form");
+  const handoffScreen = document.getElementById("screen-handoff");
 
-    const welcomeScreen = document.getElementById("screen-welcome");
-    const formScreen = document.getElementById("screen-form");
-    const handoffScreen = document.getElementById("screen-handoff");
+  document.getElementById("start-assessment-btn").addEventListener("click", () => {
+    welcomeScreen.style.display = "none";
+    formScreen.classList.add("show");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
 
-    document.getElementById("start-assessment-btn").addEventListener("click", () => {
-      welcomeScreen.style.display = "none";
-      formScreen.classList.add("show");
-      window.scrollTo({ top: 0, behavior: "smooth" });
+  document.getElementById("back-to-welcome-btn").addEventListener("click", () => {
+    formScreen.classList.remove("show");
+    welcomeScreen.style.display = "block";
+    clearIntakeError();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  setupExclusiveCheckboxes();
+  setupOntarioNotice();
+  setupIntakeSubmit();
+
+  function setupOntarioNotice() {
+    const yesEl = document.getElementById("in-ontario-yes");
+    const noEl = document.getElementById("in-ontario-no");
+    const warningEl = document.getElementById("ontario-warning");
+    function sync() { warningEl.style.display = noEl.checked ? "block" : "none"; }
+    yesEl.addEventListener("change", sync);
+    noEl.addEventListener("change", sync);
+    sync();
+  }
+
+  function setupExclusiveCheckboxes() {
+    const redFlagNone = document.getElementById("rf-none");
+    const redFlagIds = ["rf-breathing-swallowing","rf-uncontrolled-bleeding","rf-facial-swelling","rf-fever-unwell","rf-trauma"];
+    const medicalNone = document.getElementById("mh-none");
+    const medicalIds = ["mh-allergy-antibiotics","mh-allergy-pain","mh-blood-thinners","mh-diabetes","mh-pregnancy","mh-immunocompromised","mh-other"];
+    const mhOther = document.getElementById("mh-other");
+
+    redFlagNone.addEventListener("change", () => {
+      if (redFlagNone.checked) redFlagIds.forEach(id => { const el = document.getElementById(id); if (el) el.checked = false; });
     });
-
-    document.getElementById("back-to-welcome-btn").addEventListener("click", () => {
-      formScreen.classList.remove("show");
-      welcomeScreen.style.display = "block";
-      clearIntakeError();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    redFlagIds.forEach(id => {
+      const el = document.getElementById(id);
+      el.addEventListener("change", () => { if (el.checked) redFlagNone.checked = false; });
     });
-
-    setupExclusiveCheckboxes();
-    setupOntarioNotice();
-    setupIntakeSubmit();
-
-    function setupOntarioNotice() {
-      const yesEl = document.getElementById("in-ontario-yes");
-      const noEl = document.getElementById("in-ontario-no");
-      const warningEl = document.getElementById("ontario-warning");
-
-      function sync() {
-        warningEl.style.display = noEl.checked ? "block" : "none";
+    medicalNone.addEventListener("change", () => {
+      if (medicalNone.checked) {
+        medicalIds.forEach(id => { const el = document.getElementById(id); if (el) el.checked = false; });
+        document.getElementById("mh-other-detail").value = "";
+        toggleOtherMedicalDetail();
       }
+    });
+    medicalIds.forEach(id => {
+      const el = document.getElementById(id);
+      el.addEventListener("change", () => { if (el.checked) medicalNone.checked = false; toggleOtherMedicalDetail(); });
+    });
+    mhOther.addEventListener("change", toggleOtherMedicalDetail);
+    toggleOtherMedicalDetail();
+  }
 
-      yesEl.addEventListener("change", sync);
-      noEl.addEventListener("change", sync);
-      sync();
-    }
+  function toggleOtherMedicalDetail() {
+    const mhOther = document.getElementById("mh-other");
+    const wrapper = document.getElementById("mh-other-wrapper");
+    const detail = document.getElementById("mh-other-detail");
+    if (mhOther.checked) { wrapper.style.display = "block"; }
+    else { wrapper.style.display = "none"; detail.value = ""; }
+  }
 
-    function setupExclusiveCheckboxes() {
-      const redFlagNone = document.getElementById("rf-none");
-      const redFlagIds = [
-        "rf-breathing-swallowing",
-        "rf-uncontrolled-bleeding",
-        "rf-facial-swelling",
-        "rf-fever-unwell",
-        "rf-trauma"
-      ];
+  function setupIntakeSubmit() {
+    document.getElementById("intake-submit-btn").addEventListener("click", handleIntakeSubmit);
+  }
 
-      const medicalNone = document.getElementById("mh-none");
-      const medicalIds = [
-        "mh-allergy-antibiotics",
-        "mh-allergy-pain",
-        "mh-blood-thinners",
-        "mh-diabetes",
-        "mh-pregnancy",
-        "mh-immunocompromised",
-        "mh-other"
-      ];
-
-      const mhOther = document.getElementById("mh-other");
-
-      redFlagNone.addEventListener("change", () => {
-        if (redFlagNone.checked) {
-          redFlagIds.forEach((id) => {
-            const el = document.getElementById(id);
-            if (el) el.checked = false;
-          });
-        }
+  async function handleIntakeSubmit() {
+    const submitBtn = document.getElementById("intake-submit-btn");
+    clearIntakeError();
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Saving...";
+    try {
+      const formData = collectIntakeFormData();
+      const validationError = validateIntakeFormData(formData);
+      if (validationError) { showIntakeError(validationError); return; }
+      const payload = buildIntakePayload(formData);
+      const resp = await fetch(INTAKE_TRIGGER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
-
-      redFlagIds.forEach((id) => {
-        const el = document.getElementById(id);
-        el.addEventListener("change", () => {
-          if (el.checked) redFlagNone.checked = false;
-        });
-      });
-
-      medicalNone.addEventListener("change", () => {
-        if (medicalNone.checked) {
-          medicalIds.forEach((id) => {
-            const el = document.getElementById(id);
-            if (el) el.checked = false;
-          });
-          document.getElementById("mh-other-detail").value = "";
-          toggleOtherMedicalDetail();
-        }
-      });
-
-      medicalIds.forEach((id) => {
-        const el = document.getElementById(id);
-        el.addEventListener("change", () => {
-          if (el.checked) medicalNone.checked = false;
-          toggleOtherMedicalDetail();
-        });
-      });
-
-      mhOther.addEventListener("change", toggleOtherMedicalDetail);
-      toggleOtherMedicalDetail();
-    }
-
-    function toggleOtherMedicalDetail() {
-      const mhOther = document.getElementById("mh-other");
-      const wrapper = document.getElementById("mh-other-wrapper");
-      const detail = document.getElementById("mh-other-detail");
-
-      if (mhOther.checked) {
-        wrapper.style.display = "block";
-      } else {
-        wrapper.style.display = "none";
-        detail.value = "";
+      const result = await resp.json().catch(() => null);
+      if (!resp.ok || !result?.ok) {
+        showIntakeError(result?.error || result?.details || "Unable to save your information right now.");
+        return;
       }
+      showHandoff(result.case_id, result.call_initiated === true);
+    } catch (err) {
+      showIntakeError(err?.message || "Unexpected error while saving your information.");
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Continue";
     }
+  }
 
-    function setupIntakeSubmit() {
-      const submitBtn = document.getElementById("intake-submit-btn");
-      submitBtn.addEventListener("click", handleIntakeSubmit);
-    }
-
-    async function handleIntakeSubmit() {
-      const submitBtn = document.getElementById("intake-submit-btn");
-      clearIntakeError();
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = "Saving...";
-
-      try {
-        const formData = collectIntakeFormData();
-        const validationError = validateIntakeFormData(formData);
-
-        if (validationError) {
-          showIntakeError(validationError);
-          return;
-        }
-
-        const payload = buildIntakePayload(formData);
-
-        const { error } = await sb
-          .from("triage_cases")
-          .insert(payload);
-
-        if (error) {
-          console.error("Supabase insert error:", error);
-          showIntakeError(error.message || "Unable to save your information right now.");
-          return;
-        }
-
-        showHandoff();
-      } catch (err) {
-        console.error("Unexpected intake submit error:", err);
-        showIntakeError(err?.message || "Unexpected error while saving your information.");
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = "Continue";
-      }
-    }
-
-    function collectIntakeFormData() {
-      const inOntario = document.getElementById("in-ontario-yes").checked
-        ? "yes"
-        : document.getElementById("in-ontario-no").checked
-          ? "no"
-          : "";
-
-      const patientName = getValue("patient-name");
-      const patientDob = getValue("patient-dob");
-      const patientPhone = normalizePhone(getValue("patient-phone"));
-      const patientCity = getValue("patient-city");
-      const chiefComplaint = getValue("chief-complaint");
-      const onsetBucket = getValue("onset-bucket");
-      const coverageStatus = getOptionalValue("coverage-status");
-      const acknowledged = isChecked("intake-acknowledge");
-
-      const intakeRedFlags = {
+  function collectIntakeFormData() {
+    const inOntario = document.getElementById("in-ontario-yes").checked ? "yes" : document.getElementById("in-ontario-no").checked ? "no" : "";
+    return {
+      inOntario,
+      patientName: getValue("patient-name"),
+      patientDob: getValue("patient-dob"),
+      patientPhone: normalizePhone(getValue("patient-phone")),
+      patientCity: getValue("patient-city"),
+      chiefComplaint: getValue("chief-complaint"),
+      onsetBucket: getValue("onset-bucket"),
+      coverageStatus: getOptionalValue("coverage-status"),
+      acknowledged: isChecked("intake-acknowledge"),
+      intakeRedFlags: {
         trouble_breathing_or_swallowing: isChecked("rf-breathing-swallowing"),
         uncontrolled_bleeding: isChecked("rf-uncontrolled-bleeding"),
         facial_swelling: isChecked("rf-facial-swelling"),
         fever_or_feeling_unwell: isChecked("rf-fever-unwell"),
         injury_to_teeth_jaw_face: isChecked("rf-trauma"),
         none_of_the_above: isChecked("rf-none")
-      };
-
-      const intakeMedicalFlags = {
+      },
+      intakeMedicalFlags: {
         allergy_antibiotics: isChecked("mh-allergy-antibiotics"),
         allergy_pain_medication: isChecked("mh-allergy-pain"),
         blood_thinners: isChecked("mh-blood-thinners"),
@@ -1277,146 +1220,85 @@
         other_important_medical_condition: isChecked("mh-other"),
         other_medical_detail: getOptionalValue("mh-other-detail"),
         none_of_the_above: isChecked("mh-none")
-      };
-
-      return {
-        inOntario,
-        patientName,
-        patientDob,
-        patientPhone,
-        patientCity,
-        chiefComplaint,
-        onsetBucket,
-        coverageStatus,
-        acknowledged,
-        intakeRedFlags,
-        intakeMedicalFlags
-      };
-    }
-
-    function validateIntakeFormData(data) {
-      if (!data.inOntario) return "Please confirm whether you are currently in Ontario.";
-      if (data.inOntario !== "yes") return "This service is currently available only to patients in Ontario.";
-      if (!data.patientName) return "Please enter your full name.";
-      if (!data.patientDob) return "Please enter your date of birth.";
-      if (!isValidDateInput(data.patientDob)) return "Please enter a valid date of birth.";
-      if (!data.patientPhone) return "Please enter your phone number.";
-      if (!looksLikeNorthAmericanPhone(data.patientPhone)) {
-        return "Please enter a valid 10-digit phone number, or 11 digits starting with 1.";
       }
-      if (!data.patientCity) return "Please enter your city.";
-      if (!data.chiefComplaint) return "Please describe what’s been bothering you today.";
-      if (!data.onsetBucket) return "Please tell us when this started.";
+    };
+  }
 
-      if (!atLeastOneTrue(data.intakeRedFlags)) {
-        return "Please select at least one option under current symptoms, or choose 'None of the above.'";
-      }
+  function validateIntakeFormData(data) {
+    if (!data.inOntario) return "Please confirm whether you are currently in Ontario.";
+    if (data.inOntario !== "yes") return "This service is currently available only to patients in Ontario.";
+    if (!data.patientName) return "Please enter your full name.";
+    if (!data.patientDob) return "Please enter your date of birth.";
+    if (!isValidDateInput(data.patientDob)) return "Please enter a valid date of birth.";
+    if (!data.patientPhone) return "Please enter your phone number.";
+    if (!looksLikeNorthAmericanPhone(data.patientPhone)) return "Please enter a valid 10-digit phone number, or 11 digits starting with 1.";
+    if (!data.patientCity) return "Please enter your city.";
+    if (!data.chiefComplaint) return "Please describe what's been bothering you today.";
+    if (!data.onsetBucket) return "Please tell us when this started.";
+    if (!atLeastOneTrue(data.intakeRedFlags)) return "Please select at least one option under current symptoms, or choose 'None of the above.'";
+    if (!atLeastOneTrue(data.intakeMedicalFlags)) return "Please select at least one option under relevant medical information, or choose 'None of the above.'";
+    if (data.intakeMedicalFlags.other_important_medical_condition && !data.intakeMedicalFlags.other_medical_detail) return "Please tell us more about the other important medical condition.";
+    if (!data.acknowledged) return "Please confirm the acknowledgement before continuing.";
+    return null;
+  }
 
-      if (!atLeastOneTrue(data.intakeMedicalFlags)) {
-        return "Please select at least one option under relevant medical information, or choose 'None of the above.'";
-      }
+  function buildIntakePayload(data) {
+    return {
+      patient_name: data.patientName,
+      patient_dob: data.patientDob,
+      patient_phone: formatPhoneForStorage(data.patientPhone),
+      patient_city: data.patientCity,
+      chief_complaint: data.chiefComplaint,
+      onset_bucket: data.onsetBucket,
+      coverage_status: data.coverageStatus,
+      intake_red_flags: data.intakeRedFlags,
+      intake_medical_flags: data.intakeMedicalFlags,
+      intake_source: "web_form",
+      intake_version: "v1",
+    };
+  }
 
-      if (
-        data.intakeMedicalFlags.other_important_medical_condition &&
-        !data.intakeMedicalFlags.other_medical_detail
-      ) {
-        return "Please tell us more about the other important medical condition.";
-      }
-
-      if (!data.acknowledged) {
-        return "Please confirm the acknowledgement before continuing.";
-      }
-
-      return null;
+  function showHandoff(caseId, callInitiated) {
+    formScreen.classList.remove("show");
+    handoffScreen.classList.add("show");
+    const caseStatus = document.getElementById("success-case-id");
+    caseStatus.textContent = caseId ? "Case reference: " + caseId : "Intake submitted successfully";
+    const handoffCopy = handoffScreen.querySelector(".handoff-copy");
+    const handoffPanel = handoffScreen.querySelector(".handoff-panel-copy");
+    const callActions = handoffScreen.querySelector(".call-actions");
+    if (callInitiated) {
+      if (handoffCopy) handoffCopy.textContent = "Sam, our AI dental triage assistant, will call you shortly on the phone number you provided. Please keep your phone nearby and answer when it rings.";
+      if (handoffPanel) handoffPanel.textContent = "Your intake has been received and Sam will call you within the next minute or two. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist will review the case.";
+      if (callActions) callActions.innerHTML = '<div style="background:rgba(0,200,122,0.08);border:1px solid rgba(0,200,122,0.24);border-radius:16px;padding:18px 20px;text-align:center;color:#d8f7ec;font-size:16px;line-height:1.6;">Sam will call you shortly.<br><span style="font-size:14px;color:#a8e8cc;">Please keep your phone nearby and answer the call.</span></div><div class="call-fallback" style="margin-top:8px;">If you do not receive a call within 5 minutes, you can also reach Sam by dialing <a href="tel:+12193016594" style="color:#79c8f3;">1 (219) 301-6594</a>.</div>';
+    } else {
+      if (handoffCopy) handoffCopy.textContent = "Your intake has been received. Please call Sam now to complete your triage assessment.";
+      if (handoffPanel) handoffPanel.textContent = "Tap the button below to call Sam. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist will review the case.";
+      if (callActions) callActions.innerHTML = '<a class="call-btn" href="tel:+12193016594">Call Sam now</a><a class="call-number" href="tel:+12193016594">1 (219) 301-6594</a><div class="call-fallback">This is a temporary patient access number and will be replaced with a Canadian number before launch.</div>';
     }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
-    function buildIntakePayload(data) {
-      return {
-        patient_name: data.patientName,
-        patient_dob: data.patientDob,
-        patient_phone: formatPhoneForStorage(data.patientPhone),
-        patient_city: data.patientCity,
-        patient_province: "Ontario",
-        chief_complaint: data.chiefComplaint,
-        onset_bucket: data.onsetBucket,
-        coverage_status: data.coverageStatus,
-        intake_red_flags: data.intakeRedFlags,
-        intake_medical_flags: data.intakeMedicalFlags,
-        review_status: "new",
-        intake_completed_at: new Date().toISOString(),
-        intake_source: "web_form",
-        intake_version: "v1"
-      };
-    }
+  function getValue(id) { const el = document.getElementById(id); return el ? el.value.trim() : ""; }
+  function getOptionalValue(id) { const el = document.getElementById(id); if (!el) return null; const value = el.value.trim(); return value || null; }
+  function isChecked(id) { const el = document.getElementById(id); return !!(el && el.checked); }
+  function normalizePhone(value) { return value.replace(/\D/g, ""); }
+  function looksLikeNorthAmericanPhone(value) { const digits = value.replace(/\D/g, ""); return digits.length === 10 || (digits.length === 11 && digits.startsWith("1")); }
+  function formatPhoneForStorage(value) { const digits = value.replace(/\D/g, ""); if (digits.length === 11 && digits.startsWith("1")) return digits.slice(1); return digits; }
+  function isValidDateInput(value) { if (!value) return false; const d = new Date(value); return !Number.isNaN(d.getTime()); }
+  function atLeastOneTrue(obj) { return Object.values(obj).some(value => value === true); }
 
-    function showHandoff() {
-      formScreen.classList.remove("show");
-      handoffScreen.classList.add("show");
-      document.getElementById("success-case-id").textContent = "Intake submitted successfully";
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+  function showIntakeError(message) {
+    const errEl = document.getElementById("intake-error");
+    errEl.textContent = message;
+    errEl.style.display = "block";
+    window.scrollTo({ top: errEl.getBoundingClientRect().top + window.scrollY - 80, behavior: "smooth" });
+  }
 
-    function getValue(id) {
-      const el = document.getElementById(id);
-      return el ? el.value.trim() : "";
-    }
-
-    function getOptionalValue(id) {
-      const el = document.getElementById(id);
-      if (!el) return null;
-      const value = el.value.trim();
-      return value || null;
-    }
-
-    function isChecked(id) {
-      const el = document.getElementById(id);
-      return !!(el && el.checked);
-    }
-
-    function normalizePhone(value) {
-      return value.replace(/\D/g, "");
-    }
-
-    function looksLikeNorthAmericanPhone(value) {
-      const digits = value.replace(/\D/g, "");
-      if (digits.length === 10) return true;
-      if (digits.length === 11 && digits.startsWith("1")) return true;
-      return false;
-    }
-
-    function formatPhoneForStorage(value) {
-      const digits = value.replace(/\D/g, "");
-      if (digits.length === 11 && digits.startsWith("1")) {
-        return digits.slice(1);
-      }
-      return digits;
-    }
-
-    function isValidDateInput(value) {
-      if (!value) return false;
-      const d = new Date(value);
-      return !Number.isNaN(d.getTime());
-    }
-
-    function atLeastOneTrue(obj) {
-      return Object.values(obj).some((value) => value === true);
-    }
-
-    function showIntakeError(message) {
-      const errEl = document.getElementById("intake-error");
-      errEl.textContent = message;
-      errEl.style.display = "block";
-      window.scrollTo({
-        top: errEl.getBoundingClientRect().top + window.scrollY - 80,
-        behavior: "smooth"
-      });
-    }
-
-    function clearIntakeError() {
-      const errEl = document.getElementById("intake-error");
-      errEl.textContent = "";
-      errEl.style.display = "none";
-    }
-  </script>
+  function clearIntakeError() {
+    const errEl = document.getElementById("intake-error");
+    errEl.textContent = "";
+    errEl.style.display = "none";
+  }
+</script>
 </body>
 </html>
