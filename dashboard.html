@@ -20,6 +20,7 @@
       --navy: #0a1628;
       --navy-mid: #0f2044;
       --navy-light: #1a3260;
+      --navy-soft: #13274f;
       --cyan: #00c8e8;
       --cyan-dim: #0097b2;
       --cyan-faint: rgba(0, 200, 232, 0.08);
@@ -29,10 +30,13 @@
       --text-primary: #e8f0fe;
       --text-secondary: #a8bdd8;
       --text-muted: #6a80a0;
+      --text-faint: #90a6c4;
       --border: rgba(255, 255, 255, 0.07);
       --border-active: rgba(0, 200, 232, 0.3);
       --surface: rgba(255, 255, 255, 0.03);
       --surface-hover: rgba(255, 255, 255, 0.06);
+      --surface-strong: rgba(255, 255, 255, 0.05);
+      --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.22);
     }
 
     * {
@@ -54,7 +58,8 @@
     button,
     input,
     textarea,
-    select {
+    select,
+    a {
       font: inherit;
     }
 
@@ -138,9 +143,9 @@
       background: linear-gradient(135deg, #1a7fc4, #0097b2);
       color: #fff;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       padding: 14px;
       cursor: pointer;
       letter-spacing: 0.03em;
@@ -161,7 +166,7 @@
     .auth-error {
       background: rgba(232, 69, 69, 0.12);
       border: 1px solid rgba(232, 69, 69, 0.3);
-      border-radius: 6px;
+      border-radius: 8px;
       color: #ff9b9b;
       font-size: 13px;
       padding: 10px 12px;
@@ -180,7 +185,7 @@
     }
 
     .header {
-      background: #0f2044;
+      background: rgba(15, 32, 68, 0.94);
       border-bottom: 1px solid var(--border);
       padding: 0 16px;
       height: 56px;
@@ -190,7 +195,7 @@
       position: sticky;
       top: 0;
       z-index: 120;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
       flex-shrink: 0;
     }
 
@@ -199,7 +204,7 @@
       align-items: center;
       gap: 10px;
       font-size: 15px;
-      font-weight: 600;
+      font-weight: 650;
       background: linear-gradient(135deg, #1a7fc4, #00c8e8);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -234,9 +239,9 @@
       border: 1px solid rgba(0, 200, 232, 0.18);
       background: rgba(0, 200, 232, 0.08);
       color: var(--cyan);
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: 0.05em;
       text-transform: uppercase;
       transition: border-color 0.2s, background 0.2s, color 0.2s;
@@ -251,7 +256,7 @@
     .btn-signout {
       background: transparent;
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 8px;
       color: var(--text-secondary);
       font-size: 12px;
       padding: 6px 12px;
@@ -268,13 +273,14 @@
       position: sticky;
       top: 56px;
       z-index: 110;
-      background: #0f2044;
+      background: rgba(15, 32, 68, 0.94);
       border-bottom: 1px solid var(--border);
       flex-shrink: 0;
+      backdrop-filter: blur(10px);
     }
 
     .nav-tabs {
-      background: #0f2044;
+      background: transparent;
       display: flex;
       padding: 0 12px;
       gap: 2px;
@@ -312,7 +318,7 @@
       background: var(--urgent);
       color: #fff;
       font-size: 10px;
-      font-weight: 600;
+      font-weight: 700;
       padding: 1px 6px;
       border-radius: 10px;
       min-width: 18px;
@@ -323,9 +329,10 @@
       position: sticky;
       top: 103px;
       z-index: 100;
-      background: #0f2044;
+      background: rgba(15, 32, 68, 0.94);
       border-bottom: 1px solid var(--border);
       flex-shrink: 0;
+      backdrop-filter: blur(10px);
     }
 
     .desktop-layout {
@@ -344,6 +351,9 @@
       overflow-y: auto;
       width: 100%;
       min-height: 0;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0)),
+        var(--navy);
     }
 
     #detail-column {
@@ -371,7 +381,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.15);
       flex-wrap: wrap;
     }
 
@@ -382,8 +392,8 @@
       border-radius: 20px;
       color: var(--text-secondary);
       font-size: 12px;
-      font-weight: 500;
-      padding: 5px 12px;
+      font-weight: 600;
+      padding: 6px 12px;
       cursor: pointer;
       transition: all 0.2s;
     }
@@ -428,17 +438,18 @@
     .refresh-btn {
       background: transparent;
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 8px;
       color: var(--text-muted);
       padding: 5px 10px;
       cursor: pointer;
       font-size: 16px;
-      transition: color 0.2s;
+      transition: color 0.2s, border-color 0.2s;
       line-height: 1;
     }
 
     .refresh-btn:hover {
       color: var(--cyan);
+      border-color: var(--border-active);
     }
 
     .refresh-btn.spinning {
@@ -457,7 +468,7 @@
       align-items: center;
       gap: 8px;
       border-top: 1px solid rgba(255,255,255,0.04);
-      background: rgba(0, 0, 0, 0.15);
+      background: rgba(0, 0, 0, 0.12);
       flex-wrap: wrap;
     }
 
@@ -482,21 +493,22 @@
     }
 
     .case-list {
-      padding: 12px 16px;
+      padding: 12px 16px 20px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 10px;
     }
 
     .case-card {
-      background: var(--surface);
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 14px 16px;
       cursor: pointer;
-      transition: border-color 0.2s, background 0.2s, opacity 0.2s;
+      transition: border-color 0.2s, background 0.2s, opacity 0.2s, transform 0.12s;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
     }
 
     .case-card::before {
@@ -523,11 +535,13 @@
     .case-card:hover {
       border-color: var(--border-active);
       background: var(--surface-hover);
+      transform: translateY(-1px);
     }
 
     .case-card.active {
       border-color: rgba(0, 200, 232, 0.5) !important;
       background: rgba(0, 200, 232, 0.06) !important;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.16);
     }
 
     .case-card.reviewed {
@@ -535,8 +549,8 @@
     }
 
     .case-card.draft {
-      border-color: rgba(0, 200, 232, 0.18);
-      background: rgba(0, 200, 232, 0.04);
+      border-color: rgba(0, 200, 232, 0.2);
+      background: rgba(0, 200, 232, 0.045);
     }
 
     .case-card.removing {
@@ -548,7 +562,7 @@
     .status-badge {
       display: inline-block;
       font-size: 10px;
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: 0.05em;
       border-radius: 4px;
       padding: 1px 5px;
@@ -573,13 +587,13 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
     .severity-badge {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-size: 10px;
-      font-weight: 500;
+      font-weight: 600;
       padding: 2px 8px;
       border-radius: 4px;
       text-transform: uppercase;
@@ -606,8 +620,8 @@
     }
 
     .case-name {
-      font-size: 14px;
-      font-weight: 500;
+      font-size: 15px;
+      font-weight: 650;
       color: var(--text-primary);
       flex: 1;
       min-width: 0;
@@ -625,11 +639,13 @@
 
     .case-row2 {
       font-size: 13px;
-      color: #c0d4f0;
-      margin-bottom: 4px;
-      white-space: nowrap;
+      color: #e1edff;
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
       overflow: hidden;
-      text-overflow: ellipsis;
+      line-height: 1.45;
     }
 
     .case-row3 {
@@ -638,7 +654,8 @@
       gap: 12px;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-size: 11px;
-      color: var(--text-muted);
+      color: var(--text-faint);
+      flex-wrap: wrap;
     }
 
     .case-meta-item {
@@ -666,26 +683,27 @@
 
     .empty-state,
     .loading-state {
-      padding: 48px 24px;
+      padding: 56px 24px;
       text-align: center;
       color: var(--text-muted);
     }
 
     .empty-icon {
-      font-size: 36px;
+      font-size: 38px;
       margin-bottom: 12px;
       opacity: 0.45;
     }
 
     .empty-title {
       font-size: 15px;
-      font-weight: 500;
+      font-weight: 600;
       margin-bottom: 6px;
       color: var(--text-secondary);
     }
 
     .empty-sub {
       font-size: 13px;
+      line-height: 1.55;
     }
 
     .loading-dots::after {
@@ -711,7 +729,7 @@
     .detail-header {
       position: sticky;
       top: 0;
-      background: #0f2044;
+      background: rgba(15, 32, 68, 0.96);
       border-bottom: 1px solid var(--border);
       padding: 12px 16px;
       display: flex;
@@ -719,6 +737,8 @@
       gap: 12px;
       z-index: 30;
       flex-shrink: 0;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
     }
 
     .detail-scroll {
@@ -732,7 +752,7 @@
     .back-btn {
       background: transparent;
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 8px;
       color: var(--text-secondary);
       padding: 9px 14px;
       cursor: pointer;
@@ -754,14 +774,15 @@
     }
 
     .detail-patient-name {
-      font-size: 15px;
-      font-weight: 600;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.2;
     }
 
     .detail-patient-meta {
       font-size: 12px;
       color: var(--text-secondary);
-      margin-top: 2px;
+      margin-top: 3px;
     }
 
     .detail-body {
@@ -772,10 +793,11 @@
     }
 
     .detail-section {
-      background: var(--surface);
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 12px;
       overflow: hidden;
+      box-shadow: var(--shadow-soft);
     }
 
     .section-header {
@@ -790,7 +812,7 @@
 
     .section-title {
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: #c0d4f0;
@@ -808,9 +830,9 @@
     }
 
     .severity-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -840,17 +862,18 @@
     }
 
     .severity-detail-value {
-      font-size: 20px;
-      font-weight: 600;
+      font-size: 21px;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       margin-bottom: 4px;
     }
 
     .severity-reason {
-      font-size: 12px;
+      font-size: 13px;
       color: var(--text-secondary);
       font-style: italic;
+      line-height: 1.45;
     }
 
     .stats-grid {
@@ -867,7 +890,7 @@
 
     .stat-label {
       font-size: 10px;
-      font-weight: 500;
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: #8ab0d0;
@@ -877,7 +900,7 @@
     .stat-value {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-size: 15px;
-      font-weight: 500;
+      font-weight: 600;
       color: var(--text-primary);
     }
 
@@ -891,13 +914,13 @@
     .summary-item {
       background: rgba(255, 255, 255, 0.02);
       border: 1px solid var(--border);
-      border-radius: 8px;
+      border-radius: 10px;
       padding: 12px;
     }
 
     .summary-label {
       font-size: 10px;
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: #8ab0d0;
@@ -907,67 +930,14 @@
     .summary-value {
       font-size: 13px;
       color: #dbe8fb;
-      line-height: 1.5;
+      line-height: 1.55;
       white-space: pre-wrap;
       word-break: break-word;
     }
 
-    .flags-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      padding: 16px;
-    }
-
-    .flag-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: #b0c8e8;
-    }
-
-    .flag-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .flag-dot.present {
-      background: var(--urgent);
-      box-shadow: 0 0 6px rgba(232, 69, 69, 0.5);
-    }
-
-    .flag-dot.absent {
-      background: #4a6080;
-      opacity: 0.4;
-    }
-
-    .clinical-note-text,
-    .transcript-text {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 12px;
-      color: #c8daf0;
-      line-height: 1.7;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .transcript-text {
-      color: var(--text-secondary);
-      max-height: 300px;
-      overflow-y: auto;
-    }
-
-    .note-lock-badge {
-      font-size: 10px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 2px 8px;
-      color: var(--text-muted);
-      letter-spacing: 0.04em;
+    .review-panel {
+      border: 1px solid rgba(0, 200, 232, 0.14);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.16);
     }
 
     .review-form {
@@ -979,7 +949,7 @@
 
     .form-label {
       font-size: 11px;
-      font-weight: 500;
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.07em;
       color: var(--text-secondary);
@@ -992,7 +962,7 @@
       width: 100%;
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 8px;
       color: var(--text-primary);
       outline: none;
       transition: border-color 0.2s;
@@ -1004,7 +974,7 @@
       line-height: 1.6;
       padding: 12px;
       resize: vertical;
-      min-height: 90px;
+      min-height: 96px;
     }
 
     .form-textarea:focus,
@@ -1094,6 +1064,18 @@
       transform: translateY(-50%) translateX(20px);
     }
 
+    .decision-band {
+      display: grid;
+      gap: 10px;
+      padding: 0 16px 16px;
+    }
+
+    .decision-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
     .action-row {
       display: flex;
       flex-direction: column;
@@ -1103,9 +1085,9 @@
     .btn-action,
     .btn-mark-reviewed {
       width: 100%;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       padding: 14px;
       cursor: pointer;
       transition: opacity 0.2s, transform 0.1s;
@@ -1116,7 +1098,7 @@
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border);
       color: var(--text-secondary);
-      font-weight: 500;
+      font-weight: 600;
     }
 
     .btn-action:hover {
@@ -1132,7 +1114,7 @@
       background: rgba(0, 200, 232, 0.1);
       border: 1px solid rgba(0, 200, 232, 0.24);
       color: var(--cyan);
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .btn-export-record:hover {
@@ -1157,6 +1139,7 @@
       background: linear-gradient(135deg, #0a7a4a, #00a866);
       border: none;
       color: white;
+      box-shadow: 0 14px 28px rgba(0, 168, 102, 0.2);
     }
 
     .btn-action:active,
@@ -1191,6 +1174,64 @@
 
     .detail-state-text.draft {
       color: var(--cyan);
+    }
+
+    .flags-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      padding: 16px;
+    }
+
+    .flag-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #b0c8e8;
+    }
+
+    .flag-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .flag-dot.present {
+      background: var(--urgent);
+      box-shadow: 0 0 6px rgba(232, 69, 69, 0.5);
+    }
+
+    .flag-dot.absent {
+      background: #4a6080;
+      opacity: 0.4;
+    }
+
+    .clinical-note-text,
+    .transcript-text {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      color: #c8daf0;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .transcript-text {
+      color: var(--text-secondary);
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .note-lock-badge {
+      font-size: 10px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 8px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
     }
 
     .collapsible-toggle {
@@ -1322,10 +1363,10 @@
       }
 
       .queue-column {
-        width: 390px;
-        min-width: 330px;
-        max-width: 430px;
-        flex: 0 0 390px;
+        width: 400px;
+        min-width: 340px;
+        max-width: 440px;
+        flex: 0 0 400px;
         border-right: 1px solid var(--border);
         overflow-y: auto;
         overflow-x: hidden;
@@ -1369,6 +1410,13 @@
       }
     }
 
+    @media (max-width: 680px) {
+      .flags-grid,
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
     @media (max-width: 520px) {
       .header-right {
         gap: 8px;
@@ -1378,6 +1426,10 @@
       .btn-signout {
         padding-left: 10px;
         padding-right: 10px;
+      }
+
+      .case-row3 {
+        gap: 8px;
       }
     }
   </style>
@@ -1437,7 +1489,9 @@
 
     <div class="tabs-shell" id="tabs-shell">
       <nav class="nav-tabs">
-        <button class="nav-tab active" id="tab-queue" type="button">Queue <span class="tab-badge" id="queue-count-badge" style="display:none">0</span></button>
+        <button class="nav-tab active" id="tab-queue" type="button">
+          Queue <span class="tab-badge" id="queue-count-badge" style="display:none">0</span>
+        </button>
         <button class="nav-tab" id="tab-new" type="button">New</button>
         <button class="nav-tab" id="tab-drafts" type="button">Drafts</button>
         <button class="nav-tab" id="tab-reviewed" type="button">Reviewed</button>
@@ -1490,1130 +1544,1145 @@
   <div id="toast"></div>
 
   <script>
-    const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+  const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
+  const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY_HERE";
 
-    if (!window.supabase || !window.supabase.createClient) {
-      document.getElementById("auth-error").style.display = "block";
-      document.getElementById("auth-error").textContent =
-        "Supabase library failed to load. Check network / CDN blocking.";
-      throw new Error("Supabase library missing");
+  if (!window.supabase || !window.supabase.createClient) {
+    const errEl = document.getElementById("auth-error");
+    if (errEl) {
+      errEl.style.display = "block";
+      errEl.textContent = "Supabase library failed to load. Check network / CDN blocking.";
+    }
+    throw new Error("Supabase library missing");
+  }
+
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let currentTab = "queue";
+  let currentFilter = "all";
+  let currentSort = "severity";
+  let allCases = [];
+  let currentCase = null;
+  let currentUser = null;
+  let selectedCaseId = null;
+  let refreshInterval = null;
+  let isMobile = window.innerWidth < 768;
+  let queueCount = 0;
+
+  window.addEventListener("resize", () => {
+    isMobile = window.innerWidth < 768;
+    if (!isMobile) {
+      document.getElementById("queue-column").style.display = "flex";
+      document.getElementById("detail-column").style.display = "flex";
+    } else if (!currentCase) {
+      document.getElementById("detail-column").style.display = "none";
+    }
+    updateControlsDisabledState();
+  });
+
+  document.getElementById("auth-btn").addEventListener("click", handleLogin);
+  document.getElementById("signout-btn").addEventListener("click", handleSignOut);
+  document.getElementById("refresh-btn").addEventListener("click", loadCases);
+
+  document.getElementById("auth-email").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") handleLogin();
+  });
+
+  document.getElementById("auth-password").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") handleLogin();
+  });
+
+  document.getElementById("tab-queue").addEventListener("click", () => switchTab("queue"));
+  document.getElementById("tab-new").addEventListener("click", () => switchTab("new"));
+  document.getElementById("tab-drafts").addEventListener("click", () => switchTab("drafts"));
+  document.getElementById("tab-reviewed").addEventListener("click", () => switchTab("reviewed"));
+  document.getElementById("tab-all").addEventListener("click", () => switchTab("all"));
+
+  document.getElementById("chip-all").addEventListener("click", () => setFilter("all"));
+  document.getElementById("chip-urgent").addEventListener("click", () => setFilter("urgent"));
+  document.getElementById("chip-emergency").addEventListener("click", () => setFilter("emergency"));
+  document.getElementById("chip-routine").addEventListener("click", () => setFilter("routine"));
+
+  document.getElementById("sort-severity").addEventListener("click", () => {
+    if (currentTab === "queue") {
+      setSort("severity");
+      return;
+    }
+    if (!isUrgencySortRedundant()) setSort("severity");
+  });
+  document.getElementById("sort-newest").addEventListener("click", () => setSort("newest"));
+  document.getElementById("sort-oldest").addEventListener("click", () => setSort("oldest"));
+
+  async function handleLogin() {
+    const email = document.getElementById("auth-email").value.trim();
+    const password = document.getElementById("auth-password").value;
+    const btn = document.getElementById("auth-btn");
+    const errEl = document.getElementById("auth-error");
+
+    errEl.style.display = "none";
+    errEl.textContent = "";
+
+    if (!email || !password) {
+      errEl.textContent = "Enter both email and password.";
+      errEl.style.display = "block";
+      return;
     }
 
-    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    btn.disabled = true;
+    btn.textContent = "Signing in...";
 
-    let currentTab = "queue";
-    let currentFilter = "all";
-    let currentSort = "severity";
-    let allCases = [];
-    let currentCase = null;
-    let currentUser = null;
-    let selectedCaseId = null;
-    let refreshInterval = null;
-    let isMobile = window.innerWidth < 768;
-    let queueCount = 0;
+    try {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
 
-    window.addEventListener("resize", () => {
-      isMobile = window.innerWidth < 768;
-      if (!isMobile) {
-        document.getElementById("queue-column").style.display = "flex";
-        document.getElementById("detail-column").style.display = "flex";
-      } else if (!currentCase) {
+      if (error) {
+        errEl.textContent = error.message || "Sign-in failed.";
+        errEl.style.display = "block";
+        return;
+      }
+
+      if (!data || !data.user) {
+        errEl.textContent = "Sign-in returned no user.";
+        errEl.style.display = "block";
+        return;
+      }
+
+      showApp(data.user);
+    } catch (err) {
+      errEl.textContent = err?.message || "Unexpected sign-in error.";
+      errEl.style.display = "block";
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Sign In";
+    }
+  }
+
+  async function handleSignOut() {
+    try {
+      await sb.auth.signOut();
+    } catch (err) {
+      console.error("Sign-out error:", err);
+    }
+    window.location.reload();
+  }
+
+  async function init() {
+    try {
+      const { data, error } = await sb.auth.getSession();
+      if (error) {
+        console.error("Session error:", error);
+        return;
+      }
+      if (data?.session?.user) {
+        showApp(data.session.user);
+      } else if (isMobile) {
         document.getElementById("detail-column").style.display = "none";
       }
+    } catch (err) {
+      console.error("Init error:", err);
+    }
+  }
+
+  function showApp(user) {
+    currentUser = user;
+    document.getElementById("auth-screen").style.display = "none";
+    document.getElementById("app").style.display = "flex";
+    document.getElementById("header-user-email").textContent = user.email || "";
+
+    if (refreshInterval) clearInterval(refreshInterval);
+    refreshInterval = setInterval(loadCases, 90000);
+
+    if (isMobile) {
+      document.getElementById("detail-column").style.display = "none";
+    }
+
+    loadCases();
+  }
+
+  async function loadCases() {
+    const btn = document.getElementById("refresh-btn");
+    btn.classList.add("spinning");
+
+    try {
+      await Promise.all([
+        loadCurrentTabCases(),
+        loadQueueCount()
+      ]);
+
+      renderQueue();
+      updateQueueBadge();
+      updateSortChipState();
       updateControlsDisabledState();
-    });
-
-    document.getElementById("auth-btn").addEventListener("click", handleLogin);
-    document.getElementById("signout-btn").addEventListener("click", handleSignOut);
-    document.getElementById("refresh-btn").addEventListener("click", loadCases);
-
-    document.getElementById("auth-email").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") handleLogin();
-    });
-
-    document.getElementById("auth-password").addEventListener("keydown", (e) => {
-      if (e.key === "Enter") handleLogin();
-    });
-
-    document.getElementById("tab-queue").addEventListener("click", () => switchTab("queue"));
-    document.getElementById("tab-new").addEventListener("click", () => switchTab("new"));
-    document.getElementById("tab-drafts").addEventListener("click", () => switchTab("drafts"));
-    document.getElementById("tab-reviewed").addEventListener("click", () => switchTab("reviewed"));
-    document.getElementById("tab-all").addEventListener("click", () => switchTab("all"));
-
-    document.getElementById("chip-all").addEventListener("click", () => setFilter("all"));
-    document.getElementById("chip-urgent").addEventListener("click", () => setFilter("urgent"));
-    document.getElementById("chip-emergency").addEventListener("click", () => setFilter("emergency"));
-    document.getElementById("chip-routine").addEventListener("click", () => setFilter("routine"));
-
-    document.getElementById("sort-severity").addEventListener("click", () => {
-      if (!isUrgencySortRedundant() && currentTab !== "queue") setSort("severity");
-      if (currentTab === "queue") setSort("severity");
-    });
-    document.getElementById("sort-newest").addEventListener("click", () => setSort("newest"));
-    document.getElementById("sort-oldest").addEventListener("click", () => setSort("oldest"));
-
-    async function handleLogin() {
-      const email = document.getElementById("auth-email").value.trim();
-      const password = document.getElementById("auth-password").value;
-      const btn = document.getElementById("auth-btn");
-      const errEl = document.getElementById("auth-error");
-
-      errEl.style.display = "none";
-      errEl.textContent = "";
-
-      if (!email || !password) {
-        errEl.textContent = "Enter both email and password.";
-        errEl.style.display = "block";
-        return;
-      }
-
-      btn.disabled = true;
-      btn.textContent = "Signing in...";
-
-      try {
-        const { data, error } = await sb.auth.signInWithPassword({ email, password });
-
-        if (error) {
-          errEl.textContent = error.message || "Sign-in failed.";
-          errEl.style.display = "block";
-          return;
-        }
-
-        if (!data || !data.user) {
-          errEl.textContent = "Sign-in returned no user.";
-          errEl.style.display = "block";
-          return;
-        }
-
-        showApp(data.user);
-      } catch (err) {
-        errEl.textContent = err?.message || "Unexpected sign-in error.";
-        errEl.style.display = "block";
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "Sign In";
-      }
+      updateSortBarVisibility();
+    } catch (err) {
+      console.error("Load exception:", err);
+      showToast("Unexpected load error");
+    } finally {
+      btn.classList.remove("spinning");
     }
+  }
 
-    async function handleSignOut() {
-      try {
-        await sb.auth.signOut();
-      } catch (err) {
-        console.error("Sign-out error:", err);
-      }
-      window.location.reload();
-    }
+  async function loadCurrentTabCases() {
+    let query;
 
-    async function init() {
-      try {
-        const { data, error } = await sb.auth.getSession();
-        if (error) {
-          console.error("Session error:", error);
-          return;
-        }
-        if (data?.session?.user) {
-          showApp(data.session.user);
-        } else if (isMobile) {
-          document.getElementById("detail-column").style.display = "none";
-        }
-      } catch (err) {
-        console.error("Init error:", err);
-      }
-    }
-
-    function showApp(user) {
-      currentUser = user;
-      document.getElementById("auth-screen").style.display = "none";
-      document.getElementById("app").style.display = "flex";
-      document.getElementById("header-user-email").textContent = user.email || "";
-
-      if (refreshInterval) clearInterval(refreshInterval);
-      refreshInterval = setInterval(loadCases, 90000);
-
-      if (isMobile) {
-        document.getElementById("detail-column").style.display = "none";
-      }
-
-      loadCases();
-    }
-
-    async function loadCases() {
-      const btn = document.getElementById("refresh-btn");
-      btn.classList.add("spinning");
-
-      try {
-        await Promise.all([
-          loadCurrentTabCases(),
-          loadQueueCount()
-        ]);
-
-        renderQueue();
-        updateQueueBadge();
-        updateSortChipState();
-        updateControlsDisabledState();
-        updateSortBarVisibility();
-      } catch (err) {
-        console.error("Load exception:", err);
-        showToast("Unexpected load error");
-      } finally {
-        btn.classList.remove("spinning");
-      }
-    }
-
-    async function loadCurrentTabCases() {
-      let query;
-
-      if (currentTab === "queue") {
-        query = sb
-          .from("triage_cases")
-          .select("*")
-          .or("review_status.eq.new,review_status.eq.draft,review_status.is.null")
-          .order("created_at", { ascending: false })
-          .limit(300);
-      } else if (currentTab === "new") {
-        query = sb
-          .from("triage_cases")
-          .select("*")
-          .or("review_status.eq.new,review_status.is.null")
-          .order("created_at", { ascending: false })
-          .limit(300);
-      } else if (currentTab === "drafts") {
-        query = sb
-          .from("triage_cases")
-          .select("*")
-          .eq("review_status", "draft")
-          .order("created_at", { ascending: false })
-          .limit(300);
-      } else if (currentTab === "reviewed") {
-        query = sb
-          .from("triage_cases")
-          .select("*")
-          .eq("review_status", "reviewed")
-          .order("created_at", { ascending: false })
-          .limit(300);
-      } else {
-        query = sb
-          .from("triage_cases")
-          .select("*")
-          .order("created_at", { ascending: false })
-          .limit(300);
-      }
-
-      const { data, error } = await query;
-
-      if (error) {
-        console.error("Load error:", error);
-        showToast("Error loading cases: " + (error.message || "unknown"));
-        allCases = [];
-        return;
-      }
-
-      allCases = Array.isArray(data) ? data : [];
-    }
-
-    async function loadQueueCount() {
-      const { count, error } = await sb
+    if (currentTab === "queue") {
+      query = sb
         .from("triage_cases")
-        .select("id", { count: "exact", head: true })
-        .or("review_status.eq.new,review_status.eq.draft,review_status.is.null");
-
-      if (error) {
-        console.error("Queue count error:", error);
-        return;
-      }
-
-      queueCount = typeof count === "number" ? count : 0;
+        .select("*")
+        .or("review_status.eq.new,review_status.eq.draft,review_status.is.null")
+        .order("created_at", { ascending: false })
+        .limit(300);
+    } else if (currentTab === "new") {
+      query = sb
+        .from("triage_cases")
+        .select("*")
+        .or("review_status.eq.new,review_status.is.null")
+        .order("created_at", { ascending: false })
+        .limit(300);
+    } else if (currentTab === "drafts") {
+      query = sb
+        .from("triage_cases")
+        .select("*")
+        .eq("review_status", "draft")
+        .order("created_at", { ascending: false })
+        .limit(300);
+    } else if (currentTab === "reviewed") {
+      query = sb
+        .from("triage_cases")
+        .select("*")
+        .eq("review_status", "reviewed")
+        .order("created_at", { ascending: false })
+        .limit(300);
+    } else {
+      query = sb
+        .from("triage_cases")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(300);
     }
 
-    function updateQueueBadge() {
-      const badge = document.getElementById("queue-count-badge");
-      if (queueCount > 0) {
-        badge.textContent = String(queueCount);
-        badge.style.display = "inline-block";
-      } else {
-        badge.style.display = "none";
-      }
+    const { data, error } = await query;
+
+    if (error) {
+      console.error("Load error:", error);
+      showToast("Error loading cases: " + (error.message || "unknown"));
+      allCases = [];
+      return;
     }
 
-    function switchTab(tab) {
-      if (controlsShouldBeDisabled()) return;
+    allCases = Array.isArray(data) ? data : [];
+  }
 
-      if (isMobile) {
-        document.getElementById("queue-column").style.display = "flex";
-        document.getElementById("detail-column").style.display = "none";
-      }
+  async function loadQueueCount() {
+    const { count, error } = await sb
+      .from("triage_cases")
+      .select("id", { count: "exact", head: true })
+      .or("review_status.eq.new,review_status.eq.draft,review_status.is.null");
 
-      currentTab = tab;
-      selectedCaseId = null;
-      currentCase = null;
+    if (error) {
+      console.error("Queue count error:", error);
+      return;
+    }
 
-      ["queue", "new", "drafts", "reviewed", "all"].forEach((t) => {
-        document.getElementById("tab-" + t).classList.toggle("active", t === tab);
-      });
+    queueCount = typeof count === "number" ? count : 0;
+  }
 
-      currentFilter = "all";
-      ["all", "urgent", "emergency", "routine"].forEach((c) => {
-        document.getElementById("chip-" + c).classList.toggle("active", c === "all");
-      });
+  function updateQueueBadge() {
+    const badge = document.getElementById("queue-count-badge");
+    if (queueCount > 0) {
+      badge.textContent = String(queueCount);
+      badge.style.display = "inline-block";
+    } else {
+      badge.style.display = "none";
+    }
+  }
 
+  function switchTab(tab) {
+    if (controlsShouldBeDisabled()) return;
+
+    if (isMobile) {
+      document.getElementById("queue-column").style.display = "flex";
+      document.getElementById("detail-column").style.display = "none";
+    }
+
+    currentTab = tab;
+    selectedCaseId = null;
+    currentCase = null;
+
+    ["queue", "new", "drafts", "reviewed", "all"].forEach((t) => {
+      document.getElementById("tab-" + t).classList.toggle("active", t === tab);
+    });
+
+    currentFilter = "all";
+    ["all", "urgent", "emergency", "routine"].forEach((c) => {
+      document.getElementById("chip-" + c).classList.toggle("active", c === "all");
+    });
+
+    currentSort = "severity";
+    ["severity", "newest", "oldest"].forEach((k) => {
+      const el = document.getElementById("sort-" + k);
+      if (el) el.classList.toggle("active", k === "severity");
+    });
+
+    updateSortBarVisibility();
+    updateSortChipState();
+
+    if (!isMobile) {
+      renderEmptyDetailPane();
+    }
+
+    loadCases();
+  }
+
+  function updateSortBarVisibility() {
+    const sortBar = document.getElementById("sort-bar");
+    const oldestBtn = document.getElementById("sort-oldest");
+
+    sortBar.style.display = "flex";
+    oldestBtn.style.display = currentTab === "queue" ? "none" : "inline-flex";
+
+    if (currentTab === "queue" && currentSort === "oldest") {
       currentSort = "severity";
       ["severity", "newest", "oldest"].forEach((k) => {
         const el = document.getElementById("sort-" + k);
         if (el) el.classList.toggle("active", k === "severity");
       });
-
-      updateSortBarVisibility();
-      updateSortChipState();
-
-      if (!isMobile) {
-        renderEmptyDetailPane();
-      }
-
-      loadCases();
     }
+  }
 
-    function updateSortBarVisibility() {
-      const sortBar = document.getElementById("sort-bar");
-      const oldestBtn = document.getElementById("sort-oldest");
+  function renderEmptyDetailPane() {
+    const panel = document.getElementById("detail-panel");
+    panel.innerHTML = `
+      <div class="detail-placeholder" id="detail-placeholder">
+        <div class="detail-placeholder-icon">🦷</div>
+        <div class="detail-placeholder-text">Select a case to review</div>
+      </div>
+    `;
+  }
 
-      sortBar.style.display = "flex";
-      oldestBtn.style.display = currentTab === "queue" ? "none" : "inline-flex";
+  function setSort(sortKey) {
+    if (controlsShouldBeDisabled()) return;
+    if (sortKey === "oldest" && currentTab === "queue") return;
 
-      if (currentTab === "queue" && currentSort === "oldest") {
-        currentSort = "severity";
-        ["severity", "newest", "oldest"].forEach((k) => {
-          const el = document.getElementById("sort-" + k);
-          if (el) el.classList.toggle("active", k === "severity");
-        });
-      }
-    }
+    currentSort = sortKey;
 
-    function renderEmptyDetailPane() {
-      const panel = document.getElementById("detail-panel");
-      panel.innerHTML = `
-        <div class="detail-placeholder" id="detail-placeholder">
-          <div class="detail-placeholder-icon">🦷</div>
-          <div class="detail-placeholder-text">Select a case to review</div>
-        </div>
-      `;
-    }
+    ["severity", "newest", "oldest"].forEach((k) => {
+      const el = document.getElementById("sort-" + k);
+      if (el) el.classList.toggle("active", k === sortKey);
+    });
 
-    function setSort(sortKey) {
-      if (controlsShouldBeDisabled()) return;
-      if (sortKey === "oldest" && currentTab === "queue") return;
+    updateSortChipState();
+    renderQueue();
+  }
 
-      currentSort = sortKey;
+  function setFilter(filterKey) {
+    if (controlsShouldBeDisabled()) return;
 
+    currentFilter = filterKey;
+    ["all", "urgent", "emergency", "routine"].forEach((k) => {
+      document.getElementById("chip-" + k).classList.toggle("active", k === filterKey);
+    });
+
+    if (isUrgencySortRedundant() && currentSort === "severity") {
+      currentSort = "newest";
       ["severity", "newest", "oldest"].forEach((k) => {
         const el = document.getElementById("sort-" + k);
-        if (el) el.classList.toggle("active", k === sortKey);
-      });
-
-      updateSortChipState();
-      renderQueue();
-    }
-
-    function setFilter(filterKey) {
-      if (controlsShouldBeDisabled()) return;
-
-      currentFilter = filterKey;
-      ["all", "urgent", "emergency", "routine"].forEach((k) => {
-        document.getElementById("chip-" + k).classList.toggle("active", k === filterKey);
-      });
-
-      if (isUrgencySortRedundant() && currentSort === "severity") {
-        currentSort = currentTab === "queue" ? "newest" : "newest";
-        ["severity", "newest", "oldest"].forEach((k) => {
-          const el = document.getElementById("sort-" + k);
-          if (el) el.classList.toggle("active", k === "newest");
-        });
-      }
-
-      updateSortChipState();
-      renderQueue();
-    }
-
-    function isUrgencySortRedundant() {
-      return currentFilter !== "all";
-    }
-
-    function updateSortChipState() {
-      const severityChip = document.getElementById("sort-severity");
-      if (!severityChip) return;
-
-      const redundant = isUrgencySortRedundant();
-      severityChip.classList.toggle("disabled", redundant);
-
-      if (redundant && currentSort === "severity") {
-        currentSort = "newest";
-        ["severity", "newest", "oldest"].forEach((k) => {
-          const el = document.getElementById("sort-" + k);
-          if (el) el.classList.toggle("active", k === "newest");
-        });
-      }
-    }
-
-    function controlsShouldBeDisabled() {
-      return !!selectedCaseId;
-    }
-
-    function updateControlsDisabledState() {
-      const tabsShell = document.getElementById("tabs-shell");
-      const queueControls = document.getElementById("queue-controls");
-      const queueHint = document.getElementById("queue-hint");
-
-      const disabled = controlsShouldBeDisabled();
-
-      tabsShell.classList.toggle("controls-disabled", disabled);
-      queueControls.classList.toggle("controls-disabled", disabled);
-      queueHint.classList.toggle("show", disabled);
-    }
-
-    function renderQueue() {
-      const panel = document.getElementById("queue-panel");
-      let cases = [...allCases];
-
-      if (currentTab === "queue") {
-        cases = cases.filter((c) => c.review_status !== "reviewed");
-      }
-
-      if (currentFilter !== "all") {
-        cases = cases.filter((c) => c.severity === currentFilter);
-      }
-
-      const sevOrder = { urgent: 1, emergency: 2, routine: 3 };
-
-      if (currentSort === "severity" && !isUrgencySortRedundant()) {
-        cases.sort((a, b) => {
-          const aOrder = sevOrder[a.severity] ?? 9;
-          const bOrder = sevOrder[b.severity] ?? 9;
-          return aOrder - bOrder || new Date(b.created_at) - new Date(a.created_at);
-        });
-      } else if (currentSort === "newest") {
-        cases.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-      } else if (currentSort === "oldest") {
-        cases.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-      }
-
-      if (!cases.length) {
-        const { emptyTitle, emptySub } = getEmptyStateCopy();
-        panel.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">✓</div>
-            <div class="empty-title">${escHtml(emptyTitle)}</div>
-            <div class="empty-sub">${escHtml(emptySub)}</div>
-          </div>
-        `;
-        return;
-      }
-
-      panel.innerHTML = `<div class="case-list">${cases.map(renderCaseCard).join("")}</div>`;
-
-      panel.querySelectorAll(".case-card").forEach((el) => {
-        el.addEventListener("click", () => openCase(el.dataset.caseId));
+        if (el) el.classList.toggle("active", k === "newest");
       });
     }
 
-    function getEmptyStateCopy() {
-      if (currentTab === "queue") {
-        return {
-          emptyTitle: "No active cases",
-          emptySub: "No new or draft cases are currently waiting in the queue"
-        };
-      }
-      if (currentTab === "new") {
-        return {
-          emptyTitle: "No new cases",
-          emptySub: "No untouched cases match this filter"
-        };
-      }
-      if (currentTab === "drafts") {
-        return {
-          emptyTitle: "No drafts",
-          emptySub: "No cases are currently in draft status"
-        };
-      }
-      if (currentTab === "reviewed") {
-        return {
-          emptyTitle: "No reviewed cases",
-          emptySub: "No reviewed cases match this filter"
-        };
-      }
-      return {
-        emptyTitle: "All clear",
-        emptySub: "No cases match this filter"
-      };
+    updateSortChipState();
+    renderQueue();
+  }
+
+  function isUrgencySortRedundant() {
+    return currentFilter !== "all";
+  }
+
+  function updateSortChipState() {
+    const severityChip = document.getElementById("sort-severity");
+    if (!severityChip) return;
+
+    const redundant = isUrgencySortRedundant();
+    severityChip.classList.toggle("disabled", redundant);
+
+    if (redundant && currentSort === "severity") {
+      currentSort = "newest";
+      ["severity", "newest", "oldest"].forEach((k) => {
+        const el = document.getElementById("sort-" + k);
+        if (el) el.classList.toggle("active", k === "newest");
+      });
+    }
+  }
+
+  function controlsShouldBeDisabled() {
+    return !!selectedCaseId;
+  }
+
+  function updateControlsDisabledState() {
+    const tabsShell = document.getElementById("tabs-shell");
+    const queueControls = document.getElementById("queue-controls");
+    const queueHint = document.getElementById("queue-hint");
+
+    const disabled = controlsShouldBeDisabled();
+
+    tabsShell.classList.toggle("controls-disabled", disabled);
+    queueControls.classList.toggle("controls-disabled", disabled);
+    queueHint.classList.toggle("show", disabled);
+  }
+
+  function renderQueue() {
+    const panel = document.getElementById("queue-panel");
+    let cases = [...allCases];
+
+    if (currentTab === "queue") {
+      cases = cases.filter((c) => c.review_status !== "reviewed");
     }
 
-    function renderCaseCard(c) {
-      const so = c.structured_output || {};
-      const name = c.patient_name || "Unknown Patient";
-      const phone = c.patient_phone ? formatPhone(c.patient_phone) : "-";
-      const phoneRaw = c.patient_phone || "";
-      const complaint = so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-";
-      const painValue = so.pain_score ?? c.pain_score;
-      const pain = painValue !== null && painValue !== undefined && painValue !== "" ? `Pain ${painValue}/10` : "";
-      const time = formatTime(c.created_at);
-      const reviewStatus = c.review_status || "new";
-      const reviewed = reviewStatus === "reviewed";
-      const draft = reviewStatus === "draft";
-      const isActive = c.id === selectedCaseId;
+    if (currentFilter !== "all") {
+      cases = cases.filter((c) => c.severity === currentFilter);
+    }
 
-      const phoneEl = phoneRaw
-        ? `<a class="tel-link" href="tel:${escAttr(phoneRaw)}">${escHtml(phone)}</a>`
-        : `<span>${escHtml(phone)}</span>`;
+    const sevOrder = { urgent: 1, emergency: 2, routine: 3 };
 
-      return `
-        <div
-          class="case-card ${escAttr(c.severity || "")}${reviewed ? " reviewed" : ""}${draft ? " draft" : ""}${isActive ? " active" : ""}"
-          id="card-${escAttr(c.id)}"
-          data-case-id="${escAttr(c.id)}"
-        >
-          <div class="case-row1">
-            <span class="severity-badge badge-${escAttr(c.severity || "routine")}">${escHtml(c.severity || "unknown")}</span>
-            <span class="case-name">
-              ${escHtml(name)}
-              ${reviewed ? '<span class="status-badge reviewed">Reviewed</span>' : ""}
-              ${draft ? '<span class="status-badge draft">Draft</span>' : ""}
-            </span>
-            <span class="case-time">${escHtml(time)}</span>
-          </div>
-          <div class="case-row2">${escHtml(complaint)}</div>
-          <div class="case-row3">
-            <span class="case-meta-item">${phoneEl}</span>
-            ${pain ? `<span class="case-meta-item">${escHtml(pain)}</span>` : ""}
-            ${reviewed ? '<span class="reviewed-dot" title="Reviewed"></span>' : ""}
-            ${draft ? '<span class="draft-dot" title="Draft"></span>' : ""}
-          </div>
+    if (currentSort === "severity" && !isUrgencySortRedundant()) {
+      cases.sort((a, b) => {
+        const aOrder = sevOrder[a.severity] ?? 9;
+        const bOrder = sevOrder[b.severity] ?? 9;
+        return aOrder - bOrder || new Date(b.created_at) - new Date(a.created_at);
+      });
+    } else if (currentSort === "newest") {
+      cases.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    } else if (currentSort === "oldest") {
+      cases.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    }
+
+    if (!cases.length) {
+      const { emptyTitle, emptySub } = getEmptyStateCopy();
+      panel.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">✓</div>
+          <div class="empty-title">${escHtml(emptyTitle)}</div>
+          <div class="empty-sub">${escHtml(emptySub)}</div>
         </div>
       `;
+      return;
     }
 
-    async function openCase(id) {
-      selectedCaseId = id;
+    panel.innerHTML = `<div class="case-list">${cases.map(renderCaseCard).join("")}</div>`;
 
-      document.querySelectorAll(".case-card").forEach((el) => el.classList.remove("active"));
-      const cardEl = document.getElementById("card-" + CSS.escape(id));
-      if (cardEl) cardEl.classList.add("active");
+    panel.querySelectorAll(".case-card").forEach((el) => {
+      el.addEventListener("click", () => openCase(el.dataset.caseId));
+    });
+  }
 
-      updateControlsDisabledState();
+  function getEmptyStateCopy() {
+    if (currentTab === "queue") {
+      return {
+        emptyTitle: "No active cases",
+        emptySub: "No new or draft cases are currently waiting in the queue."
+      };
+    }
+    if (currentTab === "new") {
+      return {
+        emptyTitle: "No new cases",
+        emptySub: "No untouched cases match this filter."
+      };
+    }
+    if (currentTab === "drafts") {
+      return {
+        emptyTitle: "No drafts",
+        emptySub: "No cases are currently in draft status."
+      };
+    }
+    if (currentTab === "reviewed") {
+      return {
+        emptyTitle: "No reviewed cases",
+        emptySub: "No reviewed cases match this filter."
+      };
+    }
+    return {
+      emptyTitle: "All clear",
+      emptySub: "No cases match this filter."
+    };
+  }
+</script>
+  <script>
+  function renderCaseCard(c) {
+    const so = c.structured_output || {};
+    const name = c.patient_name || "Unknown Patient";
+    const phone = c.patient_phone ? formatPhone(c.patient_phone) : "-";
+    const phoneRaw = c.patient_phone || "";
+    const complaint = so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-";
+    const painValue = so.pain_score ?? c.pain_score;
+    const pain = painValue !== null && painValue !== undefined && painValue !== "" ? `Pain ${painValue}/10` : "";
+    const time = formatTime(c.created_at);
+    const reviewStatus = c.review_status || "new";
+    const reviewed = reviewStatus === "reviewed";
+    const draft = reviewStatus === "draft";
+    const isActive = c.id === selectedCaseId;
 
-      if (isMobile) {
-        document.getElementById("queue-column").style.display = "none";
-        document.getElementById("detail-column").style.display = "flex";
-      }
+    const phoneEl = phoneRaw
+      ? `<a class="tel-link" href="tel:${escAttr(phoneRaw)}">${escHtml(phone)}</a>`
+      : `<span>${escHtml(phone)}</span>`;
 
-      document.getElementById("detail-panel").innerHTML =
-        '<div class="loading-state"><span class="loading-dots">Loading</span></div>';
+    return `
+      <div
+        class="case-card ${escAttr(c.severity || "")}${reviewed ? " reviewed" : ""}${draft ? " draft" : ""}${isActive ? " active" : ""}"
+        id="card-${escAttr(c.id)}"
+        data-case-id="${escAttr(c.id)}"
+      >
+        <div class="case-row1">
+          <span class="severity-badge badge-${escAttr(c.severity || "routine")}">${escHtml(c.severity || "unknown")}</span>
+          <span class="case-name">
+            ${escHtml(name)}
+            ${reviewed ? '<span class="status-badge reviewed">Reviewed</span>' : ""}
+            ${draft ? '<span class="status-badge draft">Draft</span>' : ""}
+          </span>
+          <span class="case-time">${escHtml(time)}</span>
+        </div>
+        <div class="case-row2">${escHtml(complaint)}</div>
+        <div class="case-row3">
+          <span class="case-meta-item">${phoneEl}</span>
+          ${pain ? `<span class="case-meta-item">${escHtml(pain)}</span>` : ""}
+          ${reviewed ? '<span class="reviewed-dot" title="Reviewed"></span>' : ""}
+          ${draft ? '<span class="draft-dot" title="Draft"></span>' : ""}
+        </div>
+      </div>
+    `;
+  }
 
-      let c = allCases.find((x) => x.id === id);
+  async function openCase(id) {
+    selectedCaseId = id;
 
-      if (!c) {
-        const { data, error } = await sb.from("triage_cases").select("*").eq("id", id).single();
-        if (error) {
-          console.error("Open case error:", error);
-          showToast("Failed to load case");
-          return;
-        }
-        c = data;
-      }
+    document.querySelectorAll(".case-card").forEach((el) => el.classList.remove("active"));
+    const cardEl = document.getElementById("card-" + CSS.escape(id));
+    if (cardEl) cardEl.classList.add("active");
 
-      if (!c) return;
+    updateControlsDisabledState();
 
-      currentCase = c;
-      renderDetail(c);
+    if (isMobile) {
+      document.getElementById("queue-column").style.display = "none";
+      document.getElementById("detail-column").style.display = "flex";
     }
 
-    function renderDetail(c) {
-      const panel = document.getElementById("detail-panel");
-      const so = c.structured_output || {};
-      const name = c.patient_name || "Unknown Patient";
-      const nameNote = !c.patient_name
-        ? ' <span style="font-size:11px;color:#6a80a0;font-weight:400">(no intake form linked)</span>'
-        : "";
-      const phone = c.patient_phone ? formatPhone(c.patient_phone) : null;
-      const phoneRaw = c.patient_phone || "";
-      const phoneDisplay = phone
-        ? `<a class="tel-link" href="tel:${escAttr(phoneRaw)}">${escHtml(phone)}</a>`
-        : '<span style="color:#6a80a0">No phone</span>';
-      const reviewedAt = c.reviewed_at ? formatDatetime(c.reviewed_at) : null;
-      const reviewStatus = c.review_status || "new";
-      const isReviewed = reviewStatus === "reviewed";
-      const isDraft = reviewStatus === "draft";
+    document.getElementById("detail-panel").innerHTML =
+      '<div class="loading-state"><span class="loading-dots">Loading</span></div>';
 
-      const sevColor =
-        c.severity === "urgent" ? "#e84545" :
-        c.severity === "emergency" ? "#f0a500" :
-        "#00c87a";
+    let c = allCases.find((x) => x.id === id);
 
-      const sevIcon =
-        c.severity === "urgent" ? "!" :
-        c.severity === "emergency" ? "⚠" :
-        "✓";
+    if (!c) {
+      const { data, error } = await sb.from("triage_cases").select("*").eq("id", id).single();
+      if (error) {
+        console.error("Open case error:", error);
+        showToast("Failed to load case");
+        return;
+      }
+      c = data;
+    }
 
-      const flags = [
-        { label: "Airway / swallowing", val: so.difficulty_breathing_or_swallowing },
-        { label: "Uncontrolled bleeding", val: so.uncontrolled_bleeding },
-        { label: "Rapidly spreading swelling", val: so.feels_very_unwell_or_rapidly_increasing_swelling },
-        { label: "Avulsed tooth", val: so.avulsed_tooth },
-        { label: "Jaw fracture signs", val: so.jaw_fracture_signs },
-        { label: "Fever", val: so.fever },
-        { label: "Swelling", val: so.swelling || so.swelling_present },
-        { label: "Trauma", val: so.trauma },
-        { label: "Nocturnal pain", val: so.nocturnal_pain || c.nocturnal_pain },
-        { label: "Cold lingers >10s", val: so.cold_pain_lingers_over_10_seconds },
-        { label: "Heat sensitivity", val: so.heat_sensitivity || c.heat_sensitivity },
-        { label: "Percussion sensitivity", val: so.percussion_sensitivity || c.percussion_sensitivity },
-        { label: "Bad taste / drainage", val: so.bad_taste_or_drainage || c.bad_taste_or_drainage },
-        { label: "Immunocompromised", val: so.immunocompromised || c.immunocompromised },
-        { label: "Pericoronitis signs", val: so.pericoronitis_signs || c.pericoronitis_signs },
-        { label: "Recent extraction", val: so.recent_extraction || c.recent_extraction }
-      ];
+    if (!c) return;
 
-      const intakeRedFlags = c.intake_red_flags || {};
-      const intakeMedicalFlags = c.intake_medical_flags || {};
+    currentCase = c;
+    renderDetail(c);
+  }
 
-      const intakeRedFlagsList = humanizeTrueFlags(intakeRedFlags);
-      const intakeMedicalFlagsList = humanizeTrueFlags(intakeMedicalFlags, {
-        other_important_medical_condition: intakeMedicalFlags.other_medical_detail
-          ? `Other important medical condition: ${intakeMedicalFlags.other_medical_detail}`
-          : "Other important medical condition"
-      });
+  function renderDetail(c) {
+    const panel = document.getElementById("detail-panel");
+    const so = c.structured_output || {};
+    const name = c.patient_name || "Unknown Patient";
+    const nameNote = !c.patient_name
+      ? ' <span style="font-size:11px;color:#6a80a0;font-weight:400">(no intake form linked)</span>'
+      : "";
+    const phone = c.patient_phone ? formatPhone(c.patient_phone) : null;
+    const phoneRaw = c.patient_phone || "";
+    const phoneDisplay = phone
+      ? `<a class="tel-link" href="tel:${escAttr(phoneRaw)}">${escHtml(phone)}</a>`
+      : '<span style="color:#6a80a0">No phone</span>';
+    const reviewedAt = c.reviewed_at ? formatDatetime(c.reviewed_at) : null;
+    const reviewStatus = c.review_status || "new";
+    const isReviewed = reviewStatus === "reviewed";
+    const isDraft = reviewStatus === "draft";
 
-      panel.innerHTML = `
-        <div class="detail-shell">
-          <div class="detail-header">
-            <button class="back-btn" id="back-btn" type="button" aria-label="Back to case list">←</button>
-            <div class="detail-header-info">
-              <div class="detail-patient-name">${escHtml(name)}${nameNote}</div>
-              <div class="detail-patient-meta">${phoneDisplay} · ${escHtml(formatDatetime(c.created_at))}</div>
-            </div>
-            <span class="severity-badge badge-${escAttr(c.severity || "routine")}">${escHtml(c.severity || "unknown")}</span>
+    const sevColor =
+      c.severity === "urgent" ? "#e84545" :
+      c.severity === "emergency" ? "#f0a500" :
+      "#00c87a";
+
+    const sevIcon =
+      c.severity === "urgent" ? "!" :
+      c.severity === "emergency" ? "⚠" :
+      "✓";
+
+    const flags = [
+      { label: "Airway / swallowing", val: so.difficulty_breathing_or_swallowing },
+      { label: "Uncontrolled bleeding", val: so.uncontrolled_bleeding },
+      { label: "Rapidly spreading swelling", val: so.feels_very_unwell_or_rapidly_increasing_swelling },
+      { label: "Avulsed tooth", val: so.avulsed_tooth },
+      { label: "Jaw fracture signs", val: so.jaw_fracture_signs },
+      { label: "Fever", val: so.fever },
+      { label: "Swelling", val: so.swelling || so.swelling_present },
+      { label: "Trauma", val: so.trauma },
+      { label: "Nocturnal pain", val: so.nocturnal_pain || c.nocturnal_pain },
+      { label: "Cold lingers >10s", val: so.cold_pain_lingers_over_10_seconds },
+      { label: "Heat sensitivity", val: so.heat_sensitivity || c.heat_sensitivity },
+      { label: "Percussion sensitivity", val: so.percussion_sensitivity || c.percussion_sensitivity },
+      { label: "Bad taste / drainage", val: so.bad_taste_or_drainage || c.bad_taste_or_drainage },
+      { label: "Immunocompromised", val: so.immunocompromised || c.immunocompromised },
+      { label: "Pericoronitis signs", val: so.pericoronitis_signs || c.pericoronitis_signs },
+      { label: "Recent extraction", val: so.recent_extraction || c.recent_extraction }
+    ];
+
+    const intakeRedFlags = c.intake_red_flags || {};
+    const intakeMedicalFlags = c.intake_medical_flags || {};
+
+    const intakeRedFlagsList = humanizeTrueFlags(intakeRedFlags);
+    const intakeMedicalFlagsList = humanizeTrueFlags(intakeMedicalFlags, {
+      other_important_medical_condition: intakeMedicalFlags.other_medical_detail
+        ? `Other important medical condition: ${intakeMedicalFlags.other_medical_detail}`
+        : "Other important medical condition"
+    });
+
+    panel.innerHTML = `
+      <div class="detail-shell">
+        <div class="detail-header">
+          <button class="back-btn" id="back-btn" type="button" aria-label="Back to case list">←</button>
+          <div class="detail-header-info">
+            <div class="detail-patient-name">${escHtml(name)}${nameNote}</div>
+            <div class="detail-patient-meta">${phoneDisplay} · ${escHtml(formatDatetime(c.created_at))}</div>
           </div>
+          <span class="severity-badge badge-${escAttr(c.severity || "routine")}">${escHtml(c.severity || "unknown")}</span>
+        </div>
 
-          <div class="detail-scroll">
-            <div class="detail-body">
-              <div class="detail-section">
-                <div class="severity-row">
-                  <div class="severity-icon ${escAttr(c.severity || "routine")}">${escHtml(sevIcon)}</div>
-                  <div>
-                    <div class="severity-detail-label">Triage Classification</div>
-                    <div class="severity-detail-value" style="color:${sevColor}">${escHtml((c.severity || "unknown").toUpperCase())}</div>
-                    <div class="severity-reason">${escHtml(c.severity_reason || "-")}</div>
-                  </div>
+        <div class="detail-scroll">
+          <div class="detail-body">
+            <div class="detail-section">
+              <div class="severity-row">
+                <div class="severity-icon ${escAttr(c.severity || "routine")}">${escHtml(sevIcon)}</div>
+                <div>
+                  <div class="severity-detail-label">Triage Classification</div>
+                  <div class="severity-detail-value" style="color:${sevColor}">${escHtml((c.severity || "unknown").toUpperCase())}</div>
+                  <div class="severity-reason">${escHtml(c.severity_reason || "-")}</div>
+                </div>
+              </div>
+
+              <div class="stats-grid">
+                <div class="stat-cell">
+                  <div class="stat-label">Pain Score</div>
+                  <div class="stat-value">${formatPain(so.pain_score, c.pain_score)}</div>
+                </div>
+                <div class="stat-cell">
+                  <div class="stat-label">Duration</div>
+                  <div class="stat-value">${formatDuration(c.duration_seconds)}</div>
+                </div>
+                <div class="stat-cell">
+                  <div class="stat-label">Location</div>
+                  <div class="stat-value" style="font-size:13px">${escHtml([so.jaw, so.side].filter(Boolean).join(" / ") || "-")}</div>
+                </div>
+                <div class="stat-cell">
+                  <div class="stat-label">Extraction</div>
+                  <div class="stat-value" style="font-size:12px">${escHtml(c.extraction_source || "-")}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <div class="section-header">
+                <span class="section-title">Quick Summary</span>
+              </div>
+              <div class="summary-grid">
+                <div class="summary-item">
+                  <div class="summary-label">Chief Complaint</div>
+                  <div class="summary-value">${escHtml(so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-")}</div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-label">Onset</div>
+                  <div class="summary-value">${escHtml(so.onset || c.onset || c.onset_bucket || "-")}</div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-label">Reason for Current Severity</div>
+                  <div class="summary-value">${escHtml(c.severity_reason || "-")}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <div class="section-header">
+                <span class="section-title">Patient Intake</span>
+              </div>
+              <div class="summary-grid">
+                <div class="summary-item">
+                  <div class="summary-label">Date of Birth</div>
+                  <div class="summary-value">${escHtml(formatDateOnly(c.patient_dob))}</div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-label">City / Province</div>
+                  <div class="summary-value">${escHtml([c.patient_city, c.patient_province].filter(Boolean).join(", ") || "-")}</div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-label">Coverage</div>
+                  <div class="summary-value">${escHtml(formatTag(c.coverage_status))}</div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-label">Intake Onset</div>
+                  <div class="summary-value">${escHtml(formatTag(c.onset_bucket))}</div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-label">Reported Red Flags</div>
+                  <div class="summary-value">${escHtml(intakeRedFlagsList || "-")}</div>
+                </div>
+                <div class="summary-item">
+                  <div class="summary-label">Relevant Medical History</div>
+                  <div class="summary-value">${escHtml(intakeMedicalFlagsList || "-")}</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="detail-section review-panel">
+              <div class="section-header">
+                <span class="section-title">Dentist Review</span>
+                ${
+                  isReviewed
+                    ? `<span class="detail-state-text reviewed">✓ Reviewed ${escHtml(reviewedAt || "")}</span>`
+                    : isDraft
+                      ? `<span class="detail-state-text draft">Draft saved</span>`
+                      : `<span class="detail-state-text">Decision required</span>`
+                }
+              </div>
+
+              <div class="review-form">
+                <div>
+                  <label class="form-label" for="field-notes">Clinical Addendum</label>
+                  <textarea
+                    class="form-textarea"
+                    id="field-notes"
+                    placeholder="Add clinical notes, observations, or follow-up instructions..."
+                    ${isReviewed ? 'readonly style="opacity:0.6"' : ""}
+                  >${escHtml(c.review_notes || "")}</textarea>
                 </div>
 
-                <div class="stats-grid">
-                  <div class="stat-cell">
-                    <div class="stat-label">Pain Score</div>
-                    <div class="stat-value">${formatPain(so.pain_score, c.pain_score)}</div>
+                <div>
+                  <label class="form-label" for="field-disposition">Final Disposition</label>
+                  <select
+                    class="form-select"
+                    id="field-disposition"
+                    ${isReviewed ? 'disabled style="opacity:0.6"' : ""}
+                  >
+                    <option value="">- Select -</option>
+                    <option value="booked" ${c.final_disposition === "booked" ? "selected" : ""}>Booked appointment</option>
+                    <option value="referred_er" ${c.final_disposition === "referred_er" ? "selected" : ""}>Referred to ER</option>
+                    <option value="rx_only" ${c.final_disposition === "rx_only" ? "selected" : ""}>Prescription only</option>
+                    <option value="declined" ${c.final_disposition === "declined" ? "selected" : ""}>Patient declined care</option>
+                    <option value="no_response" ${c.final_disposition === "no_response" ? "selected" : ""}>No response from patient</option>
+                  </select>
+                </div>
+
+                <div>
+                  <div class="toggle-row">
+                    <span class="toggle-label">Prescription issued</span>
+                    <label class="toggle">
+                      <input type="checkbox" id="field-rx" ${c.prescription_issued ? "checked" : ""} ${isReviewed ? "disabled" : ""}>
+                      <div class="toggle-track"></div>
+                    </label>
                   </div>
-                  <div class="stat-cell">
-                    <div class="stat-label">Duration</div>
-                    <div class="stat-value">${formatDuration(c.duration_seconds)}</div>
-                  </div>
-                  <div class="stat-cell">
-                    <div class="stat-label">Location</div>
-                    <div class="stat-value" style="font-size:13px">${escHtml([so.jaw, so.side].filter(Boolean).join(" / ") || "-")}</div>
-                  </div>
-                  <div class="stat-cell">
-                    <div class="stat-label">Extraction</div>
-                    <div class="stat-value" style="font-size:12px">${escHtml(c.extraction_source || "-")}</div>
+
+                  <div class="toggle-row">
+                    <span class="toggle-label">Patient contacted</span>
+                    <label class="toggle">
+                      <input type="checkbox" id="field-contacted" ${c.contacted_patient_at ? "checked" : ""} ${isReviewed ? "disabled" : ""}>
+                      <div class="toggle-track"></div>
+                    </label>
                   </div>
                 </div>
               </div>
 
-              <div class="detail-section">
-                <div class="section-header">
-                  <span class="section-title">Quick Summary</span>
-                </div>
-                <div class="summary-grid">
-                  <div class="summary-item">
-                    <div class="summary-label">Chief Complaint</div>
-                    <div class="summary-value">${escHtml(so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-")}</div>
-                  </div>
-                  <div class="summary-item">
-                    <div class="summary-label">Onset</div>
-                    <div class="summary-value">${escHtml(so.onset || c.onset || c.onset_bucket || "-")}</div>
-                  </div>
-                  <div class="summary-item">
-                    <div class="summary-label">Reason for Current Severity</div>
-                    <div class="summary-value">${escHtml(c.severity_reason || "-")}</div>
-                  </div>
-                </div>
-              </div>
+              <div class="decision-band">
+                ${
+                  isReviewed
+                    ? `<div class="decision-note">This case is locked as reviewed. You can still export the clinical record below.</div>`
+                    : `<div class="decision-note">Choose a final disposition before marking the case reviewed. Use Save Draft if you are not ready to finalize.</div>`
+                }
 
-              <div class="detail-section">
-                <div class="section-header">
-                  <span class="section-title">Patient Intake</span>
-                </div>
-                <div class="summary-grid">
-                  <div class="summary-item">
-                    <div class="summary-label">Date of Birth</div>
-                    <div class="summary-value">${escHtml(formatDateOnly(c.patient_dob))}</div>
-                  </div>
-                  <div class="summary-item">
-                    <div class="summary-label">City / Province</div>
-                    <div class="summary-value">${escHtml([c.patient_city, c.patient_province].filter(Boolean).join(", ") || "-")}</div>
-                  </div>
-                  <div class="summary-item">
-                    <div class="summary-label">Coverage</div>
-                    <div class="summary-value">${escHtml(formatTag(c.coverage_status))}</div>
-                  </div>
-                  <div class="summary-item">
-                    <div class="summary-label">Intake Onset</div>
-                    <div class="summary-value">${escHtml(formatTag(c.onset_bucket))}</div>
-                  </div>
-                  <div class="summary-item">
-                    <div class="summary-label">Reported Red Flags</div>
-                    <div class="summary-value">${escHtml(intakeRedFlagsList || "-")}</div>
-                  </div>
-                  <div class="summary-item">
-                    <div class="summary-label">Relevant Medical History</div>
-                    <div class="summary-value">${escHtml(intakeMedicalFlagsList || "-")}</div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="detail-section">
-                <div class="section-header">
-                  <span class="section-title">Dentist Review</span>
+                <div class="action-row">
                   ${
                     isReviewed
-                      ? `<span class="detail-state-text reviewed">✓ Reviewed ${escHtml(reviewedAt || "")}</span>`
-                      : isDraft
-                        ? `<span class="detail-state-text draft">Draft saved</span>`
-                        : `<span class="detail-state-text">Not reviewed yet</span>`
+                      ? `
+                        <div style="text-align:center;padding:4px 0 2px;color:#00c87a;font-size:13px;font-weight:700">
+                          ✓ This case has been reviewed
+                        </div>
+                        <a
+                          class="btn-action btn-export-record"
+                          id="export-case-btn"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Export Clinical Record
+                        </a>
+                      `
+                      : `
+                        <button class="btn-mark-reviewed" id="mark-reviewed-btn" type="button">✓ Mark Reviewed</button>
+                        <button class="btn-action" id="save-draft-btn" type="button">Save Draft</button>
+                        <a
+                          class="btn-action btn-export-record"
+                          id="export-case-btn"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Export Clinical Record
+                        </a>
+                      `
                   }
                 </div>
 
-                <div class="review-form">
-                  <div>
-                    <label class="form-label" for="field-notes">Clinical Addendum</label>
-                    <textarea
-                      class="form-textarea"
-                      id="field-notes"
-                      placeholder="Add clinical notes, observations, or follow-up instructions..."
-                      ${isReviewed ? 'readonly style="opacity:0.6"' : ""}
-                    >${escHtml(c.review_notes || "")}</textarea>
-                  </div>
-
-                  <div>
-                    <label class="form-label" for="field-disposition">Final Disposition</label>
-                    <select
-                      class="form-select"
-                      id="field-disposition"
-                      ${isReviewed ? 'disabled style="opacity:0.6"' : ""}
-                    >
-                      <option value="">- Select -</option>
-                      <option value="booked" ${c.final_disposition === "booked" ? "selected" : ""}>Booked appointment</option>
-                      <option value="referred_er" ${c.final_disposition === "referred_er" ? "selected" : ""}>Referred to ER</option>
-                      <option value="rx_only" ${c.final_disposition === "rx_only" ? "selected" : ""}>Prescription only</option>
-                      <option value="declined" ${c.final_disposition === "declined" ? "selected" : ""}>Patient declined care</option>
-                      <option value="no_response" ${c.final_disposition === "no_response" ? "selected" : ""}>No response from patient</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <div class="toggle-row">
-                      <span class="toggle-label">Prescription issued</span>
-                      <label class="toggle">
-                        <input type="checkbox" id="field-rx" ${c.prescription_issued ? "checked" : ""} ${isReviewed ? "disabled" : ""}>
-                        <div class="toggle-track"></div>
-                      </label>
-                    </div>
-
-                    <div class="toggle-row">
-                      <span class="toggle-label">Patient contacted</span>
-                      <label class="toggle">
-                        <input type="checkbox" id="field-contacted" ${c.contacted_patient_at ? "checked" : ""} ${isReviewed ? "disabled" : ""}>
-                        <div class="toggle-track"></div>
-                      </label>
-                    </div>
-                  </div>
-
-                  <div class="action-row">
-                    ${
-                      isReviewed
-                        ? `
-                          <div style="text-align:center;padding:10px 0;color:#00c87a;font-size:13px;font-weight:600">
-                            ✓ This case has been reviewed
-                          </div>
-                          <a
-                            class="btn-action btn-export-record"
-                            id="export-case-btn"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            Export Clinical Record
-                          </a>
-                        `
-                        : `
-                          <button class="btn-mark-reviewed" id="mark-reviewed-btn" type="button">✓ Mark Reviewed</button>
-                          <button class="btn-action" id="save-draft-btn" type="button">Save Draft</button>
-                          <a
-                            class="btn-action btn-export-record"
-                            id="export-case-btn"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            Export Clinical Record
-                          </a>
-                        `
-                    }
-                  </div>
-
-                  <div class="save-status" id="save-status"></div>
-                </div>
+                <div class="save-status" id="save-status"></div>
               </div>
-
-              <div class="detail-section">
-                <div class="section-header">
-                  <span class="section-title">Clinical Flags</span>
-                </div>
-                <div class="flags-grid">
-                  ${flags.map((f) => `
-                    <div class="flag-item">
-                      <div class="flag-dot ${f.val === true ? "present" : "absent"}"></div>
-                      <span style="${f.val === true ? "color:#e8f0fe" : ""}">${escHtml(f.label)}</span>
-                    </div>
-                  `).join("")}
-                </div>
-              </div>
-
-              <div class="detail-section">
-                <div class="section-header">
-                  <span class="section-title">AI Clinical Note</span>
-                  <span class="note-lock-badge">Draft - Read Only</span>
-                </div>
-                <div class="section-body">
-                  <div class="clinical-note-text">${escHtml(c.clinical_note || "No clinical note generated.")}</div>
-                </div>
-              </div>
-
-              ${
-                c.transcript
-                  ? `
-                  <div class="detail-section">
-                    <div class="section-header">
-                      <span class="section-title">Call Transcript</span>
-                      <button class="collapsible-toggle" id="toggle-transcript" type="button">Show ▼</button>
-                    </div>
-                    <div class="collapsible-body" id="transcript-body">
-                      <div class="transcript-text" style="padding-top:16px">${escHtml(c.transcript)}</div>
-                    </div>
-                  </div>
-                `
-                  : ""
-              }
-
-              <div class="detail-section">
-                <div class="section-header">
-                  <span class="section-title">Call Details</span>
-                  <button class="collapsible-toggle" id="toggle-call-meta" type="button">Show ▼</button>
-                </div>
-                <div class="collapsible-body" id="call-meta-body">
-                  <div class="stats-grid">
-                    <div class="stat-cell" style="grid-column:1/-1">
-                      <div class="stat-label">Call ID</div>
-                      <div class="stat-value" style="font-size:11px;word-break:break-all">${escHtml(c.vapi_call_id || "-")}</div>
-                    </div>
-                    <div class="stat-cell">
-                      <div class="stat-label">Triage Tag</div>
-                      <div class="stat-value" style="font-size:12px">${escHtml(formatTag(c.triage_tag))}</div>
-                    </div>
-                    <div class="stat-cell">
-                      <div class="stat-label">Created</div>
-                      <div class="stat-value" style="font-size:11px">${escHtml(formatDatetime(c.created_at))}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
             </div>
+
+            <div class="detail-section">
+              <div class="section-header">
+                <span class="section-title">Clinical Flags</span>
+              </div>
+              <div class="flags-grid">
+                ${flags.map((f) => `
+                  <div class="flag-item">
+                    <div class="flag-dot ${f.val === true ? "present" : "absent"}"></div>
+                    <span style="${f.val === true ? "color:#e8f0fe" : ""}">${escHtml(f.label)}</span>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <div class="section-header">
+                <span class="section-title">AI Clinical Note</span>
+                <span class="note-lock-badge">Draft - Read Only</span>
+              </div>
+              <div class="section-body">
+                <div class="clinical-note-text">${escHtml(c.clinical_note || "No clinical note generated.")}</div>
+              </div>
+            </div>
+
+            ${
+              c.transcript
+                ? `
+                <div class="detail-section">
+                  <div class="section-header">
+                    <span class="section-title">Call Transcript</span>
+                    <button class="collapsible-toggle" id="toggle-transcript" type="button">Show ▼</button>
+                  </div>
+                  <div class="collapsible-body" id="transcript-body">
+                    <div class="transcript-text" style="padding-top:16px">${escHtml(c.transcript)}</div>
+                  </div>
+                </div>
+              `
+                : ""
+            }
+
+            <div class="detail-section">
+              <div class="section-header">
+                <span class="section-title">Call Details</span>
+                <button class="collapsible-toggle" id="toggle-call-meta" type="button">Show ▼</button>
+              </div>
+              <div class="collapsible-body" id="call-meta-body">
+                <div class="stats-grid">
+                  <div class="stat-cell" style="grid-column:1/-1">
+                    <div class="stat-label">Call ID</div>
+                    <div class="stat-value" style="font-size:11px;word-break:break-all">${escHtml(c.vapi_call_id || "-")}</div>
+                  </div>
+                  <div class="stat-cell">
+                    <div class="stat-label">Triage Tag</div>
+                    <div class="stat-value" style="font-size:12px">${escHtml(formatTag(c.triage_tag))}</div>
+                  </div>
+                  <div class="stat-cell">
+                    <div class="stat-label">Created</div>
+                    <div class="stat-value" style="font-size:11px">${escHtml(formatDatetime(c.created_at))}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
-      `;
+      </div>
+    `;
 
-      const backBtn = document.getElementById("back-btn");
-      if (backBtn) backBtn.addEventListener("click", goBack);
+    const backBtn = document.getElementById("back-btn");
+    if (backBtn) backBtn.addEventListener("click", goBack);
 
-      const saveDraftBtn = document.getElementById("save-draft-btn");
-      if (saveDraftBtn) saveDraftBtn.addEventListener("click", () => saveReview(c.id, false));
+    const saveDraftBtn = document.getElementById("save-draft-btn");
+    if (saveDraftBtn) saveDraftBtn.addEventListener("click", () => saveReview(c.id, false));
 
-      const markReviewedBtn = document.getElementById("mark-reviewed-btn");
-      if (markReviewedBtn) markReviewedBtn.addEventListener("click", () => saveReview(c.id, true));
+    const markReviewedBtn = document.getElementById("mark-reviewed-btn");
+    if (markReviewedBtn) markReviewedBtn.addEventListener("click", () => saveReview(c.id, true));
 
-      const exportBtn = document.getElementById("export-case-btn");
-      if (exportBtn) {
-        exportBtn.href = `case-export.html?id=${encodeURIComponent(c.id)}`;
-      }
-
-      const toggleTranscript = document.getElementById("toggle-transcript");
-      if (toggleTranscript) {
-        toggleTranscript.addEventListener("click", () => toggleCollapsible("transcript-body", toggleTranscript));
-      }
-
-      const toggleCallMeta = document.getElementById("toggle-call-meta");
-      if (toggleCallMeta) {
-        toggleCallMeta.addEventListener("click", () => toggleCollapsible("call-meta-body", toggleCallMeta));
-      }
+    const exportBtn = document.getElementById("export-case-btn");
+    if (exportBtn) {
+      exportBtn.href = `case-export.html?id=${encodeURIComponent(c.id)}`;
     }
 
-    function goBack() {
-      currentCase = null;
-      selectedCaseId = null;
-      updateControlsDisabledState();
-
-      document.querySelectorAll(".case-card").forEach((el) => el.classList.remove("active"));
-
-      if (isMobile) {
-        document.getElementById("queue-column").style.display = "flex";
-        document.getElementById("detail-column").style.display = "none";
-      } else {
-        renderEmptyDetailPane();
-      }
+    const toggleTranscript = document.getElementById("toggle-transcript");
+    if (toggleTranscript) {
+      toggleTranscript.addEventListener("click", () => toggleCollapsible("transcript-body", toggleTranscript));
     }
 
-    async function saveReview(id, markReviewed) {
-      const notesEl = document.getElementById("field-notes");
-      const dispositionEl = document.getElementById("field-disposition");
-      const rxEl = document.getElementById("field-rx");
-      const contactedEl = document.getElementById("field-contacted");
-      const statusEl = document.getElementById("save-status");
+    const toggleCallMeta = document.getElementById("toggle-call-meta");
+    if (toggleCallMeta) {
+      toggleCallMeta.addEventListener("click", () => toggleCollapsible("call-meta-body", toggleCallMeta));
+    }
+  }
 
-      if (!notesEl || !dispositionEl || !rxEl || !contactedEl || !statusEl) return;
+  function goBack() {
+    currentCase = null;
+    selectedCaseId = null;
+    updateControlsDisabledState();
 
-      const notes = notesEl.value;
-      const disposition = dispositionEl.value;
-      const rxIssued = rxEl.checked;
-      const contacted = contactedEl.checked;
+    document.querySelectorAll(".case-card").forEach((el) => el.classList.remove("active"));
 
-      if (markReviewed && !disposition) {
-        statusEl.textContent = "Please select a final disposition before marking reviewed.";
+    if (isMobile) {
+      document.getElementById("queue-column").style.display = "flex";
+      document.getElementById("detail-column").style.display = "none";
+    } else {
+      renderEmptyDetailPane();
+    }
+  }
+
+  async function saveReview(id, markReviewed) {
+    const notesEl = document.getElementById("field-notes");
+    const dispositionEl = document.getElementById("field-disposition");
+    const rxEl = document.getElementById("field-rx");
+    const contactedEl = document.getElementById("field-contacted");
+    const statusEl = document.getElementById("save-status");
+
+    if (!notesEl || !dispositionEl || !rxEl || !contactedEl || !statusEl) return;
+
+    const notes = notesEl.value;
+    const disposition = dispositionEl.value;
+    const rxIssued = rxEl.checked;
+    const contacted = contactedEl.checked;
+
+    if (markReviewed && !disposition) {
+      statusEl.textContent = "Please select a final disposition before marking reviewed.";
+      statusEl.className = "save-status error";
+      dispositionEl.style.borderColor = "rgba(232,69,69,0.5)";
+      setTimeout(() => {
+        statusEl.textContent = "";
+        statusEl.className = "save-status";
+        dispositionEl.style.borderColor = "";
+      }, 3000);
+      return;
+    }
+
+    statusEl.textContent = "Saving...";
+    statusEl.className = "save-status";
+
+    const update = {
+      review_notes: notes || null,
+      final_disposition: disposition || null,
+      prescription_issued: rxIssued,
+      action_taken: disposition || null
+    };
+
+    if (contacted) {
+      update.contacted_patient_at = currentCase?.contacted_patient_at || new Date().toISOString();
+    } else {
+      update.contacted_patient_at = null;
+    }
+
+    if (markReviewed) {
+      update.review_status = "reviewed";
+      update.reviewed_at = new Date().toISOString();
+      update.reviewed_by = currentUser?.email || null;
+    } else {
+      update.review_status = "draft";
+    }
+
+    try {
+      const { error } = await sb.from("triage_cases").update(update).eq("id", id);
+
+      if (error) {
+        statusEl.textContent = "Error saving - " + error.message;
         statusEl.className = "save-status error";
-        dispositionEl.style.borderColor = "rgba(232,69,69,0.5)";
-        setTimeout(() => {
-          statusEl.textContent = "";
-          statusEl.className = "save-status";
-          dispositionEl.style.borderColor = "";
-        }, 3000);
         return;
       }
 
-      statusEl.textContent = "Saving...";
-      statusEl.className = "save-status";
-
-      const update = {
-        review_notes: notes || null,
-        final_disposition: disposition || null,
-        prescription_issued: rxIssued,
-        action_taken: disposition || null
-      };
-
-      if (contacted) {
-        update.contacted_patient_at = currentCase?.contacted_patient_at || new Date().toISOString();
-      } else {
-        update.contacted_patient_at = null;
+      const idx = allCases.findIndex((x) => x.id === id);
+      if (idx >= 0) {
+        allCases[idx] = { ...allCases[idx], ...update };
       }
+
+      if (currentCase && currentCase.id === id) {
+        currentCase = { ...currentCase, ...update };
+      }
+
+      statusEl.textContent = markReviewed ? "✓ Marked as reviewed" : "✓ Draft saved";
+      statusEl.className = "save-status success";
+      showToast(markReviewed ? "Case marked reviewed" : "Draft saved");
 
       if (markReviewed) {
-        update.review_status = "reviewed";
-        update.reviewed_at = new Date().toISOString();
-        update.reviewed_by = currentUser?.email || null;
-      } else {
-        update.review_status = "draft";
-      }
-
-      try {
-        const { error } = await sb.from("triage_cases").update(update).eq("id", id);
-
-        if (error) {
-          statusEl.textContent = "Error saving - " + error.message;
-          statusEl.className = "save-status error";
-          return;
-        }
-
-        const idx = allCases.findIndex((x) => x.id === id);
-        if (idx >= 0) {
-          allCases[idx] = { ...allCases[idx], ...update };
-        }
-
-        if (currentCase && currentCase.id === id) {
-          currentCase = { ...currentCase, ...update };
-        }
-
-        statusEl.textContent = markReviewed ? "✓ Marked as reviewed" : "✓ Draft saved";
-        statusEl.className = "save-status success";
-        showToast(markReviewed ? "Case marked reviewed" : "Draft saved");
-
-        if (markReviewed) {
-          const cardEl = document.getElementById("card-" + CSS.escape(id));
-          if (cardEl) {
-            cardEl.classList.add("removing");
-            setTimeout(() => {
-              renderQueue();
-              loadQueueCount().then(updateQueueBadge);
-              if (currentCase) renderDetail(currentCase);
-            }, 350);
-          } else {
+        const cardEl = document.getElementById("card-" + CSS.escape(id));
+        if (cardEl) {
+          cardEl.classList.add("removing");
+          setTimeout(() => {
             renderQueue();
             loadQueueCount().then(updateQueueBadge);
             if (currentCase) renderDetail(currentCase);
-          }
-
-          if (isMobile && currentTab === "queue") {
-            setTimeout(goBack, 1200);
-          }
+          }, 350);
         } else {
           renderQueue();
           loadQueueCount().then(updateQueueBadge);
           if (currentCase) renderDetail(currentCase);
         }
 
-        setTimeout(() => {
-          statusEl.textContent = "";
-          statusEl.className = "save-status";
-        }, 3000);
-      } catch (err) {
-        statusEl.textContent = "Unexpected save error";
-        statusEl.className = "save-status error";
-        console.error("Save review exception:", err);
+        if (isMobile && currentTab === "queue") {
+          setTimeout(goBack, 1200);
+        }
+      } else {
+        renderQueue();
+        loadQueueCount().then(updateQueueBadge);
+        if (currentCase) renderDetail(currentCase);
       }
+
+      setTimeout(() => {
+        statusEl.textContent = "";
+        statusEl.className = "save-status";
+      }, 3000);
+    } catch (err) {
+      statusEl.textContent = "Unexpected save error";
+      statusEl.className = "save-status error";
+      console.error("Save review exception:", err);
     }
+  }
 
-    function toggleCollapsible(id, btn) {
-      const body = document.getElementById(id);
-      if (!body) return;
-      const isOpen = body.classList.toggle("open");
-      if (btn) btn.textContent = isOpen ? "Hide ▲" : "Show ▼";
-    }
+  function toggleCollapsible(id, btn) {
+    const body = document.getElementById(id);
+    if (!body) return;
+    const isOpen = body.classList.toggle("open");
+    if (btn) btn.textContent = isOpen ? "Hide ▲" : "Show ▼";
+  }
 
-    function formatTag(tag) {
-      if (!tag || tag === "-") return "-";
-      return String(tag)
-        .replace(/_/g, " ")
-        .replace(/\b\w/g, (l) => l.toUpperCase())
-        .replace(/ And /g, " & ");
-    }
+  function formatTag(tag) {
+    if (!tag || tag === "-") return "-";
+    return String(tag)
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (l) => l.toUpperCase())
+      .replace(/ And /g, " & ");
+  }
 
-    function formatPhone(p) {
-      if (!p) return "-";
-      const d = String(p).replace(/\D/g, "");
-      if (d.length === 10) return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
-      if (d.length === 11 && d.startsWith("1")) return `1 (${d.slice(1, 4)}) ${d.slice(4, 7)}-${d.slice(7)}`;
-      return String(p);
-    }
+  function formatPhone(p) {
+    if (!p) return "-";
+    const d = String(p).replace(/\D/g, "");
+    if (d.length === 10) return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
+    if (d.length === 11 && d.startsWith("1")) return `1 (${d.slice(1, 4)}) ${d.slice(4, 7)}-${d.slice(7)}`;
+    return String(p);
+  }
 
-    function formatTime(iso) {
-      if (!iso) return "-";
-      const d = new Date(iso);
-      if (Number.isNaN(d.getTime())) return "-";
+  function formatTime(iso) {
+    if (!iso) return "-";
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return "-";
 
-      const now = new Date();
-      const diffMs = now - d;
-      const diffH = diffMs / 3600000;
+    const now = new Date();
+    const diffMs = now - d;
+    const diffH = diffMs / 3600000;
 
-      if (diffH < 1) return Math.max(1, Math.round(diffMs / 60000)) + "m ago";
-      if (diffH < 24) return Math.round(diffH) + "h ago";
+    if (diffH < 1) return Math.max(1, Math.round(diffMs / 60000)) + "m ago";
+    if (diffH < 24) return Math.round(diffH) + "h ago";
 
-      return d.toLocaleDateString("en-CA", {
-        month: "short",
-        day: "numeric"
-      });
-    }
+    return d.toLocaleDateString("en-CA", {
+      month: "short",
+      day: "numeric"
+    });
+  }
 
-    function formatDatetime(iso) {
-      if (!iso) return "-";
-      const d = new Date(iso);
-      if (Number.isNaN(d.getTime())) return "-";
+  function formatDatetime(iso) {
+    if (!iso) return "-";
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return "-";
 
-      return (
-        d.toLocaleDateString("en-CA", { month: "short", day: "numeric" }) +
-        " " +
-        d.toLocaleTimeString("en-CA", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true
-        })
-      );
-    }
+    return (
+      d.toLocaleDateString("en-CA", { month: "short", day: "numeric" }) +
+      " " +
+      d.toLocaleTimeString("en-CA", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+      })
+    );
+  }
 
-    function formatDateOnly(value) {
-      if (!value) return "-";
-      const d = new Date(value);
-      if (Number.isNaN(d.getTime())) return String(value);
-      return d.toLocaleDateString("en-CA", {
-        year: "numeric",
-        month: "short",
-        day: "numeric"
-      });
-    }
+  function formatDateOnly(value) {
+    if (!value) return "-";
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return String(value);
+    return d.toLocaleDateString("en-CA", {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    });
+  }
 
-    function formatDuration(seconds) {
-      if (seconds === null || seconds === undefined || Number.isNaN(Number(seconds))) return "-";
-      const s = Number(seconds);
-      const mins = Math.floor(s / 60);
-      const secs = s % 60;
-      return `${mins}m ${secs}s`;
-    }
+  function formatDuration(seconds) {
+    if (seconds === null || seconds === undefined || Number.isNaN(Number(seconds))) return "-";
+    const s = Number(seconds);
+    const mins = Math.floor(s / 60);
+    const secs = s % 60;
+    return `${mins}m ${secs}s`;
+  }
 
-    function formatPain(primary, fallback) {
-      const pain = primary ?? fallback;
-      if (pain === null || pain === undefined || pain === "") return "-";
-      return `${pain}/10`;
-    }
+  function formatPain(primary, fallback) {
+    const pain = primary ?? fallback;
+    if (pain === null || pain === undefined || pain === "") return "-";
+    return `${pain}/10`;
+  }
 
-    function humanizeTrueFlags(obj, overrides = {}) {
-      if (!obj || typeof obj !== "object") return "";
+  function humanizeTrueFlags(obj, overrides = {}) {
+    if (!obj || typeof obj !== "object") return "";
 
-      const labels = {
-        trouble_breathing_or_swallowing: "Trouble breathing or swallowing",
-        uncontrolled_bleeding: "Uncontrolled bleeding",
-        facial_swelling: "Facial swelling",
-        fever_or_feeling_unwell: "Fever or feeling unwell",
-        injury_to_teeth_jaw_face: "Injury to teeth, jaw, or face",
-        none_of_the_above: "None of the above",
-        allergy_antibiotics: "Allergy to antibiotics",
-        allergy_pain_medication: "Allergy to pain medication",
-        blood_thinners: "Blood thinners",
-        diabetes: "Diabetes",
-        pregnancy: "Pregnancy",
-        immunocompromised: "Immunocompromised",
-        other_important_medical_condition: "Other important medical condition"
-      };
+    const labels = {
+      trouble_breathing_or_swallowing: "Trouble breathing or swallowing",
+      uncontrolled_bleeding: "Uncontrolled bleeding",
+      facial_swelling: "Facial swelling",
+      fever_or_feeling_unwell: "Fever or feeling unwell",
+      injury_to_teeth_jaw_face: "Injury to teeth, jaw, or face",
+      none_of_the_above: "None of the above",
+      allergy_antibiotics: "Allergy to antibiotics",
+      allergy_pain_medication: "Allergy to pain medication",
+      blood_thinners: "Blood thinners",
+      diabetes: "Diabetes",
+      pregnancy: "Pregnancy",
+      immunocompromised: "Immunocompromised",
+      other_important_medical_condition: "Other important medical condition"
+    };
 
-      const items = Object.entries(obj)
-        .filter(([key, value]) => key !== "other_medical_detail" && value === true)
-        .map(([key]) => overrides[key] || labels[key] || formatTag(key));
+    const items = Object.entries(obj)
+      .filter(([key, value]) => key !== "other_medical_detail" && value === true)
+      .map(([key]) => overrides[key] || labels[key] || formatTag(key));
 
-      return items.join(", ");
-    }
+    return items.join(", ");
+  }
 
-    function showToast(msg) {
-      const t = document.getElementById("toast");
-      t.textContent = msg;
-      t.classList.add("show");
-      setTimeout(() => t.classList.remove("show"), 2800);
-    }
+  function showToast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 2800);
+  }
 
-    function escHtml(value) {
-      if (value === null || value === undefined) return "";
-      return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-    }
+  function escHtml(value) {
+    if (value === null || value === undefined) return "";
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
 
-    function escAttr(value) {
-      return escHtml(value);
-    }
+  function escAttr(value) {
+    return escHtml(value);
+  }
 
-    init();
-  </script>
+  init();
+</script>
 </body>
 </html>
+
