@@ -26,6 +26,7 @@
       --border-soft: rgba(255, 255, 255, 0.05);
       --border-active: rgba(0, 200, 232, 0.32);
       --surface: rgba(255, 255, 255, 0.04);
+      --surface-strong: rgba(255, 255, 255, 0.06);
       --urgent-bg: rgba(120, 43, 67, 0.28);
       --success: #00c87a;
       --shadow-lg: 0 30px 80px rgba(0, 0, 0, 0.36);
@@ -899,11 +900,11 @@
               </div>
               <div class="trust-item">
                 <span class="trust-dot"></span>
-                <span>Speak first with Sam, our AI triage assistant</span>
+                <span>Speak first with Sam, our AI dental triage assistant</span>
               </div>
               <div class="trust-item">
                 <span class="trust-dot"></span>
-                <span>Reviewed by a licensed Ontario dentist</span>
+                <span>A licensed Ontario dentist reviews the case and may follow up as appropriate</span>
               </div>
             </div>
           </div>
@@ -927,7 +928,7 @@
           <div class="flow-block">
             <div class="flow-title">Next step: speak with Sam</div>
             <div class="flow-copy">
-              Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow-up with recommendations as appropriate.
+              Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow up with recommendations as appropriate.
             </div>
           </div>
         </div>
@@ -974,22 +975,47 @@
         <div class="grid-2" style="margin-top:14px;">
           <div class="field full">
             <label for="patient-name">Full name</label>
-            <input class="input" id="patient-name" type="text" placeholder="First and last name" />
+            <input
+              class="input"
+              id="patient-name"
+              type="text"
+              placeholder="First and last name"
+              autocomplete="name"
+            />
           </div>
 
           <div class="field">
             <label for="patient-dob">Date of birth</label>
-            <input class="input" id="patient-dob" type="date" />
+            <input
+              class="input"
+              id="patient-dob"
+              type="date"
+              max=""
+              autocomplete="bday"
+            />
           </div>
 
           <div class="field">
             <label for="patient-phone">Phone number</label>
-            <input class="input" id="patient-phone" type="tel" placeholder="10-digit number" />
+            <input
+              class="input"
+              id="patient-phone"
+              type="tel"
+              inputmode="tel"
+              autocomplete="tel"
+              placeholder="10-digit number"
+            />
           </div>
 
           <div class="field full">
             <label for="patient-city">City</label>
-            <input class="input" id="patient-city" type="text" placeholder="City" />
+            <input
+              class="input"
+              id="patient-city"
+              type="text"
+              placeholder="City"
+              autocomplete="address-level2"
+            />
           </div>
         </div>
       </div>
@@ -999,7 +1025,11 @@
 
         <div class="field">
           <label for="chief-complaint">What’s been bothering you today?</label>
-          <textarea class="textarea" id="chief-complaint" placeholder="Describe your dental concern in a few words"></textarea>
+          <textarea
+            class="textarea"
+            id="chief-complaint"
+            placeholder="Describe your dental concern in a few words"
+          ></textarea>
         </div>
 
         <div class="field" style="margin-top:14px;">
@@ -1088,7 +1118,11 @@
         <div class="conditional-field" id="mh-other-wrapper">
           <div class="field">
             <label for="mh-other-detail">Please tell us more</label>
-            <textarea class="textarea" id="mh-other-detail" placeholder="Anything important we should know"></textarea>
+            <textarea
+              class="textarea"
+              id="mh-other-detail"
+              placeholder="Anything important we should know"
+            ></textarea>
           </div>
         </div>
       </div>
@@ -1129,14 +1163,14 @@
     <section id="screen-handoff" class="card handoff-card">
       <div class="handoff-icon">✓</div>
       <div class="handoff-title">Next step: speak with Sam</div>
-      <div class="handoff-copy">
-        Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow-up with recommendations as appropriate.
+      <div class="handoff-copy" id="handoff-copy">
+        Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow up with recommendations as appropriate.
       </div>
 
       <div class="handoff-image-shell">
         <img
           class="handoff-image"
-          src="sam-handoff.png"
+          src="intake-sam-handoff.jpg"
           alt="Calm dental care coordinator speaking on the phone"
         />
       </div>
@@ -1169,363 +1203,409 @@
     </section>
   </div>
 
-<script>
-  const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
-  const INTAKE_TRIGGER_URL = SUPABASE_URL + "/functions/v1/intake-trigger";
+  <script>
+    const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+    const INTAKE_TRIGGER_URL = SUPABASE_URL + "/functions/v1/intake-trigger";
 
-  // Update these if the live fallback / caller ID changes
-  const EXPECTED_CALLER_NUMBER_DISPLAY = "1-833-959-3932";
-  const FALLBACK_DIAL_NUMBER_DISPLAY = "1-833-959-3932";
-  const FALLBACK_DIAL_NUMBER_HREF = "tel:+18339593932";
+    const EXPECTED_CALLER_NUMBER_DISPLAY = "1-833-959-3932";
+    const FALLBACK_DIAL_NUMBER_DISPLAY = "1-833-959-3932";
+    const FALLBACK_DIAL_NUMBER_HREF = "tel:+18339593932";
 
-  if (!window.supabase || !window.supabase.createClient) {
-    alert("Supabase library failed to load.");
-    throw new Error("Supabase library missing");
-  }
-
-  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  const welcomeScreen = document.getElementById("screen-welcome");
-  const formScreen = document.getElementById("screen-form");
-  const handoffScreen = document.getElementById("screen-handoff");
-
-  document.getElementById("start-assessment-btn").addEventListener("click", () => {
-    welcomeScreen.style.display = "none";
-    formScreen.classList.add("show");
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-
-  document.getElementById("back-to-welcome-btn").addEventListener("click", () => {
-    formScreen.classList.remove("show");
-    welcomeScreen.style.display = "block";
-    clearIntakeError();
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  });
-
-  setupExclusiveCheckboxes();
-  setupOntarioNotice();
-  setupIntakeSubmit();
-
-  function setupOntarioNotice() {
-    const yesEl = document.getElementById("in-ontario-yes");
-    const noEl = document.getElementById("in-ontario-no");
-    const warningEl = document.getElementById("ontario-warning");
-    function sync() {
-      warningEl.style.display = noEl.checked ? "block" : "none";
+    if (!window.supabase || !window.supabase.createClient) {
+      alert("Supabase library failed to load.");
+      throw new Error("Supabase library missing");
     }
-    yesEl.addEventListener("change", sync);
-    noEl.addEventListener("change", sync);
-    sync();
-  }
 
-  function setupExclusiveCheckboxes() {
-    const redFlagNone = document.getElementById("rf-none");
-    const redFlagIds = [
-      "rf-breathing-swallowing",
-      "rf-uncontrolled-bleeding",
-      "rf-facial-swelling",
-      "rf-fever-unwell",
-      "rf-trauma"
-    ];
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const welcomeScreen = document.getElementById("screen-welcome");
+    const formScreen = document.getElementById("screen-form");
+    const handoffScreen = document.getElementById("screen-handoff");
 
-    const medicalNone = document.getElementById("mh-none");
-    const medicalIds = [
-      "mh-allergy-antibiotics",
-      "mh-allergy-pain",
-      "mh-blood-thinners",
-      "mh-diabetes",
-      "mh-pregnancy",
-      "mh-immunocompromised",
-      "mh-other"
-    ];
+    document.getElementById("patient-dob").max = getTodayISODate();
 
-    const mhOther = document.getElementById("mh-other");
+    document.getElementById("start-assessment-btn").addEventListener("click", () => {
+      welcomeScreen.style.display = "none";
+      formScreen.classList.add("show");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
 
-    redFlagNone.addEventListener("change", () => {
-      if (redFlagNone.checked) {
-        redFlagIds.forEach(id => {
-          const el = document.getElementById(id);
-          if (el) el.checked = false;
+    document.getElementById("back-to-welcome-btn").addEventListener("click", () => {
+      formScreen.classList.remove("show");
+      welcomeScreen.style.display = "block";
+      clearIntakeError();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    setupExclusiveCheckboxes();
+    setupOntarioNotice();
+    setupPhoneFormatting();
+    setupIntakeSubmit();
+
+    function setupOntarioNotice() {
+      const yesEl = document.getElementById("in-ontario-yes");
+      const noEl = document.getElementById("in-ontario-no");
+      const warningEl = document.getElementById("ontario-warning");
+
+      function sync() {
+        warningEl.style.display = noEl.checked ? "block" : "none";
+      }
+
+      yesEl.addEventListener("change", sync);
+      noEl.addEventListener("change", sync);
+      sync();
+    }
+
+    function setupExclusiveCheckboxes() {
+      const redFlagNone = document.getElementById("rf-none");
+      const redFlagIds = [
+        "rf-breathing-swallowing",
+        "rf-uncontrolled-bleeding",
+        "rf-facial-swelling",
+        "rf-fever-unwell",
+        "rf-trauma"
+      ];
+
+      const medicalNone = document.getElementById("mh-none");
+      const medicalIds = [
+        "mh-allergy-antibiotics",
+        "mh-allergy-pain",
+        "mh-blood-thinners",
+        "mh-diabetes",
+        "mh-pregnancy",
+        "mh-immunocompromised",
+        "mh-other"
+      ];
+
+      const mhOther = document.getElementById("mh-other");
+
+      redFlagNone.addEventListener("change", () => {
+        if (redFlagNone.checked) {
+          redFlagIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.checked = false;
+          });
+        }
+      });
+
+      redFlagIds.forEach(id => {
+        const el = document.getElementById(id);
+        el.addEventListener("change", () => {
+          if (el.checked) redFlagNone.checked = false;
         });
-      }
-    });
-
-    redFlagIds.forEach(id => {
-      const el = document.getElementById(id);
-      el.addEventListener("change", () => {
-        if (el.checked) redFlagNone.checked = false;
       });
-    });
 
-    medicalNone.addEventListener("change", () => {
-      if (medicalNone.checked) {
-        medicalIds.forEach(id => {
-          const el = document.getElementById(id);
-          if (el) el.checked = false;
+      medicalNone.addEventListener("change", () => {
+        if (medicalNone.checked) {
+          medicalIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.checked = false;
+          });
+          document.getElementById("mh-other-detail").value = "";
+          toggleOtherMedicalDetail();
+        }
+      });
+
+      medicalIds.forEach(id => {
+        const el = document.getElementById(id);
+        el.addEventListener("change", () => {
+          if (el.checked) medicalNone.checked = false;
+          toggleOtherMedicalDetail();
         });
-        document.getElementById("mh-other-detail").value = "";
-        toggleOtherMedicalDetail();
-      }
-    });
+      });
 
-    medicalIds.forEach(id => {
+      mhOther.addEventListener("change", toggleOtherMedicalDetail);
+      toggleOtherMedicalDetail();
+    }
+
+    function toggleOtherMedicalDetail() {
+      const mhOther = document.getElementById("mh-other");
+      const wrapper = document.getElementById("mh-other-wrapper");
+      const detail = document.getElementById("mh-other-detail");
+
+      if (mhOther.checked) {
+        wrapper.style.display = "block";
+      } else {
+        wrapper.style.display = "none";
+        detail.value = "";
+      }
+    }
+
+    function setupPhoneFormatting() {
+      const phoneInput = document.getElementById("patient-phone");
+
+      phoneInput.addEventListener("input", () => {
+        const digits = normalizePhone(phoneInput.value).slice(0, 11);
+        phoneInput.value = formatPhoneForDisplay(digits);
+      });
+    }
+
+    function setupIntakeSubmit() {
+      document.getElementById("intake-submit-btn").addEventListener("click", handleIntakeSubmit);
+    }
+
+    async function handleIntakeSubmit() {
+      const submitBtn = document.getElementById("intake-submit-btn");
+      clearIntakeError();
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Saving...";
+
+      try {
+        const formData = collectIntakeFormData();
+        const validationError = validateIntakeFormData(formData);
+
+        if (validationError) {
+          showIntakeError(validationError);
+          return;
+        }
+
+        const payload = buildIntakePayload(formData);
+        const resp = await fetch(INTAKE_TRIGGER_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        const result = await resp.json().catch(() => null);
+
+        if (!resp.ok || !result?.ok) {
+          showIntakeError(result?.error || result?.details || "Unable to save your information right now.");
+          return;
+        }
+
+        showHandoff(result.case_id, result.call_initiated === true);
+      } catch (err) {
+        showIntakeError(err?.message || "Unexpected error while saving your information.");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Continue";
+      }
+    }
+
+    function collectIntakeFormData() {
+      const inOntario = document.getElementById("in-ontario-yes").checked
+        ? "yes"
+        : document.getElementById("in-ontario-no").checked
+          ? "no"
+          : "";
+
+      return {
+        inOntario,
+        patientName: getValue("patient-name"),
+        patientDob: getValue("patient-dob"),
+        patientPhone: normalizePhone(getValue("patient-phone")),
+        patientCity: getValue("patient-city"),
+        chiefComplaint: getValue("chief-complaint"),
+        onsetBucket: getValue("onset-bucket"),
+        coverageStatus: getOptionalValue("coverage-status"),
+        acknowledged: isChecked("intake-acknowledge"),
+        intakeRedFlags: {
+          trouble_breathing_or_swallowing: isChecked("rf-breathing-swallowing"),
+          uncontrolled_bleeding: isChecked("rf-uncontrolled-bleeding"),
+          facial_swelling: isChecked("rf-facial-swelling"),
+          fever_or_feeling_unwell: isChecked("rf-fever-unwell"),
+          injury_to_teeth_jaw_face: isChecked("rf-trauma"),
+          none_of_the_above: isChecked("rf-none")
+        },
+        intakeMedicalFlags: {
+          allergy_antibiotics: isChecked("mh-allergy-antibiotics"),
+          allergy_pain_medication: isChecked("mh-allergy-pain"),
+          blood_thinners: isChecked("mh-blood-thinners"),
+          diabetes: isChecked("mh-diabetes"),
+          pregnancy: isChecked("mh-pregnancy"),
+          immunocompromised: isChecked("mh-immunocompromised"),
+          other_important_medical_condition: isChecked("mh-other"),
+          other_medical_detail: getOptionalValue("mh-other-detail"),
+          none_of_the_above: isChecked("mh-none")
+        }
+      };
+    }
+
+    function validateIntakeFormData(data) {
+      if (!data.inOntario) return "Please confirm whether you are currently in Ontario.";
+      if (data.inOntario !== "yes") return "This service is currently available only to patients in Ontario.";
+      if (!data.patientName) return "Please enter your full name.";
+      if (data.patientName.length < 2) return "Please enter a valid full name.";
+      if (!data.patientDob) return "Please enter your date of birth.";
+      if (!isValidDateInput(data.patientDob)) return "Please enter a valid date of birth.";
+      if (isFutureDate(data.patientDob)) return "Date of birth cannot be in the future.";
+      if (!data.patientPhone) return "Please enter your phone number.";
+      if (!looksLikeNorthAmericanPhone(data.patientPhone)) {
+        return "Please enter a valid 10-digit phone number, or 11 digits starting with 1.";
+      }
+      if (!data.patientCity) return "Please enter your city.";
+      if (!data.chiefComplaint) return "Please describe what’s been bothering you today.";
+      if (data.chiefComplaint.length < 3) return "Please provide a little more detail about your concern.";
+      if (!data.onsetBucket) return "Please tell us when this started.";
+      if (!atLeastOneTrue(data.intakeRedFlags)) {
+        return "Please select at least one option under current symptoms, or choose 'None of the above.'";
+      }
+      if (!atLeastOneTrue(data.intakeMedicalFlags)) {
+        return "Please select at least one option under relevant medical information, or choose 'None of the above.'";
+      }
+      if (data.intakeMedicalFlags.other_important_medical_condition && !data.intakeMedicalFlags.other_medical_detail) {
+        return "Please tell us more about the other important medical condition.";
+      }
+      if (!data.acknowledged) {
+        return "Please confirm the acknowledgement before continuing.";
+      }
+      return null;
+    }
+
+    function buildIntakePayload(data) {
+      return {
+        patient_name: data.patientName,
+        patient_dob: data.patientDob,
+        patient_phone: formatPhoneForStorage(data.patientPhone),
+        patient_city: data.patientCity,
+        chief_complaint: data.chiefComplaint,
+        onset_bucket: data.onsetBucket,
+        coverage_status: data.coverageStatus,
+        intake_red_flags: data.intakeRedFlags,
+        intake_medical_flags: data.intakeMedicalFlags,
+        intake_source: "web_form",
+        intake_version: "v1"
+      };
+    }
+
+    function showHandoff(caseId, callInitiated) {
+      formScreen.classList.remove("show");
+      handoffScreen.classList.add("show");
+
+      const handoffCopy = document.getElementById("handoff-copy");
+      const handoffPanelCopy = document.getElementById("handoff-panel-copy");
+      const caseStatus = document.getElementById("success-case-id");
+      const expectCallCard = document.getElementById("expect-call-card");
+      const incomingNumberCard = document.getElementById("incoming-number-card");
+      const incomingNumberValue = document.getElementById("incoming-number-value");
+      const callActions = document.getElementById("call-actions");
+
+      handoffCopy.textContent =
+        "Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow up with recommendations as appropriate.";
+
+      caseStatus.textContent = caseId ? "Case reference: " + caseId : "Intake submitted successfully";
+      incomingNumberValue.textContent = EXPECTED_CALLER_NUMBER_DISPLAY;
+
+      if (callInitiated) {
+        handoffPanelCopy.textContent =
+          "Your intake has been received and Sam will call the phone number you provided shortly.";
+
+        expectCallCard.style.display = "block";
+        incomingNumberCard.style.display = "block";
+
+        callActions.innerHTML = `
+          <div class="call-fallback">
+            If you do not receive a call within 5 minutes, you can also call
+            <a class="call-number" href="${FALLBACK_DIAL_NUMBER_HREF}">${FALLBACK_DIAL_NUMBER_DISPLAY}</a>.
+          </div>
+        `;
+      } else {
+        handoffPanelCopy.textContent =
+          "Your intake has been received. Please call Sam now to continue your triage assessment.";
+
+        expectCallCard.style.display = "none";
+        incomingNumberCard.style.display = "none";
+
+        callActions.innerHTML = `
+          <a class="call-btn" href="${FALLBACK_DIAL_NUMBER_HREF}">Call Sam now</a>
+          <a class="call-number" href="${FALLBACK_DIAL_NUMBER_HREF}">${FALLBACK_DIAL_NUMBER_DISPLAY}</a>
+          <div class="call-fallback">
+            If the button above does not work, dial the number shown here.
+          </div>
+        `;
+      }
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function getTodayISODate() {
+      const d = new Date();
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function getValue(id) {
       const el = document.getElementById(id);
-      el.addEventListener("change", () => {
-        if (el.checked) medicalNone.checked = false;
-        toggleOtherMedicalDetail();
+      return el ? el.value.trim() : "";
+    }
+
+    function getOptionalValue(id) {
+      const el = document.getElementById(id);
+      if (!el) return null;
+      const value = el.value.trim();
+      return value || null;
+    }
+
+    function isChecked(id) {
+      const el = document.getElementById(id);
+      return !!(el && el.checked);
+    }
+
+    function normalizePhone(value) {
+      return value.replace(/\D/g, "");
+    }
+
+    function looksLikeNorthAmericanPhone(value) {
+      const digits = value.replace(/\D/g, "");
+      return digits.length === 10 || (digits.length === 11 && digits.startsWith("1"));
+    }
+
+    function formatPhoneForStorage(value) {
+      const digits = value.replace(/\D/g, "");
+      if (digits.length === 11 && digits.startsWith("1")) return digits.slice(1);
+      return digits;
+    }
+
+    function formatPhoneForDisplay(digits) {
+      if (!digits) return "";
+      if (digits.length <= 10) {
+        if (digits.length < 4) return digits;
+        if (digits.length < 7) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+        return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+      }
+      if (digits.length === 11 && digits.startsWith("1")) {
+        const core = digits.slice(1);
+        if (core.length < 4) return `1 ${core}`;
+        if (core.length < 7) return `1 (${core.slice(0, 3)}) ${core.slice(3)}`;
+        return `1 (${core.slice(0, 3)}) ${core.slice(3, 6)}-${core.slice(6, 10)}`;
+      }
+      return digits;
+    }
+
+    function isValidDateInput(value) {
+      if (!value) return false;
+      const d = new Date(value);
+      return !Number.isNaN(d.getTime());
+    }
+
+    function isFutureDate(value) {
+      const d = new Date(value);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return d > today;
+    }
+
+    function atLeastOneTrue(obj) {
+      return Object.values(obj).some(value => value === true);
+    }
+
+    function showIntakeError(message) {
+      const errEl = document.getElementById("intake-error");
+      errEl.textContent = message;
+      errEl.style.display = "block";
+      window.scrollTo({
+        top: errEl.getBoundingClientRect().top + window.scrollY - 80,
+        behavior: "smooth"
       });
-    });
-
-    mhOther.addEventListener("change", toggleOtherMedicalDetail);
-    toggleOtherMedicalDetail();
-  }
-
-  function toggleOtherMedicalDetail() {
-    const mhOther = document.getElementById("mh-other");
-    const wrapper = document.getElementById("mh-other-wrapper");
-    const detail = document.getElementById("mh-other-detail");
-    if (mhOther.checked) {
-      wrapper.style.display = "block";
-    } else {
-      wrapper.style.display = "none";
-      detail.value = "";
-    }
-  }
-
-  function setupIntakeSubmit() {
-    document.getElementById("intake-submit-btn").addEventListener("click", handleIntakeSubmit);
-  }
-
-  async function handleIntakeSubmit() {
-    const submitBtn = document.getElementById("intake-submit-btn");
-    clearIntakeError();
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Saving...";
-
-    try {
-      const formData = collectIntakeFormData();
-      const validationError = validateIntakeFormData(formData);
-      if (validationError) {
-        showIntakeError(validationError);
-        return;
-      }
-
-      const payload = buildIntakePayload(formData);
-      const resp = await fetch(INTAKE_TRIGGER_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const result = await resp.json().catch(() => null);
-
-      if (!resp.ok || !result?.ok) {
-        showIntakeError(result?.error || result?.details || "Unable to save your information right now.");
-        return;
-      }
-
-      showHandoff(result.case_id, result.call_initiated === true);
-    } catch (err) {
-      showIntakeError(err?.message || "Unexpected error while saving your information.");
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = "Continue";
-    }
-  }
-
-  function collectIntakeFormData() {
-    const inOntario = document.getElementById("in-ontario-yes").checked
-      ? "yes"
-      : document.getElementById("in-ontario-no").checked
-        ? "no"
-        : "";
-
-    return {
-      inOntario,
-      patientName: getValue("patient-name"),
-      patientDob: getValue("patient-dob"),
-      patientPhone: normalizePhone(getValue("patient-phone")),
-      patientCity: getValue("patient-city"),
-      chiefComplaint: getValue("chief-complaint"),
-      onsetBucket: getValue("onset-bucket"),
-      coverageStatus: getOptionalValue("coverage-status"),
-      acknowledged: isChecked("intake-acknowledge"),
-      intakeRedFlags: {
-        trouble_breathing_or_swallowing: isChecked("rf-breathing-swallowing"),
-        uncontrolled_bleeding: isChecked("rf-uncontrolled-bleeding"),
-        facial_swelling: isChecked("rf-facial-swelling"),
-        fever_or_feeling_unwell: isChecked("rf-fever-unwell"),
-        injury_to_teeth_jaw_face: isChecked("rf-trauma"),
-        none_of_the_above: isChecked("rf-none")
-      },
-      intakeMedicalFlags: {
-        allergy_antibiotics: isChecked("mh-allergy-antibiotics"),
-        allergy_pain_medication: isChecked("mh-allergy-pain"),
-        blood_thinners: isChecked("mh-blood-thinners"),
-        diabetes: isChecked("mh-diabetes"),
-        pregnancy: isChecked("mh-pregnancy"),
-        immunocompromised: isChecked("mh-immunocompromised"),
-        other_important_medical_condition: isChecked("mh-other"),
-        other_medical_detail: getOptionalValue("mh-other-detail"),
-        none_of_the_above: isChecked("mh-none")
-      }
-    };
-  }
-
-  function validateIntakeFormData(data) {
-    if (!data.inOntario) return "Please confirm whether you are currently in Ontario.";
-    if (data.inOntario !== "yes") return "This service is currently available only to patients in Ontario.";
-    if (!data.patientName) return "Please enter your full name.";
-    if (!data.patientDob) return "Please enter your date of birth.";
-    if (!isValidDateInput(data.patientDob)) return "Please enter a valid date of birth.";
-    if (!data.patientPhone) return "Please enter your phone number.";
-    if (!looksLikeNorthAmericanPhone(data.patientPhone)) {
-      return "Please enter a valid 10-digit phone number, or 11 digits starting with 1.";
-    }
-    if (!data.patientCity) return "Please enter your city.";
-    if (!data.chiefComplaint) return "Please describe what’s been bothering you today.";
-    if (!data.onsetBucket) return "Please tell us when this started.";
-    if (!atLeastOneTrue(data.intakeRedFlags)) {
-      return "Please select at least one option under current symptoms, or choose 'None of the above.'";
-    }
-    if (!atLeastOneTrue(data.intakeMedicalFlags)) {
-      return "Please select at least one option under relevant medical information, or choose 'None of the above.'";
-    }
-    if (data.intakeMedicalFlags.other_important_medical_condition && !data.intakeMedicalFlags.other_medical_detail) {
-      return "Please tell us more about the other important medical condition.";
-    }
-    if (!data.acknowledged) {
-      return "Please confirm the acknowledgement before continuing.";
-    }
-    return null;
-  }
-
-  function buildIntakePayload(data) {
-    return {
-      patient_name: data.patientName,
-      patient_dob: data.patientDob,
-      patient_phone: formatPhoneForStorage(data.patientPhone),
-      patient_city: data.patientCity,
-      chief_complaint: data.chiefComplaint,
-      onset_bucket: data.onsetBucket,
-      coverage_status: data.coverageStatus,
-      intake_red_flags: data.intakeRedFlags,
-      intake_medical_flags: data.intakeMedicalFlags,
-      intake_source: "web_form",
-      intake_version: "v1",
-    };
-  }
-
-  function showHandoff(caseId, callInitiated) {
-    formScreen.classList.remove("show");
-    handoffScreen.classList.add("show");
-
-    const caseStatus = document.getElementById("success-case-id");
-    const handoffCopy = handoffScreen.querySelector(".handoff-copy");
-    const handoffPanelCopy = document.getElementById("handoff-panel-copy");
-    const expectCallCard = document.getElementById("expect-call-card");
-    const incomingNumberCard = document.getElementById("incoming-number-card");
-    const incomingNumberValue = document.getElementById("incoming-number-value");
-    const callActions = document.getElementById("call-actions");
-
-    caseStatus.textContent = caseId ? "Case reference: " + caseId : "Intake submitted successfully";
-    incomingNumberValue.textContent = EXPECTED_CALLER_NUMBER_DISPLAY;
-
-    if (callInitiated) {
-      handoffCopy.textContent =
-        "Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow-up with recommendations as appropriate.";
-
-      handoffPanelCopy.textContent =
-        "Your intake has been received and Sam will call the phone number you provided shortly.";
-
-      expectCallCard.style.display = "block";
-      incomingNumberCard.style.display = "block";
-
-      callActions.innerHTML = `
-        <div class="call-fallback">
-          If you do not receive a call within 5 minutes, you can also call
-          <a class="call-number" href="${FALLBACK_DIAL_NUMBER_HREF}">${FALLBACK_DIAL_NUMBER_DISPLAY}</a>.
-        </div>
-      `;
-    } else {
-      handoffCopy.textContent =
-        "Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow-up with recommendations as appropriate.";
-
-      handoffPanelCopy.textContent =
-        "Your intake has been received. Please call Sam now to continue your triage assessment.";
-
-      expectCallCard.style.display = "none";
-      incomingNumberCard.style.display = "none";
-
-      callActions.innerHTML = `
-        <a class="call-btn" href="${FALLBACK_DIAL_NUMBER_HREF}">Call Sam now</a>
-        <a class="call-number" href="${FALLBACK_DIAL_NUMBER_HREF}">${FALLBACK_DIAL_NUMBER_DISPLAY}</a>
-        <div class="call-fallback">
-          If the button above does not work, dial the number shown here.
-        </div>
-      `;
     }
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  function getValue(id) {
-    const el = document.getElementById(id);
-    return el ? el.value.trim() : "";
-  }
-
-  function getOptionalValue(id) {
-    const el = document.getElementById(id);
-    if (!el) return null;
-    const value = el.value.trim();
-    return value || null;
-  }
-
-  function isChecked(id) {
-    const el = document.getElementById(id);
-    return !!(el && el.checked);
-  }
-
-  function normalizePhone(value) {
-    return value.replace(/\D/g, "");
-  }
-
-  function looksLikeNorthAmericanPhone(value) {
-    const digits = value.replace(/\D/g, "");
-    return digits.length === 10 || (digits.length === 11 && digits.startsWith("1"));
-  }
-
-  function formatPhoneForStorage(value) {
-    const digits = value.replace(/\D/g, "");
-    if (digits.length === 11 && digits.startsWith("1")) return digits.slice(1);
-    return digits;
-  }
-
-  function isValidDateInput(value) {
-    if (!value) return false;
-    const d = new Date(value);
-    return !Number.isNaN(d.getTime());
-  }
-
-  function atLeastOneTrue(obj) {
-    return Object.values(obj).some(value => value === true);
-  }
-
-  function showIntakeError(message) {
-    const errEl = document.getElementById("intake-error");
-    errEl.textContent = message;
-    errEl.style.display = "block";
-    window.scrollTo({
-      top: errEl.getBoundingClientRect().top + window.scrollY - 80,
-      behavior: "smooth"
-    });
-  }
-
-  function clearIntakeError() {
-    const errEl = document.getElementById("intake-error");
-    errEl.textContent = "";
-    errEl.style.display = "none";
-  }
-</script>
+    function clearIntakeError() {
+      const errEl = document.getElementById("intake-error");
+      errEl.textContent = "";
+      errEl.style.display = "none";
+    }
+  </script>
 </body>
 </html>
