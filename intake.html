@@ -557,7 +557,7 @@
     .handoff-card {
       display: none;
       margin-top: 18px;
-      padding: 24px 20px 26px;
+      padding: 20px 20px 24px;
       text-align: center;
     }
 
@@ -566,8 +566,8 @@
     }
 
     .handoff-icon {
-      width: 56px;
-      height: 56px;
+      width: 54px;
+      height: 54px;
       border-radius: 999px;
       background: rgba(0, 200, 122, 0.1);
       border: 1px solid rgba(0, 200, 122, 0.24);
@@ -580,9 +580,9 @@
     }
 
     .handoff-title {
-      font-size: clamp(30px, 7vw, 40px);
+      font-size: clamp(28px, 6vw, 38px);
       font-weight: 780;
-      line-height: 1.04;
+      line-height: 1.05;
       letter-spacing: -0.03em;
       margin-bottom: 12px;
       color: var(--white);
@@ -594,6 +594,23 @@
       margin: 0 auto 16px;
       font-size: 16px;
       line-height: 1.65;
+    }
+
+    .handoff-image-shell {
+      margin: 0 auto 16px;
+      max-width: 440px;
+      border-radius: 22px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .handoff-image {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      object-position: center 20%;
     }
 
     .handoff-panel {
@@ -620,6 +637,64 @@
       color: #dbe8fb;
       font-size: 15px;
       line-height: 1.65;
+    }
+
+    .expect-call-card {
+      margin: 0 auto 14px;
+      max-width: 720px;
+      background: rgba(0, 200, 122, 0.08);
+      border: 1px solid rgba(0, 200, 122, 0.24);
+      border-radius: 18px;
+      padding: 18px 18px;
+      text-align: center;
+    }
+
+    .expect-call-title {
+      font-size: 21px;
+      font-weight: 780;
+      color: #eafaf3;
+      line-height: 1.25;
+      margin-bottom: 6px;
+    }
+
+    .expect-call-copy {
+      color: #cceedd;
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    .incoming-number-card {
+      margin: 0 auto 16px;
+      max-width: 720px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px 16px;
+      text-align: center;
+    }
+
+    .incoming-number-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #bfd6f1;
+      margin-bottom: 8px;
+    }
+
+    .incoming-number-value {
+      font-size: clamp(24px, 6vw, 34px);
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--white);
+      letter-spacing: -0.02em;
+    }
+
+    .incoming-number-sub {
+      margin-top: 8px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
     }
 
     .case-status {
@@ -649,8 +724,8 @@
       width: 100%;
       border: none;
       border-radius: 18px;
-      padding: 19px 20px;
-      font-size: 21px;
+      padding: 18px 20px;
+      font-size: 20px;
       font-weight: 800;
       letter-spacing: -0.01em;
       color: #fff;
@@ -1058,30 +1133,51 @@
         Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow-up with recommendations as appropriate.
       </div>
 
+      <div class="handoff-image-shell">
+        <img
+          class="handoff-image"
+          src="sam-handoff.png"
+          alt="Calm dental care coordinator speaking on the phone"
+        />
+      </div>
+
       <div class="handoff-panel">
         <div class="handoff-panel-title">What happens now</div>
-        <div class="handoff-panel-copy">
-          Your intake has been received. Tap the button below to call Sam now. If tap-to-call does not work on your device, you can manually dial the number shown underneath.
+        <div class="handoff-panel-copy" id="handoff-panel-copy">
+          Your intake has been received.
+        </div>
+      </div>
+
+      <div class="expect-call-card" id="expect-call-card">
+        <div class="expect-call-title">Sam will call you shortly</div>
+        <div class="expect-call-copy">
+          Please keep your phone nearby and answer the call when it comes through.
+        </div>
+      </div>
+
+      <div class="incoming-number-card" id="incoming-number-card">
+        <div class="incoming-number-label">Expect a call from</div>
+        <div class="incoming-number-value" id="incoming-number-value">1-833-959-3932</div>
+        <div class="incoming-number-sub">
+          Saving this number may help you recognize the call.
         </div>
       </div>
 
       <div class="case-status" id="success-case-id">Intake submitted successfully</div>
 
-      <div class="call-actions">
-        <a class="call-btn" id="call-sam-btn" href="tel:+12193016594">
-          Call Sam now
-        </a>
-        <a class="call-number" href="tel:+12193016594">1 (219) 301-6594</a>
-        <div class="call-fallback">
-          This is a temporary patient access number and will be replaced with a Canadian number before launch.
-        </div>
-      </div>
+      <div class="call-actions" id="call-actions"></div>
     </section>
   </div>
+
 <script>
   const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
   const INTAKE_TRIGGER_URL = SUPABASE_URL + "/functions/v1/intake-trigger";
+
+  // Update these if the live fallback / caller ID changes
+  const EXPECTED_CALLER_NUMBER_DISPLAY = "1-833-959-3932";
+  const FALLBACK_DIAL_NUMBER_DISPLAY = "1-833-959-3932";
+  const FALLBACK_DIAL_NUMBER_HREF = "tel:+18339593932";
 
   if (!window.supabase || !window.supabase.createClient) {
     alert("Supabase library failed to load.");
@@ -1114,7 +1210,9 @@
     const yesEl = document.getElementById("in-ontario-yes");
     const noEl = document.getElementById("in-ontario-no");
     const warningEl = document.getElementById("ontario-warning");
-    function sync() { warningEl.style.display = noEl.checked ? "block" : "none"; }
+    function sync() {
+      warningEl.style.display = noEl.checked ? "block" : "none";
+    }
     yesEl.addEventListener("change", sync);
     noEl.addEventListener("change", sync);
     sync();
@@ -1122,29 +1220,62 @@
 
   function setupExclusiveCheckboxes() {
     const redFlagNone = document.getElementById("rf-none");
-    const redFlagIds = ["rf-breathing-swallowing","rf-uncontrolled-bleeding","rf-facial-swelling","rf-fever-unwell","rf-trauma"];
+    const redFlagIds = [
+      "rf-breathing-swallowing",
+      "rf-uncontrolled-bleeding",
+      "rf-facial-swelling",
+      "rf-fever-unwell",
+      "rf-trauma"
+    ];
+
     const medicalNone = document.getElementById("mh-none");
-    const medicalIds = ["mh-allergy-antibiotics","mh-allergy-pain","mh-blood-thinners","mh-diabetes","mh-pregnancy","mh-immunocompromised","mh-other"];
+    const medicalIds = [
+      "mh-allergy-antibiotics",
+      "mh-allergy-pain",
+      "mh-blood-thinners",
+      "mh-diabetes",
+      "mh-pregnancy",
+      "mh-immunocompromised",
+      "mh-other"
+    ];
+
     const mhOther = document.getElementById("mh-other");
 
     redFlagNone.addEventListener("change", () => {
-      if (redFlagNone.checked) redFlagIds.forEach(id => { const el = document.getElementById(id); if (el) el.checked = false; });
+      if (redFlagNone.checked) {
+        redFlagIds.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.checked = false;
+        });
+      }
     });
+
     redFlagIds.forEach(id => {
       const el = document.getElementById(id);
-      el.addEventListener("change", () => { if (el.checked) redFlagNone.checked = false; });
+      el.addEventListener("change", () => {
+        if (el.checked) redFlagNone.checked = false;
+      });
     });
+
     medicalNone.addEventListener("change", () => {
       if (medicalNone.checked) {
-        medicalIds.forEach(id => { const el = document.getElementById(id); if (el) el.checked = false; });
+        medicalIds.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.checked = false;
+        });
         document.getElementById("mh-other-detail").value = "";
         toggleOtherMedicalDetail();
       }
     });
+
     medicalIds.forEach(id => {
       const el = document.getElementById(id);
-      el.addEventListener("change", () => { if (el.checked) medicalNone.checked = false; toggleOtherMedicalDetail(); });
+      el.addEventListener("change", () => {
+        if (el.checked) medicalNone.checked = false;
+        toggleOtherMedicalDetail();
+      });
     });
+
     mhOther.addEventListener("change", toggleOtherMedicalDetail);
     toggleOtherMedicalDetail();
   }
@@ -1153,8 +1284,12 @@
     const mhOther = document.getElementById("mh-other");
     const wrapper = document.getElementById("mh-other-wrapper");
     const detail = document.getElementById("mh-other-detail");
-    if (mhOther.checked) { wrapper.style.display = "block"; }
-    else { wrapper.style.display = "none"; detail.value = ""; }
+    if (mhOther.checked) {
+      wrapper.style.display = "block";
+    } else {
+      wrapper.style.display = "none";
+      detail.value = "";
+    }
   }
 
   function setupIntakeSubmit() {
@@ -1166,21 +1301,29 @@
     clearIntakeError();
     submitBtn.disabled = true;
     submitBtn.textContent = "Saving...";
+
     try {
       const formData = collectIntakeFormData();
       const validationError = validateIntakeFormData(formData);
-      if (validationError) { showIntakeError(validationError); return; }
+      if (validationError) {
+        showIntakeError(validationError);
+        return;
+      }
+
       const payload = buildIntakePayload(formData);
       const resp = await fetch(INTAKE_TRIGGER_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+
       const result = await resp.json().catch(() => null);
+
       if (!resp.ok || !result?.ok) {
         showIntakeError(result?.error || result?.details || "Unable to save your information right now.");
         return;
       }
+
       showHandoff(result.case_id, result.call_initiated === true);
     } catch (err) {
       showIntakeError(err?.message || "Unexpected error while saving your information.");
@@ -1191,7 +1334,12 @@
   }
 
   function collectIntakeFormData() {
-    const inOntario = document.getElementById("in-ontario-yes").checked ? "yes" : document.getElementById("in-ontario-no").checked ? "no" : "";
+    const inOntario = document.getElementById("in-ontario-yes").checked
+      ? "yes"
+      : document.getElementById("in-ontario-no").checked
+        ? "no"
+        : "";
+
     return {
       inOntario,
       patientName: getValue("patient-name"),
@@ -1231,14 +1379,24 @@
     if (!data.patientDob) return "Please enter your date of birth.";
     if (!isValidDateInput(data.patientDob)) return "Please enter a valid date of birth.";
     if (!data.patientPhone) return "Please enter your phone number.";
-    if (!looksLikeNorthAmericanPhone(data.patientPhone)) return "Please enter a valid 10-digit phone number, or 11 digits starting with 1.";
+    if (!looksLikeNorthAmericanPhone(data.patientPhone)) {
+      return "Please enter a valid 10-digit phone number, or 11 digits starting with 1.";
+    }
     if (!data.patientCity) return "Please enter your city.";
-    if (!data.chiefComplaint) return "Please describe what's been bothering you today.";
+    if (!data.chiefComplaint) return "Please describe what’s been bothering you today.";
     if (!data.onsetBucket) return "Please tell us when this started.";
-    if (!atLeastOneTrue(data.intakeRedFlags)) return "Please select at least one option under current symptoms, or choose 'None of the above.'";
-    if (!atLeastOneTrue(data.intakeMedicalFlags)) return "Please select at least one option under relevant medical information, or choose 'None of the above.'";
-    if (data.intakeMedicalFlags.other_important_medical_condition && !data.intakeMedicalFlags.other_medical_detail) return "Please tell us more about the other important medical condition.";
-    if (!data.acknowledged) return "Please confirm the acknowledgement before continuing.";
+    if (!atLeastOneTrue(data.intakeRedFlags)) {
+      return "Please select at least one option under current symptoms, or choose 'None of the above.'";
+    }
+    if (!atLeastOneTrue(data.intakeMedicalFlags)) {
+      return "Please select at least one option under relevant medical information, or choose 'None of the above.'";
+    }
+    if (data.intakeMedicalFlags.other_important_medical_condition && !data.intakeMedicalFlags.other_medical_detail) {
+      return "Please tell us more about the other important medical condition.";
+    }
+    if (!data.acknowledged) {
+      return "Please confirm the acknowledgement before continuing.";
+    }
     return null;
   }
 
@@ -1261,37 +1419,106 @@
   function showHandoff(caseId, callInitiated) {
     formScreen.classList.remove("show");
     handoffScreen.classList.add("show");
+
     const caseStatus = document.getElementById("success-case-id");
-    caseStatus.textContent = caseId ? "Case reference: " + caseId : "Intake submitted successfully";
     const handoffCopy = handoffScreen.querySelector(".handoff-copy");
-    const handoffPanel = handoffScreen.querySelector(".handoff-panel-copy");
-    const callActions = handoffScreen.querySelector(".call-actions");
+    const handoffPanelCopy = document.getElementById("handoff-panel-copy");
+    const expectCallCard = document.getElementById("expect-call-card");
+    const incomingNumberCard = document.getElementById("incoming-number-card");
+    const incomingNumberValue = document.getElementById("incoming-number-value");
+    const callActions = document.getElementById("call-actions");
+
+    caseStatus.textContent = caseId ? "Case reference: " + caseId : "Intake submitted successfully";
+    incomingNumberValue.textContent = EXPECTED_CALLER_NUMBER_DISPLAY;
+
     if (callInitiated) {
-      if (handoffCopy) handoffCopy.textContent = "Sam, our AI dental triage assistant, will call you shortly on the phone number you provided. Please keep your phone nearby and answer when it rings.";
-      if (handoffPanel) handoffPanel.textContent = "Your intake has been received and Sam will call you within the next minute or two. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist will review the case.";
-      if (callActions) callActions.innerHTML = '<div style="background:rgba(0,200,122,0.08);border:1px solid rgba(0,200,122,0.24);border-radius:16px;padding:18px 20px;text-align:center;color:#d8f7ec;font-size:16px;line-height:1.6;">Sam will call you shortly.<br><span style="font-size:14px;color:#a8e8cc;">Please keep your phone nearby and answer the call.</span></div><div class="call-fallback" style="margin-top:8px;">If you do not receive a call within 5 minutes, you can also reach Sam by dialing <a href="tel:+12193016594" style="color:#79c8f3;">1 (219) 301-6594</a>.</div>';
+      handoffCopy.textContent =
+        "Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow-up with recommendations as appropriate.";
+
+      handoffPanelCopy.textContent =
+        "Your intake has been received and Sam will call the phone number you provided shortly.";
+
+      expectCallCard.style.display = "block";
+      incomingNumberCard.style.display = "block";
+
+      callActions.innerHTML = `
+        <div class="call-fallback">
+          If you do not receive a call within 5 minutes, you can also call
+          <a class="call-number" href="${FALLBACK_DIAL_NUMBER_HREF}">${FALLBACK_DIAL_NUMBER_DISPLAY}</a>.
+        </div>
+      `;
     } else {
-      if (handoffCopy) handoffCopy.textContent = "Your intake has been received. Please call Sam now to complete your triage assessment.";
-      if (handoffPanel) handoffPanel.textContent = "Tap the button below to call Sam. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist will review the case.";
-      if (callActions) callActions.innerHTML = '<a class="call-btn" href="tel:+12193016594">Call Sam now</a><a class="call-number" href="tel:+12193016594">1 (219) 301-6594</a><div class="call-fallback">This is a temporary patient access number and will be replaced with a Canadian number before launch.</div>';
+      handoffCopy.textContent =
+        "Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow-up with recommendations as appropriate.";
+
+      handoffPanelCopy.textContent =
+        "Your intake has been received. Please call Sam now to continue your triage assessment.";
+
+      expectCallCard.style.display = "none";
+      incomingNumberCard.style.display = "none";
+
+      callActions.innerHTML = `
+        <a class="call-btn" href="${FALLBACK_DIAL_NUMBER_HREF}">Call Sam now</a>
+        <a class="call-number" href="${FALLBACK_DIAL_NUMBER_HREF}">${FALLBACK_DIAL_NUMBER_DISPLAY}</a>
+        <div class="call-fallback">
+          If the button above does not work, dial the number shown here.
+        </div>
+      `;
     }
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function getValue(id) { const el = document.getElementById(id); return el ? el.value.trim() : ""; }
-  function getOptionalValue(id) { const el = document.getElementById(id); if (!el) return null; const value = el.value.trim(); return value || null; }
-  function isChecked(id) { const el = document.getElementById(id); return !!(el && el.checked); }
-  function normalizePhone(value) { return value.replace(/\D/g, ""); }
-  function looksLikeNorthAmericanPhone(value) { const digits = value.replace(/\D/g, ""); return digits.length === 10 || (digits.length === 11 && digits.startsWith("1")); }
-  function formatPhoneForStorage(value) { const digits = value.replace(/\D/g, ""); if (digits.length === 11 && digits.startsWith("1")) return digits.slice(1); return digits; }
-  function isValidDateInput(value) { if (!value) return false; const d = new Date(value); return !Number.isNaN(d.getTime()); }
-  function atLeastOneTrue(obj) { return Object.values(obj).some(value => value === true); }
+  function getValue(id) {
+    const el = document.getElementById(id);
+    return el ? el.value.trim() : "";
+  }
+
+  function getOptionalValue(id) {
+    const el = document.getElementById(id);
+    if (!el) return null;
+    const value = el.value.trim();
+    return value || null;
+  }
+
+  function isChecked(id) {
+    const el = document.getElementById(id);
+    return !!(el && el.checked);
+  }
+
+  function normalizePhone(value) {
+    return value.replace(/\D/g, "");
+  }
+
+  function looksLikeNorthAmericanPhone(value) {
+    const digits = value.replace(/\D/g, "");
+    return digits.length === 10 || (digits.length === 11 && digits.startsWith("1"));
+  }
+
+  function formatPhoneForStorage(value) {
+    const digits = value.replace(/\D/g, "");
+    if (digits.length === 11 && digits.startsWith("1")) return digits.slice(1);
+    return digits;
+  }
+
+  function isValidDateInput(value) {
+    if (!value) return false;
+    const d = new Date(value);
+    return !Number.isNaN(d.getTime());
+  }
+
+  function atLeastOneTrue(obj) {
+    return Object.values(obj).some(value => value === true);
+  }
 
   function showIntakeError(message) {
     const errEl = document.getElementById("intake-error");
     errEl.textContent = message;
     errEl.style.display = "block";
-    window.scrollTo({ top: errEl.getBoundingClientRect().top + window.scrollY - 80, behavior: "smooth" });
+    window.scrollTo({
+      top: errEl.getBoundingClientRect().top + window.scrollY - 80,
+      behavior: "smooth"
+    });
   }
 
   function clearIntakeError() {
