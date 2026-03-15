@@ -194,7 +194,7 @@
       justify-content: space-between;
       position: sticky;
       top: 0;
-      z-index: 120;
+      z-index: 140;
       backdrop-filter: blur(10px);
       flex-shrink: 0;
     }
@@ -272,11 +272,16 @@
     .tabs-shell {
       position: sticky;
       top: 56px;
-      z-index: 110;
+      z-index: 130;
       background: rgba(15, 32, 68, 0.94);
       border-bottom: 1px solid var(--border);
       flex-shrink: 0;
       backdrop-filter: blur(10px);
+      transition: transform 0.18s ease, opacity 0.18s ease, max-height 0.18s ease;
+    }
+
+    .tabs-shell.hidden-in-detail {
+      display: none;
     }
 
     .nav-tabs {
@@ -286,6 +291,11 @@
       gap: 2px;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .nav-tabs::-webkit-scrollbar {
+      display: none;
     }
 
     .nav-tab {
@@ -328,11 +338,16 @@
     .queue-controls {
       position: sticky;
       top: 103px;
-      z-index: 100;
+      z-index: 120;
       background: rgba(15, 32, 68, 0.94);
       border-bottom: 1px solid var(--border);
       flex-shrink: 0;
       backdrop-filter: blur(10px);
+      transition: transform 0.18s ease, opacity 0.18s ease, max-height 0.18s ease;
+    }
+
+    .queue-controls.hidden-in-detail {
+      display: none;
     }
 
     .desktop-layout {
@@ -363,7 +378,7 @@
       position: absolute;
       inset: 0;
       background: var(--navy);
-      z-index: 10;
+      z-index: 20;
       min-height: 0;
       overflow: hidden;
     }
@@ -377,12 +392,19 @@
     }
 
     .filter-bar {
-      padding: 12px 16px;
+      padding: 10px 12px;
       display: flex;
       align-items: center;
-      gap: 10px;
-      background: rgba(0, 0, 0, 0.15);
-      flex-wrap: wrap;
+      gap: 8px;
+      background: rgba(0, 0, 0, 0.14);
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .filter-bar::-webkit-scrollbar {
+      display: none;
     }
 
     .filter-chip,
@@ -396,6 +418,8 @@
       padding: 6px 12px;
       cursor: pointer;
       transition: all 0.2s;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .filter-chip.active,
@@ -429,10 +453,11 @@
     }
 
     .filter-right {
-      margin-left: auto;
       display: flex;
       align-items: center;
       gap: 8px;
+      margin-left: 2px;
+      flex-shrink: 0;
     }
 
     .refresh-btn {
@@ -440,11 +465,12 @@
       border: 1px solid var(--border);
       border-radius: 8px;
       color: var(--text-muted);
-      padding: 5px 10px;
+      padding: 6px 10px;
       cursor: pointer;
       font-size: 16px;
       transition: color 0.2s, border-color 0.2s;
       line-height: 1;
+      flex-shrink: 0;
     }
 
     .refresh-btn:hover {
@@ -463,13 +489,20 @@
     }
 
     .sort-bar {
-      padding: 8px 16px;
+      padding: 8px 12px;
       display: flex;
       align-items: center;
       gap: 8px;
       border-top: 1px solid rgba(255,255,255,0.04);
       background: rgba(0, 0, 0, 0.12);
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .sort-bar::-webkit-scrollbar {
+      display: none;
     }
 
     .sort-label {
@@ -477,11 +510,12 @@
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
+      flex-shrink: 0;
     }
 
     .queue-hint {
       display: none;
-      padding: 8px 16px 10px;
+      padding: 8px 12px 10px;
       font-size: 11px;
       color: var(--text-muted);
       border-top: 1px solid rgba(255,255,255,0.04);
@@ -731,7 +765,7 @@
       top: 0;
       background: rgba(15, 32, 68, 0.96);
       border-bottom: 1px solid var(--border);
-      padding: 12px 16px;
+      padding: 10px 14px;
       display: flex;
       align-items: center;
       gap: 12px;
@@ -1272,7 +1306,7 @@
       padding: 12px 20px;
       font-size: 13px;
       color: var(--cyan);
-      z-index: 140;
+      z-index: 200;
       transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       white-space: nowrap;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
@@ -1408,6 +1442,48 @@
       .back-btn {
         display: none;
       }
+
+      .tabs-shell.hidden-in-detail,
+      .queue-controls.hidden-in-detail {
+        display: block;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .header {
+        padding: 0 12px;
+      }
+
+      .nav-tabs {
+        padding: 0 8px;
+      }
+
+      .nav-tab {
+        padding: 11px 10px;
+      }
+
+      .filter-chip,
+      .sort-chip {
+        padding: 6px 11px;
+      }
+
+      .detail-header {
+        padding: 9px 12px;
+      }
+
+      .detail-body {
+        padding: 12px;
+        gap: 12px;
+      }
+
+      .case-list {
+        padding: 10px 12px 20px;
+      }
+
+      .tabs-shell.hidden-in-detail,
+      .queue-controls.hidden-in-detail {
+        display: none !important;
+      }
     }
 
     @media (max-width: 680px) {
@@ -1497,29 +1573,29 @@
         <button class="nav-tab" id="tab-reviewed" type="button">Reviewed</button>
         <button class="nav-tab" id="tab-all" type="button">All Cases</button>
       </nav>
+    </div>
 
-      <div class="queue-controls" id="queue-controls">
-        <div class="filter-bar" id="filter-bar">
-          <button class="filter-chip active" id="chip-all" type="button">All</button>
-          <button class="filter-chip" id="chip-urgent" type="button">Urgent</button>
-          <button class="filter-chip" id="chip-emergency" type="button">Emergency</button>
-          <button class="filter-chip" id="chip-routine" type="button">Routine</button>
+    <div class="queue-controls" id="queue-controls">
+      <div class="filter-bar" id="filter-bar">
+        <button class="filter-chip active" id="chip-all" type="button">All</button>
+        <button class="filter-chip" id="chip-urgent" type="button">Urgent</button>
+        <button class="filter-chip" id="chip-emergency" type="button">Emergency</button>
+        <button class="filter-chip" id="chip-routine" type="button">Routine</button>
 
-          <div class="filter-right">
-            <button class="refresh-btn" id="refresh-btn" type="button" title="Refresh">↻</button>
-          </div>
+        <div class="filter-right">
+          <button class="refresh-btn" id="refresh-btn" type="button" title="Refresh">↻</button>
         </div>
+      </div>
 
-        <div class="sort-bar" id="sort-bar">
-          <span class="sort-label">Sort:</span>
-          <button class="sort-chip active" id="sort-severity" type="button">Urgency</button>
-          <button class="sort-chip" id="sort-newest" type="button">Newest</button>
-          <button class="sort-chip" id="sort-oldest" type="button" style="display:none">Oldest</button>
-        </div>
+      <div class="sort-bar" id="sort-bar">
+        <span class="sort-label">Sort:</span>
+        <button class="sort-chip active" id="sort-severity" type="button">Urgency</button>
+        <button class="sort-chip" id="sort-newest" type="button">Newest</button>
+        <button class="sort-chip" id="sort-oldest" type="button" style="display:none">Oldest</button>
+      </div>
 
-        <div class="queue-hint" id="queue-hint">
-          Return to the case list to change queue filters or tabs.
-        </div>
+      <div class="queue-hint" id="queue-hint">
+        Return to the case list to change queue filters or tabs.
       </div>
     </div>
 
@@ -1544,467 +1620,487 @@
   <div id="toast"></div>
 
   <script>
-  const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
-  if (!window.supabase || !window.supabase.createClient) {
-    const errEl = document.getElementById("auth-error");
-    if (errEl) {
-      errEl.style.display = "block";
-      errEl.textContent = "Supabase library failed to load. Check network / CDN blocking.";
-    }
-    throw new Error("Supabase library missing");
-  }
+    const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
 
-  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  let currentTab = "queue";
-  let currentFilter = "all";
-  let currentSort = "severity";
-  let allCases = [];
-  let currentCase = null;
-  let currentUser = null;
-  let selectedCaseId = null;
-  let refreshInterval = null;
-  let isMobile = window.innerWidth < 768;
-  let queueCount = 0;
-
-  window.addEventListener("resize", () => {
-    isMobile = window.innerWidth < 768;
-    if (!isMobile) {
-      document.getElementById("queue-column").style.display = "flex";
-      document.getElementById("detail-column").style.display = "flex";
-    } else if (!currentCase) {
-      document.getElementById("detail-column").style.display = "none";
-    }
-    updateControlsDisabledState();
-  });
-
-  document.getElementById("auth-btn").addEventListener("click", handleLogin);
-  document.getElementById("signout-btn").addEventListener("click", handleSignOut);
-  document.getElementById("refresh-btn").addEventListener("click", loadCases);
-
-  document.getElementById("auth-email").addEventListener("keydown", (e) => {
-    if (e.key === "Enter") handleLogin();
-  });
-
-  document.getElementById("auth-password").addEventListener("keydown", (e) => {
-    if (e.key === "Enter") handleLogin();
-  });
-
-  document.getElementById("tab-queue").addEventListener("click", () => switchTab("queue"));
-  document.getElementById("tab-new").addEventListener("click", () => switchTab("new"));
-  document.getElementById("tab-drafts").addEventListener("click", () => switchTab("drafts"));
-  document.getElementById("tab-reviewed").addEventListener("click", () => switchTab("reviewed"));
-  document.getElementById("tab-all").addEventListener("click", () => switchTab("all"));
-
-  document.getElementById("chip-all").addEventListener("click", () => setFilter("all"));
-  document.getElementById("chip-urgent").addEventListener("click", () => setFilter("urgent"));
-  document.getElementById("chip-emergency").addEventListener("click", () => setFilter("emergency"));
-  document.getElementById("chip-routine").addEventListener("click", () => setFilter("routine"));
-
-  document.getElementById("sort-severity").addEventListener("click", () => {
-    if (currentTab === "queue") {
-      setSort("severity");
-      return;
-    }
-    if (!isUrgencySortRedundant()) setSort("severity");
-  });
-  document.getElementById("sort-newest").addEventListener("click", () => setSort("newest"));
-  document.getElementById("sort-oldest").addEventListener("click", () => setSort("oldest"));
-
-  async function handleLogin() {
-    const email = document.getElementById("auth-email").value.trim();
-    const password = document.getElementById("auth-password").value;
-    const btn = document.getElementById("auth-btn");
-    const errEl = document.getElementById("auth-error");
-
-    errEl.style.display = "none";
-    errEl.textContent = "";
-
-    if (!email || !password) {
-      errEl.textContent = "Enter both email and password.";
-      errEl.style.display = "block";
-      return;
-    }
-
-    btn.disabled = true;
-    btn.textContent = "Signing in...";
-
-    try {
-      const { data, error } = await sb.auth.signInWithPassword({ email, password });
-
-      if (error) {
-        errEl.textContent = error.message || "Sign-in failed.";
+    if (!window.supabase || !window.supabase.createClient) {
+      const errEl = document.getElementById("auth-error");
+      if (errEl) {
         errEl.style.display = "block";
-        return;
+        errEl.textContent = "Supabase library failed to load. Check network / CDN blocking.";
       }
-
-      if (!data || !data.user) {
-        errEl.textContent = "Sign-in returned no user.";
-        errEl.style.display = "block";
-        return;
-      }
-
-      showApp(data.user);
-    } catch (err) {
-      errEl.textContent = err?.message || "Unexpected sign-in error.";
-      errEl.style.display = "block";
-    } finally {
-      btn.disabled = false;
-      btn.textContent = "Sign In";
+      throw new Error("Supabase library missing");
     }
-  }
 
-  async function handleSignOut() {
-    try {
-      await sb.auth.signOut();
-    } catch (err) {
-      console.error("Sign-out error:", err);
-    }
-    window.location.reload();
-  }
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  async function init() {
-    try {
-      const { data, error } = await sb.auth.getSession();
-      if (error) {
-        console.error("Session error:", error);
-        return;
-      }
-      if (data?.session?.user) {
-        showApp(data.session.user);
-      } else if (isMobile) {
+    let currentTab = "queue";
+    let currentFilter = "all";
+    let currentSort = "severity";
+    let allCases = [];
+    let currentCase = null;
+    let currentUser = null;
+    let selectedCaseId = null;
+    let refreshInterval = null;
+    let isMobile = window.innerWidth < 768;
+    let queueCount = 0;
+
+    window.addEventListener("resize", () => {
+      isMobile = window.innerWidth < 768;
+
+      if (!isMobile) {
+        document.getElementById("queue-column").style.display = "flex";
+        document.getElementById("detail-column").style.display = "flex";
+      } else if (!currentCase) {
         document.getElementById("detail-column").style.display = "none";
       }
-    } catch (err) {
-      console.error("Init error:", err);
-    }
-  }
 
-  function showApp(user) {
-    currentUser = user;
-    document.getElementById("auth-screen").style.display = "none";
-    document.getElementById("app").style.display = "flex";
-    document.getElementById("header-user-email").textContent = user.email || "";
-
-    if (refreshInterval) clearInterval(refreshInterval);
-    refreshInterval = setInterval(loadCases, 90000);
-
-    if (isMobile) {
-      document.getElementById("detail-column").style.display = "none";
-    }
-
-    loadCases();
-  }
-
-  async function loadCases() {
-    const btn = document.getElementById("refresh-btn");
-    btn.classList.add("spinning");
-
-    try {
-      await Promise.all([
-        loadCurrentTabCases(),
-        loadQueueCount()
-      ]);
-
-      renderQueue();
-      updateQueueBadge();
-      updateSortChipState();
       updateControlsDisabledState();
-      updateSortBarVisibility();
-    } catch (err) {
-      console.error("Load exception:", err);
-      showToast("Unexpected load error");
-    } finally {
-      btn.classList.remove("spinning");
-    }
-  }
-
-  async function loadCurrentTabCases() {
-    let query;
-
-    if (currentTab === "queue") {
-      query = sb
-        .from("triage_cases")
-        .select("*")
-        .or("review_status.eq.new,review_status.eq.draft,review_status.is.null")
-        .order("created_at", { ascending: false })
-        .limit(300);
-    } else if (currentTab === "new") {
-      query = sb
-        .from("triage_cases")
-        .select("*")
-        .or("review_status.eq.new,review_status.is.null")
-        .order("created_at", { ascending: false })
-        .limit(300);
-    } else if (currentTab === "drafts") {
-      query = sb
-        .from("triage_cases")
-        .select("*")
-        .eq("review_status", "draft")
-        .order("created_at", { ascending: false })
-        .limit(300);
-    } else if (currentTab === "reviewed") {
-      query = sb
-        .from("triage_cases")
-        .select("*")
-        .eq("review_status", "reviewed")
-        .order("created_at", { ascending: false })
-        .limit(300);
-    } else {
-      query = sb
-        .from("triage_cases")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(300);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error("Load error:", error);
-      showToast("Error loading cases: " + (error.message || "unknown"));
-      allCases = [];
-      return;
-    }
-
-    allCases = Array.isArray(data) ? data : [];
-  }
-
-  async function loadQueueCount() {
-    const { count, error } = await sb
-      .from("triage_cases")
-      .select("id", { count: "exact", head: true })
-      .or("review_status.eq.new,review_status.eq.draft,review_status.is.null");
-
-    if (error) {
-      console.error("Queue count error:", error);
-      return;
-    }
-
-    queueCount = typeof count === "number" ? count : 0;
-  }
-
-  function updateQueueBadge() {
-    const badge = document.getElementById("queue-count-badge");
-    if (queueCount > 0) {
-      badge.textContent = String(queueCount);
-      badge.style.display = "inline-block";
-    } else {
-      badge.style.display = "none";
-    }
-  }
-
-  function switchTab(tab) {
-    if (controlsShouldBeDisabled()) return;
-
-    if (isMobile) {
-      document.getElementById("queue-column").style.display = "flex";
-      document.getElementById("detail-column").style.display = "none";
-    }
-
-    currentTab = tab;
-    selectedCaseId = null;
-    currentCase = null;
-
-    ["queue", "new", "drafts", "reviewed", "all"].forEach((t) => {
-      document.getElementById("tab-" + t).classList.toggle("active", t === tab);
+      updateDetailModeVisibility();
     });
 
-    currentFilter = "all";
-    ["all", "urgent", "emergency", "routine"].forEach((c) => {
-      document.getElementById("chip-" + c).classList.toggle("active", c === "all");
+    document.getElementById("auth-btn").addEventListener("click", handleLogin);
+    document.getElementById("signout-btn").addEventListener("click", handleSignOut);
+    document.getElementById("refresh-btn").addEventListener("click", loadCases);
+
+    document.getElementById("auth-email").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleLogin();
     });
 
-    currentSort = "severity";
-    ["severity", "newest", "oldest"].forEach((k) => {
-      const el = document.getElementById("sort-" + k);
-      if (el) el.classList.toggle("active", k === "severity");
+    document.getElementById("auth-password").addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleLogin();
     });
 
-    updateSortBarVisibility();
-    updateSortChipState();
+    document.getElementById("tab-queue").addEventListener("click", () => switchTab("queue"));
+    document.getElementById("tab-new").addEventListener("click", () => switchTab("new"));
+    document.getElementById("tab-drafts").addEventListener("click", () => switchTab("drafts"));
+    document.getElementById("tab-reviewed").addEventListener("click", () => switchTab("reviewed"));
+    document.getElementById("tab-all").addEventListener("click", () => switchTab("all"));
 
-    if (!isMobile) {
-      renderEmptyDetailPane();
+    document.getElementById("chip-all").addEventListener("click", () => setFilter("all"));
+    document.getElementById("chip-urgent").addEventListener("click", () => setFilter("urgent"));
+    document.getElementById("chip-emergency").addEventListener("click", () => setFilter("emergency"));
+    document.getElementById("chip-routine").addEventListener("click", () => setFilter("routine"));
+
+    document.getElementById("sort-severity").addEventListener("click", () => {
+      if (currentTab === "queue") {
+        setSort("severity");
+        return;
+      }
+      if (!isUrgencySortRedundant()) setSort("severity");
+    });
+
+    document.getElementById("sort-newest").addEventListener("click", () => setSort("newest"));
+    document.getElementById("sort-oldest").addEventListener("click", () => setSort("oldest"));
+
+    async function handleLogin() {
+      const email = document.getElementById("auth-email").value.trim();
+      const password = document.getElementById("auth-password").value;
+      const btn = document.getElementById("auth-btn");
+      const errEl = document.getElementById("auth-error");
+
+      errEl.style.display = "none";
+      errEl.textContent = "";
+
+      if (!email || !password) {
+        errEl.textContent = "Enter both email and password.";
+        errEl.style.display = "block";
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Signing in...";
+
+      try {
+        const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
+        if (error) {
+          errEl.textContent = error.message || "Sign-in failed.";
+          errEl.style.display = "block";
+          return;
+        }
+
+        if (!data || !data.user) {
+          errEl.textContent = "Sign-in returned no user.";
+          errEl.style.display = "block";
+          return;
+        }
+
+        showApp(data.user);
+      } catch (err) {
+        errEl.textContent = err?.message || "Unexpected sign-in error.";
+        errEl.style.display = "block";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Sign In";
+      }
     }
 
-    loadCases();
-  }
+    async function handleSignOut() {
+      try {
+        await sb.auth.signOut();
+      } catch (err) {
+        console.error("Sign-out error:", err);
+      }
+      window.location.reload();
+    }
 
-  function updateSortBarVisibility() {
-    const sortBar = document.getElementById("sort-bar");
-    const oldestBtn = document.getElementById("sort-oldest");
+    async function init() {
+      try {
+        const { data, error } = await sb.auth.getSession();
+        if (error) {
+          console.error("Session error:", error);
+          return;
+        }
 
-    sortBar.style.display = "flex";
-    oldestBtn.style.display = currentTab === "queue" ? "none" : "inline-flex";
+        if (data?.session?.user) {
+          showApp(data.session.user);
+        } else if (isMobile) {
+          document.getElementById("detail-column").style.display = "none";
+        }
+      } catch (err) {
+        console.error("Init error:", err);
+      }
+    }
 
-    if (currentTab === "queue" && currentSort === "oldest") {
+    function showApp(user) {
+      currentUser = user;
+      document.getElementById("auth-screen").style.display = "none";
+      document.getElementById("app").style.display = "flex";
+      document.getElementById("header-user-email").textContent = user.email || "";
+
+      if (refreshInterval) clearInterval(refreshInterval);
+      refreshInterval = setInterval(loadCases, 90000);
+
+      if (isMobile) {
+        document.getElementById("detail-column").style.display = "none";
+      }
+
+      loadCases();
+    }
+
+    async function loadCases() {
+      const btn = document.getElementById("refresh-btn");
+      btn.classList.add("spinning");
+
+      try {
+        await Promise.all([
+          loadCurrentTabCases(),
+          loadQueueCount()
+        ]);
+
+        renderQueue();
+        updateQueueBadge();
+        updateSortChipState();
+        updateControlsDisabledState();
+        updateSortBarVisibility();
+        updateDetailModeVisibility();
+      } catch (err) {
+        console.error("Load exception:", err);
+        showToast("Unexpected load error");
+      } finally {
+        btn.classList.remove("spinning");
+      }
+    }
+
+    async function loadCurrentTabCases() {
+      let query;
+
+      if (currentTab === "queue") {
+        query = sb
+          .from("triage_cases")
+          .select("*")
+          .or("review_status.eq.new,review_status.eq.draft,review_status.is.null")
+          .order("created_at", { ascending: false })
+          .limit(300);
+      } else if (currentTab === "new") {
+        query = sb
+          .from("triage_cases")
+          .select("*")
+          .or("review_status.eq.new,review_status.is.null")
+          .order("created_at", { ascending: false })
+          .limit(300);
+      } else if (currentTab === "drafts") {
+        query = sb
+          .from("triage_cases")
+          .select("*")
+          .eq("review_status", "draft")
+          .order("created_at", { ascending: false })
+          .limit(300);
+      } else if (currentTab === "reviewed") {
+        query = sb
+          .from("triage_cases")
+          .select("*")
+          .eq("review_status", "reviewed")
+          .order("created_at", { ascending: false })
+          .limit(300);
+      } else {
+        query = sb
+          .from("triage_cases")
+          .select("*")
+          .order("created_at", { ascending: false })
+          .limit(300);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error("Load error:", error);
+        showToast("Error loading cases: " + (error.message || "unknown"));
+        allCases = [];
+        return;
+      }
+
+      allCases = Array.isArray(data) ? data : [];
+    }
+
+    async function loadQueueCount() {
+      const { count, error } = await sb
+        .from("triage_cases")
+        .select("id", { count: "exact", head: true })
+        .or("review_status.eq.new,review_status.eq.draft,review_status.is.null");
+
+      if (error) {
+        console.error("Queue count error:", error);
+        return;
+      }
+
+      queueCount = typeof count === "number" ? count : 0;
+    }
+
+    function updateQueueBadge() {
+      const badge = document.getElementById("queue-count-badge");
+      if (queueCount > 0) {
+        badge.textContent = String(queueCount);
+        badge.style.display = "inline-block";
+      } else {
+        badge.style.display = "none";
+      }
+    }
+
+    function switchTab(tab) {
+      if (controlsShouldBeDisabled()) return;
+
+      if (isMobile) {
+        document.getElementById("queue-column").style.display = "flex";
+        document.getElementById("detail-column").style.display = "none";
+      }
+
+      currentTab = tab;
+      selectedCaseId = null;
+      currentCase = null;
+
+      ["queue", "new", "drafts", "reviewed", "all"].forEach((t) => {
+        document.getElementById("tab-" + t).classList.toggle("active", t === tab);
+      });
+
+      currentFilter = "all";
+      ["all", "urgent", "emergency", "routine"].forEach((c) => {
+        document.getElementById("chip-" + c).classList.toggle("active", c === "all");
+      });
+
       currentSort = "severity";
       ["severity", "newest", "oldest"].forEach((k) => {
         const el = document.getElementById("sort-" + k);
         if (el) el.classList.toggle("active", k === "severity");
       });
-    }
-  }
 
-  function renderEmptyDetailPane() {
-    const panel = document.getElementById("detail-panel");
-    panel.innerHTML = `
-      <div class="detail-placeholder" id="detail-placeholder">
-        <div class="detail-placeholder-icon">🦷</div>
-        <div class="detail-placeholder-text">Select a case to review</div>
-      </div>
-    `;
-  }
+      updateSortBarVisibility();
+      updateSortChipState();
 
-  function setSort(sortKey) {
-    if (controlsShouldBeDisabled()) return;
-    if (sortKey === "oldest" && currentTab === "queue") return;
+      if (!isMobile) {
+        renderEmptyDetailPane();
+      }
 
-    currentSort = sortKey;
-
-    ["severity", "newest", "oldest"].forEach((k) => {
-      const el = document.getElementById("sort-" + k);
-      if (el) el.classList.toggle("active", k === sortKey);
-    });
-
-    updateSortChipState();
-    renderQueue();
-  }
-
-  function setFilter(filterKey) {
-    if (controlsShouldBeDisabled()) return;
-
-    currentFilter = filterKey;
-    ["all", "urgent", "emergency", "routine"].forEach((k) => {
-      document.getElementById("chip-" + k).classList.toggle("active", k === filterKey);
-    });
-
-    if (isUrgencySortRedundant() && currentSort === "severity") {
-      currentSort = "newest";
-      ["severity", "newest", "oldest"].forEach((k) => {
-        const el = document.getElementById("sort-" + k);
-        if (el) el.classList.toggle("active", k === "newest");
-      });
+      loadCases();
     }
 
-    updateSortChipState();
-    renderQueue();
-  }
+    function updateSortBarVisibility() {
+      const sortBar = document.getElementById("sort-bar");
+      const oldestBtn = document.getElementById("sort-oldest");
 
-  function isUrgencySortRedundant() {
-    return currentFilter !== "all";
-  }
+      sortBar.style.display = "flex";
+      oldestBtn.style.display = currentTab === "queue" ? "none" : "inline-flex";
 
-  function updateSortChipState() {
-    const severityChip = document.getElementById("sort-severity");
-    if (!severityChip) return;
-
-    const redundant = isUrgencySortRedundant();
-    severityChip.classList.toggle("disabled", redundant);
-
-    if (redundant && currentSort === "severity") {
-      currentSort = "newest";
-      ["severity", "newest", "oldest"].forEach((k) => {
-        const el = document.getElementById("sort-" + k);
-        if (el) el.classList.toggle("active", k === "newest");
-      });
-    }
-  }
-
-  function controlsShouldBeDisabled() {
-    return !!selectedCaseId;
-  }
-
-  function updateControlsDisabledState() {
-    const tabsShell = document.getElementById("tabs-shell");
-    const queueControls = document.getElementById("queue-controls");
-    const queueHint = document.getElementById("queue-hint");
-
-    const disabled = controlsShouldBeDisabled();
-
-    tabsShell.classList.toggle("controls-disabled", disabled);
-    queueControls.classList.toggle("controls-disabled", disabled);
-    queueHint.classList.toggle("show", disabled);
-  }
-
-  function renderQueue() {
-    const panel = document.getElementById("queue-panel");
-    let cases = [...allCases];
-
-    if (currentTab === "queue") {
-      cases = cases.filter((c) => c.review_status !== "reviewed");
+      if (currentTab === "queue" && currentSort === "oldest") {
+        currentSort = "severity";
+        ["severity", "newest", "oldest"].forEach((k) => {
+          const el = document.getElementById("sort-" + k);
+          if (el) el.classList.toggle("active", k === "severity");
+        });
+      }
     }
 
-    if (currentFilter !== "all") {
-      cases = cases.filter((c) => c.severity === currentFilter);
-    }
-
-    const sevOrder = { urgent: 1, emergency: 2, routine: 3 };
-
-    if (currentSort === "severity" && !isUrgencySortRedundant()) {
-      cases.sort((a, b) => {
-        const aOrder = sevOrder[a.severity] ?? 9;
-        const bOrder = sevOrder[b.severity] ?? 9;
-        return aOrder - bOrder || new Date(b.created_at) - new Date(a.created_at);
-      });
-    } else if (currentSort === "newest") {
-      cases.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-    } else if (currentSort === "oldest") {
-      cases.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
-    }
-
-    if (!cases.length) {
-      const { emptyTitle, emptySub } = getEmptyStateCopy();
+    function renderEmptyDetailPane() {
+      const panel = document.getElementById("detail-panel");
       panel.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-icon">✓</div>
-          <div class="empty-title">${escHtml(emptyTitle)}</div>
-          <div class="empty-sub">${escHtml(emptySub)}</div>
+        <div class="detail-placeholder" id="detail-placeholder">
+          <div class="detail-placeholder-icon">🦷</div>
+          <div class="detail-placeholder-text">Select a case to review</div>
         </div>
       `;
-      return;
     }
 
-    panel.innerHTML = `<div class="case-list">${cases.map(renderCaseCard).join("")}</div>`;
+    function setSort(sortKey) {
+      if (controlsShouldBeDisabled()) return;
+      if (sortKey === "oldest" && currentTab === "queue") return;
 
-    panel.querySelectorAll(".case-card").forEach((el) => {
-      el.addEventListener("click", () => openCase(el.dataset.caseId));
-    });
-  }
+      currentSort = sortKey;
 
-  function getEmptyStateCopy() {
-    if (currentTab === "queue") {
+      ["severity", "newest", "oldest"].forEach((k) => {
+        const el = document.getElementById("sort-" + k);
+        if (el) el.classList.toggle("active", k === sortKey);
+      });
+
+      updateSortChipState();
+      renderQueue();
+    }
+
+    function setFilter(filterKey) {
+      if (controlsShouldBeDisabled()) return;
+
+      currentFilter = filterKey;
+      ["all", "urgent", "emergency", "routine"].forEach((k) => {
+        document.getElementById("chip-" + k).classList.toggle("active", k === filterKey);
+      });
+
+      if (isUrgencySortRedundant() && currentSort === "severity") {
+        currentSort = "newest";
+        ["severity", "newest", "oldest"].forEach((k) => {
+          const el = document.getElementById("sort-" + k);
+          if (el) el.classList.toggle("active", k === "newest");
+        });
+      }
+
+      updateSortChipState();
+      renderQueue();
+    }
+
+    function isUrgencySortRedundant() {
+      return currentFilter !== "all";
+    }
+
+    function updateSortChipState() {
+      const severityChip = document.getElementById("sort-severity");
+      if (!severityChip) return;
+
+      const redundant = isUrgencySortRedundant();
+      severityChip.classList.toggle("disabled", redundant);
+
+      if (redundant && currentSort === "severity") {
+        currentSort = "newest";
+        ["severity", "newest", "oldest"].forEach((k) => {
+          const el = document.getElementById("sort-" + k);
+          if (el) el.classList.toggle("active", k === "newest");
+        });
+      }
+    }
+
+    function controlsShouldBeDisabled() {
+      return !!selectedCaseId;
+    }
+
+    function updateControlsDisabledState() {
+      const tabsShell = document.getElementById("tabs-shell");
+      const queueControls = document.getElementById("queue-controls");
+      const queueHint = document.getElementById("queue-hint");
+      const disabled = controlsShouldBeDisabled();
+
+      tabsShell.classList.toggle("controls-disabled", disabled);
+      queueControls.classList.toggle("controls-disabled", disabled);
+      queueHint.classList.toggle("show", disabled);
+    }
+
+    function updateDetailModeVisibility() {
+      const tabsShell = document.getElementById("tabs-shell");
+      const queueControls = document.getElementById("queue-controls");
+
+      if (isMobile && selectedCaseId) {
+        tabsShell.classList.add("hidden-in-detail");
+        queueControls.classList.add("hidden-in-detail");
+      } else {
+        tabsShell.classList.remove("hidden-in-detail");
+        queueControls.classList.remove("hidden-in-detail");
+      }
+    }
+
+    function renderQueue() {
+      const panel = document.getElementById("queue-panel");
+      let cases = [...allCases];
+
+      if (currentTab === "queue") {
+        cases = cases.filter((c) => c.review_status !== "reviewed");
+      }
+
+      if (currentFilter !== "all") {
+        cases = cases.filter((c) => c.severity === currentFilter);
+      }
+
+      const sevOrder = { urgent: 1, emergency: 2, routine: 3 };
+
+      if (currentSort === "severity" && !isUrgencySortRedundant()) {
+        cases.sort((a, b) => {
+          const aOrder = sevOrder[a.severity] ?? 9;
+          const bOrder = sevOrder[b.severity] ?? 9;
+          return aOrder - bOrder || new Date(b.created_at) - new Date(a.created_at);
+        });
+      } else if (currentSort === "newest") {
+        cases.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      } else if (currentSort === "oldest") {
+        cases.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+      }
+
+      if (!cases.length) {
+        const copy = getEmptyStateCopy();
+        panel.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">✓</div>
+            <div class="empty-title">${escHtml(copy.emptyTitle)}</div>
+            <div class="empty-sub">${escHtml(copy.emptySub)}</div>
+          </div>
+        `;
+        return;
+      }
+
+      panel.innerHTML = `<div class="case-list">${cases.map(renderCaseCard).join("")}</div>`;
+
+      panel.querySelectorAll(".case-card").forEach((el) => {
+        el.addEventListener("click", () => openCase(el.dataset.caseId));
+      });
+    }
+
+    function getEmptyStateCopy() {
+      if (currentTab === "queue") {
+        return {
+          emptyTitle: "No active cases",
+          emptySub: "No new or draft cases are currently waiting in the queue."
+        };
+      }
+      if (currentTab === "new") {
+        return {
+          emptyTitle: "No new cases",
+          emptySub: "No untouched cases match this filter."
+        };
+      }
+      if (currentTab === "drafts") {
+        return {
+          emptyTitle: "No drafts",
+          emptySub: "No cases are currently in draft status."
+        };
+      }
+      if (currentTab === "reviewed") {
+        return {
+          emptyTitle: "No reviewed cases",
+          emptySub: "No reviewed cases match this filter."
+        };
+      }
       return {
-        emptyTitle: "No active cases",
-        emptySub: "No new or draft cases are currently waiting in the queue."
+        emptyTitle: "All clear",
+        emptySub: "No cases match this filter."
       };
     }
-    if (currentTab === "new") {
-      return {
-        emptyTitle: "No new cases",
-        emptySub: "No untouched cases match this filter."
-      };
-    }
-    if (currentTab === "drafts") {
-      return {
-        emptyTitle: "No drafts",
-        emptySub: "No cases are currently in draft status."
-      };
-    }
-    if (currentTab === "reviewed") {
-      return {
-        emptyTitle: "No reviewed cases",
-        emptySub: "No reviewed cases match this filter."
-      };
-    }
-    return {
-      emptyTitle: "All clear",
-      emptySub: "No cases match this filter."
-    };
-  }
-</script>
+  </script>
+
   <script>
   function renderCaseCard(c) {
     const so = c.structured_output || {};
@@ -2550,7 +2646,9 @@
       console.error("Save review exception:", err);
     }
   }
+</script>
 
+  <script>
   function toggleCollapsible(id, btn) {
     const body = document.getElementById(id);
     if (!body) return;
@@ -2684,4 +2782,3 @@
 </script>
 </body>
 </html>
-
