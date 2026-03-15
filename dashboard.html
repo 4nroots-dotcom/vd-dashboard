@@ -35,7 +35,6 @@
       --border-active: rgba(0, 200, 232, 0.3);
       --surface: rgba(255, 255, 255, 0.03);
       --surface-hover: rgba(255, 255, 255, 0.06);
-      --surface-strong: rgba(255, 255, 255, 0.05);
       --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.22);
     }
 
@@ -194,7 +193,7 @@
       justify-content: space-between;
       position: sticky;
       top: 0;
-      z-index: 140;
+      z-index: 150;
       backdrop-filter: blur(10px);
       flex-shrink: 0;
     }
@@ -272,20 +271,14 @@
     .tabs-shell {
       position: sticky;
       top: 56px;
-      z-index: 130;
+      z-index: 140;
       background: rgba(15, 32, 68, 0.94);
       border-bottom: 1px solid var(--border);
       flex-shrink: 0;
       backdrop-filter: blur(10px);
-      transition: transform 0.18s ease, opacity 0.18s ease, max-height 0.18s ease;
-    }
-
-    .tabs-shell.hidden-in-detail {
-      display: none;
     }
 
     .nav-tabs {
-      background: transparent;
       display: flex;
       padding: 0 12px;
       gap: 2px;
@@ -338,16 +331,130 @@
     .queue-controls {
       position: sticky;
       top: 103px;
-      z-index: 120;
+      z-index: 130;
       background: rgba(15, 32, 68, 0.94);
       border-bottom: 1px solid var(--border);
       flex-shrink: 0;
       backdrop-filter: blur(10px);
-      transition: transform 0.18s ease, opacity 0.18s ease, max-height 0.18s ease;
     }
 
-    .queue-controls.hidden-in-detail {
+    .filter-bar {
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      background: rgba(0, 0, 0, 0.14);
+    }
+
+    .filter-bar::-webkit-scrollbar {
       display: none;
+    }
+
+    .filter-chip,
+    .sort-chip {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .filter-chip.active,
+    .sort-chip.active {
+      background: var(--cyan-faint);
+      border-color: var(--border-active);
+      color: var(--cyan);
+    }
+
+    .sort-chip.disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      color: var(--text-muted);
+      border-color: var(--border);
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .filter-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .refresh-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-muted);
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: color 0.2s, border-color 0.2s;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .refresh-btn:hover {
+      color: var(--cyan);
+      border-color: var(--border-active);
+    }
+
+    .refresh-btn.spinning {
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .sort-bar {
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      border-top: 1px solid rgba(255,255,255,0.04);
+      background: rgba(0, 0, 0, 0.12);
+    }
+
+    .sort-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .sort-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      flex-shrink: 0;
+    }
+
+    .queue-hint {
+      display: none;
+      padding: 8px 12px 10px;
+      font-size: 11px;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(255,255,255,0.04);
+      background: rgba(0, 0, 0, 0.12);
+    }
+
+    .queue-hint.show {
+      display: block;
     }
 
     .desktop-layout {
@@ -389,141 +496,6 @@
       flex-direction: column;
       flex: 1;
       min-height: 0;
-    }
-
-    .filter-bar {
-      padding: 10px 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(0, 0, 0, 0.14);
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-
-    .filter-bar::-webkit-scrollbar {
-      display: none;
-    }
-
-    .filter-chip,
-    .sort-chip {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      color: var(--text-secondary);
-      font-size: 12px;
-      font-weight: 600;
-      padding: 6px 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .filter-chip.active,
-    .sort-chip.active {
-      background: var(--cyan-faint);
-      border-color: var(--border-active);
-      color: var(--cyan);
-    }
-
-    .sort-chip.disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-      color: var(--text-muted);
-      border-color: var(--border);
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    .controls-disabled .filter-chip,
-    .controls-disabled .sort-chip,
-    .controls-disabled .refresh-btn,
-    .controls-disabled .nav-tab {
-      opacity: 0.45;
-      cursor: default;
-      pointer-events: none;
-    }
-
-    .controls-disabled .filter-chip.active,
-    .controls-disabled .sort-chip.active,
-    .controls-disabled .nav-tab.active {
-      opacity: 0.6;
-    }
-
-    .filter-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-left: 2px;
-      flex-shrink: 0;
-    }
-
-    .refresh-btn {
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text-muted);
-      padding: 6px 10px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: color 0.2s, border-color 0.2s;
-      line-height: 1;
-      flex-shrink: 0;
-    }
-
-    .refresh-btn:hover {
-      color: var(--cyan);
-      border-color: var(--border-active);
-    }
-
-    .refresh-btn.spinning {
-      animation: spin 0.6s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .sort-bar {
-      padding: 8px 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border-top: 1px solid rgba(255,255,255,0.04);
-      background: rgba(0, 0, 0, 0.12);
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-
-    .sort-bar::-webkit-scrollbar {
-      display: none;
-    }
-
-    .sort-label {
-      font-size: 11px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      flex-shrink: 0;
-    }
-
-    .queue-hint {
-      display: none;
-      padding: 8px 12px 10px;
-      font-size: 11px;
-      color: var(--text-muted);
-      border-top: 1px solid rgba(255,255,255,0.04);
-      background: rgba(0, 0, 0, 0.12);
-    }
-
-    .queue-hint.show {
-      display: block;
     }
 
     .case-list {
@@ -765,7 +737,7 @@
       top: 0;
       background: rgba(15, 32, 68, 0.96);
       border-bottom: 1px solid var(--border);
-      padding: 10px 14px;
+      padding: 9px 12px;
       display: flex;
       align-items: center;
       gap: 12px;
@@ -820,10 +792,10 @@
     }
 
     .detail-body {
-      padding: 16px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 12px;
     }
 
     .detail-section {
@@ -874,17 +846,9 @@
       flex-shrink: 0;
     }
 
-    .severity-icon.urgent {
-      background: rgba(232, 69, 69, 0.12);
-    }
-
-    .severity-icon.emergency {
-      background: rgba(240, 165, 0, 0.12);
-    }
-
-    .severity-icon.routine {
-      background: rgba(0, 200, 122, 0.1);
-    }
+    .severity-icon.urgent { background: rgba(232, 69, 69, 0.12); }
+    .severity-icon.emergency { background: rgba(240, 165, 0, 0.12); }
+    .severity-icon.routine { background: rgba(0, 200, 122, 0.1); }
 
     .severity-detail-label {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -1164,11 +1128,6 @@
       opacity: 0.9;
     }
 
-    .btn-export-record:active {
-      transform: scale(0.98);
-      opacity: 0.9;
-    }
-
     .btn-mark-reviewed {
       background: linear-gradient(135deg, #0a7a4a, #00a866);
       border: none;
@@ -1189,26 +1148,16 @@
       min-height: 18px;
     }
 
-    .save-status.success {
-      color: var(--routine);
-    }
-
-    .save-status.error {
-      color: var(--urgent);
-    }
+    .save-status.success { color: var(--routine); }
+    .save-status.error { color: var(--urgent); }
 
     .detail-state-text {
       font-size: 11px;
       color: var(--text-secondary);
     }
 
-    .detail-state-text.reviewed {
-      color: var(--routine);
-    }
-
-    .detail-state-text.draft {
-      color: var(--cyan);
-    }
+    .detail-state-text.reviewed { color: var(--routine); }
+    .detail-state-text.draft { color: var(--cyan); }
 
     .flags-grid {
       display: grid;
@@ -1341,20 +1290,6 @@
       text-decoration: underline;
     }
 
-    ::-webkit-scrollbar {
-      width: 4px;
-      height: 4px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: #1a3260;
-      border-radius: 2px;
-    }
-
     .detail-placeholder {
       width: 100%;
       color: var(--text-muted);
@@ -1442,11 +1377,6 @@
       .back-btn {
         display: none;
       }
-
-      .tabs-shell.hidden-in-detail,
-      .queue-controls.hidden-in-detail {
-        display: block;
-      }
     }
 
     @media (max-width: 767px) {
@@ -1467,22 +1397,21 @@
         padding: 6px 11px;
       }
 
-      .detail-header {
-        padding: 9px 12px;
-      }
-
-      .detail-body {
-        padding: 12px;
-        gap: 12px;
-      }
-
       .case-list {
         padding: 10px 12px 20px;
       }
 
-      .tabs-shell.hidden-in-detail,
-      .queue-controls.hidden-in-detail {
+      #app.mobile-detail-open .tabs-shell,
+      #app.mobile-detail-open .queue-controls,
+      #app.mobile-detail-open .queue-column {
         display: none !important;
+      }
+
+      #app.mobile-detail-open #detail-column {
+        display: flex !important;
+        position: relative;
+        inset: auto;
+        flex: 1 1 auto;
       }
     }
 
@@ -1576,7 +1505,7 @@
     </div>
 
     <div class="queue-controls" id="queue-controls">
-      <div class="filter-bar" id="filter-bar">
+      <div class="filter-bar">
         <button class="filter-chip active" id="chip-all" type="button">All</button>
         <button class="filter-chip" id="chip-urgent" type="button">Urgent</button>
         <button class="filter-chip" id="chip-emergency" type="button">Emergency</button>
@@ -1645,18 +1574,30 @@
     let isMobile = window.innerWidth < 768;
     let queueCount = 0;
 
+    function syncMobileDetailMode() {
+      const app = document.getElementById("app");
+      if (!app) return;
+
+      if (isMobile && selectedCaseId) {
+        app.classList.add("mobile-detail-open");
+      } else {
+        app.classList.remove("mobile-detail-open");
+      }
+    }
+
     window.addEventListener("resize", () => {
       isMobile = window.innerWidth < 768;
 
       if (!isMobile) {
         document.getElementById("queue-column").style.display = "flex";
         document.getElementById("detail-column").style.display = "flex";
-      } else if (!currentCase) {
+      } else if (!selectedCaseId) {
+        document.getElementById("queue-column").style.display = "flex";
         document.getElementById("detail-column").style.display = "none";
       }
 
+      syncMobileDetailMode();
       updateControlsDisabledState();
-      updateDetailModeVisibility();
     });
 
     document.getElementById("auth-btn").addEventListener("click", handleLogin);
@@ -1774,8 +1715,10 @@
 
       if (isMobile) {
         document.getElementById("detail-column").style.display = "none";
+        document.getElementById("queue-column").style.display = "flex";
       }
 
+      syncMobileDetailMode();
       loadCases();
     }
 
@@ -1792,9 +1735,9 @@
         renderQueue();
         updateQueueBadge();
         updateSortChipState();
-        updateControlsDisabledState();
         updateSortBarVisibility();
-        updateDetailModeVisibility();
+        updateControlsDisabledState();
+        syncMobileDetailMode();
       } catch (err) {
         console.error("Load exception:", err);
         showToast("Unexpected load error");
@@ -1881,11 +1824,6 @@
     function switchTab(tab) {
       if (controlsShouldBeDisabled()) return;
 
-      if (isMobile) {
-        document.getElementById("queue-column").style.display = "flex";
-        document.getElementById("detail-column").style.display = "none";
-      }
-
       currentTab = tab;
       selectedCaseId = null;
       currentCase = null;
@@ -1905,13 +1843,17 @@
         if (el) el.classList.toggle("active", k === "severity");
       });
 
-      updateSortBarVisibility();
-      updateSortChipState();
-
-      if (!isMobile) {
+      if (isMobile) {
+        document.getElementById("queue-column").style.display = "flex";
+        document.getElementById("detail-column").style.display = "none";
+      } else {
         renderEmptyDetailPane();
       }
 
+      syncMobileDetailMode();
+      updateSortBarVisibility();
+      updateSortChipState();
+      updateControlsDisabledState();
       loadCases();
     }
 
@@ -2004,24 +1946,11 @@
       const tabsShell = document.getElementById("tabs-shell");
       const queueControls = document.getElementById("queue-controls");
       const queueHint = document.getElementById("queue-hint");
-      const disabled = controlsShouldBeDisabled();
+      const disabled = !!selectedCaseId;
 
       tabsShell.classList.toggle("controls-disabled", disabled);
       queueControls.classList.toggle("controls-disabled", disabled);
-      queueHint.classList.toggle("show", disabled);
-    }
-
-    function updateDetailModeVisibility() {
-      const tabsShell = document.getElementById("tabs-shell");
-      const queueControls = document.getElementById("queue-controls");
-
-      if (isMobile && selectedCaseId) {
-        tabsShell.classList.add("hidden-in-detail");
-        queueControls.classList.add("hidden-in-detail");
-      } else {
-        tabsShell.classList.remove("hidden-in-detail");
-        queueControls.classList.remove("hidden-in-detail");
-      }
+      queueHint.classList.toggle("show", disabled && !isMobile);
     }
 
     function renderQueue() {
@@ -2051,12 +1980,12 @@
       }
 
       if (!cases.length) {
-        const copy = getEmptyStateCopy();
+        const { emptyTitle, emptySub } = getEmptyStateCopy();
         panel.innerHTML = `
           <div class="empty-state">
             <div class="empty-icon">✓</div>
-            <div class="empty-title">${escHtml(copy.emptyTitle)}</div>
-            <div class="empty-sub">${escHtml(copy.emptySub)}</div>
+            <div class="empty-title">${emptyTitle}</div>
+            <div class="empty-sub">${emptySub}</div>
           </div>
         `;
         return;
@@ -2153,15 +2082,17 @@
     const cardEl = document.getElementById("card-" + CSS.escape(id));
     if (cardEl) cardEl.classList.add("active");
 
-    updateControlsDisabledState();
-
     if (isMobile) {
-      document.getElementById("queue-column").style.display = "none";
+      syncMobileDetailMode();
       document.getElementById("detail-column").style.display = "flex";
+      document.getElementById("detail-panel").innerHTML =
+        '<div class="loading-state"><span class="loading-dots">Loading</span></div>';
+    } else {
+      document.getElementById("detail-panel").innerHTML =
+        '<div class="loading-state"><span class="loading-dots">Loading</span></div>';
     }
 
-    document.getElementById("detail-panel").innerHTML =
-      '<div class="loading-state"><span class="loading-dots">Loading</span></div>';
+    updateControlsDisabledState();
 
     let c = allCases.find((x) => x.id === id);
 
@@ -2494,7 +2425,6 @@
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </div>
@@ -2528,16 +2458,18 @@
   function goBack() {
     currentCase = null;
     selectedCaseId = null;
-    updateControlsDisabledState();
 
     document.querySelectorAll(".case-card").forEach((el) => el.classList.remove("active"));
 
     if (isMobile) {
+      syncMobileDetailMode();
       document.getElementById("queue-column").style.display = "flex";
       document.getElementById("detail-column").style.display = "none";
     } else {
       renderEmptyDetailPane();
     }
+
+    updateControlsDisabledState();
   }
 
   async function saveReview(id, markReviewed) {
