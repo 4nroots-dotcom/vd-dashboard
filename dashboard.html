@@ -36,6 +36,7 @@
       --surface: rgba(255, 255, 255, 0.03);
       --surface-hover: rgba(255, 255, 255, 0.06);
       --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.22);
+      --shadow-card: 0 12px 28px rgba(0, 0, 0, 0.14);
     }
 
     * {
@@ -938,11 +939,27 @@
       box-shadow: 0 14px 28px rgba(0, 0, 0, 0.16);
     }
 
-    .review-form {
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
+    .review-grid {
+      display: grid;
       gap: 12px;
+      padding: 16px;
+    }
+
+    .review-block {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .review-block-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #8ab0d0;
+      margin-bottom: 10px;
     }
 
     .form-label {
@@ -972,7 +989,7 @@
       line-height: 1.6;
       padding: 12px;
       resize: vertical;
-      min-height: 96px;
+      min-height: 104px;
     }
 
     .form-textarea:focus,
@@ -1000,16 +1017,38 @@
       background: #0f2044;
     }
 
+    .decision-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .decision-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .decision-toggles {
+      display: grid;
+      gap: 10px;
+    }
+
     .toggle-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 10px 0;
+      padding: 12px 0;
       border-bottom: 1px solid var(--border);
+      gap: 12px;
     }
 
     .toggle-row:last-child {
       border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .toggle-row:first-child {
+      padding-top: 0;
     }
 
     .toggle-label {
@@ -1062,16 +1101,10 @@
       transform: translateY(-50%) translateX(20px);
     }
 
-    .decision-band {
+    .action-band {
       display: grid;
       gap: 10px;
       padding: 0 16px 16px;
-    }
-
-    .decision-note {
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.5;
     }
 
     .action-row {
@@ -1159,6 +1192,14 @@
     .detail-state-text.reviewed { color: var(--routine); }
     .detail-state-text.draft { color: var(--cyan); }
 
+    .review-lock-message {
+      text-align: center;
+      padding: 4px 0 2px;
+      color: #00c87a;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
     .flags-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -1172,6 +1213,10 @@
       gap: 8px;
       font-size: 12px;
       color: #b0c8e8;
+      background: rgba(255,255,255,0.015);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 10px;
+      padding: 10px 12px;
     }
 
     .flag-dot {
@@ -1188,7 +1233,7 @@
 
     .flag-dot.absent {
       background: #4a6080;
-      opacity: 0.4;
+      opacity: 0.38;
     }
 
     .clinical-note-text,
@@ -1377,6 +1422,14 @@
       .back-btn {
         display: none;
       }
+
+      .summary-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .review-grid {
+        grid-template-columns: 1.05fr 0.95fr;
+      }
     }
 
     @media (max-width: 767px) {
@@ -1417,7 +1470,8 @@
 
     @media (max-width: 680px) {
       .flags-grid,
-      .stats-grid {
+      .stats-grid,
+      .summary-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -1550,7 +1604,12 @@
 
   <script>
     const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpc3MiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI".replace('"','');
+  </script>
+
+  <script>
+    // Restore exact key literal cleanly
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
 
     if (!window.supabase || !window.supabase.createClient) {
       const errEl = document.getElementById("auth-error");
@@ -1561,7 +1620,7 @@
       throw new Error("Supabase library missing");
     }
 
-    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let currentTab = "queue";
     let currentFilter = "all";
@@ -2031,686 +2090,690 @@
   </script>
 
   <script>
-  function renderCaseCard(c) {
-    const so = c.structured_output || {};
-    const name = c.patient_name || "Unknown Patient";
-    const phone = c.patient_phone ? formatPhone(c.patient_phone) : "-";
-    const phoneRaw = c.patient_phone || "";
-    const complaint = so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-";
-    const painValue = so.pain_score ?? c.pain_score;
-    const pain = painValue !== null && painValue !== undefined && painValue !== "" ? `Pain ${painValue}/10` : "";
-    const time = formatTime(c.created_at);
-    const reviewStatus = c.review_status || "new";
-    const reviewed = reviewStatus === "reviewed";
-    const draft = reviewStatus === "draft";
-    const isActive = c.id === selectedCaseId;
+    function renderCaseCard(c) {
+      const so = c.structured_output || {};
+      const name = c.patient_name || "Unknown Patient";
+      const phone = c.patient_phone ? formatPhone(c.patient_phone) : "-";
+      const phoneRaw = c.patient_phone || "";
+      const complaint = so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-";
+      const painValue = so.pain_score ?? c.pain_score;
+      const pain = painValue !== null && painValue !== undefined && painValue !== "" ? `Pain ${painValue}/10` : "";
+      const time = formatTime(c.created_at);
+      const reviewStatus = c.review_status || "new";
+      const reviewed = reviewStatus === "reviewed";
+      const draft = reviewStatus === "draft";
+      const isActive = c.id === selectedCaseId;
 
-    const phoneEl = phoneRaw
-      ? `<a class="tel-link" href="tel:${escAttr(phoneRaw)}">${escHtml(phone)}</a>`
-      : `<span>${escHtml(phone)}</span>`;
+      const phoneEl = phoneRaw
+        ? `<a class="tel-link" href="tel:${escAttr(phoneRaw)}">${escHtml(phone)}</a>`
+        : `<span>${escHtml(phone)}</span>`;
 
-    return `
-      <div
-        class="case-card ${escAttr(c.severity || "")}${reviewed ? " reviewed" : ""}${draft ? " draft" : ""}${isActive ? " active" : ""}"
-        id="card-${escAttr(c.id)}"
-        data-case-id="${escAttr(c.id)}"
-      >
-        <div class="case-row1">
-          <span class="severity-badge badge-${escAttr(c.severity || "routine")}">${escHtml(c.severity || "unknown")}</span>
-          <span class="case-name">
-            ${escHtml(name)}
-            ${reviewed ? '<span class="status-badge reviewed">Reviewed</span>' : ""}
-            ${draft ? '<span class="status-badge draft">Draft</span>' : ""}
-          </span>
-          <span class="case-time">${escHtml(time)}</span>
-        </div>
-        <div class="case-row2">${escHtml(complaint)}</div>
-        <div class="case-row3">
-          <span class="case-meta-item">${phoneEl}</span>
-          ${pain ? `<span class="case-meta-item">${escHtml(pain)}</span>` : ""}
-          ${reviewed ? '<span class="reviewed-dot" title="Reviewed"></span>' : ""}
-          ${draft ? '<span class="draft-dot" title="Draft"></span>' : ""}
-        </div>
-      </div>
-    `;
-  }
-
-  async function openCase(id) {
-    selectedCaseId = id;
-
-    document.querySelectorAll(".case-card").forEach((el) => el.classList.remove("active"));
-    const cardEl = document.getElementById("card-" + CSS.escape(id));
-    if (cardEl) cardEl.classList.add("active");
-
-    if (isMobile) {
-      syncMobileDetailMode();
-      document.getElementById("detail-column").style.display = "flex";
-      document.getElementById("detail-panel").innerHTML =
-        '<div class="loading-state"><span class="loading-dots">Loading</span></div>';
-    } else {
-      document.getElementById("detail-panel").innerHTML =
-        '<div class="loading-state"><span class="loading-dots">Loading</span></div>';
-    }
-
-    updateControlsDisabledState();
-
-    let c = allCases.find((x) => x.id === id);
-
-    if (!c) {
-      const { data, error } = await sb.from("triage_cases").select("*").eq("id", id).single();
-      if (error) {
-        console.error("Open case error:", error);
-        showToast("Failed to load case");
-        return;
-      }
-      c = data;
-    }
-
-    if (!c) return;
-
-    currentCase = c;
-    renderDetail(c);
-  }
-
-  function renderDetail(c) {
-    const panel = document.getElementById("detail-panel");
-    const so = c.structured_output || {};
-    const name = c.patient_name || "Unknown Patient";
-    const nameNote = !c.patient_name
-      ? ' <span style="font-size:11px;color:#6a80a0;font-weight:400">(no intake form linked)</span>'
-      : "";
-    const phone = c.patient_phone ? formatPhone(c.patient_phone) : null;
-    const phoneRaw = c.patient_phone || "";
-    const phoneDisplay = phone
-      ? `<a class="tel-link" href="tel:${escAttr(phoneRaw)}">${escHtml(phone)}</a>`
-      : '<span style="color:#6a80a0">No phone</span>';
-    const reviewedAt = c.reviewed_at ? formatDatetime(c.reviewed_at) : null;
-    const reviewStatus = c.review_status || "new";
-    const isReviewed = reviewStatus === "reviewed";
-    const isDraft = reviewStatus === "draft";
-
-    const sevColor =
-      c.severity === "urgent" ? "#e84545" :
-      c.severity === "emergency" ? "#f0a500" :
-      "#00c87a";
-
-    const sevIcon =
-      c.severity === "urgent" ? "!" :
-      c.severity === "emergency" ? "⚠" :
-      "✓";
-
-    const flags = [
-      { label: "Airway / swallowing", val: so.difficulty_breathing_or_swallowing },
-      { label: "Uncontrolled bleeding", val: so.uncontrolled_bleeding },
-      { label: "Rapidly spreading swelling", val: so.feels_very_unwell_or_rapidly_increasing_swelling },
-      { label: "Avulsed tooth", val: so.avulsed_tooth },
-      { label: "Jaw fracture signs", val: so.jaw_fracture_signs },
-      { label: "Fever", val: so.fever },
-      { label: "Swelling", val: so.swelling || so.swelling_present },
-      { label: "Trauma", val: so.trauma },
-      { label: "Nocturnal pain", val: so.nocturnal_pain || c.nocturnal_pain },
-      { label: "Cold lingers >10s", val: so.cold_pain_lingers_over_10_seconds },
-      { label: "Heat sensitivity", val: so.heat_sensitivity || c.heat_sensitivity },
-      { label: "Percussion sensitivity", val: so.percussion_sensitivity || c.percussion_sensitivity },
-      { label: "Bad taste / drainage", val: so.bad_taste_or_drainage || c.bad_taste_or_drainage },
-      { label: "Immunocompromised", val: so.immunocompromised || c.immunocompromised },
-      { label: "Pericoronitis signs", val: so.pericoronitis_signs || c.pericoronitis_signs },
-      { label: "Recent extraction", val: so.recent_extraction || c.recent_extraction }
-    ];
-
-    const intakeRedFlags = c.intake_red_flags || {};
-    const intakeMedicalFlags = c.intake_medical_flags || {};
-
-    const intakeRedFlagsList = humanizeTrueFlags(intakeRedFlags);
-    const intakeMedicalFlagsList = humanizeTrueFlags(intakeMedicalFlags, {
-      other_important_medical_condition: intakeMedicalFlags.other_medical_detail
-        ? `Other important medical condition: ${intakeMedicalFlags.other_medical_detail}`
-        : "Other important medical condition"
-    });
-
-    panel.innerHTML = `
-      <div class="detail-shell">
-        <div class="detail-header">
-          <button class="back-btn" id="back-btn" type="button" aria-label="Back to case list">←</button>
-          <div class="detail-header-info">
-            <div class="detail-patient-name">${escHtml(name)}${nameNote}</div>
-            <div class="detail-patient-meta">${phoneDisplay} · ${escHtml(formatDatetime(c.created_at))}</div>
+      return `
+        <div
+          class="case-card ${escAttr(c.severity || "")}${reviewed ? " reviewed" : ""}${draft ? " draft" : ""}${isActive ? " active" : ""}"
+          id="card-${escAttr(c.id)}"
+          data-case-id="${escAttr(c.id)}"
+        >
+          <div class="case-row1">
+            <span class="severity-badge badge-${escAttr(c.severity || "routine")}">${escHtml(c.severity || "unknown")}</span>
+            <span class="case-name">
+              ${escHtml(name)}
+              ${reviewed ? '<span class="status-badge reviewed">Reviewed</span>' : ""}
+              ${draft ? '<span class="status-badge draft">Draft</span>' : ""}
+            </span>
+            <span class="case-time">${escHtml(time)}</span>
           </div>
-          <span class="severity-badge badge-${escAttr(c.severity || "routine")}">${escHtml(c.severity || "unknown")}</span>
+          <div class="case-row2">${escHtml(complaint)}</div>
+          <div class="case-row3">
+            <span class="case-meta-item">${phoneEl}</span>
+            ${pain ? `<span class="case-meta-item">${escHtml(pain)}</span>` : ""}
+            ${reviewed ? '<span class="reviewed-dot" title="Reviewed"></span>' : ""}
+            ${draft ? '<span class="draft-dot" title="Draft"></span>' : ""}
+          </div>
         </div>
+      `;
+    }
 
-        <div class="detail-scroll">
-          <div class="detail-body">
-            <div class="detail-section">
-              <div class="severity-row">
-                <div class="severity-icon ${escAttr(c.severity || "routine")}">${escHtml(sevIcon)}</div>
-                <div>
-                  <div class="severity-detail-label">Triage Classification</div>
-                  <div class="severity-detail-value" style="color:${sevColor}">${escHtml((c.severity || "unknown").toUpperCase())}</div>
-                  <div class="severity-reason">${escHtml(c.severity_reason || "-")}</div>
-                </div>
-              </div>
+    async function openCase(id) {
+      selectedCaseId = id;
 
-              <div class="stats-grid">
-                <div class="stat-cell">
-                  <div class="stat-label">Pain Score</div>
-                  <div class="stat-value">${formatPain(so.pain_score, c.pain_score)}</div>
-                </div>
-                <div class="stat-cell">
-                  <div class="stat-label">Duration</div>
-                  <div class="stat-value">${formatDuration(c.duration_seconds)}</div>
-                </div>
-                <div class="stat-cell">
-                  <div class="stat-label">Location</div>
-                  <div class="stat-value" style="font-size:13px">${escHtml([so.jaw, so.side].filter(Boolean).join(" / ") || "-")}</div>
-                </div>
-                <div class="stat-cell">
-                  <div class="stat-label">Extraction</div>
-                  <div class="stat-value" style="font-size:12px">${escHtml(c.extraction_source || "-")}</div>
-                </div>
-              </div>
+      document.querySelectorAll(".case-card").forEach((el) => el.classList.remove("active"));
+      const cardEl = document.getElementById("card-" + CSS.escape(id));
+      if (cardEl) cardEl.classList.add("active");
+
+      if (isMobile) {
+        syncMobileDetailMode();
+        document.getElementById("detail-column").style.display = "flex";
+        document.getElementById("detail-panel").innerHTML =
+          '<div class="loading-state"><span class="loading-dots">Loading</span></div>';
+      } else {
+        document.getElementById("detail-panel").innerHTML =
+          '<div class="loading-state"><span class="loading-dots">Loading</span></div>';
+      }
+
+      updateControlsDisabledState();
+
+      let c = allCases.find((x) => x.id === id);
+
+      if (!c) {
+        const { data, error } = await sb.from("triage_cases").select("*").eq("id", id).single();
+        if (error) {
+          console.error("Open case error:", error);
+          showToast("Failed to load case");
+          return;
+        }
+        c = data;
+      }
+
+      if (!c) return;
+
+      currentCase = c;
+      renderDetail(c);
+    }
+
+    function renderDetail(c) {
+      const panel = document.getElementById("detail-panel");
+      const so = c.structured_output || {};
+      const name = c.patient_name || "Unknown Patient";
+      const nameNote = !c.patient_name
+        ? ' <span style="font-size:11px;color:#6a80a0;font-weight:400">(no intake form linked)</span>'
+        : "";
+      const phone = c.patient_phone ? formatPhone(c.patient_phone) : null;
+      const phoneRaw = c.patient_phone || "";
+      const phoneDisplay = phone
+        ? `<a class="tel-link" href="tel:${escAttr(phoneRaw)}">${escHtml(phone)}</a>`
+        : '<span style="color:#6a80a0">No phone</span>';
+      const reviewedAt = c.reviewed_at ? formatDatetime(c.reviewed_at) : null;
+      const reviewStatus = c.review_status || "new";
+      const isReviewed = reviewStatus === "reviewed";
+      const isDraft = reviewStatus === "draft";
+
+      const sevColor =
+        c.severity === "urgent" ? "#e84545" :
+        c.severity === "emergency" ? "#f0a500" :
+        "#00c87a";
+
+      const sevIcon =
+        c.severity === "urgent" ? "!" :
+        c.severity === "emergency" ? "⚠" :
+        "✓";
+
+      const flags = [
+        { label: "Airway / swallowing", val: so.difficulty_breathing_or_swallowing },
+        { label: "Uncontrolled bleeding", val: so.uncontrolled_bleeding },
+        { label: "Rapidly spreading swelling", val: so.feels_very_unwell_or_rapidly_increasing_swelling },
+        { label: "Avulsed tooth", val: so.avulsed_tooth },
+        { label: "Jaw fracture signs", val: so.jaw_fracture_signs },
+        { label: "Fever", val: so.fever },
+        { label: "Swelling", val: so.swelling || so.swelling_present },
+        { label: "Trauma", val: so.trauma },
+        { label: "Nocturnal pain", val: so.nocturnal_pain || c.nocturnal_pain },
+        { label: "Cold lingers >10s", val: so.cold_pain_lingers_over_10_seconds },
+        { label: "Heat sensitivity", val: so.heat_sensitivity || c.heat_sensitivity },
+        { label: "Percussion sensitivity", val: so.percussion_sensitivity || c.percussion_sensitivity },
+        { label: "Bad taste / drainage", val: so.bad_taste_or_drainage || c.bad_taste_or_drainage },
+        { label: "Immunocompromised", val: so.immunocompromised || c.immunocompromised },
+        { label: "Pericoronitis signs", val: so.pericoronitis_signs || c.pericoronitis_signs },
+        { label: "Recent extraction", val: so.recent_extraction || c.recent_extraction }
+      ];
+
+      const intakeRedFlags = c.intake_red_flags || {};
+      const intakeMedicalFlags = c.intake_medical_flags || {};
+
+      const intakeRedFlagsList = humanizeTrueFlags(intakeRedFlags);
+      const intakeMedicalFlagsList = humanizeTrueFlags(intakeMedicalFlags, {
+        other_important_medical_condition: intakeMedicalFlags.other_medical_detail
+          ? `Other important medical condition: ${intakeMedicalFlags.other_medical_detail}`
+          : "Other important medical condition"
+      });
+
+      panel.innerHTML = `
+        <div class="detail-shell">
+          <div class="detail-header">
+            <button class="back-btn" id="back-btn" type="button" aria-label="Back to case list">←</button>
+            <div class="detail-header-info">
+              <div class="detail-patient-name">${escHtml(name)}${nameNote}</div>
+              <div class="detail-patient-meta">${phoneDisplay} · ${escHtml(formatDatetime(c.created_at))}</div>
             </div>
+            <span class="severity-badge badge-${escAttr(c.severity || "routine")}">${escHtml(c.severity || "unknown")}</span>
+          </div>
 
-            <div class="detail-section">
-              <div class="section-header">
-                <span class="section-title">Quick Summary</span>
-              </div>
-              <div class="summary-grid">
-                <div class="summary-item">
-                  <div class="summary-label">Chief Complaint</div>
-                  <div class="summary-value">${escHtml(so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-")}</div>
-                </div>
-                <div class="summary-item">
-                  <div class="summary-label">Onset</div>
-                  <div class="summary-value">${escHtml(so.onset || c.onset || c.onset_bucket || "-")}</div>
-                </div>
-                <div class="summary-item">
-                  <div class="summary-label">Reason for Current Severity</div>
-                  <div class="summary-value">${escHtml(c.severity_reason || "-")}</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="detail-section">
-              <div class="section-header">
-                <span class="section-title">Patient Intake</span>
-              </div>
-              <div class="summary-grid">
-                <div class="summary-item">
-                  <div class="summary-label">Date of Birth</div>
-                  <div class="summary-value">${escHtml(formatDateOnly(c.patient_dob))}</div>
-                </div>
-                <div class="summary-item">
-                  <div class="summary-label">City / Province</div>
-                  <div class="summary-value">${escHtml([c.patient_city, c.patient_province].filter(Boolean).join(", ") || "-")}</div>
-                </div>
-                <div class="summary-item">
-                  <div class="summary-label">Coverage</div>
-                  <div class="summary-value">${escHtml(formatTag(c.coverage_status))}</div>
-                </div>
-                <div class="summary-item">
-                  <div class="summary-label">Intake Onset</div>
-                  <div class="summary-value">${escHtml(formatTag(c.onset_bucket))}</div>
-                </div>
-                <div class="summary-item">
-                  <div class="summary-label">Reported Red Flags</div>
-                  <div class="summary-value">${escHtml(intakeRedFlagsList || "-")}</div>
-                </div>
-                <div class="summary-item">
-                  <div class="summary-label">Relevant Medical History</div>
-                  <div class="summary-value">${escHtml(intakeMedicalFlagsList || "-")}</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="detail-section review-panel">
-              <div class="section-header">
-                <span class="section-title">Dentist Review</span>
-                ${
-                  isReviewed
-                    ? `<span class="detail-state-text reviewed">✓ Reviewed ${escHtml(reviewedAt || "")}</span>`
-                    : isDraft
-                      ? `<span class="detail-state-text draft">Draft saved</span>`
-                      : `<span class="detail-state-text">Decision required</span>`
-                }
-              </div>
-
-              <div class="review-form">
-                <div>
-                  <label class="form-label" for="field-notes">Clinical Addendum</label>
-                  <textarea
-                    class="form-textarea"
-                    id="field-notes"
-                    placeholder="Add clinical notes, observations, or follow-up instructions..."
-                    ${isReviewed ? 'readonly style="opacity:0.6"' : ""}
-                  >${escHtml(c.review_notes || "")}</textarea>
-                </div>
-
-                <div>
-                  <label class="form-label" for="field-disposition">Final Disposition</label>
-                  <select
-                    class="form-select"
-                    id="field-disposition"
-                    ${isReviewed ? 'disabled style="opacity:0.6"' : ""}
-                  >
-                    <option value="">- Select -</option>
-                    <option value="booked" ${c.final_disposition === "booked" ? "selected" : ""}>Booked appointment</option>
-                    <option value="referred_er" ${c.final_disposition === "referred_er" ? "selected" : ""}>Referred to ER</option>
-                    <option value="rx_only" ${c.final_disposition === "rx_only" ? "selected" : ""}>Prescription only</option>
-                    <option value="declined" ${c.final_disposition === "declined" ? "selected" : ""}>Patient declined care</option>
-                    <option value="no_response" ${c.final_disposition === "no_response" ? "selected" : ""}>No response from patient</option>
-                  </select>
-                </div>
-
-                <div>
-                  <div class="toggle-row">
-                    <span class="toggle-label">Prescription issued</span>
-                    <label class="toggle">
-                      <input type="checkbox" id="field-rx" ${c.prescription_issued ? "checked" : ""} ${isReviewed ? "disabled" : ""}>
-                      <div class="toggle-track"></div>
-                    </label>
+          <div class="detail-scroll">
+            <div class="detail-body">
+              <div class="detail-section">
+                <div class="severity-row">
+                  <div class="severity-icon ${escAttr(c.severity || "routine")}">${escHtml(sevIcon)}</div>
+                  <div>
+                    <div class="severity-detail-label">Triage Classification</div>
+                    <div class="severity-detail-value" style="color:${sevColor}">${escHtml((c.severity || "unknown").toUpperCase())}</div>
+                    <div class="severity-reason">${escHtml(c.severity_reason || "-")}</div>
                   </div>
+                </div>
 
-                  <div class="toggle-row">
-                    <span class="toggle-label">Patient contacted</span>
-                    <label class="toggle">
-                      <input type="checkbox" id="field-contacted" ${c.contacted_patient_at ? "checked" : ""} ${isReviewed ? "disabled" : ""}>
-                      <div class="toggle-track"></div>
-                    </label>
+                <div class="stats-grid">
+                  <div class="stat-cell">
+                    <div class="stat-label">Pain Score</div>
+                    <div class="stat-value">${formatPain(so.pain_score, c.pain_score)}</div>
+                  </div>
+                  <div class="stat-cell">
+                    <div class="stat-label">Duration</div>
+                    <div class="stat-value">${formatDuration(c.duration_seconds)}</div>
+                  </div>
+                  <div class="stat-cell">
+                    <div class="stat-label">Location</div>
+                    <div class="stat-value" style="font-size:13px">${escHtml([so.jaw, so.side].filter(Boolean).join(" / ") || "-")}</div>
+                  </div>
+                  <div class="stat-cell">
+                    <div class="stat-label">Extraction</div>
+                    <div class="stat-value" style="font-size:12px">${escHtml(c.extraction_source || "-")}</div>
                   </div>
                 </div>
               </div>
 
-              <div class="decision-band">
-                ${
-                  isReviewed
-                    ? `<div class="decision-note">This case is locked as reviewed. You can still export the clinical record below.</div>`
-                    : `<div class="decision-note">Choose a final disposition before marking the case reviewed. Use Save Draft if you are not ready to finalize.</div>`
-                }
+              <div class="detail-section">
+                <div class="section-header">
+                  <span class="section-title">Quick Summary</span>
+                </div>
+                <div class="summary-grid">
+                  <div class="summary-item">
+                    <div class="summary-label">Chief Complaint</div>
+                    <div class="summary-value">${escHtml(so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-")}</div>
+                  </div>
+                  <div class="summary-item">
+                    <div class="summary-label">Onset</div>
+                    <div class="summary-value">${escHtml(so.onset || c.onset || c.onset_bucket || "-")}</div>
+                  </div>
+                  <div class="summary-item">
+                    <div class="summary-label">Reason for Current Severity</div>
+                    <div class="summary-value">${escHtml(c.severity_reason || "-")}</div>
+                  </div>
+                </div>
+              </div>
 
-                <div class="action-row">
+              <div class="detail-section">
+                <div class="section-header">
+                  <span class="section-title">Patient Intake</span>
+                </div>
+                <div class="summary-grid">
+                  <div class="summary-item">
+                    <div class="summary-label">Date of Birth</div>
+                    <div class="summary-value">${escHtml(formatDateOnly(c.patient_dob))}</div>
+                  </div>
+                  <div class="summary-item">
+                    <div class="summary-label">City / Province</div>
+                    <div class="summary-value">${escHtml([c.patient_city, c.patient_province].filter(Boolean).join(", ") || "-")}</div>
+                  </div>
+                  <div class="summary-item">
+                    <div class="summary-label">Coverage</div>
+                    <div class="summary-value">${escHtml(formatTag(c.coverage_status))}</div>
+                  </div>
+                  <div class="summary-item">
+                    <div class="summary-label">Intake Onset</div>
+                    <div class="summary-value">${escHtml(formatTag(c.onset_bucket))}</div>
+                  </div>
+                  <div class="summary-item">
+                    <div class="summary-label">Reported Red Flags</div>
+                    <div class="summary-value">${escHtml(intakeRedFlagsList || "-")}</div>
+                  </div>
+                  <div class="summary-item">
+                    <div class="summary-label">Relevant Medical History</div>
+                    <div class="summary-value">${escHtml(intakeMedicalFlagsList || "-")}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="detail-section review-panel">
+                <div class="section-header">
+                  <span class="section-title">Dentist Review</span>
                   ${
                     isReviewed
-                      ? `
-                        <div style="text-align:center;padding:4px 0 2px;color:#00c87a;font-size:13px;font-weight:700">
-                          ✓ This case has been reviewed
-                        </div>
-                        <a
-                          class="btn-action btn-export-record"
-                          id="export-case-btn"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Export Clinical Record
-                        </a>
-                      `
-                      : `
-                        <button class="btn-mark-reviewed" id="mark-reviewed-btn" type="button">✓ Mark Reviewed</button>
-                        <button class="btn-action" id="save-draft-btn" type="button">Save Draft</button>
-                        <a
-                          class="btn-action btn-export-record"
-                          id="export-case-btn"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Export Clinical Record
-                        </a>
-                      `
+                      ? `<span class="detail-state-text reviewed">✓ Reviewed ${escHtml(reviewedAt || "")}</span>`
+                      : isDraft
+                        ? `<span class="detail-state-text draft">Draft saved</span>`
+                        : `<span class="detail-state-text">Decision required</span>`
                   }
                 </div>
 
-                <div class="save-status" id="save-status"></div>
-              </div>
-            </div>
-
-            <div class="detail-section">
-              <div class="section-header">
-                <span class="section-title">Clinical Flags</span>
-              </div>
-              <div class="flags-grid">
-                ${flags.map((f) => `
-                  <div class="flag-item">
-                    <div class="flag-dot ${f.val === true ? "present" : "absent"}"></div>
-                    <span style="${f.val === true ? "color:#e8f0fe" : ""}">${escHtml(f.label)}</span>
+                <div class="review-grid">
+                  <div class="review-block">
+                    <div class="review-block-title">Clinical Addendum</div>
+                    <label class="form-label" for="field-notes">Notes</label>
+                    <textarea
+                      class="form-textarea"
+                      id="field-notes"
+                      placeholder="Add clinical notes, observations, or follow-up instructions..."
+                      ${isReviewed ? 'readonly style="opacity:0.6"' : ""}
+                    >${escHtml(c.review_notes || "")}</textarea>
                   </div>
-                `).join("")}
-              </div>
-            </div>
 
-            <div class="detail-section">
-              <div class="section-header">
-                <span class="section-title">AI Clinical Note</span>
-                <span class="note-lock-badge">Draft - Read Only</span>
-              </div>
-              <div class="section-body">
-                <div class="clinical-note-text">${escHtml(c.clinical_note || "No clinical note generated.")}</div>
-              </div>
-            </div>
+                  <div class="review-block">
+                    <div class="review-block-title">Decision</div>
+                    <div class="decision-grid">
+                      <div>
+                        <label class="form-label" for="field-disposition">Final Disposition</label>
+                        <select
+                          class="form-select"
+                          id="field-disposition"
+                          ${isReviewed ? 'disabled style="opacity:0.6"' : ""}
+                        >
+                          <option value="">- Select -</option>
+                          <option value="booked" ${c.final_disposition === "booked" ? "selected" : ""}>Booked appointment</option>
+                          <option value="referred_er" ${c.final_disposition === "referred_er" ? "selected" : ""}>Referred to ER</option>
+                          <option value="rx_only" ${c.final_disposition === "rx_only" ? "selected" : ""}>Prescription only</option>
+                          <option value="declined" ${c.final_disposition === "declined" ? "selected" : ""}>Patient declined care</option>
+                          <option value="no_response" ${c.final_disposition === "no_response" ? "selected" : ""}>No response from patient</option>
+                        </select>
+                      </div>
 
-            ${
-              c.transcript
-                ? `
-                <div class="detail-section">
-                  <div class="section-header">
-                    <span class="section-title">Call Transcript</span>
-                    <button class="collapsible-toggle" id="toggle-transcript" type="button">Show ▼</button>
-                  </div>
-                  <div class="collapsible-body" id="transcript-body">
-                    <div class="transcript-text" style="padding-top:16px">${escHtml(c.transcript)}</div>
+                      <div class="decision-toggles">
+                        <div class="toggle-row">
+                          <span class="toggle-label">Prescription issued</span>
+                          <label class="toggle">
+                            <input type="checkbox" id="field-rx" ${c.prescription_issued ? "checked" : ""} ${isReviewed ? "disabled" : ""}>
+                            <div class="toggle-track"></div>
+                          </label>
+                        </div>
+
+                        <div class="toggle-row">
+                          <span class="toggle-label">Patient contacted</span>
+                          <label class="toggle">
+                            <input type="checkbox" id="field-contacted" ${c.contacted_patient_at ? "checked" : ""} ${isReviewed ? "disabled" : ""}>
+                            <div class="toggle-track"></div>
+                          </label>
+                        </div>
+                      </div>
+
+                      <div class="decision-note">
+                        ${
+                          isReviewed
+                            ? "This case is locked as reviewed. You can still export the clinical record below."
+                            : "Choose a final disposition before marking the case reviewed. Use Save Draft if you are not ready to finalize."
+                        }
+                      </div>
+                    </div>
                   </div>
                 </div>
-              `
-                : ""
-            }
 
-            <div class="detail-section">
-              <div class="section-header">
-                <span class="section-title">Call Details</span>
-                <button class="collapsible-toggle" id="toggle-call-meta" type="button">Show ▼</button>
+                <div class="action-band">
+                  <div class="action-row">
+                    ${
+                      isReviewed
+                        ? `
+                          <div class="review-lock-message">✓ This case has been reviewed</div>
+                          <a
+                            class="btn-action btn-export-record"
+                            id="export-case-btn"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Export Clinical Record
+                          </a>
+                        `
+                        : `
+                          <button class="btn-mark-reviewed" id="mark-reviewed-btn" type="button">✓ Mark Reviewed</button>
+                          <button class="btn-action" id="save-draft-btn" type="button">Save Draft</button>
+                          <a
+                            class="btn-action btn-export-record"
+                            id="export-case-btn"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            Export Clinical Record
+                          </a>
+                        `
+                    }
+                  </div>
+
+                  <div class="save-status" id="save-status"></div>
+                </div>
               </div>
-              <div class="collapsible-body" id="call-meta-body">
-                <div class="stats-grid">
-                  <div class="stat-cell" style="grid-column:1/-1">
-                    <div class="stat-label">Call ID</div>
-                    <div class="stat-value" style="font-size:11px;word-break:break-all">${escHtml(c.vapi_call_id || "-")}</div>
+
+              <div class="detail-section">
+                <div class="section-header">
+                  <span class="section-title">Clinical Flags</span>
+                </div>
+                <div class="flags-grid">
+                  ${flags.map((f) => `
+                    <div class="flag-item">
+                      <div class="flag-dot ${f.val === true ? "present" : "absent"}"></div>
+                      <span style="${f.val === true ? "color:#e8f0fe" : ""}">${escHtml(f.label)}</span>
+                    </div>
+                  `).join("")}
+                </div>
+              </div>
+
+              <div class="detail-section">
+                <div class="section-header">
+                  <span class="section-title">AI Clinical Note</span>
+                  <span class="note-lock-badge">Draft - Read Only</span>
+                </div>
+                <div class="section-body">
+                  <div class="clinical-note-text">${escHtml(c.clinical_note || "No clinical note generated.")}</div>
+                </div>
+              </div>
+
+              ${
+                c.transcript
+                  ? `
+                  <div class="detail-section">
+                    <div class="section-header">
+                      <span class="section-title">Call Transcript</span>
+                      <button class="collapsible-toggle" id="toggle-transcript" type="button">Show ▼</button>
+                    </div>
+                    <div class="collapsible-body" id="transcript-body">
+                      <div class="transcript-text" style="padding-top:16px">${escHtml(c.transcript)}</div>
+                    </div>
                   </div>
-                  <div class="stat-cell">
-                    <div class="stat-label">Triage Tag</div>
-                    <div class="stat-value" style="font-size:12px">${escHtml(formatTag(c.triage_tag))}</div>
-                  </div>
-                  <div class="stat-cell">
-                    <div class="stat-label">Created</div>
-                    <div class="stat-value" style="font-size:11px">${escHtml(formatDatetime(c.created_at))}</div>
+                `
+                  : ""
+              }
+
+              <div class="detail-section">
+                <div class="section-header">
+                  <span class="section-title">Call Details</span>
+                  <button class="collapsible-toggle" id="toggle-call-meta" type="button">Show ▼</button>
+                </div>
+                <div class="collapsible-body" id="call-meta-body">
+                  <div class="stats-grid">
+                    <div class="stat-cell" style="grid-column:1/-1">
+                      <div class="stat-label">Call ID</div>
+                      <div class="stat-value" style="font-size:11px;word-break:break-all">${escHtml(c.vapi_call_id || "-")}</div>
+                    </div>
+                    <div class="stat-cell">
+                      <div class="stat-label">Triage Tag</div>
+                      <div class="stat-value" style="font-size:12px">${escHtml(formatTag(c.triage_tag))}</div>
+                    </div>
+                    <div class="stat-cell">
+                      <div class="stat-label">Created</div>
+                      <div class="stat-value" style="font-size:11px">${escHtml(formatDatetime(c.created_at))}</div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    `;
+      `;
 
-    const backBtn = document.getElementById("back-btn");
-    if (backBtn) backBtn.addEventListener("click", goBack);
+      const backBtn = document.getElementById("back-btn");
+      if (backBtn) backBtn.addEventListener("click", goBack);
 
-    const saveDraftBtn = document.getElementById("save-draft-btn");
-    if (saveDraftBtn) saveDraftBtn.addEventListener("click", () => saveReview(c.id, false));
+      const saveDraftBtn = document.getElementById("save-draft-btn");
+      if (saveDraftBtn) saveDraftBtn.addEventListener("click", () => saveReview(c.id, false));
 
-    const markReviewedBtn = document.getElementById("mark-reviewed-btn");
-    if (markReviewedBtn) markReviewedBtn.addEventListener("click", () => saveReview(c.id, true));
+      const markReviewedBtn = document.getElementById("mark-reviewed-btn");
+      if (markReviewedBtn) markReviewedBtn.addEventListener("click", () => saveReview(c.id, true));
 
-    const exportBtn = document.getElementById("export-case-btn");
-    if (exportBtn) {
-      exportBtn.href = `case-export.html?id=${encodeURIComponent(c.id)}`;
+      const exportBtn = document.getElementById("export-case-btn");
+      if (exportBtn) {
+        exportBtn.href = `case-export.html?id=${encodeURIComponent(c.id)}`;
+      }
+
+      const toggleTranscript = document.getElementById("toggle-transcript");
+      if (toggleTranscript) {
+        toggleTranscript.addEventListener("click", () => toggleCollapsible("transcript-body", toggleTranscript));
+      }
+
+      const toggleCallMeta = document.getElementById("toggle-call-meta");
+      if (toggleCallMeta) {
+        toggleCallMeta.addEventListener("click", () => toggleCollapsible("call-meta-body", toggleCallMeta));
+      }
     }
 
-    const toggleTranscript = document.getElementById("toggle-transcript");
-    if (toggleTranscript) {
-      toggleTranscript.addEventListener("click", () => toggleCollapsible("transcript-body", toggleTranscript));
+    function goBack() {
+      currentCase = null;
+      selectedCaseId = null;
+
+      document.querySelectorAll(".case-card").forEach((el) => el.classList.remove("active"));
+
+      if (isMobile) {
+        syncMobileDetailMode();
+        document.getElementById("queue-column").style.display = "flex";
+        document.getElementById("detail-column").style.display = "none";
+      } else {
+        renderEmptyDetailPane();
+      }
+
+      updateControlsDisabledState();
     }
 
-    const toggleCallMeta = document.getElementById("toggle-call-meta");
-    if (toggleCallMeta) {
-      toggleCallMeta.addEventListener("click", () => toggleCollapsible("call-meta-body", toggleCallMeta));
-    }
-  }
+    async function saveReview(id, markReviewed) {
+      const notesEl = document.getElementById("field-notes");
+      const dispositionEl = document.getElementById("field-disposition");
+      const rxEl = document.getElementById("field-rx");
+      const contactedEl = document.getElementById("field-contacted");
+      const statusEl = document.getElementById("save-status");
 
-  function goBack() {
-    currentCase = null;
-    selectedCaseId = null;
+      if (!notesEl || !dispositionEl || !rxEl || !contactedEl || !statusEl) return;
 
-    document.querySelectorAll(".case-card").forEach((el) => el.classList.remove("active"));
+      const notes = notesEl.value;
+      const disposition = dispositionEl.value;
+      const rxIssued = rxEl.checked;
+      const contacted = contactedEl.checked;
 
-    if (isMobile) {
-      syncMobileDetailMode();
-      document.getElementById("queue-column").style.display = "flex";
-      document.getElementById("detail-column").style.display = "none";
-    } else {
-      renderEmptyDetailPane();
-    }
-
-    updateControlsDisabledState();
-  }
-
-  async function saveReview(id, markReviewed) {
-    const notesEl = document.getElementById("field-notes");
-    const dispositionEl = document.getElementById("field-disposition");
-    const rxEl = document.getElementById("field-rx");
-    const contactedEl = document.getElementById("field-contacted");
-    const statusEl = document.getElementById("save-status");
-
-    if (!notesEl || !dispositionEl || !rxEl || !contactedEl || !statusEl) return;
-
-    const notes = notesEl.value;
-    const disposition = dispositionEl.value;
-    const rxIssued = rxEl.checked;
-    const contacted = contactedEl.checked;
-
-    if (markReviewed && !disposition) {
-      statusEl.textContent = "Please select a final disposition before marking reviewed.";
-      statusEl.className = "save-status error";
-      dispositionEl.style.borderColor = "rgba(232,69,69,0.5)";
-      setTimeout(() => {
-        statusEl.textContent = "";
-        statusEl.className = "save-status";
-        dispositionEl.style.borderColor = "";
-      }, 3000);
-      return;
-    }
-
-    statusEl.textContent = "Saving...";
-    statusEl.className = "save-status";
-
-    const update = {
-      review_notes: notes || null,
-      final_disposition: disposition || null,
-      prescription_issued: rxIssued,
-      action_taken: disposition || null
-    };
-
-    if (contacted) {
-      update.contacted_patient_at = currentCase?.contacted_patient_at || new Date().toISOString();
-    } else {
-      update.contacted_patient_at = null;
-    }
-
-    if (markReviewed) {
-      update.review_status = "reviewed";
-      update.reviewed_at = new Date().toISOString();
-      update.reviewed_by = currentUser?.email || null;
-    } else {
-      update.review_status = "draft";
-    }
-
-    try {
-      const { error } = await sb.from("triage_cases").update(update).eq("id", id);
-
-      if (error) {
-        statusEl.textContent = "Error saving - " + error.message;
+      if (markReviewed && !disposition) {
+        statusEl.textContent = "Please select a final disposition before marking reviewed.";
         statusEl.className = "save-status error";
+        dispositionEl.style.borderColor = "rgba(232,69,69,0.5)";
+        setTimeout(() => {
+          statusEl.textContent = "";
+          statusEl.className = "save-status";
+          dispositionEl.style.borderColor = "";
+        }, 3000);
         return;
       }
 
-      const idx = allCases.findIndex((x) => x.id === id);
-      if (idx >= 0) {
-        allCases[idx] = { ...allCases[idx], ...update };
-      }
+      statusEl.textContent = "Saving...";
+      statusEl.className = "save-status";
 
-      if (currentCase && currentCase.id === id) {
-        currentCase = { ...currentCase, ...update };
-      }
+      const update = {
+        review_notes: notes || null,
+        final_disposition: disposition || null,
+        prescription_issued: rxIssued,
+        action_taken: disposition || null
+      };
 
-      statusEl.textContent = markReviewed ? "✓ Marked as reviewed" : "✓ Draft saved";
-      statusEl.className = "save-status success";
-      showToast(markReviewed ? "Case marked reviewed" : "Draft saved");
+      if (contacted) {
+        update.contacted_patient_at = currentCase?.contacted_patient_at || new Date().toISOString();
+      } else {
+        update.contacted_patient_at = null;
+      }
 
       if (markReviewed) {
-        const cardEl = document.getElementById("card-" + CSS.escape(id));
-        if (cardEl) {
-          cardEl.classList.add("removing");
-          setTimeout(() => {
+        update.review_status = "reviewed";
+        update.reviewed_at = new Date().toISOString();
+        update.reviewed_by = currentUser?.email || null;
+      } else {
+        update.review_status = "draft";
+      }
+
+      try {
+        const { error } = await sb.from("triage_cases").update(update).eq("id", id);
+
+        if (error) {
+          statusEl.textContent = "Error saving - " + error.message;
+          statusEl.className = "save-status error";
+          return;
+        }
+
+        const idx = allCases.findIndex((x) => x.id === id);
+        if (idx >= 0) {
+          allCases[idx] = { ...allCases[idx], ...update };
+        }
+
+        if (currentCase && currentCase.id === id) {
+          currentCase = { ...currentCase, ...update };
+        }
+
+        statusEl.textContent = markReviewed ? "✓ Marked as reviewed" : "✓ Draft saved";
+        statusEl.className = "save-status success";
+        showToast(markReviewed ? "Case marked reviewed" : "Draft saved");
+
+        if (markReviewed) {
+          const cardEl = document.getElementById("card-" + CSS.escape(id));
+          if (cardEl) {
+            cardEl.classList.add("removing");
+            setTimeout(() => {
+              renderQueue();
+              loadQueueCount().then(updateQueueBadge);
+              if (currentCase) renderDetail(currentCase);
+            }, 350);
+          } else {
             renderQueue();
             loadQueueCount().then(updateQueueBadge);
             if (currentCase) renderDetail(currentCase);
-          }, 350);
+          }
+
+          if (isMobile && currentTab === "queue") {
+            setTimeout(goBack, 1200);
+          }
         } else {
           renderQueue();
           loadQueueCount().then(updateQueueBadge);
           if (currentCase) renderDetail(currentCase);
         }
 
-        if (isMobile && currentTab === "queue") {
-          setTimeout(goBack, 1200);
-        }
-      } else {
-        renderQueue();
-        loadQueueCount().then(updateQueueBadge);
-        if (currentCase) renderDetail(currentCase);
+        setTimeout(() => {
+          statusEl.textContent = "";
+          statusEl.className = "save-status";
+        }, 3000);
+      } catch (err) {
+        statusEl.textContent = "Unexpected save error";
+        statusEl.className = "save-status error";
+        console.error("Save review exception:", err);
       }
-
-      setTimeout(() => {
-        statusEl.textContent = "";
-        statusEl.className = "save-status";
-      }, 3000);
-    } catch (err) {
-      statusEl.textContent = "Unexpected save error";
-      statusEl.className = "save-status error";
-      console.error("Save review exception:", err);
     }
-  }
-</script>
 
-  <script>
-  function toggleCollapsible(id, btn) {
-    const body = document.getElementById(id);
-    if (!body) return;
-    const isOpen = body.classList.toggle("open");
-    if (btn) btn.textContent = isOpen ? "Hide ▲" : "Show ▼";
-  }
+    function toggleCollapsible(id, btn) {
+      const body = document.getElementById(id);
+      if (!body) return;
+      const isOpen = body.classList.toggle("open");
+      if (btn) btn.textContent = isOpen ? "Hide ▲" : "Show ▼";
+    }
 
-  function formatTag(tag) {
-    if (!tag || tag === "-") return "-";
-    return String(tag)
-      .replace(/_/g, " ")
-      .replace(/\b\w/g, (l) => l.toUpperCase())
-      .replace(/ And /g, " & ");
-  }
+    function formatTag(tag) {
+      if (!tag || tag === "-") return "-";
+      return String(tag)
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, (l) => l.toUpperCase())
+        .replace(/ And /g, " & ");
+    }
 
-  function formatPhone(p) {
-    if (!p) return "-";
-    const d = String(p).replace(/\D/g, "");
-    if (d.length === 10) return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
-    if (d.length === 11 && d.startsWith("1")) return `1 (${d.slice(1, 4)}) ${d.slice(4, 7)}-${d.slice(7)}`;
-    return String(p);
-  }
+    function formatPhone(p) {
+      if (!p) return "-";
+      const d = String(p).replace(/\D/g, "");
+      if (d.length === 10) return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
+      if (d.length === 11 && d.startsWith("1")) return `1 (${d.slice(1, 4)}) ${d.slice(4, 7)}-${d.slice(7)}`;
+      return String(p);
+    }
 
-  function formatTime(iso) {
-    if (!iso) return "-";
-    const d = new Date(iso);
-    if (Number.isNaN(d.getTime())) return "-";
+    function formatTime(iso) {
+      if (!iso) return "-";
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return "-";
 
-    const now = new Date();
-    const diffMs = now - d;
-    const diffH = diffMs / 3600000;
+      const now = new Date();
+      const diffMs = now - d;
+      const diffH = diffMs / 3600000;
 
-    if (diffH < 1) return Math.max(1, Math.round(diffMs / 60000)) + "m ago";
-    if (diffH < 24) return Math.round(diffH) + "h ago";
+      if (diffH < 1) return Math.max(1, Math.round(diffMs / 60000)) + "m ago";
+      if (diffH < 24) return Math.round(diffH) + "h ago";
 
-    return d.toLocaleDateString("en-CA", {
-      month: "short",
-      day: "numeric"
-    });
-  }
+      return d.toLocaleDateString("en-CA", {
+        month: "short",
+        day: "numeric"
+      });
+    }
 
-  function formatDatetime(iso) {
-    if (!iso) return "-";
-    const d = new Date(iso);
-    if (Number.isNaN(d.getTime())) return "-";
+    function formatDatetime(iso) {
+      if (!iso) return "-";
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return "-";
 
-    return (
-      d.toLocaleDateString("en-CA", { month: "short", day: "numeric" }) +
-      " " +
-      d.toLocaleTimeString("en-CA", {
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true
-      })
-    );
-  }
+      return (
+        d.toLocaleDateString("en-CA", { month: "short", day: "numeric" }) +
+        " " +
+        d.toLocaleTimeString("en-CA", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true
+        })
+      );
+    }
 
-  function formatDateOnly(value) {
-    if (!value) return "-";
-    const d = new Date(value);
-    if (Number.isNaN(d.getTime())) return String(value);
-    return d.toLocaleDateString("en-CA", {
-      year: "numeric",
-      month: "short",
-      day: "numeric"
-    });
-  }
+    function formatDateOnly(value) {
+      if (!value) return "-";
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return String(value);
+      return d.toLocaleDateString("en-CA", {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+      });
+    }
 
-  function formatDuration(seconds) {
-    if (seconds === null || seconds === undefined || Number.isNaN(Number(seconds))) return "-";
-    const s = Number(seconds);
-    const mins = Math.floor(s / 60);
-    const secs = s % 60;
-    return `${mins}m ${secs}s`;
-  }
+    function formatDuration(seconds) {
+      if (seconds === null || seconds === undefined || Number.isNaN(Number(seconds))) return "-";
+      const s = Number(seconds);
+      const mins = Math.floor(s / 60);
+      const secs = s % 60;
+      return `${mins}m ${secs}s`;
+    }
 
-  function formatPain(primary, fallback) {
-    const pain = primary ?? fallback;
-    if (pain === null || pain === undefined || pain === "") return "-";
-    return `${pain}/10`;
-  }
+    function formatPain(primary, fallback) {
+      const pain = primary ?? fallback;
+      if (pain === null || pain === undefined || pain === "") return "-";
+      return `${pain}/10`;
+    }
 
-  function humanizeTrueFlags(obj, overrides = {}) {
-    if (!obj || typeof obj !== "object") return "";
+    function humanizeTrueFlags(obj, overrides = {}) {
+      if (!obj || typeof obj !== "object") return "";
 
-    const labels = {
-      trouble_breathing_or_swallowing: "Trouble breathing or swallowing",
-      uncontrolled_bleeding: "Uncontrolled bleeding",
-      facial_swelling: "Facial swelling",
-      fever_or_feeling_unwell: "Fever or feeling unwell",
-      injury_to_teeth_jaw_face: "Injury to teeth, jaw, or face",
-      none_of_the_above: "None of the above",
-      allergy_antibiotics: "Allergy to antibiotics",
-      allergy_pain_medication: "Allergy to pain medication",
-      blood_thinners: "Blood thinners",
-      diabetes: "Diabetes",
-      pregnancy: "Pregnancy",
-      immunocompromised: "Immunocompromised",
-      other_important_medical_condition: "Other important medical condition"
-    };
+      const labels = {
+        trouble_breathing_or_swallowing: "Trouble breathing or swallowing",
+        uncontrolled_bleeding: "Uncontrolled bleeding",
+        facial_swelling: "Facial swelling",
+        fever_or_feeling_unwell: "Fever or feeling unwell",
+        injury_to_teeth_jaw_face: "Injury to teeth, jaw, or face",
+        none_of_the_above: "None of the above",
+        allergy_antibiotics: "Allergy to antibiotics",
+        allergy_pain_medication: "Allergy to pain medication",
+        blood_thinners: "Blood thinners",
+        diabetes: "Diabetes",
+        pregnancy: "Pregnancy",
+        immunocompromised: "Immunocompromised",
+        other_important_medical_condition: "Other important medical condition"
+      };
 
-    const items = Object.entries(obj)
-      .filter(([key, value]) => key !== "other_medical_detail" && value === true)
-      .map(([key]) => overrides[key] || labels[key] || formatTag(key));
+      const items = Object.entries(obj)
+        .filter(([key, value]) => key !== "other_medical_detail" && value === true)
+        .map(([key]) => overrides[key] || labels[key] || formatTag(key));
 
-    return items.join(", ");
-  }
+      return items.join(", ");
+    }
 
-  function showToast(msg) {
-    const t = document.getElementById("toast");
-    t.textContent = msg;
-    t.classList.add("show");
-    setTimeout(() => t.classList.remove("show"), 2800);
-  }
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2800);
+    }
 
-  function escHtml(value) {
-    if (value === null || value === undefined) return "";
-    return String(value)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;");
-  }
+    function escHtml(value) {
+      if (value === null || value === undefined) return "";
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
 
-  function escAttr(value) {
-    return escHtml(value);
-  }
+    function escAttr(value) {
+      return escHtml(value);
+    }
 
-  init();
-</script>
+    init();
+  </script>
 </body>
 </html>
