@@ -12,31 +12,41 @@
   <style>
     html,
     body {
-      background: #0a1628;
+      background: #071323;
       height: 100%;
     }
 
     :root {
-      --navy: #0a1628;
-      --navy-mid: #0f2044;
-      --navy-light: #1a3260;
-      --navy-soft: #13274f;
+      --navy-0: #071323;
+      --navy-1: #0a1628;
+      --navy-2: #0f2044;
+      --navy-3: #17305e;
       --cyan: #00c8e8;
+      --cyan-soft: #73d7f3;
       --cyan-dim: #0097b2;
       --cyan-faint: rgba(0, 200, 232, 0.08);
       --urgent: #e84545;
       --emergency: #f0a500;
       --routine: #00c87a;
+      --white: #f5f9ff;
       --text-primary: #e8f0fe;
       --text-secondary: #a8bdd8;
       --text-muted: #6a80a0;
       --text-faint: #90a6c4;
       --border: rgba(255, 255, 255, 0.07);
+      --border-soft: rgba(255, 255, 255, 0.05);
       --border-active: rgba(0, 200, 232, 0.3);
       --surface: rgba(255, 255, 255, 0.03);
       --surface-hover: rgba(255, 255, 255, 0.06);
+      --surface-strong: rgba(255, 255, 255, 0.045);
       --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.22);
       --shadow-card: 0 12px 28px rgba(0, 0, 0, 0.14);
+      --danger-bg: rgba(232, 69, 69, 0.12);
+      --danger-border: rgba(232, 69, 69, 0.28);
+      --warning-bg: rgba(240, 165, 0, 0.12);
+      --warning-border: rgba(240, 165, 0, 0.28);
+      --success-bg: rgba(0, 200, 122, 0.1);
+      --success-border: rgba(0, 200, 122, 0.24);
     }
 
     * {
@@ -48,7 +58,10 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--navy);
+      background:
+        radial-gradient(circle at top center, rgba(51, 108, 190, 0.16), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(0, 200, 232, 0.06), transparent 24%),
+        linear-gradient(180deg, var(--navy-0) 0%, var(--navy-1) 100%);
       color: var(--text-primary);
       font-size: 14px;
       line-height: 1.5;
@@ -71,29 +84,30 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
-      background: radial-gradient(ellipse at 50% 0%, #0f2a50 0%, #0a1628 70%);
+      background: radial-gradient(ellipse at 50% 0%, #0f2a50 0%, #071323 72%);
     }
 
     .auth-card {
       width: 100%;
-      max-width: 380px;
-      background: #0f2044;
+      max-width: 390px;
+      background: linear-gradient(180deg, rgba(18, 39, 81, 0.95) 0%, rgba(11, 27, 58, 0.95) 100%);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 40px 32px;
-      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5);
+      border-radius: 18px;
+      padding: 38px 30px;
+      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.52);
+      backdrop-filter: blur(10px);
     }
 
     .auth-logo {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 32px;
+      margin-bottom: 12px;
     }
 
     .auth-logo-text {
       font-size: 18px;
-      font-weight: 600;
+      font-weight: 700;
       background: linear-gradient(135deg, #1a7fc4, #00c8e8);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -110,7 +124,7 @@
     .field-label {
       display: block;
       font-size: 11px;
-      font-weight: 500;
+      font-weight: 600;
       color: #a0b4d0;
       text-transform: uppercase;
       letter-spacing: 0.08em;
@@ -121,17 +135,18 @@
       width: 100%;
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 8px;
       color: var(--text-primary);
       font-size: 14px;
       padding: 12px 14px;
       outline: none;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, background 0.2s;
       margin-bottom: 16px;
     }
 
     .field-input:focus {
       border-color: var(--border-active);
+      background: rgba(255, 255, 255, 0.1);
     }
 
     .field-input::placeholder {
@@ -151,15 +166,16 @@
       letter-spacing: 0.03em;
       transition: opacity 0.2s, transform 0.1s;
       margin-top: 4px;
+      box-shadow: 0 14px 30px rgba(49, 128, 212, 0.22);
     }
 
     .btn-primary:active {
-      transform: scale(0.98);
-      opacity: 0.9;
+      transform: scale(0.985);
+      opacity: 0.92;
     }
 
     .btn-primary:disabled {
-      opacity: 0.6;
+      opacity: 0.58;
       cursor: not-allowed;
     }
 
@@ -188,7 +204,7 @@
       background: rgba(15, 32, 68, 0.94);
       border-bottom: 1px solid var(--border);
       padding: 0 16px;
-      height: 56px;
+      min-height: 58px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -209,12 +225,14 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+      white-space: nowrap;
     }
 
     .header-right {
       display: flex;
       align-items: center;
       gap: 10px;
+      flex-shrink: 0;
     }
 
     .header-user {
@@ -271,7 +289,7 @@
 
     .tabs-shell {
       position: sticky;
-      top: 56px;
+      top: 58px;
       z-index: 140;
       background: rgba(15, 32, 68, 0.94);
       border-bottom: 1px solid var(--border);
@@ -331,7 +349,7 @@
 
     .queue-controls {
       position: sticky;
-      top: 103px;
+      top: 105px;
       z-index: 130;
       background: rgba(15, 32, 68, 0.94);
       border-bottom: 1px solid var(--border);
@@ -383,6 +401,12 @@
       color: var(--text-muted);
       border-color: var(--border);
       background: rgba(255, 255, 255, 0.02);
+    }
+
+    .controls-disabled .filter-chip,
+    .controls-disabled .sort-chip,
+    .controls-disabled .nav-tab {
+      pointer-events: none;
     }
 
     .filter-right {
@@ -476,7 +500,7 @@
       min-height: 0;
       background:
         linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0)),
-        var(--navy);
+        var(--navy-1);
     }
 
     #detail-column {
@@ -485,7 +509,7 @@
       flex: 1;
       position: absolute;
       inset: 0;
-      background: var(--navy);
+      background: var(--navy-1);
       z-index: 20;
       min-height: 0;
       overflow: hidden;
@@ -527,17 +551,10 @@
       width: 3px;
     }
 
-    .case-card.urgent::before {
-      background: var(--urgent);
-    }
-
-    .case-card.emergency::before {
-      background: var(--emergency);
-    }
-
-    .case-card.routine::before {
-      background: var(--routine);
-    }
+    .case-card.urgent::before { background: var(--urgent); }
+    .case-card.emergency::before { background: var(--emergency); }
+    .case-card.routine::before { background: var(--routine); }
+    .case-card.unknown::before { background: var(--cyan); }
 
     .case-card:hover {
       border-color: var(--border-active);
@@ -551,13 +568,10 @@
       box-shadow: 0 12px 24px rgba(0, 0, 0, 0.16);
     }
 
-    .case-card.reviewed {
-      opacity: 0.58;
-    }
-
+    .case-card.reviewed { opacity: 0.6; }
     .case-card.draft {
-      border-color: rgba(0, 200, 232, 0.2);
-      background: rgba(0, 200, 232, 0.045);
+      border-color: rgba(0, 200, 232, 0.18);
+      background: rgba(0, 200, 232, 0.04);
     }
 
     .case-card.removing {
@@ -579,9 +593,9 @@
     }
 
     .status-badge.reviewed {
-      color: #3a5070;
-      background: rgba(58, 80, 112, 0.2);
-      border: 1px solid #2a4060;
+      color: #6b839f;
+      background: rgba(58, 80, 112, 0.16);
+      border: 1px solid rgba(58, 80, 112, 0.28);
     }
 
     .status-badge.draft {
@@ -600,7 +614,7 @@
     .severity-badge {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-size: 10px;
-      font-weight: 600;
+      font-weight: 700;
       padding: 2px 8px;
       border-radius: 4px;
       text-transform: uppercase;
@@ -624,6 +638,12 @@
       background: rgba(0, 200, 122, 0.1);
       color: var(--routine);
       border: 1px solid rgba(0, 200, 122, 0.25);
+    }
+
+    .badge-unknown {
+      background: rgba(0, 200, 232, 0.08);
+      color: var(--cyan);
+      border: 1px solid rgba(0, 200, 232, 0.2);
     }
 
     .case-name {
@@ -671,20 +691,20 @@
       gap: 4px;
     }
 
-    .reviewed-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--routine);
-      margin-left: auto;
-    }
-
+    .reviewed-dot,
     .draft-dot {
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: var(--cyan);
       margin-left: auto;
+    }
+
+    .reviewed-dot {
+      background: var(--routine);
+    }
+
+    .draft-dot {
+      background: var(--cyan);
       box-shadow: 0 0 6px rgba(0, 200, 232, 0.4);
     }
 
@@ -738,7 +758,7 @@
       top: 0;
       background: rgba(15, 32, 68, 0.96);
       border-bottom: 1px solid var(--border);
-      padding: 9px 12px;
+      padding: 10px 12px;
       display: flex;
       align-items: center;
       gap: 12px;
@@ -850,6 +870,7 @@
     .severity-icon.urgent { background: rgba(232, 69, 69, 0.12); }
     .severity-icon.emergency { background: rgba(240, 165, 0, 0.12); }
     .severity-icon.routine { background: rgba(0, 200, 122, 0.1); }
+    .severity-icon.unknown { background: rgba(0, 200, 232, 0.08); }
 
     .severity-detail-label {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -883,13 +904,13 @@
     }
 
     .stat-cell {
-      background: var(--navy);
+      background: var(--navy-1);
       padding: 12px 14px;
     }
 
     .stat-label {
       font-size: 10px;
-      font-weight: 600;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: #8ab0d0;
@@ -899,7 +920,7 @@
     .stat-value {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-size: 15px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--text-primary);
     }
 
@@ -972,6 +993,13 @@
       display: block;
     }
 
+    .form-helper {
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
     .form-textarea,
     .form-select {
       width: 100%;
@@ -980,7 +1008,7 @@
       border-radius: 8px;
       color: var(--text-primary);
       outline: none;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, background 0.2s;
     }
 
     .form-textarea {
@@ -995,6 +1023,7 @@
     .form-textarea:focus,
     .form-select:focus {
       border-color: var(--border-active);
+      background: rgba(255,255,255,0.055);
     }
 
     .form-textarea::placeholder {
@@ -1026,6 +1055,31 @@
       font-size: 12px;
       color: var(--text-muted);
       line-height: 1.5;
+    }
+
+    .semantic-note {
+      background: rgba(0, 200, 232, 0.06);
+      border: 1px solid rgba(0, 200, 232, 0.14);
+      border-radius: 10px;
+      padding: 10px 11px;
+      color: #d8ebff;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .soft-warning {
+      display: none;
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      border-radius: 10px;
+      padding: 10px 11px;
+      color: #ffdca1;
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .soft-warning.show {
+      display: block;
     }
 
     .decision-toggles {
@@ -1300,7 +1354,7 @@
       padding: 12px 20px;
       font-size: 13px;
       color: var(--cyan);
-      z-index: 200;
+      z-index: 220;
       transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       white-space: nowrap;
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
@@ -1356,6 +1410,8 @@
       font-size: 14px;
       max-width: 240px;
     }
+
+    /* DESKTOP */
 
     @media (min-width: 768px) {
       html,
@@ -1430,7 +1486,14 @@
       .review-grid {
         grid-template-columns: 1.05fr 0.95fr;
       }
+
+      #app.desktop-review-focus .tabs-shell,
+      #app.desktop-review-focus .queue-controls {
+        display: none !important;
+      }
     }
+
+    /* MOBILE */
 
     @media (max-width: 767px) {
       .header {
@@ -1510,7 +1573,7 @@
         <div class="auth-logo-text">VirtualDentist.ai</div>
       </div>
 
-      <div class="auth-title">Dentist Dashboard - Secure Access</div>
+      <div class="auth-title">Dentist Dashboard · Secure Access</div>
 
       <label class="field-label" for="auth-email">Email</label>
       <input class="field-input" type="email" id="auth-email" placeholder="you@example.com" autocomplete="email" />
@@ -1604,12 +1667,7 @@
 
   <script>
     const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpc3MiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI".replace('"','');
-  </script>
-
-  <script>
-    // Restore exact key literal cleanly
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
 
     if (!window.supabase || !window.supabase.createClient) {
       const errEl = document.getElementById("auth-error");
@@ -1620,7 +1678,7 @@
       throw new Error("Supabase library missing");
     }
 
-    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
     let currentTab = "queue";
     let currentFilter = "all";
@@ -1632,32 +1690,6 @@
     let refreshInterval = null;
     let isMobile = window.innerWidth < 768;
     let queueCount = 0;
-
-    function syncMobileDetailMode() {
-      const app = document.getElementById("app");
-      if (!app) return;
-
-      if (isMobile && selectedCaseId) {
-        app.classList.add("mobile-detail-open");
-      } else {
-        app.classList.remove("mobile-detail-open");
-      }
-    }
-
-    window.addEventListener("resize", () => {
-      isMobile = window.innerWidth < 768;
-
-      if (!isMobile) {
-        document.getElementById("queue-column").style.display = "flex";
-        document.getElementById("detail-column").style.display = "flex";
-      } else if (!selectedCaseId) {
-        document.getElementById("queue-column").style.display = "flex";
-        document.getElementById("detail-column").style.display = "none";
-      }
-
-      syncMobileDetailMode();
-      updateControlsDisabledState();
-    });
 
     document.getElementById("auth-btn").addEventListener("click", handleLogin);
     document.getElementById("signout-btn").addEventListener("click", handleSignOut);
@@ -1692,6 +1724,38 @@
 
     document.getElementById("sort-newest").addEventListener("click", () => setSort("newest"));
     document.getElementById("sort-oldest").addEventListener("click", () => setSort("oldest"));
+
+    window.addEventListener("resize", () => {
+      isMobile = window.innerWidth < 768;
+
+      if (!isMobile) {
+        document.getElementById("queue-column").style.display = "flex";
+        document.getElementById("detail-column").style.display = "flex";
+      } else if (!selectedCaseId) {
+        document.getElementById("queue-column").style.display = "flex";
+        document.getElementById("detail-column").style.display = "none";
+      }
+
+      syncModes();
+      updateControlsDisabledState();
+    });
+
+    function syncModes() {
+      const app = document.getElementById("app");
+      if (!app) return;
+
+      if (isMobile && selectedCaseId) {
+        app.classList.add("mobile-detail-open");
+      } else {
+        app.classList.remove("mobile-detail-open");
+      }
+
+      if (!isMobile && selectedCaseId) {
+        app.classList.add("desktop-review-focus");
+      } else {
+        app.classList.remove("desktop-review-focus");
+      }
+    }
 
     async function handleLogin() {
       const email = document.getElementById("auth-email").value.trim();
@@ -1777,7 +1841,7 @@
         document.getElementById("queue-column").style.display = "flex";
       }
 
-      syncMobileDetailMode();
+      syncModes();
       loadCases();
     }
 
@@ -1796,7 +1860,7 @@
         updateSortChipState();
         updateSortBarVisibility();
         updateControlsDisabledState();
-        syncMobileDetailMode();
+        syncModes();
       } catch (err) {
         console.error("Load exception:", err);
         showToast("Unexpected load error");
@@ -1909,7 +1973,7 @@
         renderEmptyDetailPane();
       }
 
-      syncMobileDetailMode();
+      syncModes();
       updateSortBarVisibility();
       updateSortChipState();
       updateControlsDisabledState();
@@ -2021,15 +2085,15 @@
       }
 
       if (currentFilter !== "all") {
-        cases = cases.filter((c) => c.severity === currentFilter);
+        cases = cases.filter((c) => (c.severity || "unknown") === currentFilter);
       }
 
-      const sevOrder = { urgent: 1, emergency: 2, routine: 3 };
+      const sevOrder = { urgent: 1, emergency: 2, routine: 3, unknown: 4 };
 
       if (currentSort === "severity" && !isUrgencySortRedundant()) {
         cases.sort((a, b) => {
-          const aOrder = sevOrder[a.severity] ?? 9;
-          const bOrder = sevOrder[b.severity] ?? 9;
+          const aOrder = sevOrder[a.severity || "unknown"] ?? 9;
+          const bOrder = sevOrder[b.severity || "unknown"] ?? 9;
           return aOrder - bOrder || new Date(b.created_at) - new Date(a.created_at);
         });
       } else if (currentSort === "newest") {
@@ -2087,9 +2151,7 @@
         emptySub: "No cases match this filter."
       };
     }
-  </script>
 
-  <script>
     function renderCaseCard(c) {
       const so = c.structured_output || {};
       const name = c.patient_name || "Unknown Patient";
@@ -2103,6 +2165,7 @@
       const reviewed = reviewStatus === "reviewed";
       const draft = reviewStatus === "draft";
       const isActive = c.id === selectedCaseId;
+      const severity = c.severity || "unknown";
 
       const phoneEl = phoneRaw
         ? `<a class="tel-link" href="tel:${escAttr(phoneRaw)}">${escHtml(phone)}</a>`
@@ -2110,12 +2173,12 @@
 
       return `
         <div
-          class="case-card ${escAttr(c.severity || "")}${reviewed ? " reviewed" : ""}${draft ? " draft" : ""}${isActive ? " active" : ""}"
+          class="case-card ${escAttr(severity)}${reviewed ? " reviewed" : ""}${draft ? " draft" : ""}${isActive ? " active" : ""}"
           id="card-${escAttr(c.id)}"
           data-case-id="${escAttr(c.id)}"
         >
           <div class="case-row1">
-            <span class="severity-badge badge-${escAttr(c.severity || "routine")}">${escHtml(c.severity || "unknown")}</span>
+            <span class="severity-badge badge-${escAttr(severity)}">${escHtml(severity)}</span>
             <span class="case-name">
               ${escHtml(name)}
               ${reviewed ? '<span class="status-badge reviewed">Reviewed</span>' : ""}
@@ -2141,16 +2204,14 @@
       const cardEl = document.getElementById("card-" + CSS.escape(id));
       if (cardEl) cardEl.classList.add("active");
 
+      document.getElementById("detail-panel").innerHTML =
+        '<div class="loading-state"><span class="loading-dots">Loading</span></div>';
+
       if (isMobile) {
-        syncMobileDetailMode();
         document.getElementById("detail-column").style.display = "flex";
-        document.getElementById("detail-panel").innerHTML =
-          '<div class="loading-state"><span class="loading-dots">Loading</span></div>';
-      } else {
-        document.getElementById("detail-panel").innerHTML =
-          '<div class="loading-state"><span class="loading-dots">Loading</span></div>';
       }
 
+      syncModes();
       updateControlsDisabledState();
 
       let c = allCases.find((x) => x.id === id);
@@ -2183,20 +2244,24 @@
       const phoneDisplay = phone
         ? `<a class="tel-link" href="tel:${escAttr(phoneRaw)}">${escHtml(phone)}</a>`
         : '<span style="color:#6a80a0">No phone</span>';
+
       const reviewedAt = c.reviewed_at ? formatDatetime(c.reviewed_at) : null;
       const reviewStatus = c.review_status || "new";
       const isReviewed = reviewStatus === "reviewed";
       const isDraft = reviewStatus === "draft";
+      const severity = c.severity || "unknown";
 
       const sevColor =
-        c.severity === "urgent" ? "#e84545" :
-        c.severity === "emergency" ? "#f0a500" :
-        "#00c87a";
+        severity === "urgent" ? "#e84545" :
+        severity === "emergency" ? "#f0a500" :
+        severity === "routine" ? "#00c87a" :
+        "#00c8e8";
 
       const sevIcon =
-        c.severity === "urgent" ? "!" :
-        c.severity === "emergency" ? "⚠" :
-        "✓";
+        severity === "urgent" ? "!" :
+        severity === "emergency" ? "⚠" :
+        severity === "routine" ? "✓" :
+        "?";
 
       const flags = [
         { label: "Airway / swallowing", val: so.difficulty_breathing_or_swallowing },
@@ -2235,17 +2300,17 @@
               <div class="detail-patient-name">${escHtml(name)}${nameNote}</div>
               <div class="detail-patient-meta">${phoneDisplay} · ${escHtml(formatDatetime(c.created_at))}</div>
             </div>
-            <span class="severity-badge badge-${escAttr(c.severity || "routine")}">${escHtml(c.severity || "unknown")}</span>
+            <span class="severity-badge badge-${escAttr(severity)}">${escHtml(severity)}</span>
           </div>
 
           <div class="detail-scroll">
             <div class="detail-body">
               <div class="detail-section">
                 <div class="severity-row">
-                  <div class="severity-icon ${escAttr(c.severity || "routine")}">${escHtml(sevIcon)}</div>
+                  <div class="severity-icon ${escAttr(severity)}">${escHtml(sevIcon)}</div>
                   <div>
                     <div class="severity-detail-label">Triage Classification</div>
-                    <div class="severity-detail-value" style="color:${sevColor}">${escHtml((c.severity || "unknown").toUpperCase())}</div>
+                    <div class="severity-detail-value" style="color:${sevColor}">${escHtml(String(severity).toUpperCase())}</div>
                     <div class="severity-reason">${escHtml(c.severity_reason || "-")}</div>
                   </div>
                 </div>
@@ -2327,7 +2392,7 @@
                   <span class="section-title">Dentist Review</span>
                   ${
                     isReviewed
-                      ? `<span class="detail-state-text reviewed">✓ Reviewed ${escHtml(reviewedAt || "")}</span>`
+                      ? `<span class="detail-state-text reviewed">✓ Finalized review ${escHtml(reviewedAt || "")}</span>`
                       : isDraft
                         ? `<span class="detail-state-text draft">Draft saved</span>`
                         : `<span class="detail-state-text">Decision required</span>`
@@ -2344,11 +2409,18 @@
                       placeholder="Add clinical notes, observations, or follow-up instructions..."
                       ${isReviewed ? 'readonly style="opacity:0.6"' : ""}
                     >${escHtml(c.review_notes || "")}</textarea>
+                    <div class="form-helper">
+                      Use this for the dentist’s clinical addendum or follow-up rationale.
+                    </div>
                   </div>
 
                   <div class="review-block">
                     <div class="review-block-title">Decision</div>
                     <div class="decision-grid">
+                      <div class="semantic-note">
+                        <strong>Semantics:</strong> Mark reviewed only when this case has a finalized operational outcome. “Patient contacted” should reflect real outreach, not intended outreach.
+                      </div>
+
                       <div>
                         <label class="form-label" for="field-disposition">Final Disposition</label>
                         <select
@@ -2363,6 +2435,9 @@
                           <option value="declined" ${c.final_disposition === "declined" ? "selected" : ""}>Patient declined care</option>
                           <option value="no_response" ${c.final_disposition === "no_response" ? "selected" : ""}>No response from patient</option>
                         </select>
+                        <div class="form-helper">
+                          This is the dentist’s final operational outcome for the case.
+                        </div>
                       </div>
 
                       <div class="decision-toggles">
@@ -2383,11 +2458,13 @@
                         </div>
                       </div>
 
+                      <div class="soft-warning" id="decision-soft-warning"></div>
+
                       <div class="decision-note">
                         ${
                           isReviewed
                             ? "This case is locked as reviewed. You can still export the clinical record below."
-                            : "Choose a final disposition before marking the case reviewed. Use Save Draft if you are not ready to finalize."
+                            : "A final disposition is required before marking reviewed. Save Draft if you are not ready to finalize."
                         }
                       </div>
                     </div>
@@ -2399,7 +2476,7 @@
                     ${
                       isReviewed
                         ? `
-                          <div class="review-lock-message">✓ This case has been reviewed</div>
+                          <div class="review-lock-message">✓ This case has been finalized as reviewed</div>
                           <a
                             class="btn-action btn-export-record"
                             id="export-case-btn"
@@ -2445,7 +2522,7 @@
               <div class="detail-section">
                 <div class="section-header">
                   <span class="section-title">AI Clinical Note</span>
-                  <span class="note-lock-badge">Draft - Read Only</span>
+                  <span class="note-lock-badge">Draft · Read Only</span>
                 </div>
                 <div class="section-body">
                   <div class="clinical-note-text">${escHtml(c.clinical_note || "No clinical note generated.")}</div>
@@ -2490,6 +2567,7 @@
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
@@ -2518,6 +2596,34 @@
       if (toggleCallMeta) {
         toggleCallMeta.addEventListener("click", () => toggleCollapsible("call-meta-body", toggleCallMeta));
       }
+
+      const dispositionEl = document.getElementById("field-disposition");
+      const rxEl = document.getElementById("field-rx");
+      const contactedEl = document.getElementById("field-contacted");
+
+      if (dispositionEl && rxEl && contactedEl && !isReviewed) {
+        const syncSoftWarnings = () => updateDecisionSoftWarning(dispositionEl.value, rxEl.checked, contactedEl.checked);
+        dispositionEl.addEventListener("change", syncSoftWarnings);
+        rxEl.addEventListener("change", syncSoftWarnings);
+        contactedEl.addEventListener("change", syncSoftWarnings);
+        syncSoftWarnings();
+      }
+    }
+
+    function updateDecisionSoftWarning(disposition, rxIssued, contacted) {
+      const warningEl = document.getElementById("decision-soft-warning");
+      if (!warningEl) return;
+
+      let message = "";
+
+      if (disposition === "rx_only" && !rxIssued) {
+        message = "Prescription only is selected, but “Prescription issued” is still off. Turn it on if a prescription was actually issued.";
+      } else if (disposition === "no_response" && contacted) {
+        message = "No response is selected, but “Patient contacted” is on. Leave it on only if real outreach occurred and that matches your workflow meaning.";
+      }
+
+      warningEl.textContent = message;
+      warningEl.classList.toggle("show", !!message);
     }
 
     function goBack() {
@@ -2527,13 +2633,13 @@
       document.querySelectorAll(".case-card").forEach((el) => el.classList.remove("active"));
 
       if (isMobile) {
-        syncMobileDetailMode();
         document.getElementById("queue-column").style.display = "flex";
         document.getElementById("detail-column").style.display = "none";
       } else {
         renderEmptyDetailPane();
       }
 
+      syncModes();
       updateControlsDisabledState();
     }
 
@@ -2546,7 +2652,7 @@
 
       if (!notesEl || !dispositionEl || !rxEl || !contactedEl || !statusEl) return;
 
-      const notes = notesEl.value;
+      const notes = notesEl.value.trim();
       const disposition = dispositionEl.value;
       const rxIssued = rxEl.checked;
       const contacted = contactedEl.checked;
@@ -2613,16 +2719,13 @@
           const cardEl = document.getElementById("card-" + CSS.escape(id));
           if (cardEl) {
             cardEl.classList.add("removing");
-            setTimeout(() => {
-              renderQueue();
-              loadQueueCount().then(updateQueueBadge);
-              if (currentCase) renderDetail(currentCase);
-            }, 350);
-          } else {
+          }
+
+          setTimeout(() => {
             renderQueue();
             loadQueueCount().then(updateQueueBadge);
             if (currentCase) renderDetail(currentCase);
-          }
+          }, 350);
 
           if (isMobile && currentTab === "queue") {
             setTimeout(goBack, 1200);
