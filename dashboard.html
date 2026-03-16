@@ -1784,6 +1784,11 @@
       updateControlsDisabledState();
     });
 
+    function resolveReviewerName(email) {
+      if (!email) return "-";
+      return REVIEWER_NAME_MAP[email] || email;
+    }
+
     function syncModes() {
       const app = document.getElementById("app");
       if (!app) return;
@@ -1799,11 +1804,6 @@
       } else {
         app.classList.remove("desktop-review-focus");
       }
-    }
-
-    function resolveReviewerName(email) {
-      if (!email) return "-";
-      return REVIEWER_NAME_MAP[email] || email;
     }
 
     async function handleLogin() {
@@ -2346,7 +2346,10 @@
             <button class="back-btn" id="back-btn" type="button" aria-label="Back to case list">←</button>
             <div class="detail-header-info">
               <div class="detail-patient-name">${escHtml(name)}${nameNote}</div>
-              <div class="detail-patient-meta">${phoneDisplay} · ${escHtml(formatDatetime(c.created_at))}</div>
+              <div class="detail-patient-meta">
+                ${phoneDisplay} · ${escHtml(formatDatetime(c.created_at))}
+                ${isReviewed ? ` · Reviewed by ${escHtml(reviewerName)}` : ""}
+              </div>
             </div>
             <span class="severity-badge badge-${escAttr(severity)}">${escHtml(severity)}</span>
           </div>
