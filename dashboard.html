@@ -1476,9 +1476,10 @@
       }
 
       .back-btn {
-        display: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
       }
-
       .summary-grid {
         grid-template-columns: 1fr 1fr;
       }
@@ -2285,13 +2286,21 @@
       const intakeRedFlags = c.intake_red_flags || {};
       const intakeMedicalFlags = c.intake_medical_flags || {};
 
-      const intakeRedFlagsList = humanizeTrueFlags(intakeRedFlags);
-      const intakeMedicalFlagsList = humanizeTrueFlags(intakeMedicalFlags, {
-        other_important_medical_condition: intakeMedicalFlags.other_medical_detail
-          ? `Other important medical condition: ${intakeMedicalFlags.other_medical_detail}`
-          : "Other important medical condition"
-      });
+      const intakeRedFlagsList = humanizeTrueFlags(
+        intakeRedFlags,
+        {},
+        { noneLabel: "None reported" }
+      );
 
+      const intakeMedicalFlagsList = humanizeTrueFlags(
+        intakeMedicalFlags,
+        {
+          other_important_medical_condition: intakeMedicalFlags.other_medical_detail
+            ? `Other important medical condition: ${intakeMedicalFlags.other_medical_detail}`
+            : "Other important medical condition"
+        },
+        { noneLabel: "No relevant medical history reported" }
+      );
       panel.innerHTML = `
         <div class="detail-shell">
           <div class="detail-header">
@@ -2829,7 +2838,7 @@
       return `${pain}/10`;
     }
 
-    function humanizeTrueFlags(obj, overrides = {}) {
+    function humanizeTrueFlags(obj, overrides = {}, options = {}) {
       if (!obj || typeof obj !== "object") return "";
 
       const labels = {
@@ -2848,6 +2857,25 @@
         other_important_medical_condition: "Other important medical condition"
       };
 
+      const trueKeys = Object.entries(obj)
+        .filter(([key, value]) => key !== "other_medical_detail" && value === true)
+        .map(([key]) => key);
+
+      if (!trueKeys.length) return "";
+
+      if (
+        trueKeys.length === 1 &&
+        trueKeys[0] === "none_of_the_above" &&
+        options.noneLabel
+      ) {
+        return options.noneLabel;
+      }
+
+      return trueKeys
+        .filter((key) => key !== "none_of_the_above")
+        .map((key) => overrides[key] || labels[key] || formatTag(key))
+        .join(", ");
+    }
       const items = Object.entries(obj)
         .filter(([key, value]) => key !== "other_medical_detail" && value === true)
         .map(([key]) => overrides[key] || labels[key] || formatTag(key));
