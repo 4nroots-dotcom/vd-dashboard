@@ -2,16 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>VirtualDentist.ai - Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    html,
-    body {
+    html, body {
       background: #071323;
       height: 100%;
     }
@@ -38,15 +34,10 @@
       --border-active: rgba(0, 200, 232, 0.3);
       --surface: rgba(255, 255, 255, 0.03);
       --surface-hover: rgba(255, 255, 255, 0.06);
-      --surface-strong: rgba(255, 255, 255, 0.045);
       --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.22);
       --shadow-card: 0 12px 28px rgba(0, 0, 0, 0.14);
-      --danger-bg: rgba(232, 69, 69, 0.12);
-      --danger-border: rgba(232, 69, 69, 0.28);
       --warning-bg: rgba(240, 165, 0, 0.12);
       --warning-border: rgba(240, 165, 0, 0.28);
-      --success-bg: rgba(0, 200, 122, 0.1);
-      --success-border: rgba(0, 200, 122, 0.24);
     }
 
     * {
@@ -68,11 +59,7 @@
       overscroll-behavior: none;
     }
 
-    button,
-    input,
-    textarea,
-    select,
-    a {
+    button, input, textarea, select, a {
       font: inherit;
     }
 
@@ -439,9 +426,7 @@
     }
 
     @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
+      to { transform: rotate(360deg); }
     }
 
     .sort-bar {
@@ -569,6 +554,7 @@
     }
 
     .case-card.reviewed { opacity: 0.6; }
+
     .case-card.draft {
       border-color: rgba(0, 200, 232, 0.18);
       background: rgba(0, 200, 232, 0.04);
@@ -699,9 +685,7 @@
       margin-left: auto;
     }
 
-    .reviewed-dot {
-      background: var(--routine);
-    }
+    .reviewed-dot { background: var(--routine); }
 
     .draft-dot {
       background: var(--cyan);
@@ -1168,7 +1152,8 @@
     }
 
     .btn-action,
-    .btn-mark-reviewed {
+    .btn-mark-reviewed,
+    .btn-back-desktop {
       width: 100%;
       border-radius: 8px;
       font-size: 14px;
@@ -1179,16 +1164,22 @@
       letter-spacing: 0.02em;
     }
 
-    .btn-action {
+    .btn-action,
+    .btn-back-desktop {
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border);
       color: var(--text-secondary);
       font-weight: 600;
     }
 
-    .btn-action:hover {
+    .btn-action:hover,
+    .btn-back-desktop:hover {
       border-color: var(--border-active);
       color: var(--text-primary);
+    }
+
+    .btn-back-desktop {
+      display: none;
     }
 
     .btn-export-record {
@@ -1223,7 +1214,8 @@
     }
 
     .btn-action:active,
-    .btn-mark-reviewed:active {
+    .btn-mark-reviewed:active,
+    .btn-back-desktop:active {
       transform: scale(0.98);
       opacity: 0.9;
     }
@@ -1411,11 +1403,8 @@
       max-width: 240px;
     }
 
-    /* DESKTOP */
-
     @media (min-width: 768px) {
-      html,
-      body {
+      html, body {
         overflow: hidden;
       }
 
@@ -1476,10 +1465,15 @@
       }
 
       .back-btn {
+        display: none;
+      }
+
+      .btn-back-desktop {
         display: inline-flex;
         align-items: center;
         justify-content: center;
       }
+
       .summary-grid {
         grid-template-columns: 1fr 1fr;
       }
@@ -1493,8 +1487,6 @@
         display: none !important;
       }
     }
-
-    /* MOBILE */
 
     @media (max-width: 767px) {
       .header {
@@ -1561,7 +1553,7 @@
   <div id="auth-screen">
     <div class="auth-card">
       <div class="auth-logo">
-        <svg width="48" height="48" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="48" height="48" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
             <linearGradient id="ag" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stop-color="#1a4fa0" />
@@ -1590,7 +1582,7 @@
   <div id="app">
     <header class="header">
       <div class="header-logo">
-        <svg width="26" height="26" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="26" height="26" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs>
             <linearGradient id="hg" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stop-color="#1a4fa0" />
@@ -2240,6 +2232,7 @@
       const nameNote = !c.patient_name
         ? ' <span style="font-size:11px;color:#6a80a0;font-weight:400">(no intake form linked)</span>'
         : "";
+
       const phone = c.patient_phone ? formatPhone(c.patient_phone) : null;
       const phoneRaw = c.patient_phone || "";
       const phoneDisplay = phone
@@ -2286,21 +2279,9 @@
       const intakeRedFlags = c.intake_red_flags || {};
       const intakeMedicalFlags = c.intake_medical_flags || {};
 
-      const intakeRedFlagsList = humanizeTrueFlags(
-        intakeRedFlags,
-        {},
-        { noneLabel: "None reported" }
-      );
+      const intakeRedFlagsList = humanizeRedFlags(intakeRedFlags);
+      const intakeMedicalFlagsList = humanizeMedicalFlags(intakeMedicalFlags);
 
-      const intakeMedicalFlagsList = humanizeTrueFlags(
-        intakeMedicalFlags,
-        {
-          other_important_medical_condition: intakeMedicalFlags.other_medical_detail
-            ? `Other important medical condition: ${intakeMedicalFlags.other_medical_detail}`
-            : "Other important medical condition"
-        },
-        { noneLabel: "No relevant medical history reported" }
-      );
       panel.innerHTML = `
         <div class="detail-shell">
           <div class="detail-header">
@@ -2387,11 +2368,11 @@
                   </div>
                   <div class="summary-item">
                     <div class="summary-label">Reported Red Flags</div>
-                    <div class="summary-value">${escHtml(intakeRedFlagsList || "-")}</div>
+                    <div class="summary-value">${escHtml(intakeRedFlagsList)}</div>
                   </div>
                   <div class="summary-item">
                     <div class="summary-label">Relevant Medical History</div>
-                    <div class="summary-value">${escHtml(intakeMedicalFlagsList || "-")}</div>
+                    <div class="summary-value">${escHtml(intakeMedicalFlagsList)}</div>
                   </div>
                 </div>
               </div>
@@ -2486,24 +2467,16 @@
                       isReviewed
                         ? `
                           <div class="review-lock-message">✓ This case has been finalized as reviewed</div>
-                          <a
-                            class="btn-action btn-export-record"
-                            id="export-case-btn"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
+                          <button class="btn-back-desktop" id="desktop-back-btn" type="button">Back to main screen</button>
+                          <a class="btn-action btn-export-record" id="export-case-btn" target="_blank" rel="noopener noreferrer">
                             Export Clinical Record
                           </a>
                         `
                         : `
                           <button class="btn-mark-reviewed" id="mark-reviewed-btn" type="button">✓ Mark Reviewed</button>
                           <button class="btn-action" id="save-draft-btn" type="button">Save Draft</button>
-                          <a
-                            class="btn-action btn-export-record"
-                            id="export-case-btn"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
+                          <button class="btn-back-desktop" id="desktop-back-btn" type="button">Back to main screen</button>
+                          <a class="btn-action btn-export-record" id="export-case-btn" target="_blank" rel="noopener noreferrer">
                             Export Clinical Record
                           </a>
                         `
@@ -2576,7 +2549,6 @@
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -2584,6 +2556,9 @@
 
       const backBtn = document.getElementById("back-btn");
       if (backBtn) backBtn.addEventListener("click", goBack);
+
+      const desktopBackBtn = document.getElementById("desktop-back-btn");
+      if (desktopBackBtn) desktopBackBtn.addEventListener("click", goBack);
 
       const saveDraftBtn = document.getElementById("save-draft-btn");
       if (saveDraftBtn) saveDraftBtn.addEventListener("click", () => saveReview(c.id, false));
@@ -2838,16 +2813,36 @@
       return `${pain}/10`;
     }
 
-    function humanizeTrueFlags(obj, overrides = {}, options = {}) {
-      if (!obj || typeof obj !== "object") return "";
+    function humanizeRedFlags(obj) {
+      if (!obj || typeof obj !== "object") return "None reported";
+
+      if (obj.none_of_the_above === true) {
+        return "None reported";
+      }
 
       const labels = {
         trouble_breathing_or_swallowing: "Trouble breathing or swallowing",
         uncontrolled_bleeding: "Uncontrolled bleeding",
         facial_swelling: "Facial swelling",
         fever_or_feeling_unwell: "Fever or feeling unwell",
-        injury_to_teeth_jaw_face: "Injury to teeth, jaw, or face",
-        none_of_the_above: "None of the above",
+        injury_to_teeth_jaw_face: "Injury to teeth, jaw, or face"
+      };
+
+      const items = Object.entries(obj)
+        .filter(([key, value]) => key !== "none_of_the_above" && value === true)
+        .map(([key]) => labels[key] || formatTag(key));
+
+      return items.length ? items.join(", ") : "None reported";
+    }
+
+    function humanizeMedicalFlags(obj) {
+      if (!obj || typeof obj !== "object") return "No relevant medical history reported";
+
+      if (obj.none_of_the_above === true) {
+        return "No relevant medical history reported";
+      }
+
+      const labels = {
         allergy_antibiotics: "Allergy to antibiotics",
         allergy_pain_medication: "Allergy to pain medication",
         blood_thinners: "Blood thinners",
@@ -2857,30 +2852,25 @@
         other_important_medical_condition: "Other important medical condition"
       };
 
-      const trueKeys = Object.entries(obj)
-        .filter(([key, value]) => key !== "other_medical_detail" && value === true)
-        .map(([key]) => key);
+      const items = [];
 
-      if (!trueKeys.length) return "";
+      Object.entries(obj).forEach(([key, value]) => {
+        if (key === "none_of_the_above" || key === "other_medical_detail") return;
+        if (value !== true) return;
 
-      if (
-        trueKeys.length === 1 &&
-        trueKeys[0] === "none_of_the_above" &&
-        options.noneLabel
-      ) {
-        return options.noneLabel;
-      }
+        if (key === "other_important_medical_condition") {
+          if (obj.other_medical_detail) {
+            items.push(`Other important medical condition: ${obj.other_medical_detail}`);
+          } else {
+            items.push("Other important medical condition");
+          }
+          return;
+        }
 
-      return trueKeys
-        .filter((key) => key !== "none_of_the_above")
-        .map((key) => overrides[key] || labels[key] || formatTag(key))
-        .join(", ");
-    }
-      const items = Object.entries(obj)
-        .filter(([key, value]) => key !== "other_medical_detail" && value === true)
-        .map(([key]) => overrides[key] || labels[key] || formatTag(key));
+        items.push(labels[key] || formatTag(key));
+      });
 
-      return items.join(", ");
+      return items.length ? items.join(", ") : "No relevant medical history reported";
     }
 
     function showToast(msg) {
