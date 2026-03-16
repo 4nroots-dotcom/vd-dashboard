@@ -277,10 +277,15 @@
       align-items: center;
       gap: 8px;
       flex-wrap: wrap;
-      position: sticky;
-      top: 58px;
-      z-index: 110;
       backdrop-filter: blur(10px);
+    }
+
+    @media (min-width: 768px) {
+      .toolbar {
+        position: sticky;
+        top: 58px;
+        z-index: 110;
+      }
     }
 
     .toolbar-label {
@@ -953,10 +958,10 @@
 
     <div class="toolbar">
       <span class="toolbar-label">Period</span>
-      <button class="period-chip active" id="chip-7" type="button">7 days</button>
+      <button class="period-chip" id="chip-7" type="button">7 days</button>
       <button class="period-chip" id="chip-30" type="button">30 days</button>
       <button class="period-chip" id="chip-90" type="button">90 days</button>
-      <button class="period-chip" id="chip-0" type="button">All time</button>
+      <button class="period-chip active" id="chip-0" type="button">All time</button>
 
       <div class="toolbar-right">
         <span class="last-updated" id="last-updated"></span>
@@ -985,7 +990,7 @@
 
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let currentPeriod = 7;
+    let currentPeriod = 0;
     let currentUser = null;
 
     document.getElementById("auth-btn").addEventListener("click", handleLogin);
