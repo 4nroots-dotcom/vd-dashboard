@@ -57,7 +57,7 @@
     }
 
     body {
-      padding: 20px 14px 36px;
+      padding: 18px 14px 36px;
     }
 
     button,
@@ -76,24 +76,32 @@
 
     .brand {
       display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 6px 0 18px;
+    }
+
+    .brand-logo-link {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 14px;
-      margin: 4px 0 20px;
+      text-decoration: none;
     }
 
-    .brand-mark {
-      width: 46px;
-      height: 46px;
+    .brand-logo {
       display: block;
-      flex-shrink: 0;
+      width: 100%;
+      max-width: 360px;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 28px rgba(0, 0, 0, 0.18));
     }
 
-    .brand-text {
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: 0.01em;
-      color: #79c8f3;
+    .brand-logo-icon {
+      display: none;
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
     }
 
     .card {
@@ -401,6 +409,10 @@
       margin-top: -1px;
     }
 
+    .phone-helper-strong {
+      color: #cfe7ff;
+    }
+
     .input,
     .select,
     .textarea {
@@ -473,6 +485,17 @@
     .conditional-field {
       display: none;
       margin-top: 12px;
+    }
+
+    .pre-submit-note {
+      margin-top: 16px;
+      padding: 14px 15px;
+      border-radius: 14px;
+      background: rgba(0, 200, 232, 0.06);
+      border: 1px solid rgba(0, 200, 232, 0.14);
+      color: #d8ebff;
+      font-size: 13px;
+      line-height: 1.55;
     }
 
     .ack {
@@ -566,6 +589,20 @@
       display: block;
     }
 
+    .handoff-top-logo {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+
+    .handoff-top-logo img {
+      width: 100%;
+      max-width: 300px;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 28px rgba(0, 0, 0, 0.18));
+    }
+
     .handoff-icon {
       width: 54px;
       height: 54px;
@@ -585,16 +622,66 @@
       font-weight: 780;
       line-height: 1.05;
       letter-spacing: -0.03em;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       color: var(--white);
     }
 
-    .handoff-copy {
+    .incoming-number-card {
+      margin: 0 auto 14px;
+      max-width: 720px;
+      background: rgba(255, 255, 255, 0.055);
+      border: 1px solid rgba(115, 215, 243, 0.18);
+      border-radius: 18px;
+      padding: 18px 16px;
+      text-align: center;
+    }
+
+    .incoming-number-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #bfd6f1;
+      margin-bottom: 8px;
+    }
+
+    .incoming-number-value {
+      font-size: clamp(24px, 6vw, 34px);
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--white);
+      letter-spacing: -0.02em;
+    }
+
+    .incoming-number-sub {
+      margin-top: 8px;
+      font-size: 14px;
       color: var(--text-secondary);
-      max-width: 700px;
-      margin: 0 auto 16px;
-      font-size: 16px;
-      line-height: 1.65;
+      line-height: 1.5;
+    }
+
+    .expect-call-card {
+      margin: 0 auto 14px;
+      max-width: 720px;
+      background: rgba(0, 200, 122, 0.08);
+      border: 1px solid rgba(0, 200, 122, 0.24);
+      border-radius: 18px;
+      padding: 18px 18px;
+      text-align: center;
+    }
+
+    .expect-call-title {
+      font-size: 21px;
+      font-weight: 780;
+      color: #eafaf3;
+      line-height: 1.25;
+      margin-bottom: 6px;
+    }
+
+    .expect-call-copy {
+      color: #cceedd;
+      font-size: 15px;
+      line-height: 1.55;
     }
 
     .handoff-image-shell {
@@ -612,6 +699,14 @@
       aspect-ratio: 4 / 5;
       object-fit: cover;
       object-position: center 20%;
+    }
+
+    .handoff-copy {
+      color: var(--text-secondary);
+      max-width: 700px;
+      margin: 0 auto 14px;
+      font-size: 15px;
+      line-height: 1.6;
     }
 
     .handoff-panel {
@@ -640,75 +735,18 @@
       line-height: 1.65;
     }
 
-    .expect-call-card {
-      margin: 0 auto 14px;
-      max-width: 720px;
-      background: rgba(0, 200, 122, 0.08);
-      border: 1px solid rgba(0, 200, 122, 0.24);
-      border-radius: 18px;
-      padding: 18px 18px;
-      text-align: center;
-    }
-
-    .expect-call-title {
-      font-size: 21px;
-      font-weight: 780;
-      color: #eafaf3;
-      line-height: 1.25;
-      margin-bottom: 6px;
-    }
-
-    .expect-call-copy {
-      color: #cceedd;
-      font-size: 15px;
-      line-height: 1.55;
-    }
-
-    .incoming-number-card {
-      margin: 0 auto 16px;
-      max-width: 720px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 16px 16px;
-      text-align: center;
-    }
-
-    .incoming-number-label {
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: #bfd6f1;
-      margin-bottom: 8px;
-    }
-
-    .incoming-number-value {
-      font-size: clamp(24px, 6vw, 34px);
-      font-weight: 800;
-      line-height: 1.1;
-      color: var(--white);
-      letter-spacing: -0.02em;
-    }
-
-    .incoming-number-sub {
-      margin-top: 8px;
-      font-size: 14px;
-      color: var(--text-secondary);
-      line-height: 1.5;
-    }
-
     .case-status {
       display: inline-block;
-      margin: 2px auto 16px;
+      margin: 10px auto 0;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
       border-radius: var(--radius-sm);
-      padding: 10px 12px;
-      color: #d8ecff;
-      font-size: 13px;
+      padding: 8px 10px;
+      color: #a9bdd8;
+      font-size: 12px;
       word-break: break-word;
+      max-width: 100%;
     }
 
     .call-actions {
@@ -772,6 +810,10 @@
 
       .brand {
         margin-bottom: 24px;
+      }
+
+      .brand-logo {
+        max-width: 420px;
       }
 
       .hero {
@@ -859,23 +901,45 @@
       .action-bar .btn-secondary {
         width: 100%;
       }
+
+      .brand-logo {
+        max-width: 300px;
+      }
+
+      .handoff-top-logo img {
+        max-width: 250px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .brand-logo {
+        max-width: 270px;
+      }
+
+      .hero-title {
+        font-size: clamp(30px, 8vw, 42px);
+      }
+
+      .incoming-number-value {
+        font-size: 26px;
+      }
+
+      .expect-call-title {
+        font-size: 19px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="shell">
     <div class="brand">
-      <svg class="brand-mark" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <defs>
-          <linearGradient id="intakeLogoGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#1a4fa0" />
-            <stop offset="100%" stop-color="#00c8e8" />
-          </linearGradient>
-        </defs>
-        <path d="M30 20 Q30 10 40 10 L80 10 Q90 10 90 20 L95 60 Q97 80 85 90 L70 108 Q65 115 60 115 Q55 115 50 108 L35 90 Q23 80 25 60 Z" stroke="url(#intakeLogoGrad)" stroke-width="7" fill="none" stroke-linejoin="round" />
-        <polyline points="28,58 42,58 50,40 60,76 70,50 78,58 92,58" stroke="url(#intakeLogoGrad)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
-      </svg>
-      <div class="brand-text">VirtualDentist.ai</div>
+      <a href="#" class="brand-logo-link" aria-label="VirtualDentist.ai home">
+        <img
+          class="brand-logo"
+          src="virtualdentist-logo.png"
+          alt="VirtualDentist.ai"
+        />
+      </a>
     </div>
 
     <section id="screen-welcome" class="card hero">
@@ -928,7 +992,7 @@
           <div class="flow-block">
             <div class="flow-title">Next step: speak with Sam</div>
             <div class="flow-copy">
-              Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow up with recommendations as appropriate.
+              Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow up with recommendations as appropriate. After you submit, Sam will call the number you provide.
             </div>
           </div>
         </div>
@@ -1005,6 +1069,9 @@
               autocomplete="tel"
               placeholder="10-digit number"
             />
+            <div class="helper phone-helper-strong">
+              Sam will call this number shortly after you submit.
+            </div>
           </div>
 
           <div class="field full">
@@ -1145,6 +1212,10 @@
         </div>
       </div>
 
+      <div class="pre-submit-note">
+        After you submit, Sam will call the phone number you provided to continue your triage assessment.
+      </div>
+
       <label class="ack">
         <input type="checkbox" id="intake-acknowledge" />
         <span>
@@ -1161,24 +1232,18 @@
     </section>
 
     <section id="screen-handoff" class="card handoff-card">
+      <div class="handoff-top-logo">
+        <img src="virtualdentist-logo.png" alt="VirtualDentist.ai" />
+      </div>
+
       <div class="handoff-icon">✓</div>
       <div class="handoff-title">Next step: speak with Sam</div>
-      <div class="handoff-copy" id="handoff-copy">
-        Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow up with recommendations as appropriate.
-      </div>
 
-      <div class="handoff-image-shell">
-        <img
-          class="handoff-image"
-          src="intake-sam-handoff.jpg"
-          alt="Calm dental care coordinator speaking on the phone"
-        />
-      </div>
-
-      <div class="handoff-panel">
-        <div class="handoff-panel-title">What happens now</div>
-        <div class="handoff-panel-copy" id="handoff-panel-copy">
-          Your intake has been received.
+      <div class="incoming-number-card" id="incoming-number-card">
+        <div class="incoming-number-label">Expect a call from</div>
+        <div class="incoming-number-value" id="incoming-number-value">1-833-959-3932</div>
+        <div class="incoming-number-sub">
+          Saving this number may help you recognize the call.
         </div>
       </div>
 
@@ -1189,23 +1254,34 @@
         </div>
       </div>
 
-      <div class="incoming-number-card" id="incoming-number-card">
-        <div class="incoming-number-label">Expect a call from</div>
-        <div class="incoming-number-value" id="incoming-number-value">1-833-959-3932</div>
-        <div class="incoming-number-sub">
-          Saving this number may help you recognize the call.
+      <div class="handoff-image-shell">
+        <img
+          class="handoff-image"
+          src="intake-sam-handoff.jpg"
+          alt="Calm dental care coordinator speaking on the phone"
+        />
+      </div>
+
+      <div class="handoff-copy" id="handoff-copy">
+        Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow up with recommendations as appropriate.
+      </div>
+
+      <div class="handoff-panel">
+        <div class="handoff-panel-title">What happens now</div>
+        <div class="handoff-panel-copy" id="handoff-panel-copy">
+          Your intake has been received.
         </div>
       </div>
 
-      <div class="case-status" id="success-case-id">Intake submitted successfully</div>
-
       <div class="call-actions" id="call-actions"></div>
+
+      <div class="case-status" id="success-case-id">Intake submitted successfully</div>
     </section>
   </div>
 
   <script>
     const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+    const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY_HERE";
     const INTAKE_TRIGGER_URL = SUPABASE_URL + "/functions/v1/intake-trigger";
 
     const EXPECTED_CALLER_NUMBER_DISPLAY = "1-833-959-3932";
