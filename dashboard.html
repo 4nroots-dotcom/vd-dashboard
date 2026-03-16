@@ -38,6 +38,8 @@
       --shadow-card: 0 12px 28px rgba(0, 0, 0, 0.14);
       --warning-bg: rgba(240, 165, 0, 0.12);
       --warning-border: rgba(240, 165, 0, 0.28);
+      --success-bg: rgba(0, 200, 122, 0.10);
+      --success-border: rgba(0, 200, 122, 0.24);
     }
 
     * {
@@ -967,6 +969,45 @@
       margin-bottom: 10px;
     }
 
+    .signoff-block {
+      background: var(--success-bg);
+      border: 1px solid var(--success-border);
+    }
+
+    .signoff-grid {
+      display: grid;
+      gap: 10px;
+    }
+
+    .signoff-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding-bottom: 8px;
+    }
+
+    .signoff-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .signoff-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: #b9d8c7;
+      flex-shrink: 0;
+    }
+
+    .signoff-value {
+      font-size: 13px;
+      color: #e8fff4;
+      text-align: right;
+      word-break: break-word;
+    }
+
     .form-label {
       font-size: 11px;
       font-weight: 600;
@@ -1526,6 +1567,15 @@
       .summary-grid {
         grid-template-columns: 1fr;
       }
+
+      .signoff-row {
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .signoff-value {
+        text-align: left;
+      }
     }
 
     @media (max-width: 520px) {
@@ -1658,6 +1708,11 @@
     const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
 
+    const REVIEWER_NAME_MAP = {
+      "4nroots@gmail.com": "Dr. Balaji Swaminath",
+      "hamitranu@gmail.com": "Dr. Hamit Ranu"
+    };
+
     if (!window.supabase || !window.supabase.createClient) {
       const errEl = document.getElementById("auth-error");
       if (errEl) {
@@ -1746,6 +1801,11 @@
       }
     }
 
+    function resolveReviewerName(email) {
+      if (!email) return "-";
+      return REVIEWER_NAME_MAP[email] || email;
+    }
+
     async function handleLogin() {
       const email = document.getElementById("auth-email").value.trim();
       const password = document.getElementById("auth-password").value;
@@ -1820,7 +1880,7 @@
       currentUser = user;
       document.getElementById("auth-screen").style.display = "none";
       document.getElementById("app").style.display = "flex";
-      document.getElementById("header-user-email").textContent = user.email || "";
+      document.getElementById("header-user-email").textContent = resolveReviewerName(user.email || "");
 
       if (refreshInterval) clearInterval(refreshInterval);
       refreshInterval = setInterval(loadCases, 90000);
@@ -1949,7 +2009,7 @@
         document.getElementById("chip-" + c).classList.toggle("active", c === "all");
       });
 
-      currentSort = "severity";
+      currentSort = "newest";
       ["severity", "newest", "oldest"].forEach((k) => {
         const el = document.getElementById("sort-" + k);
         if (el) el.classList.toggle("active", k === "newest");
@@ -1977,10 +2037,10 @@
       oldestBtn.style.display = currentTab === "queue" ? "none" : "inline-flex";
 
       if (currentTab === "queue" && currentSort === "oldest") {
-        currentSort = "severity";
+        currentSort = "newest";
         ["severity", "newest", "oldest"].forEach((k) => {
           const el = document.getElementById("sort-" + k);
-          if (el) el.classList.toggle("active", k === "severity");
+          if (el) el.classList.toggle("active", k === "newest");
         });
       }
     }
@@ -2240,6 +2300,8 @@
       const isReviewed = reviewStatus === "reviewed";
       const isDraft = reviewStatus === "draft";
       const severity = c.severity || "unknown";
+      const reviewerName = resolveReviewerName(c.reviewed_by);
+      const finalDispositionLabel = formatDisposition(c.final_disposition);
 
       const sevColor =
         severity === "urgent" ? "#e84545" :
@@ -2372,6 +2434,37 @@
                   </div>
                 </div>
               </div>
+
+              ${
+                isReviewed
+                  ? `
+                    <div class="detail-section">
+                      <div class="section-header">
+                        <span class="section-title">Clinical Sign-off</span>
+                      </div>
+                      <div class="section-body">
+                        <div class="review-block signoff-block">
+                          <div class="review-block-title">Finalized Review</div>
+                          <div class="signoff-grid">
+                            <div class="signoff-row">
+                              <div class="signoff-label">Reviewed by</div>
+                              <div class="signoff-value">${escHtml(reviewerName)}</div>
+                            </div>
+                            <div class="signoff-row">
+                              <div class="signoff-label">Reviewed at</div>
+                              <div class="signoff-value">${escHtml(reviewedAt || "-")}</div>
+                            </div>
+                            <div class="signoff-row">
+                              <div class="signoff-label">Final disposition</div>
+                              <div class="signoff-value">${escHtml(finalDispositionLabel)}</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  `
+                  : ""
+              }
 
               <div class="detail-section review-panel">
                 <div class="section-header">
@@ -2740,6 +2833,18 @@
         .replace(/_/g, " ")
         .replace(/\b\w/g, (l) => l.toUpperCase())
         .replace(/ And /g, " & ");
+    }
+
+    function formatDisposition(value) {
+      if (!value) return "-";
+      const labels = {
+        booked: "Booked appointment",
+        referred_er: "Referred to ER",
+        rx_only: "Prescription only",
+        declined: "Patient declined care",
+        no_response: "No response from patient"
+      };
+      return labels[value] || formatTag(value);
     }
 
     function formatPhone(p) {
