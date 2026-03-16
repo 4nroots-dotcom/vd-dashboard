@@ -78,7 +78,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      margin: 6px 0 18px;
+      margin: 6px 0 16px;
     }
 
     .brand-logo-link {
@@ -91,17 +91,10 @@
     .brand-logo {
       display: block;
       width: 100%;
-      max-width: 360px;
+      max-width: 285px;
       height: auto;
       object-fit: contain;
-      filter: drop-shadow(0 8px 28px rgba(0, 0, 0, 0.18));
-    }
-
-    .brand-logo-icon {
-      display: none;
-      width: 44px;
-      height: 44px;
-      object-fit: contain;
+      filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.16));
     }
 
     .card {
@@ -410,7 +403,8 @@
     }
 
     .phone-helper-strong {
-      color: #cfe7ff;
+      color: #d9ecff;
+      font-weight: 600;
     }
 
     .input,
@@ -489,13 +483,14 @@
 
     .pre-submit-note {
       margin-top: 16px;
-      padding: 14px 15px;
+      padding: 15px 16px;
       border-radius: 14px;
-      background: rgba(0, 200, 232, 0.06);
-      border: 1px solid rgba(0, 200, 232, 0.14);
-      color: #d8ebff;
-      font-size: 13px;
-      line-height: 1.55;
+      background: rgba(0, 200, 232, 0.08);
+      border: 1px solid rgba(0, 200, 232, 0.18);
+      color: #e4f4ff;
+      font-size: 14px;
+      line-height: 1.6;
+      font-weight: 600;
     }
 
     .ack {
@@ -581,7 +576,7 @@
     .handoff-card {
       display: none;
       margin-top: 18px;
-      padding: 20px 20px 24px;
+      padding: 22px 20px 24px;
       text-align: center;
     }
 
@@ -589,40 +584,26 @@
       display: block;
     }
 
-    .handoff-top-logo {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 14px;
-    }
-
-    .handoff-top-logo img {
-      width: 100%;
-      max-width: 300px;
-      height: auto;
-      object-fit: contain;
-      filter: drop-shadow(0 8px 28px rgba(0, 0, 0, 0.18));
-    }
-
     .handoff-icon {
-      width: 54px;
-      height: 54px;
+      width: 58px;
+      height: 58px;
       border-radius: 999px;
       background: rgba(0, 200, 122, 0.1);
       border: 1px solid rgba(0, 200, 122, 0.24);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
+      font-size: 30px;
       color: var(--success);
       margin-bottom: 14px;
     }
 
     .handoff-title {
-      font-size: clamp(28px, 6vw, 38px);
-      font-weight: 780;
-      line-height: 1.05;
-      letter-spacing: -0.03em;
-      margin-bottom: 14px;
+      font-size: clamp(30px, 6vw, 40px);
+      font-weight: 800;
+      line-height: 1.02;
+      letter-spacing: -0.035em;
+      margin-bottom: 16px;
       color: var(--white);
     }
 
@@ -630,7 +611,7 @@
       margin: 0 auto 14px;
       max-width: 720px;
       background: rgba(255, 255, 255, 0.055);
-      border: 1px solid rgba(115, 215, 243, 0.18);
+      border: 1px solid rgba(115, 215, 243, 0.22);
       border-radius: 18px;
       padding: 18px 16px;
       text-align: center;
@@ -639,49 +620,51 @@
     .incoming-number-label {
       font-size: 11px;
       font-weight: 800;
-      letter-spacing: 0.14em;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      color: #bfd6f1;
+      color: #d5e8ff;
       margin-bottom: 8px;
     }
 
     .incoming-number-value {
-      font-size: clamp(24px, 6vw, 34px);
+      font-size: clamp(28px, 6vw, 36px);
       font-weight: 800;
-      line-height: 1.1;
+      line-height: 1.05;
       color: var(--white);
       letter-spacing: -0.02em;
     }
 
     .incoming-number-sub {
-      margin-top: 8px;
-      font-size: 14px;
-      color: var(--text-secondary);
+      margin-top: 10px;
+      font-size: 15px;
+      color: #d8e8fb;
       line-height: 1.5;
+      font-weight: 600;
     }
 
     .expect-call-card {
-      margin: 0 auto 14px;
+      margin: 0 auto 16px;
       max-width: 720px;
-      background: rgba(0, 200, 122, 0.08);
-      border: 1px solid rgba(0, 200, 122, 0.24);
+      background: rgba(0, 200, 122, 0.10);
+      border: 1px solid rgba(0, 200, 122, 0.26);
       border-radius: 18px;
       padding: 18px 18px;
       text-align: center;
     }
 
     .expect-call-title {
-      font-size: 21px;
-      font-weight: 780;
-      color: #eafaf3;
-      line-height: 1.25;
+      font-size: 22px;
+      font-weight: 800;
+      color: #f0fbf5;
+      line-height: 1.22;
       margin-bottom: 6px;
     }
 
     .expect-call-copy {
-      color: #cceedd;
+      color: #d6f5e5;
       font-size: 15px;
       line-height: 1.55;
+      font-weight: 600;
     }
 
     .handoff-image-shell {
@@ -706,7 +689,7 @@
       max-width: 700px;
       margin: 0 auto 14px;
       font-size: 15px;
-      line-height: 1.6;
+      line-height: 1.65;
     }
 
     .handoff-panel {
@@ -737,7 +720,7 @@
 
     .case-status {
       display: inline-block;
-      margin: 10px auto 0;
+      margin: 12px auto 0;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.06);
@@ -752,7 +735,7 @@
     .call-actions {
       display: grid;
       gap: 12px;
-      max-width: 520px;
+      max-width: 560px;
       margin: 0 auto;
     }
 
@@ -785,8 +768,8 @@
 
     .call-number {
       font-size: 18px;
-      font-weight: 700;
-      color: #eaf4ff;
+      font-weight: 800;
+      color: #f2f8ff;
       text-decoration: none;
       display: inline-block;
     }
@@ -796,11 +779,16 @@
     }
 
     .call-fallback {
-      font-size: 13px;
-      line-height: 1.56;
-      color: var(--text-muted);
-      max-width: 600px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #cfdeef;
+      max-width: 620px;
       margin: 0 auto;
+    }
+
+    .call-fallback strong {
+      color: #ffffff;
+      font-weight: 800;
     }
 
     @media (min-width: 760px) {
@@ -809,11 +797,11 @@
       }
 
       .brand {
-        margin-bottom: 24px;
+        margin-bottom: 20px;
       }
 
       .brand-logo {
-        max-width: 420px;
+        max-width: 340px;
       }
 
       .hero {
@@ -901,19 +889,11 @@
       .action-bar .btn-secondary {
         width: 100%;
       }
-
-      .brand-logo {
-        max-width: 300px;
-      }
-
-      .handoff-top-logo img {
-        max-width: 250px;
-      }
     }
 
     @media (max-width: 420px) {
       .brand-logo {
-        max-width: 270px;
+        max-width: 255px;
       }
 
       .hero-title {
@@ -925,7 +905,7 @@
       }
 
       .expect-call-title {
-        font-size: 19px;
+        font-size: 20px;
       }
     }
   </style>
@@ -990,9 +970,9 @@
           </div>
 
           <div class="flow-block">
-            <div class="flow-title">Next step: speak with Sam</div>
+            <div class="flow-title">What happens next</div>
             <div class="flow-copy">
-              Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow up with recommendations as appropriate. After you submit, Sam will call the number you provide.
+              After you submit, Sam will call the phone number you provide. Sam is our AI dental triage assistant and will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow up with recommendations as appropriate.
             </div>
           </div>
         </div>
@@ -1070,7 +1050,7 @@
               placeholder="10-digit number"
             />
             <div class="helper phone-helper-strong">
-              Sam will call this number shortly after you submit.
+              Sam will call this number after you submit. Please use the best number to reach you now.
             </div>
           </div>
 
@@ -1213,7 +1193,7 @@
       </div>
 
       <div class="pre-submit-note">
-        After you submit, Sam will call the phone number you provided to continue your triage assessment.
+        After you submit, Sam will call the number above to continue your triage assessment. Please keep your phone nearby.
       </div>
 
       <label class="ack">
@@ -1232,23 +1212,19 @@
     </section>
 
     <section id="screen-handoff" class="card handoff-card">
-      <div class="handoff-top-logo">
-        <img src="virtualdentist-logo.png" alt="VirtualDentist.ai" />
-      </div>
-
       <div class="handoff-icon">✓</div>
-      <div class="handoff-title">Next step: speak with Sam</div>
+      <div class="handoff-title">Next step: answer Sam’s call</div>
 
       <div class="incoming-number-card" id="incoming-number-card">
-        <div class="incoming-number-label">Expect a call from</div>
+        <div class="incoming-number-label">Answer the call from</div>
         <div class="incoming-number-value" id="incoming-number-value">1-833-959-3932</div>
         <div class="incoming-number-sub">
-          Saving this number may help you recognize the call.
+          Saving this number now may help you recognize the call quickly.
         </div>
       </div>
 
       <div class="expect-call-card" id="expect-call-card">
-        <div class="expect-call-title">Sam will call you shortly</div>
+        <div class="expect-call-title">Sam is calling now or shortly</div>
         <div class="expect-call-copy">
           Please keep your phone nearby and answer the call when it comes through.
         </div>
@@ -1281,7 +1257,8 @@
 
   <script>
     const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";    const INTAKE_TRIGGER_URL = SUPABASE_URL + "/functions/v1/intake-trigger";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+    const INTAKE_TRIGGER_URL = SUPABASE_URL + "/functions/v1/intake-trigger";
 
     const EXPECTED_CALLER_NUMBER_DISPLAY = "1-833-959-3932";
     const FALLBACK_DIAL_NUMBER_DISPLAY = "1-833-959-3932";
@@ -1563,14 +1540,14 @@
 
       if (callInitiated) {
         handoffPanelCopy.textContent =
-          "Your intake has been received and Sam will call the phone number you provided shortly.";
+          "Your intake has been received. Sam is calling the number you provided now or shortly.";
 
         expectCallCard.style.display = "block";
         incomingNumberCard.style.display = "block";
 
         callActions.innerHTML = `
           <div class="call-fallback">
-            If you do not receive a call within 5 minutes, you can also call
+            If you do not receive a call within <strong>5 minutes</strong>, you can also call
             <a class="call-number" href="${FALLBACK_DIAL_NUMBER_HREF}">${FALLBACK_DIAL_NUMBER_DISPLAY}</a>.
           </div>
         `;
