@@ -1624,8 +1624,8 @@
 
       <div class="sort-bar" id="sort-bar">
         <span class="sort-label">Sort:</span>
-        <button class="sort-chip active" id="sort-severity" type="button">Urgency</button>
-        <button class="sort-chip" id="sort-newest" type="button">Newest</button>
+        <button class="sort-chip" id="sort-severity" type="button">Urgency</button>
+        <button class="sort-chip active" id="sort-newest" type="button">Newest</button>
         <button class="sort-chip" id="sort-oldest" type="button" style="display:none">Oldest</button>
       </div>
 
@@ -1671,7 +1671,7 @@
 
     let currentTab = "queue";
     let currentFilter = "all";
-    let currentSort = "severity";
+    let currentSort = "newest";
     let allCases = [];
     let currentCase = null;
     let currentUser = null;
@@ -1952,7 +1952,7 @@
       currentSort = "severity";
       ["severity", "newest", "oldest"].forEach((k) => {
         const el = document.getElementById("sort-" + k);
-        if (el) el.classList.toggle("active", k === "severity");
+        if (el) el.classList.toggle("active", k === "newest");
       });
 
       if (isMobile) {
