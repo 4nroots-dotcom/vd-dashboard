@@ -63,16 +63,13 @@
       font: inherit;
     }
 
-    /* AUTH */
-
     #auth-screen {
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 24px;
-      background:
-        radial-gradient(ellipse at 50% 0%, #0f2a50 0%, #071323 72%);
+      background: radial-gradient(ellipse at 50% 0%, #0f2a50 0%, #071323 72%);
     }
 
     .auth-card {
@@ -179,8 +176,6 @@
       white-space: pre-wrap;
     }
 
-    /* APP */
-
     #app {
       display: none;
       flex-direction: column;
@@ -266,8 +261,6 @@
       border-color: rgba(0,200,232,0.3);
       color: var(--cyan);
     }
-
-    /* TOOLBAR */
 
     .toolbar {
       background: rgba(15, 32, 68, 0.9);
@@ -367,8 +360,6 @@
       color: var(--cyan);
     }
 
-    /* MAIN */
-
     .main {
       flex: 1;
       padding: 18px;
@@ -395,8 +386,6 @@
       66% { content: "..."; }
     }
 
-    /* SECTION */
-
     .section-head {
       display: flex;
       align-items: center;
@@ -422,8 +411,6 @@
       height: 1px;
       background: rgba(255,255,255,0.06);
     }
-
-    /* HERO METRIC STRIP */
 
     .hero-grid {
       display: grid;
@@ -482,8 +469,6 @@
       color: var(--text-secondary);
       line-height: 1.45;
     }
-
-    /* PANEL */
 
     .panel {
       background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.02));
@@ -549,8 +534,6 @@
       }
     }
 
-    /* MINI LIST */
-
     .mini-list {
       display: flex;
       flex-direction: column;
@@ -586,8 +569,6 @@
     .mini-row-val.warn { color: var(--warning); }
     .mini-row-val.danger { color: var(--danger); }
     .mini-row-val.cyan { color: var(--cyan); }
-
-    /* STACK BARS */
 
     .stack-list {
       display: flex;
@@ -649,8 +630,6 @@
       background: linear-gradient(90deg, #1a7fc4, #00c8e8);
     }
 
-    /* DURATION HISTOGRAM */
-
     .histogram {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -697,8 +676,6 @@
       color: var(--text-primary);
       font-weight: 700;
     }
-
-    /* HOUR OF DAY */
 
     .tod-chart {
       display: flex;
@@ -763,8 +740,6 @@
       border-radius: 2px;
     }
 
-    /* FLAG GRID */
-
     .flag-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -805,8 +780,6 @@
       font-size: 16px;
       font-weight: 700;
     }
-
-    /* EXTRACTION */
 
     .ext-row {
       display: flex;
@@ -903,7 +876,6 @@
   </style>
 </head>
 <body>
-
   <div id="auth-screen">
     <div class="auth-card">
       <div class="auth-logo">
@@ -979,8 +951,8 @@
 
   <script>
     const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
-    
+    const SUPABASE_ANON_KEY = "YOUR_ANON_KEY_HERE";
+
     const REVIEWER_NAME_MAP = {
       "4nroots@gmail.com": "Dr. Balaji Swaminath",
       "hamitranu@gmail.com": "Dr. Hamit Ranu"
@@ -990,7 +962,7 @@
       if (!email) return "";
       return REVIEWER_NAME_MAP[email] || email;
     }
-    
+
     if (!window.supabase || !window.supabase.createClient) {
       document.getElementById("auth-error").style.display = "block";
       document.getElementById("auth-error").textContent =
@@ -1175,9 +1147,10 @@
           !c.reviewed_by
       ).length;
 
+      const contacted = cases.filter((c) => !!c.contacted_patient_at).length;
       const contactedAfterClinicalReview = cases.filter(
         (c) => !!c.contacted_patient_at && !!c.reviewed_by
-).length;      
+      ).length;
       const erRef = cases.filter((c) => c.final_disposition === "referred_er").length;
       const rxIssued = cases.filter((c) => c.prescription_issued === true).length;
 
@@ -1281,9 +1254,7 @@
       const nullPain = cases.filter((c) => c.structured_output?.pain_score == null).length;
       const nullComplaint = cases.filter((c) => !c.structured_output?.chief_complaint).length;
       const nullOnset = cases.filter((c) => !c.structured_output?.onset).length;
-      const nullLoc = cases.filter(
-        (c) => !c.structured_output?.jaw && !c.structured_output?.side
-      ).length;
+      const nullLoc = cases.filter((c) => !c.structured_output?.jaw && !c.structured_output?.side).length;
 
       const dispoLabels = {
         booked: "Appointment booked",
@@ -1294,8 +1265,7 @@
       };
 
       const p = (n, d) => (d > 0 ? Math.round((n / d) * 100) : 0);
-      const fmtDur = (s) =>
-        s != null ? `${Math.floor(s / 60)}m ${s % 60}s` : "—";
+      const fmtDur = (s) => s != null ? `${Math.floor(s / 60)}m ${s % 60}s` : "—";
       const fmtMin = (m) =>
         m != null
           ? m >= 60
@@ -1319,7 +1289,7 @@
         ${hc("Avg Time to Review", fmtMin(avgTTR), "created → reviewed", "rgba(0,200,232,0.35)", "#00c8e8")}
         ${hc("Avg Time to Contact", fmtMin(avgTTC), "created → contacted", "rgba(0,200,232,0.35)", "#00c8e8")}
         ${hc("Contact Rate", `${contactedAfterClinicalReview} / ${clinicallyReviewed || 0}`, clinicallyReviewed > 0 ? `${p(contactedAfterClinicalReview, clinicallyReviewed)}% of clinically reviewed` : "no clinically reviewed cases yet", "rgba(0,200,122,0.35)", "#00c87a")}
-        </div>`;
+      </div>`;
 
       html += secHead("Outcomes");
       html += `<div class="two-col">`;
