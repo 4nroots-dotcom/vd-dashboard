@@ -1175,7 +1175,9 @@
           !c.reviewed_by
       ).length;
 
-      const contacted = cases.filter((c) => !!c.contacted_patient_at).length;
+      const contactedAfterClinicalReview = cases.filter(
+        (c) => !!c.contacted_patient_at && !!c.reviewed_by
+).length;      
       const erRef = cases.filter((c) => c.final_disposition === "referred_er").length;
       const rxIssued = cases.filter((c) => c.prescription_issued === true).length;
 
@@ -1316,8 +1318,8 @@
         ${hc("Clinically Reviewed", `${clinicallyReviewed} / ${total}`, `${p(clinicallyReviewed, total)}% with reviewed_by present`, "rgba(0,200,232,0.35)", "#00c8e8")}
         ${hc("Avg Time to Review", fmtMin(avgTTR), "created → reviewed", "rgba(0,200,232,0.35)", "#00c8e8")}
         ${hc("Avg Time to Contact", fmtMin(avgTTC), "created → contacted", "rgba(0,200,232,0.35)", "#00c8e8")}
-        ${hc("Contact Rate", `${contacted} / ${clinicallyReviewed || 0}`, clinicallyReviewed > 0 ? `${p(contacted, clinicallyReviewed)}% of clinically reviewed` : "no clinically reviewed cases yet", "rgba(0,200,122,0.35)", "#00c87a")}
-      </div>`;
+        ${hc("Contact Rate", `${contactedAfterClinicalReview} / ${clinicallyReviewed || 0}`, clinicallyReviewed > 0 ? `${p(contactedAfterClinicalReview, clinicallyReviewed)}% of clinically reviewed` : "no clinically reviewed cases yet", "rgba(0,200,122,0.35)", "#00c87a")}
+        </div>`;
 
       html += secHead("Outcomes");
       html += `<div class="two-col">`;
