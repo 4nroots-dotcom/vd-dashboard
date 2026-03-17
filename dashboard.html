@@ -2438,37 +2438,45 @@
                 </div>
               </div>
 
-              ${
-                isReviewed
-                  ? `
-                    <div class="detail-section">
-                      <div class="section-header">
-                        <span class="section-title">Clinical Sign-off</span>
+              <div class="detail-section">
+                <div class="section-header">
+                  <span class="section-title">Clinical Sign-off</span>
+                </div>
+                <div class="section-body">
+                  <div class="review-block signoff-block">
+                    <div class="review-block-title">
+                      ${isReviewed ? "Finalized Review" : "Pending Final Review"}
+                    </div>
+                    <div class="signoff-grid">
+                      <div class="signoff-row">
+                        <div class="signoff-label">Reviewed by</div>
+                        <div class="signoff-value">
+                          ${escHtml(isReviewed ? reviewerName : resolveReviewerName(currentUser?.email || ""))}
+                        </div>
                       </div>
-                      <div class="section-body">
-                        <div class="review-block signoff-block">
-                          <div class="review-block-title">Finalized Review</div>
-                          <div class="signoff-grid">
-                            <div class="signoff-row">
-                              <div class="signoff-label">Reviewed by</div>
-                              <div class="signoff-value">${escHtml(reviewerName)}</div>
-                            </div>
-                            <div class="signoff-row">
-                              <div class="signoff-label">Reviewed at</div>
-                              <div class="signoff-value">${escHtml(reviewedAt || "-")}</div>
-                            </div>
-                            <div class="signoff-row">
-                              <div class="signoff-label">Final disposition</div>
-                              <div class="signoff-value">${escHtml(finalDispositionLabel)}</div>
-                            </div>
-                          </div>
+                      <div class="signoff-row">
+                        <div class="signoff-label">Reviewed at</div>
+                        <div class="signoff-value">
+                          ${escHtml(isReviewed ? (reviewedAt || "-") : "Pending final review")}
+                        </div>
+                      </div>
+                      <div class="signoff-row">
+                        <div class="signoff-label">Final disposition</div>
+                        <div class="signoff-value">
+                          ${escHtml(isReviewed ? finalDispositionLabel : "Pending")}
+                        </div>
+                      </div>
+                      <div class="signoff-row">
+                        <div class="signoff-label">Status</div>
+                        <div class="signoff-value">
+                          ${escHtml(isReviewed ? "Finalized" : "Not yet finalized")}
                         </div>
                       </div>
                     </div>
-                  `
-                  : ""
-              }
-
+                  </div>
+                </div>
+              </div>
+              
               <div class="detail-section review-panel">
                 <div class="section-header">
                   <span class="section-title">Dentist Review</span>
