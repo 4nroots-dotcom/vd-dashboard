@@ -1376,6 +1376,62 @@
       display: block;
     }
 
+    .discrepancy-section {
+      border-color: rgba(240, 165, 0, 0.34);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.16);
+    }
+
+    .discrepancy-section .section-header {
+      background: rgba(240, 165, 0, 0.08);
+      border-bottom-color: rgba(240, 165, 0, 0.18);
+    }
+
+    .discrepancy-title {
+      color: #ffd38a;
+    }
+
+    .discrepancy-list {
+      display: grid;
+      gap: 10px;
+      padding: 16px;
+    }
+
+    .discrepancy-item {
+      background: rgba(240, 165, 0, 0.12);
+      border: 1px solid rgba(240, 165, 0, 0.28);
+      border-radius: 10px;
+      padding: 12px;
+    }
+
+    .discrepancy-field {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #ffd38a;
+      margin-bottom: 8px;
+    }
+
+    .discrepancy-line {
+      font-size: 13px;
+      line-height: 1.55;
+      color: #fff0d2;
+      word-break: break-word;
+    }
+
+    .discrepancy-line + .discrepancy-line {
+      margin-top: 6px;
+    }
+
+    .discrepancy-note {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      font-size: 12px;
+      line-height: 1.5;
+      color: #ffe7bb;
+    }
+
     #toast {
       position: fixed;
       bottom: 24px;
@@ -1706,7 +1762,7 @@
 
   <script>
     const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJIUzI1NiIsInR5cCI6IkpXVCJ9";
 
     const REVIEWER_NAME_MAP = {
       "4nroots@gmail.com": "Dr. Balaji Swaminath",
@@ -2336,9 +2392,11 @@
 
       const intakeRedFlags = c.intake_red_flags || {};
       const intakeMedicalFlags = c.intake_medical_flags || {};
-
       const intakeRedFlagsList = humanizeRedFlags(intakeRedFlags);
       const intakeMedicalFlagsList = humanizeMedicalFlags(intakeMedicalFlags);
+
+      const contradictions = Array.isArray(c.contradictions) ? c.contradictions : [];
+      const hasContradictions = contradictions.length > 0;
 
       panel.innerHTML = `
         <div class="detail-shell">
@@ -2428,7 +2486,7 @@
                     <div class="summary-value">${escHtml(formatTag(c.onset_bucket))}</div>
                   </div>
                   <div class="summary-item">
-                    <div class="summary-label">Reported Red Flags</div>
+                    <div class="summary-label">Intake-Reported Red Flags</div>
                     <div class="summary-value">${escHtml(intakeRedFlagsList)}</div>
                   </div>
                   <div class="summary-item">
@@ -2437,6 +2495,32 @@
                   </div>
                 </div>
               </div>
+
+              ${
+                hasContradictions
+                  ? `
+                  <div class="detail-section discrepancy-section">
+                    <div class="section-header">
+                      <span class="section-title discrepancy-title">⚠ Intake vs. Call Discrepancies</span>
+                    </div>
+                    <div class="discrepancy-list">
+                      ${contradictions.map((item) => `
+                        <div class="discrepancy-item">
+                          <div class="discrepancy-field">${escHtml(formatContradictionField(item.field))}</div>
+                          <div class="discrepancy-line"><strong>Intake:</strong> ${escHtml(item.intake_value || "-")}</div>
+                          <div class="discrepancy-line"><strong>Call:</strong> ${escHtml(item.call_value || "-")}</div>
+                          ${
+                            item.clinical_note
+                              ? `<div class="discrepancy-note"><strong>Verify:</strong> ${escHtml(item.clinical_note)}</div>`
+                              : ""
+                          }
+                        </div>
+                      `).join("")}
+                    </div>
+                  </div>
+                  `
+                  : ""
+              }
 
               <div class="detail-section">
                 <div class="section-header">
@@ -2476,7 +2560,7 @@
                   </div>
                 </div>
               </div>
-              
+
               <div class="detail-section review-panel">
                 <div class="section-header">
                   <span class="section-title">Dentist Review</span>
@@ -2856,6 +2940,25 @@
         no_response: "No response from patient"
       };
       return labels[value] || formatTag(value);
+    }
+
+    function formatContradictionField(field) {
+      if (!field) return "Discrepancy";
+
+      const labels = {
+        fever: "Fever",
+        swelling: "Swelling",
+        trauma: "Trauma",
+        uncontrolled_bleeding: "Uncontrolled bleeding",
+        avulsed_tooth: "Avulsed tooth",
+        jaw_fracture_signs: "Jaw fracture signs",
+        difficulty_breathing_or_swallowing: "Airway / swallowing",
+        immunocompromised: "Immunocompromised",
+        recent_extraction: "Recent extraction",
+        pericoronitis_signs: "Pericoronitis signs"
+      };
+
+      return labels[field] || formatTag(field);
     }
 
     function formatPhone(p) {
