@@ -2947,18 +2947,22 @@
         fever: "Fever",
         swelling: "Swelling",
         trauma: "Trauma",
+        bleeding: "Bleeding",
         uncontrolled_bleeding: "Uncontrolled bleeding",
+        breathing_swallowing: "Airway / Swallowing",
+        difficulty_breathing_or_swallowing: "Airway / Swallowing",
+        feeling_unwell: "Feeling Unwell",
         avulsed_tooth: "Avulsed tooth",
         jaw_fracture_signs: "Jaw fracture signs",
-        difficulty_breathing_or_swallowing: "Airway / swallowing",
         immunocompromised: "Immunocompromised",
+        pregnant: "Pregnancy",
+        anticoagulant: "Blood Thinners",
         recent_extraction: "Recent extraction",
         pericoronitis_signs: "Pericoronitis signs"
       };
 
-      return labels[field] || formatTag(field);
-    }
-
+  return labels[field] || formatTag(field);
+}
     function formatPhone(p) {
       if (!p) return "-";
       const d = String(p).replace(/\D/g, "");
