@@ -980,7 +980,17 @@
   <script>
     const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+    
+    const REVIEWER_NAME_MAP = {
+      "4nroots@gmail.com": "Dr. Balaji Swaminath",
+      "hamitranu@gmail.com": "Dr. Hamit Ranu"
+    };
 
+    function resolveReviewerName(email) {
+      if (!email) return "";
+      return REVIEWER_NAME_MAP[email] || email;
+    }
+    
     if (!window.supabase || !window.supabase.createClient) {
       document.getElementById("auth-error").style.display = "block";
       document.getElementById("auth-error").textContent =
@@ -1081,7 +1091,7 @@
       currentUser = user;
       document.getElementById("auth-screen").style.display = "none";
       document.getElementById("app").style.display = "flex";
-      document.getElementById("header-user-email").textContent = user.email || "";
+      document.getElementById("header-user-email").textContent = resolveReviewerName(user.email || "");
       loadMetrics();
     }
 
