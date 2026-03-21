@@ -614,21 +614,10 @@
       transition: width 0.7s cubic-bezier(0.4,0,0.2,1);
     }
 
-    .stack-fill.urgent {
-      background: linear-gradient(90deg, #8b2020, #e84545);
-    }
-
-    .stack-fill.emergency {
-      background: linear-gradient(90deg, #8b6000, #f0a500);
-    }
-
-    .stack-fill.routine {
-      background: linear-gradient(90deg, #007040, #00c87a);
-    }
-
-    .stack-fill.cyan {
-      background: linear-gradient(90deg, #1a7fc4, #00c8e8);
-    }
+    .stack-fill.urgent { background: linear-gradient(90deg, #8b2020, #e84545); }
+    .stack-fill.emergency { background: linear-gradient(90deg, #8b6000, #f0a500); }
+    .stack-fill.routine { background: linear-gradient(90deg, #007040, #00c87a); }
+    .stack-fill.cyan { background: linear-gradient(90deg, #1a7fc4, #00c8e8); }
 
     .histogram {
       display: grid;
@@ -897,7 +886,7 @@
       <input class="field-input" type="email" id="auth-email" placeholder="you@example.com" autocomplete="email" />
 
       <label class="field-label" for="auth-password">Password</label>
-      <input class="field-input" type="password" id="auth-password" placeholder="••••••••" autocomplete="current-password" />
+      <input class="field-input" type="password" id="auth-password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="current-password" />
 
       <button class="btn-primary" id="auth-btn" type="button">Sign In</button>
       <div class="auth-error" id="auth-error"></div>
@@ -937,8 +926,8 @@
 
       <div class="toolbar-right">
         <span class="last-updated" id="last-updated"></span>
-        <button class="refresh-btn" id="refresh-btn" type="button" title="Refresh">↻</button>
-        <a class="back-link" href="dashboard.html">← Dashboard</a>
+        <button class="refresh-btn" id="refresh-btn" type="button" title="Refresh">&#8635;</button>
+        <a class="back-link" href="dashboard.html">&larr; Dashboard</a>
       </div>
     </div>
 
@@ -950,16 +939,49 @@
   <div id="toast"></div>
 
   <script>
-    const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
-    const REVIEWER_NAME_MAP = {
+    var SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
+    var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+    var REVIEWER_NAME_MAP = {
       "4nroots@gmail.com": "Dr. Balaji Swaminath",
       "hamitranu@gmail.com": "Dr. Hamit Ranu"
+    };
+
+    /* --- Triage tag labels --- */
+    var TRIAGE_TAG_LABELS = {
+      facial_trauma_high_energy: "Facial trauma (high energy)",
+      post_extraction_possible_dry_socket: "Post-extraction / dry socket",
+      pericoronitis_possible: "Pericoronitis",
+      suspected_odontogenic_infection: "Odontogenic infection",
+      broken_tooth_trauma_low_energy: "Broken tooth (low energy)",
+      suspected_irreversible_pulpitis: "Irreversible pulpitis",
+      soft_tissue_lesion_unspecified: "Soft tissue lesion",
+      tooth_structure_loss_no_pain: "Tooth structure loss (no pain)",
+      routine_dental_pain: "Routine dental pain",
+      acute_dental_pain_unspecified: "Acute dental pain (unspecified)"
     };
 
     function resolveReviewerName(email) {
       if (!email) return "";
       return REVIEWER_NAME_MAP[email] || email;
+    }
+
+    function getSO(c) {
+      var so = c.structured_output;
+      if (!so) return {};
+      if (typeof so === "string") {
+        try { return JSON.parse(so); } catch (e) { return {}; }
+      }
+      return so;
+    }
+
+    function getContradictions(c) {
+      var raw = c.contradictions;
+      if (!raw) return [];
+      if (typeof raw === "string") {
+        try { raw = JSON.parse(raw); } catch (e) { return []; }
+      }
+      if (!Array.isArray(raw)) return [];
+      return raw;
     }
 
     if (!window.supabase || !window.supabase.createClient) {
@@ -969,33 +991,33 @@
       throw new Error("Supabase library missing");
     }
 
-    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    let currentPeriod = 0;
-    let currentUser = null;
+    var currentPeriod = 0;
+    var currentUser = null;
 
     document.getElementById("auth-btn").addEventListener("click", handleLogin);
     document.getElementById("signout-btn").addEventListener("click", handleSignOut);
     document.getElementById("refresh-btn").addEventListener("click", loadMetrics);
 
-    document.getElementById("chip-7").addEventListener("click", () => setPeriod(7));
-    document.getElementById("chip-30").addEventListener("click", () => setPeriod(30));
-    document.getElementById("chip-90").addEventListener("click", () => setPeriod(90));
-    document.getElementById("chip-0").addEventListener("click", () => setPeriod(0));
+    document.getElementById("chip-7").addEventListener("click", function() { setPeriod(7); });
+    document.getElementById("chip-30").addEventListener("click", function() { setPeriod(30); });
+    document.getElementById("chip-90").addEventListener("click", function() { setPeriod(90); });
+    document.getElementById("chip-0").addEventListener("click", function() { setPeriod(0); });
 
-    document.getElementById("auth-email").addEventListener("keydown", (e) => {
+    document.getElementById("auth-email").addEventListener("keydown", function(e) {
       if (e.key === "Enter") handleLogin();
     });
 
-    document.getElementById("auth-password").addEventListener("keydown", (e) => {
+    document.getElementById("auth-password").addEventListener("keydown", function(e) {
       if (e.key === "Enter") handleLogin();
     });
 
     async function handleLogin() {
-      const email = document.getElementById("auth-email").value.trim();
-      const password = document.getElementById("auth-password").value;
-      const btn = document.getElementById("auth-btn");
-      const errEl = document.getElementById("auth-error");
+      var email = document.getElementById("auth-email").value.trim();
+      var password = document.getElementById("auth-password").value;
+      var btn = document.getElementById("auth-btn");
+      var errEl = document.getElementById("auth-error");
 
       errEl.style.display = "none";
       errEl.textContent = "";
@@ -1010,7 +1032,9 @@
       btn.textContent = "Signing in...";
 
       try {
-        const { data, error } = await sb.auth.signInWithPassword({ email, password });
+        var result = await sb.auth.signInWithPassword({ email: email, password: password });
+        var data = result.data;
+        var error = result.error;
 
         if (error) {
           errEl.textContent = error.message || "Sign-in failed.";
@@ -1026,7 +1050,7 @@
 
         showApp(data.user);
       } catch (err) {
-        errEl.textContent = err?.message || "Unexpected sign-in error.";
+        errEl.textContent = (err && err.message) ? err.message : "Unexpected sign-in error.";
         errEl.style.display = "block";
       } finally {
         btn.disabled = false;
@@ -1045,12 +1069,14 @@
 
     async function init() {
       try {
-        const { data, error } = await sb.auth.getSession();
+        var result = await sb.auth.getSession();
+        var data = result.data;
+        var error = result.error;
         if (error) {
           console.error("Session error:", error);
           return;
         }
-        if (data?.session?.user) {
+        if (data && data.session && data.session.user) {
           showApp(data.session.user);
         }
       } catch (err) {
@@ -1068,43 +1094,31 @@
 
     function setPeriod(days) {
       currentPeriod = days;
-      [7, 30, 90, 0].forEach((d) => {
+      [7, 30, 90, 0].forEach(function(d) {
         document.getElementById("chip-" + d).classList.toggle("active", d === days);
       });
       loadMetrics();
     }
 
     async function loadMetrics() {
-      const btn = document.getElementById("refresh-btn");
+      var btn = document.getElementById("refresh-btn");
       btn.classList.add("spinning");
 
       try {
-        let query = sb
+        var query = sb
           .from("triage_cases")
-          .select(`
-            id,
-            created_at,
-            severity,
-            extraction_source,
-            review_status,
-            reviewed_at,
-            reviewed_by,
-            contacted_patient_at,
-            final_disposition,
-            prescription_issued,
-            duration_seconds,
-            structured_output,
-            triage_tag
-          `)
+          .select("id, created_at, severity, extraction_source, review_status, reviewed_at, reviewed_by, contacted_patient_at, final_disposition, prescription_issued, duration_seconds, structured_output, triage_tag, contradictions")
           .order("created_at", { ascending: true });
 
         if (currentPeriod > 0) {
-          const since = new Date();
+          var since = new Date();
           since.setDate(since.getDate() - currentPeriod);
           query = query.gte("created_at", since.toISOString());
         }
 
-        const { data, error } = await query;
+        var result = await query;
+        var data = result.data;
+        var error = result.error;
         btn.classList.remove("spinning");
 
         if (error) {
@@ -1113,7 +1127,7 @@
           return;
         }
 
-        const now = new Date();
+        var now = new Date();
         document.getElementById("last-updated").textContent =
           "Updated " +
           now.toLocaleTimeString("en-CA", {
@@ -1126,60 +1140,58 @@
       } catch (err) {
         btn.classList.remove("spinning");
         console.error("Metrics exception:", err);
-        showToast("Unexpected metrics error: " + (err?.message || "unknown"));
+        showToast("Unexpected metrics error: " + ((err && err.message) ? err.message : "unknown"));
       }
     }
 
     function renderMetrics(cases) {
-      const total = cases.length;
+      var total = cases.length;
 
-      const urgent = cases.filter((c) => c.severity === "urgent").length;
-      const emergency = cases.filter((c) => c.severity === "emergency").length;
-      const routine = cases.filter((c) => c.severity === "routine").length;
+      var urgent = cases.filter(function(c) { return c.severity === "urgent"; }).length;
+      var emergency = cases.filter(function(c) { return c.severity === "emergency"; }).length;
+      var routine = cases.filter(function(c) { return c.severity === "routine"; }).length;
 
-      const pendingReview = cases.filter((c) => c.review_status !== "reviewed").length;
-      const clinicallyReviewed = cases.filter((c) => !!c.reviewed_by).length;
-      const clearedReviewed = cases.filter((c) => c.review_status === "reviewed").length;
-      const pendingUrgentEmergency = cases.filter(
-        (c) =>
-          (c.severity === "urgent" || c.severity === "emergency") &&
-          !c.reviewed_by
-      ).length;
+      var pendingReview = cases.filter(function(c) { return c.review_status !== "reviewed"; }).length;
+      var clinicallyReviewed = cases.filter(function(c) { return !!c.reviewed_by; }).length;
+      var clearedReviewed = cases.filter(function(c) { return c.review_status === "reviewed"; }).length;
+      var pendingUrgentEmergency = cases.filter(function(c) {
+        return (c.severity === "urgent" || c.severity === "emergency") && !c.reviewed_by;
+      }).length;
 
-      const contacted = cases.filter((c) => !!c.contacted_patient_at).length;
-      const contactedAfterClinicalReview = cases.filter(
-        (c) => !!c.contacted_patient_at && !!c.reviewed_by
-      ).length;
-      const erRef = cases.filter((c) => c.final_disposition === "referred_er").length;
-      const rxIssued = cases.filter((c) => c.prescription_issued === true).length;
+      var contacted = cases.filter(function(c) { return !!c.contacted_patient_at; }).length;
+      var contactedAfterClinicalReview = cases.filter(function(c) {
+        return !!c.contacted_patient_at && !!c.reviewed_by;
+      }).length;
+      var erRef = cases.filter(function(c) { return c.final_disposition === "referred_er"; }).length;
+      var rxIssued = cases.filter(function(c) { return c.prescription_issued === true; }).length;
 
-      const reviewMinutes = cases
-        .filter((c) => c.created_at && c.reviewed_at && c.reviewed_by)
-        .map((c) => (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000)
-        .filter((n) => Number.isFinite(n) && n >= 0);
+      var reviewMinutes = cases
+        .filter(function(c) { return c.created_at && c.reviewed_at && c.reviewed_by; })
+        .map(function(c) { return (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000; })
+        .filter(function(n) { return Number.isFinite(n) && n >= 0; });
 
-      const contactMinutes = cases
-        .filter((c) => c.created_at && c.contacted_patient_at)
-        .map((c) => (new Date(c.contacted_patient_at) - new Date(c.created_at)) / 60000)
-        .filter((n) => Number.isFinite(n) && n >= 0);
+      var contactMinutes = cases
+        .filter(function(c) { return c.created_at && c.contacted_patient_at; })
+        .map(function(c) { return (new Date(c.contacted_patient_at) - new Date(c.created_at)) / 60000; })
+        .filter(function(n) { return Number.isFinite(n) && n >= 0; });
 
-      const avgTTR = reviewMinutes.length
-        ? Math.round(reviewMinutes.reduce((a, b) => a + b, 0) / reviewMinutes.length)
+      var avgTTR = reviewMinutes.length
+        ? Math.round(reviewMinutes.reduce(function(a, b) { return a + b; }, 0) / reviewMinutes.length)
         : null;
 
-      const avgTTC = contactMinutes.length
-        ? Math.round(contactMinutes.reduce((a, b) => a + b, 0) / contactMinutes.length)
+      var avgTTC = contactMinutes.length
+        ? Math.round(contactMinutes.reduce(function(a, b) { return a + b; }, 0) / contactMinutes.length)
         : null;
 
-      const durations = cases
-        .map((c) => c.duration_seconds)
-        .filter((n) => Number.isFinite(n) && n > 0);
+      var durations = cases
+        .map(function(c) { return c.duration_seconds; })
+        .filter(function(n) { return Number.isFinite(n) && n > 0; });
 
-      const avgDur = durations.length
-        ? Math.round(durations.reduce((a, b) => a + b, 0) / durations.length)
+      var avgDur = durations.length
+        ? Math.round(durations.reduce(function(a, b) { return a + b; }, 0) / durations.length)
         : null;
 
-      const durationBuckets = [
+      var durationBuckets = [
         { label: "<30s", count: 0 },
         { label: "30-60s", count: 0 },
         { label: "1-2m", count: 0 },
@@ -1187,7 +1199,7 @@
         { label: ">4m", count: 0 }
       ];
 
-      durations.forEach((d) => {
+      durations.forEach(function(d) {
         if (d < 30) durationBuckets[0].count++;
         else if (d < 60) durationBuckets[1].count++;
         else if (d < 120) durationBuckets[2].count++;
@@ -1195,39 +1207,76 @@
         else durationBuckets[4].count++;
       });
 
-      const maxDurationBucket = Math.max(...durationBuckets.map((b) => b.count), 1);
+      var maxDurationBucket = Math.max.apply(null, durationBuckets.map(function(b) { return b.count; }).concat([1]));
 
-      const usableCalls = cases.filter(isUsableCall).length;
-      const incompleteCalls = total - usableCalls;
+      var usableCalls = cases.filter(isUsableCall).length;
+      var incompleteCalls = total - usableCalls;
 
-      const afterHours = cases.filter((c) => {
-        const d = new Date(c.created_at);
-        const h = d.getHours();
-        const dow = d.getDay();
+      var afterHours = cases.filter(function(c) {
+        var d = new Date(c.created_at);
+        var h = d.getHours();
+        var dow = d.getDay();
         return dow === 0 || dow === 6 || h < 8 || h >= 18;
       }).length;
 
-      const hourCounts = new Array(24).fill(0);
-      cases.forEach((c) => {
-        const hour = new Date(c.created_at).getHours();
+      var hourCounts = new Array(24).fill(0);
+      cases.forEach(function(c) {
+        var hour = new Date(c.created_at).getHours();
         hourCounts[hour]++;
       });
-      const maxHour = Math.max(...hourCounts, 1);
+      var maxHour = Math.max.apply(null, hourCounts.concat([1]));
 
-      const extCounts = {};
-      cases.forEach((c) => {
-        const s = c.extraction_source || "none";
+      var extCounts = {};
+      cases.forEach(function(c) {
+        var s = c.extraction_source || "none";
         extCounts[s] = (extCounts[s] || 0) + 1;
       });
 
-      const dispoCounts = {};
-      cases.forEach((c) => {
+      var dispoCounts = {};
+      cases.forEach(function(c) {
         if (c.final_disposition) {
           dispoCounts[c.final_disposition] = (dispoCounts[c.final_disposition] || 0) + 1;
         }
       });
 
-      const flags = {
+      /* --- NEW: Triage tag distribution --- */
+      var tagCounts = {};
+      cases.forEach(function(c) {
+        var tag = c.triage_tag || "untagged";
+        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+      });
+
+      /* --- NEW: Reviewer breakdown --- */
+      var reviewerCounts = {};
+      var reviewerTTR = {};
+      cases.forEach(function(c) {
+        if (!c.reviewed_by) return;
+        var name = resolveReviewerName(c.reviewed_by);
+        reviewerCounts[name] = (reviewerCounts[name] || 0) + 1;
+        if (c.created_at && c.reviewed_at) {
+          var mins = (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000;
+          if (Number.isFinite(mins) && mins >= 0) {
+            if (!reviewerTTR[name]) reviewerTTR[name] = [];
+            reviewerTTR[name].push(mins);
+          }
+        }
+      });
+
+      /* --- NEW: Contradiction metrics --- */
+      var casesWithContradictions = 0;
+      var contradictionFieldCounts = {};
+      cases.forEach(function(c) {
+        var contras = getContradictions(c);
+        if (contras.length > 0) {
+          casesWithContradictions++;
+          contras.forEach(function(item) {
+            var field = item.field || "unknown";
+            contradictionFieldCounts[field] = (contradictionFieldCounts[field] || 0) + 1;
+          });
+        }
+      });
+
+      var flags = {
         fever: 0,
         trauma: 0,
         swelling: 0,
@@ -1238,8 +1287,8 @@
         immunocompromised: 0
       };
 
-      cases.forEach((c) => {
-        const so = c.structured_output || {};
+      cases.forEach(function(c) {
+        var so = getSO(c);
         if (so.fever) flags.fever++;
         if (so.trauma) flags.trauma++;
         if (so.swelling_present || so.swelling) flags.swelling++;
@@ -1250,12 +1299,12 @@
         if (so.immunocompromised) flags.immunocompromised++;
       });
 
-      const nullPain = cases.filter((c) => c.structured_output?.pain_score == null).length;
-      const nullComplaint = cases.filter((c) => !c.structured_output?.chief_complaint).length;
-      const nullOnset = cases.filter((c) => !c.structured_output?.onset).length;
-      const nullLoc = cases.filter((c) => !c.structured_output?.jaw && !c.structured_output?.side).length;
+      var nullPain = cases.filter(function(c) { var so = getSO(c); return so.pain_score == null; }).length;
+      var nullComplaint = cases.filter(function(c) { var so = getSO(c); return !so.chief_complaint; }).length;
+      var nullOnset = cases.filter(function(c) { var so = getSO(c); return !so.onset; }).length;
+      var nullLoc = cases.filter(function(c) { var so = getSO(c); return !so.jaw && !so.side; }).length;
 
-      const dispoLabels = {
+      var dispoLabels = {
         booked: "Appointment booked",
         referred_er: "Referred to ER",
         rx_only: "Prescription only",
@@ -1263,215 +1312,239 @@
         no_response: "No response"
       };
 
-      const p = (n, d) => (d > 0 ? Math.round((n / d) * 100) : 0);
-      const fmtDur = (s) => s != null ? `${Math.floor(s / 60)}m ${s % 60}s` : "—";
-      const fmtMin = (m) =>
-        m != null
-          ? m >= 60
-            ? `${Math.floor(m / 60)}h ${Math.round(m % 60)}m`
-            : `${Math.round(m)} min`
-          : "—";
+      var contradictionFieldLabels = {
+        fever: "Fever",
+        swelling: "Swelling",
+        trauma: "Trauma",
+        bleeding: "Bleeding",
+        uncontrolled_bleeding: "Uncontrolled bleeding",
+        breathing_swallowing: "Airway / Swallowing",
+        difficulty_breathing_or_swallowing: "Airway / Swallowing",
+        feeling_unwell: "Feeling Unwell",
+        immunocompromised: "Immunocompromised",
+        pregnant: "Pregnancy",
+        anticoagulant: "Blood Thinners",
+        recent_extraction: "Recent extraction"
+      };
 
-      let html = "";
+      var html = "";
 
+      /* === OPERATIONS === */
       html += secHead("Operations");
-      html += `<div class="hero-grid">
-        ${hc("Total Calls", total, "all captured calls", "rgba(0,200,232,0.35)", "#e8f0fe")}
-        ${hc("Usable Calls", usableCalls, `${p(usableCalls, total)}% appear clinically usable`, "rgba(0,200,122,0.35)", "#00c87a")}
-        ${hc("Pending Review", pendingReview, "not yet clinically reviewed", pendingReview > 0 ? "rgba(240,165,0,0.4)" : "rgba(0,200,122,0.35)", pendingReview > 0 ? "#f0a500" : "#00c87a")}
-        ${hc("Pending Urgent / Emergency", pendingUrgentEmergency, "high-priority cases awaiting review", pendingUrgentEmergency > 0 ? "rgba(232,69,69,0.4)" : "rgba(0,200,122,0.35)", pendingUrgentEmergency > 0 ? "#e84545" : "#00c87a")}
-      </div>`;
+      html += '<div class="hero-grid">' +
+        hc("Total Calls", total, "all captured calls", "rgba(0,200,232,0.35)", "#e8f0fe") +
+        hc("Usable Calls", usableCalls, p(usableCalls, total) + "% appear clinically usable", "rgba(0,200,122,0.35)", "#00c87a") +
+        hc("Pending Review", pendingReview, "not yet clinically reviewed", pendingReview > 0 ? "rgba(240,165,0,0.4)" : "rgba(0,200,122,0.35)", pendingReview > 0 ? "#f0a500" : "#00c87a") +
+        hc("Pending Urgent / Emergency", pendingUrgentEmergency, "high-priority cases awaiting review", pendingUrgentEmergency > 0 ? "rgba(232,69,69,0.4)" : "rgba(0,200,122,0.35)", pendingUrgentEmergency > 0 ? "#e84545" : "#00c87a") +
+      '</div>';
 
+      /* === SPEED === */
       html += secHead("Speed");
-      html += `<div class="hero-grid">
-        ${hc("Clinically Reviewed", `${clinicallyReviewed} / ${total}`, `${p(clinicallyReviewed, total)}% with reviewed_by present`, "rgba(0,200,232,0.35)", "#00c8e8")}
-        ${hc("Avg Time to Review", fmtMin(avgTTR), "created → reviewed", "rgba(0,200,232,0.35)", "#00c8e8")}
-        ${hc("Avg Time to Contact", fmtMin(avgTTC), "created → contacted", "rgba(0,200,232,0.35)", "#00c8e8")}
-        ${hc("Contact Rate", `${contactedAfterClinicalReview} / ${clinicallyReviewed || 0}`, clinicallyReviewed > 0 ? `${p(contactedAfterClinicalReview, clinicallyReviewed)}% of clinically reviewed` : "no clinically reviewed cases yet", "rgba(0,200,122,0.35)", "#00c87a")}
-      </div>`;
+      html += '<div class="hero-grid">' +
+        hc("Clinically Reviewed", clinicallyReviewed + " / " + total, p(clinicallyReviewed, total) + "% with reviewed_by present", "rgba(0,200,232,0.35)", "#00c8e8") +
+        hc("Avg Time to Review", fmtMin(avgTTR), "created \u2192 reviewed", "rgba(0,200,232,0.35)", "#00c8e8") +
+        hc("Avg Time to Contact", fmtMin(avgTTC), "created \u2192 contacted", "rgba(0,200,232,0.35)", "#00c8e8") +
+        hc("Contact Rate", contactedAfterClinicalReview + " / " + (clinicallyReviewed || 0), clinicallyReviewed > 0 ? (p(contactedAfterClinicalReview, clinicallyReviewed) + "% of clinically reviewed") : "no clinically reviewed cases yet", "rgba(0,200,122,0.35)", "#00c87a") +
+      '</div>';
 
+      /* === OUTCOMES === */
       html += secHead("Outcomes");
-      html += `<div class="two-col">`;
+      html += '<div class="two-col">';
 
-      html += `<div class="panel">
-        <div class="panel-head">
-          <div class="panel-title">Final Disposition</div>
-          <div class="panel-subtle">${Object.values(dispoCounts).reduce((a, b) => a + b, 0)} recorded</div>
-        </div>
-        <div class="panel-body">`;
+      /* Disposition panel */
+      var dispoTotal = 0;
+      Object.keys(dispoCounts).forEach(function(k) { dispoTotal += dispoCounts[k]; });
 
-      const dispoTotal = Object.values(dispoCounts).reduce((a, b) => a + b, 0);
+      html += '<div class="panel">' +
+        '<div class="panel-head"><div class="panel-title">Final Disposition</div><div class="panel-subtle">' + dispoTotal + ' recorded</div></div>' +
+        '<div class="panel-body">';
+
       if (dispoTotal === 0) {
-        html += `<div class="no-data">No dispositions recorded yet</div>`;
+        html += '<div class="no-data">No dispositions recorded yet</div>';
       } else {
-        html += `<div class="stack-list">`;
+        html += '<div class="stack-list">';
         Object.entries(dispoCounts)
-          .sort((a, b) => b[1] - a[1])
-          .forEach(([key, count]) => {
-            const pp = p(count, dispoTotal);
-            html += `
-              <div>
-                <div class="stack-row-label">
-                  <span class="stack-name cyan">${escHtml(dispoLabels[key] || key)}</span>
-                  <span class="stack-stats">${count} · ${pp}%</span>
-                </div>
-                <div class="stack-track">
-                  <div class="stack-fill cyan" style="width:${pp}%"></div>
-                </div>
-              </div>
-            `;
+          .sort(function(a, b) { return b[1] - a[1]; })
+          .forEach(function(entry) {
+            var key = entry[0];
+            var count = entry[1];
+            var pp = p(count, dispoTotal);
+            html += '<div>' +
+              '<div class="stack-row-label"><span class="stack-name cyan">' + escHtml(dispoLabels[key] || key) + '</span><span class="stack-stats">' + count + ' \u00B7 ' + pp + '%</span></div>' +
+              '<div class="stack-track"><div class="stack-fill cyan" style="width:' + pp + '%"></div></div>' +
+            '</div>';
           });
-        html += `</div>`;
+        html += '</div>';
       }
 
-      html += `
-          <div class="panel-divider"></div>
-          <div class="panel-sub-label">Review Status</div>
-          <div class="mini-list">
-            <div class="mini-row"><span class="mini-row-label">Clinically reviewed</span><span class="mini-row-val cyan">${clinicallyReviewed} / ${total} (${p(clinicallyReviewed, total)}%)</span></div>
-            <div class="mini-row"><span class="mini-row-label">Cleared / reviewed flag</span><span class="mini-row-val">${clearedReviewed}</span></div>
-            <div class="mini-row"><span class="mini-row-label">Patients contacted</span><span class="mini-row-val">${contacted}</span></div>
-          </div>
-        </div>
-      </div>`;
+      html += '<div class="panel-divider"></div>' +
+        '<div class="panel-sub-label">Review Status</div>' +
+        '<div class="mini-list">' +
+          '<div class="mini-row"><span class="mini-row-label">Clinically reviewed</span><span class="mini-row-val cyan">' + clinicallyReviewed + ' / ' + total + ' (' + p(clinicallyReviewed, total) + '%)</span></div>' +
+          '<div class="mini-row"><span class="mini-row-label">Cleared / reviewed flag</span><span class="mini-row-val">' + clearedReviewed + '</span></div>' +
+          '<div class="mini-row"><span class="mini-row-label">Patients contacted</span><span class="mini-row-val">' + contacted + '</span></div>' +
+        '</div>';
 
-      html += `<div class="panel">
-        <div class="panel-head">
-          <div class="panel-title">Severity Distribution</div>
-          <div class="panel-subtle">${total} call${total !== 1 ? "s" : ""}</div>
-        </div>
-        <div class="panel-body">
-          <div class="stack-list">
-            ${stackBar("urgent", "Urgent", urgent, total)}
-            ${stackBar("emergency", "Emergency", emergency, total)}
-            ${stackBar("routine", "Routine", routine, total)}
-          </div>
-        </div>
-      </div>`;
+      /* --- NEW: Reviewer breakdown --- */
+      var reviewerKeys = Object.keys(reviewerCounts);
+      if (reviewerKeys.length > 0) {
+        html += '<div class="panel-divider"></div>' +
+          '<div class="panel-sub-label">Reviewer Breakdown</div>' +
+          '<div class="mini-list">';
+        reviewerKeys.sort(function(a, b) { return reviewerCounts[b] - reviewerCounts[a]; }).forEach(function(name) {
+          var rCount = reviewerCounts[name];
+          var rTimes = reviewerTTR[name] || [];
+          var rAvg = rTimes.length ? Math.round(rTimes.reduce(function(a, b) { return a + b; }, 0) / rTimes.length) : null;
+          html += '<div class="mini-row"><span class="mini-row-label">' + escHtml(name) + '</span><span class="mini-row-val cyan">' + rCount + ' reviewed' + (rAvg !== null ? (' \u00B7 avg ' + fmtMin(rAvg)) : '') + '</span></div>';
+        });
+        html += '</div>';
+      }
 
-      html += `</div>`;
+      html += '</div></div>';
 
+      /* Severity panel */
+      html += '<div class="panel">' +
+        '<div class="panel-head"><div class="panel-title">Severity Distribution</div><div class="panel-subtle">' + total + ' call' + (total !== 1 ? 's' : '') + '</div></div>' +
+        '<div class="panel-body"><div class="stack-list">' +
+          stackBar("urgent", "Urgent", urgent, total) +
+          stackBar("emergency", "Emergency", emergency, total) +
+          stackBar("routine", "Routine", routine, total) +
+        '</div>';
+
+      /* --- NEW: Triage tag distribution --- */
+      var tagKeys = Object.keys(tagCounts);
+      if (tagKeys.length > 0) {
+        html += '<div class="panel-divider"></div>' +
+          '<div class="panel-sub-label">Triage Tag Distribution</div>' +
+          '<div class="stack-list">';
+        tagKeys.sort(function(a, b) { return tagCounts[b] - tagCounts[a]; }).forEach(function(tag) {
+          var tCount = tagCounts[tag];
+          var tPct = p(tCount, total);
+          var tagLabel = TRIAGE_TAG_LABELS[tag] || formatTag(tag);
+          html += '<div>' +
+            '<div class="stack-row-label"><span class="stack-name cyan">' + escHtml(tagLabel) + '</span><span class="stack-stats">' + tCount + ' \u00B7 ' + tPct + '%</span></div>' +
+            '<div class="stack-track"><div class="stack-fill cyan" style="width:' + tPct + '%"></div></div>' +
+          '</div>';
+        });
+        html += '</div>';
+      }
+
+      html += '</div></div>';
+      html += '</div>';
+
+      /* === QUALITY & DIAGNOSTICS === */
       html += secHead("Quality & diagnostics");
-      html += `<div class="two-col">`;
+      html += '<div class="two-col">';
 
-      html += `<div class="panel">
-        <div class="panel-head">
-          <div class="panel-title">Call Duration Distribution</div>
-          <div class="panel-subtle">Avg ${fmtDur(avgDur)}</div>
-        </div>
-        <div class="panel-body">`;
+      /* Duration panel */
+      html += '<div class="panel">' +
+        '<div class="panel-head"><div class="panel-title">Call Duration Distribution</div><div class="panel-subtle">Avg ' + fmtDur(avgDur) + '</div></div>' +
+        '<div class="panel-body">';
 
       if (!durations.length) {
-        html += `<div class="no-data">No duration data available</div>`;
+        html += '<div class="no-data">No duration data available</div>';
       } else {
-        html += `<div class="histogram">`;
-        durationBuckets.forEach((bucket) => {
-          const height = Math.max((bucket.count / maxDurationBucket) * 100, bucket.count > 0 ? 8 : 0);
-          html += `
-            <div class="hist-col">
-              <div class="hist-bar-wrap">
-                <div class="hist-bar" style="height:${height}%"></div>
-              </div>
-              <div class="hist-count">${bucket.count}</div>
-              <div class="hist-label">${bucket.label}</div>
-            </div>
-          `;
+        html += '<div class="histogram">';
+        durationBuckets.forEach(function(bucket) {
+          var height = Math.max((bucket.count / maxDurationBucket) * 100, bucket.count > 0 ? 8 : 0);
+          html += '<div class="hist-col"><div class="hist-bar-wrap"><div class="hist-bar" style="height:' + height + '%"></div></div><div class="hist-count">' + bucket.count + '</div><div class="hist-label">' + bucket.label + '</div></div>';
         });
-        html += `</div>`;
+        html += '</div>';
       }
 
-      html += `
-          <div class="panel-divider"></div>
-          <div class="panel-sub-label">Data Quality</div>
-          <div class="mini-list">
-            ${nullRow("Pain score missing", nullPain, total)}
-            ${nullRow("Chief complaint missing", nullComplaint, total)}
-            ${nullRow("Onset missing", nullOnset, total)}
-            ${nullRow("Location missing", nullLoc, total)}
-            <div class="mini-row"><span class="mini-row-label">Incomplete / likely partial</span><span class="mini-row-val ${p(incompleteCalls, total) > 15 ? "warn" : "ok"}">${incompleteCalls} (${p(incompleteCalls, total)}%)</span></div>
-          </div>
-        </div>
-      </div>`;
+      html += '<div class="panel-divider"></div>' +
+        '<div class="panel-sub-label">Data Quality</div>' +
+        '<div class="mini-list">' +
+          nullRow("Pain score missing", nullPain, total) +
+          nullRow("Chief complaint missing", nullComplaint, total) +
+          nullRow("Onset missing", nullOnset, total) +
+          nullRow("Location missing", nullLoc, total) +
+          '<div class="mini-row"><span class="mini-row-label">Incomplete / likely partial</span><span class="mini-row-val ' + (p(incompleteCalls, total) > 15 ? "warn" : "ok") + '">' + incompleteCalls + ' (' + p(incompleteCalls, total) + '%)</span></div>' +
+        '</div></div></div>';
 
-      html += `<div class="panel">
-        <div class="panel-head">
-          <div class="panel-title">Calls by Hour of Day</div>
-          <div class="panel-subtle">${afterHours} after-hours</div>
-        </div>
-        <div class="panel-body">
-          <div class="tod-chart">`;
+      /* Hour of day panel */
+      html += '<div class="panel">' +
+        '<div class="panel-head"><div class="panel-title">Calls by Hour of Day</div><div class="panel-subtle">' + afterHours + ' after-hours</div></div>' +
+        '<div class="panel-body"><div class="tod-chart">';
 
-      for (let h = 0; h < 24; h++) {
-        const cnt = hourCounts[h];
-        const ht = Math.max((cnt / maxHour) * 100, cnt > 0 ? 6 : 0);
-        const after = h < 8 || h >= 18;
-        const lbl = h === 0 ? "12a" : h === 6 ? "6a" : h === 12 ? "12p" : h === 18 ? "6p" : "";
-        html += `
-          <div class="tod-col">
-            <div class="tod-bar ${after ? "after" : "biz"}" style="height:${ht}%" title="${cnt} call${cnt !== 1 ? "s" : ""} at ${h}:00"></div>
-            <div class="tod-tick">${lbl}</div>
-          </div>
-        `;
+      for (var h = 0; h < 24; h++) {
+        var cnt = hourCounts[h];
+        var ht = Math.max((cnt / maxHour) * 100, cnt > 0 ? 6 : 0);
+        var isAfter = h < 8 || h >= 18;
+        var lbl = h === 0 ? "12a" : h === 6 ? "6a" : h === 12 ? "12p" : h === 18 ? "6p" : "";
+        html += '<div class="tod-col"><div class="tod-bar ' + (isAfter ? "after" : "biz") + '" style="height:' + ht + '%" title="' + cnt + ' call' + (cnt !== 1 ? 's' : '') + ' at ' + h + ':00"></div><div class="tod-tick">' + lbl + '</div></div>';
       }
 
-      html += `</div>
-          <div class="tod-legend">
-            <div class="tod-legend-item"><div class="tod-legend-dot" style="background:rgba(0,200,232,0.2);border:1px solid rgba(0,200,232,0.15)"></div>Business hours (8am–6pm)</div>
-            <div class="tod-legend-item"><div class="tod-legend-dot" style="background:rgba(240,165,0,0.22);border:1px solid rgba(240,165,0,0.18)"></div>After hours</div>
-          </div>
-          <div class="panel-divider"></div>
-          <div class="panel-sub-label">Operational Signals</div>
-          <div class="mini-list">
-            <div class="mini-row"><span class="mini-row-label">After-hours share</span><span class="mini-row-val ${p(afterHours, total) > 40 ? "warn" : "cyan"}">${afterHours} (${p(afterHours, total)}%)</span></div>
-            <div class="mini-row"><span class="mini-row-label">ER referrals</span><span class="mini-row-val">${erRef}</span></div>
-            <div class="mini-row"><span class="mini-row-label">Rx issued</span><span class="mini-row-val">${rxIssued}</span></div>
-          </div>
-        </div>
-      </div>`;
+      html += '</div>' +
+        '<div class="tod-legend">' +
+          '<div class="tod-legend-item"><div class="tod-legend-dot" style="background:rgba(0,200,232,0.2);border:1px solid rgba(0,200,232,0.15)"></div>Business hours (8am\u20136pm)</div>' +
+          '<div class="tod-legend-item"><div class="tod-legend-dot" style="background:rgba(240,165,0,0.22);border:1px solid rgba(240,165,0,0.18)"></div>After hours</div>' +
+        '</div>' +
+        '<div class="panel-divider"></div>' +
+        '<div class="panel-sub-label">Operational Signals</div>' +
+        '<div class="mini-list">' +
+          '<div class="mini-row"><span class="mini-row-label">After-hours share</span><span class="mini-row-val ' + (p(afterHours, total) > 40 ? "warn" : "cyan") + '">' + afterHours + ' (' + p(afterHours, total) + '%)</span></div>' +
+          '<div class="mini-row"><span class="mini-row-label">ER referrals</span><span class="mini-row-val">' + erRef + '</span></div>' +
+          '<div class="mini-row"><span class="mini-row-label">Rx issued</span><span class="mini-row-val">' + rxIssued + '</span></div>' +
+        '</div></div></div>';
 
-      html += `</div>`;
+      html += '</div>';
 
+      /* === CLINICAL & TECHNICAL DIAGNOSTICS === */
       html += secHead("Clinical & technical diagnostics");
-      html += `<div class="two-col">`;
+      html += '<div class="two-col">';
 
-      html += `<div class="panel">
-        <div class="panel-head"><div class="panel-title">Red Flag Frequency</div></div>
-        <div class="panel-body">
-          <div class="flag-grid">
-            ${flagCard("Fever", flags.fever, "#f0a500")}
-            ${flagCard("Swelling", flags.swelling, "#e84545")}
-            ${flagCard("Trauma", flags.trauma, "#e84545")}
-            ${flagCard("Nocturnal pain", flags.nocturnal, "#f0a500")}
-            ${flagCard("Cold lingers", flags.cold_lingers, "#00c8e8")}
-            ${flagCard("Airway concern", flags.airway, "#e84545")}
-            ${flagCard("Bleeding", flags.bleeding, "#e84545")}
-            ${flagCard("Immunocomp.", flags.immunocompromised, "#f0a500")}
-          </div>
-        </div>
-      </div>`;
+      /* Red flag panel */
+      html += '<div class="panel">' +
+        '<div class="panel-head"><div class="panel-title">Red Flag Frequency</div></div>' +
+        '<div class="panel-body"><div class="flag-grid">' +
+          flagCard("Fever", flags.fever, "#f0a500") +
+          flagCard("Swelling", flags.swelling, "#e84545") +
+          flagCard("Trauma", flags.trauma, "#e84545") +
+          flagCard("Nocturnal pain", flags.nocturnal, "#f0a500") +
+          flagCard("Cold lingers", flags.cold_lingers, "#00c8e8") +
+          flagCard("Airway concern", flags.airway, "#e84545") +
+          flagCard("Bleeding", flags.bleeding, "#e84545") +
+          flagCard("Immunocomp.", flags.immunocompromised, "#f0a500") +
+        '</div></div></div>';
 
-      html += `<div class="panel">
-        <div class="panel-head"><div class="panel-title">Extraction Source</div></div>
-        <div class="panel-body">
-          ${extractionRow("Vapi (primary)", extCounts["vapi"] || 0, total, "#00c8e8")}
-          ${extractionRow("OpenAI (fallback)", extCounts["openai"] || 0, total, "#a78bfa")}
-          ${extractionRow("None / unknown", extCounts["none"] || 0, total, "#5f7597")}
-        </div>
-      </div>`;
+      /* Extraction source panel */
+      html += '<div class="panel">' +
+        '<div class="panel-head"><div class="panel-title">Extraction Source</div></div>' +
+        '<div class="panel-body">' +
+          extractionRow("Vapi (primary)", extCounts["vapi"] || 0, total, "#00c8e8") +
+          extractionRow("OpenAI (fallback)", extCounts["openai"] || 0, total, "#a78bfa") +
+          extractionRow("None / unknown", extCounts["none"] || 0, total, "#5f7597") +
 
-      html += `</div>`;
-      html += `<div style="height:40px"></div>`;
+        /* --- NEW: Contradiction metrics --- */
+        '<div class="panel-divider"></div>' +
+        '<div class="panel-sub-label">Intake vs. Call Discrepancies</div>' +
+        '<div class="mini-list">' +
+          '<div class="mini-row"><span class="mini-row-label">Cases with discrepancies</span><span class="mini-row-val ' + (casesWithContradictions > 0 ? "warn" : "ok") + '">' + casesWithContradictions + ' / ' + total + '</span></div>';
+
+      var contraFieldKeys = Object.keys(contradictionFieldCounts);
+      if (contraFieldKeys.length > 0) {
+        contraFieldKeys.sort(function(a, b) { return contradictionFieldCounts[b] - contradictionFieldCounts[a]; }).forEach(function(field) {
+          var fLabel = contradictionFieldLabels[field] || formatTag(field);
+          html += '<div class="mini-row"><span class="mini-row-label">' + escHtml(fLabel) + '</span><span class="mini-row-val">' + contradictionFieldCounts[field] + '</span></div>';
+        });
+      }
+
+      html += '</div></div></div>';
+      html += '</div>';
+
+      html += '<div style="height:40px"></div>';
 
       document.getElementById("main-content").innerHTML = html;
     }
 
     function isUsableCall(c) {
-      const so = c.structured_output || {};
-      const hasComplaint = !!so.chief_complaint;
-      const hasPain = so.pain_score != null;
-      const hasOnset = !!so.onset;
-      const hasLocation = !!so.jaw || !!so.side;
-      const hasFlags =
+      var so = getSO(c);
+      var hasComplaint = !!so.chief_complaint;
+      var hasPain = so.pain_score != null;
+      var hasOnset = !!so.onset;
+      var hasLocation = !!so.jaw || !!so.side;
+      var hasFlags =
         !!so.swelling ||
         !!so.swelling_present ||
         !!so.trauma ||
@@ -1485,73 +1558,79 @@
     }
 
     function secHead(label) {
-      return `<div class="section-head"><span class="section-label">${escHtml(label)}</span><div class="section-line"></div></div>`;
+      return '<div class="section-head"><span class="section-label">' + escHtml(label) + '</span><div class="section-line"></div></div>';
     }
 
     function hc(label, value, sub, accent, accentColor) {
-      return `
-        <div class="hero-card" style="--accent:${accent};--accent-color:${accentColor}">
-          <div class="hc-label">${escHtml(label)}</div>
-          <div class="hc-value">${escHtml(String(value))}</div>
-          ${sub ? `<div class="hc-sub">${escHtml(sub)}</div>` : ""}
-        </div>
-      `;
+      return '<div class="hero-card" style="--accent:' + accent + ';--accent-color:' + accentColor + '">' +
+        '<div class="hc-label">' + escHtml(label) + '</div>' +
+        '<div class="hc-value">' + escHtml(String(value)) + '</div>' +
+        (sub ? '<div class="hc-sub">' + escHtml(sub) + '</div>' : '') +
+      '</div>';
     }
 
     function stackBar(cls, label, count, total) {
-      const pp = total > 0 ? Math.round((count / total) * 100) : 0;
-      return `
-        <div>
-          <div class="stack-row-label">
-            <span class="stack-name ${cls}">${escHtml(label)}</span>
-            <span class="stack-stats">${count} · ${pp}%</span>
-          </div>
-          <div class="stack-track">
-            <div class="stack-fill ${cls}" style="width:${pp}%"></div>
-          </div>
-        </div>
-      `;
+      var pp = total > 0 ? Math.round((count / total) * 100) : 0;
+      return '<div>' +
+        '<div class="stack-row-label"><span class="stack-name ' + cls + '">' + escHtml(label) + '</span><span class="stack-stats">' + count + ' \u00B7 ' + pp + '%</span></div>' +
+        '<div class="stack-track"><div class="stack-fill ' + cls + '" style="width:' + pp + '%"></div></div>' +
+      '</div>';
     }
 
     function flagCard(label, count, color) {
-      const active = count > 0;
-      return `
-        <div class="flag-card">
-          <div class="flag-dot" style="background:${color};${active ? `box-shadow:0 0 5px ${color}80` : "opacity:0.25"}"></div>
-          <div class="flag-label">${escHtml(label)}</div>
-          <div class="flag-count" style="color:${active ? color : "#5f7597"}">${count}</div>
-        </div>
-      `;
+      var active = count > 0;
+      return '<div class="flag-card">' +
+        '<div class="flag-dot" style="background:' + color + ';' + (active ? 'box-shadow:0 0 5px ' + color + '80' : 'opacity:0.25') + '"></div>' +
+        '<div class="flag-label">' + escHtml(label) + '</div>' +
+        '<div class="flag-count" style="color:' + (active ? color : '#5f7597') + '">' + count + '</div>' +
+      '</div>';
     }
 
     function nullRow(label, count, total) {
-      const pp = total > 0 ? Math.round((count / total) * 100) : 0;
-      const cls = pp > 20 ? "danger" : pp > 10 ? "warn" : "ok";
-      return `<div class="mini-row"><span class="mini-row-label">${escHtml(label)}</span><span class="mini-row-val ${cls}">${count} (${pp}%)</span></div>`;
+      var pp = total > 0 ? Math.round((count / total) * 100) : 0;
+      var cls = pp > 20 ? "danger" : pp > 10 ? "warn" : "ok";
+      return '<div class="mini-row"><span class="mini-row-label">' + escHtml(label) + '</span><span class="mini-row-val ' + cls + '">' + count + ' (' + pp + '%)</span></div>';
     }
 
     function extractionRow(label, count, total, color) {
-      const pp = total > 0 ? Math.round((count / total) * 100) : 0;
-      return `
-        <div class="ext-row">
-          <div class="ext-dot" style="background:${color}"></div>
-          <div class="ext-label">${escHtml(label)}</div>
-          <div class="ext-bar-wrap">
-            <div class="ext-bar-track">
-              <div class="ext-bar-fill" style="width:${pp}%;background:${color}"></div>
-            </div>
-          </div>
-          <div class="ext-count">${count}</div>
-          <div class="ext-pct">${pp}%</div>
-        </div>
-      `;
+      var pp = total > 0 ? Math.round((count / total) * 100) : 0;
+      return '<div class="ext-row">' +
+        '<div class="ext-dot" style="background:' + color + '"></div>' +
+        '<div class="ext-label">' + escHtml(label) + '</div>' +
+        '<div class="ext-bar-wrap"><div class="ext-bar-track"><div class="ext-bar-fill" style="width:' + pp + '%;background:' + color + '"></div></div></div>' +
+        '<div class="ext-count">' + count + '</div>' +
+        '<div class="ext-pct">' + pp + '%</div>' +
+      '</div>';
+    }
+
+    function formatTag(tag) {
+      if (!tag || tag === "-") return "-";
+      return String(tag)
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, function(l) { return l.toUpperCase(); })
+        .replace(/ And /g, " & ");
+    }
+
+    function p(n, d) {
+      return d > 0 ? Math.round((n / d) * 100) : 0;
+    }
+
+    function fmtDur(s) {
+      if (s == null) return "\u2014";
+      return Math.floor(s / 60) + "m " + (s % 60) + "s";
+    }
+
+    function fmtMin(m) {
+      if (m == null) return "\u2014";
+      if (m >= 60) return Math.floor(m / 60) + "h " + Math.round(m % 60) + "m";
+      return Math.round(m) + " min";
     }
 
     function showToast(msg) {
-      const t = document.getElementById("toast");
+      var t = document.getElementById("toast");
       t.textContent = msg;
       t.classList.add("show");
-      setTimeout(() => t.classList.remove("show"), 2800);
+      setTimeout(function() { t.classList.remove("show"); }, 2800);
     }
 
     function escHtml(value) {
