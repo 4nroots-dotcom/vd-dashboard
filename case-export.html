@@ -23,6 +23,8 @@
       --routine: #23915a;
       --signoff-bg: rgba(35, 145, 90, 0.06);
       --signoff-line: rgba(35, 145, 90, 0.18);
+      --discrepancy-bg: rgba(213, 154, 24, 0.06);
+      --discrepancy-line: rgba(213, 154, 24, 0.22);
     }
 
     * {
@@ -411,6 +413,54 @@
       word-break: break-word;
     }
 
+    .discrepancy-panel {
+      border: 1px solid var(--discrepancy-line);
+      background: var(--discrepancy-bg);
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .discrepancy-item {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(213, 154, 24, 0.14);
+    }
+
+    .discrepancy-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .discrepancy-item:first-child {
+      padding-top: 0;
+    }
+
+    .discrepancy-field-name {
+      font-size: 10px;
+      font-weight: 700;
+      color: #8a6a00;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .discrepancy-line {
+      font-size: 13px;
+      color: #3a3000;
+      line-height: 1.5;
+    }
+
+    .discrepancy-line + .discrepancy-line {
+      margin-top: 4px;
+    }
+
+    .discrepancy-verify {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #6a5500;
+      padding-top: 6px;
+      border-top: 1px solid rgba(213, 154, 24, 0.12);
+    }
+
     .footer-note {
       margin-top: 8px;
       font-size: 11px;
@@ -507,7 +557,8 @@
 
       .section,
       .field,
-      .signoff-panel {
+      .signoff-panel,
+      .discrepancy-panel {
         break-inside: avoid;
       }
 
@@ -525,7 +576,7 @@
   <div class="app-shell">
     <div class="toolbar no-print">
       <div class="toolbar-left">
-        <a class="link-btn" href="dashboard.html">← Back to Dashboard</a>
+        <a class="link-btn" href="dashboard.html">&larr; Back to Dashboard</a>
       </div>
       <div class="toolbar-right">
         <button class="btn" id="reload-btn" type="button">Reload</button>
@@ -537,41 +588,133 @@
       For a clean clinical record, disable browser headers/footers in print settings.
     </div>
 
-    <div id="loading-state" class="loading-box">Loading case export…</div>
+    <div id="loading-state" class="loading-box">Loading case export&hellip;</div>
     <div id="error-state" class="error-box" style="display:none;"></div>
     <div id="export-root" style="display:none;"></div>
   </div>
 
   <script>
-    const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+    var SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
+    var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
 
-    const REVIEWER_NAME_MAP = {
+    var REVIEWER_NAME_MAP = {
       "4nroots@gmail.com": "Dr. Balaji Swaminath",
       "hamitranu@gmail.com": "Dr. Hamit Ranu"
+    };
+
+    var CONTRADICTION_FIELD_LABELS = {
+      fever: "Fever",
+      swelling: "Swelling",
+      trauma: "Trauma",
+      bleeding: "Bleeding",
+      uncontrolled_bleeding: "Uncontrolled bleeding",
+      breathing_swallowing: "Airway / Swallowing",
+      difficulty_breathing_or_swallowing: "Airway / Swallowing",
+      feeling_unwell: "Feeling Unwell",
+      avulsed_tooth: "Avulsed tooth",
+      jaw_fracture_signs: "Jaw fracture signs",
+      immunocompromised: "Immunocompromised",
+      pregnant: "Pregnancy",
+      anticoagulant: "Blood Thinners",
+      recent_extraction: "Recent extraction",
+      pericoronitis_signs: "Pericoronitis signs"
     };
 
     if (!window.supabase || !window.supabase.createClient) {
       throw new Error("Supabase library missing");
     }
 
-    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    const loadingEl = document.getElementById("loading-state");
-    const errorEl = document.getElementById("error-state");
-    const rootEl = document.getElementById("export-root");
+    var loadingEl = document.getElementById("loading-state");
+    var errorEl = document.getElementById("error-state");
+    var rootEl = document.getElementById("export-root");
 
-    document.getElementById("reload-btn").addEventListener("click", () => {
+    document.getElementById("reload-btn").addEventListener("click", function() {
       loadExport();
     });
 
-    document.getElementById("print-btn").addEventListener("click", () => {
+    document.getElementById("print-btn").addEventListener("click", function() {
       window.print();
     });
 
     function resolveReviewerName(email) {
       if (!email) return "-";
       return REVIEWER_NAME_MAP[email] || email;
+    }
+
+    function getSO(c) {
+      var so = c.structured_output;
+      if (!so) return {};
+      if (typeof so === "string") {
+        try { return JSON.parse(so); } catch (e) { return {}; }
+      }
+      return so;
+    }
+
+    function getContradictions(c) {
+      var raw = c.contradictions;
+      if (!raw) return [];
+      if (typeof raw === "string") {
+        try { raw = JSON.parse(raw); } catch (e) { return []; }
+      }
+      if (!Array.isArray(raw)) return [];
+      return raw;
+    }
+
+    function humanizeRedFlags(obj) {
+      if (!obj) return "None reported";
+      if (typeof obj === "string") return obj || "None reported";
+      if (Array.isArray(obj)) return obj.length ? obj.join(", ") : "None reported";
+      if (typeof obj !== "object") return "None reported";
+      if (obj.none_of_the_above === true) return "None reported";
+
+      var labels = {
+        trouble_breathing_or_swallowing: "Trouble breathing or swallowing",
+        uncontrolled_bleeding: "Uncontrolled bleeding",
+        facial_swelling: "Facial swelling",
+        fever_or_feeling_unwell: "Fever or feeling unwell",
+        injury_to_teeth_jaw_face: "Injury to teeth, jaw, or face"
+      };
+
+      var items = Object.entries(obj)
+        .filter(function(entry) { return entry[0] !== "none_of_the_above" && entry[1] === true; })
+        .map(function(entry) { return labels[entry[0]] || formatTag(entry[0]); });
+
+      return items.length ? items.join(", ") : "None reported";
+    }
+
+    function humanizeMedicalFlags(obj) {
+      if (!obj) return "No relevant medical history reported";
+      if (typeof obj === "string") return obj || "No relevant medical history reported";
+      if (Array.isArray(obj)) return obj.length ? obj.join(", ") : "No relevant medical history reported";
+      if (typeof obj !== "object") return "No relevant medical history reported";
+      if (obj.none_of_the_above === true) return "No relevant medical history reported";
+
+      var labels = {
+        allergy_antibiotics: "Allergy to antibiotics",
+        allergy_pain_medication: "Allergy to pain medication",
+        blood_thinners: "Blood thinners",
+        diabetes: "Diabetes",
+        pregnancy: "Pregnancy",
+        immunocompromised: "Immunocompromised",
+        other_important_medical_condition: "Other important medical condition"
+      };
+
+      var items = [];
+      Object.entries(obj).forEach(function(entry) {
+        var key = entry[0];
+        var value = entry[1];
+        if (key === "none_of_the_above" || key === "other_medical_detail") return;
+        if (value !== true) return;
+        if (key === "other_important_medical_condition") {
+          items.push(obj.other_medical_detail ? ("Other: " + obj.other_medical_detail) : "Other important medical condition");
+          return;
+        }
+        items.push(labels[key] || formatTag(key));
+      });
+
+      return items.length ? items.join(", ") : "No relevant medical history reported";
     }
 
     async function loadExport() {
@@ -581,56 +724,65 @@
       errorEl.textContent = "";
 
       try {
-        const { data: sessionData, error: sessionError } = await sb.auth.getSession();
+        var sessionResult = await sb.auth.getSession();
+        var sessionData = sessionResult.data;
+        var sessionError = sessionResult.error;
+
         if (sessionError) {
           throw new Error(sessionError.message || "Session error");
         }
 
-        if (!sessionData?.session?.user) {
+        if (!sessionData || !sessionData.session || !sessionData.session.user) {
           throw new Error("Not signed in. Open this page after signing into the dashboard.");
         }
 
-        const caseId = getCaseIdFromUrl();
+        var caseId = getCaseIdFromUrl();
         if (!caseId) {
           throw new Error("Missing case id in URL. Use case-export.html?id=YOUR_CASE_ID");
         }
 
-        const { data, error } = await sb
+        var result = await sb
           .from("triage_cases")
           .select("*")
           .eq("id", caseId)
           .single();
 
-        if (error) {
-          throw new Error(error.message || "Unable to load case");
+        if (result.error) {
+          throw new Error(result.error.message || "Unable to load case");
         }
 
-        if (!data) {
+        if (!result.data) {
           throw new Error("Case not found");
         }
 
-        renderExport(data);
+        renderExport(result.data);
         loadingEl.style.display = "none";
         rootEl.style.display = "block";
       } catch (err) {
         loadingEl.style.display = "none";
         errorEl.style.display = "block";
-        errorEl.textContent = err?.message || "Unexpected export error";
+        errorEl.textContent = (err && err.message) ? err.message : "Unexpected export error";
       }
     }
 
     function getCaseIdFromUrl() {
-      const url = new URL(window.location.href);
+      var url = new URL(window.location.href);
       return url.searchParams.get("id");
     }
 
     function renderExport(c) {
-      const so = c.structured_output || {};
-      const severity = (c.severity || "unknown").toLowerCase();
-      const reviewStatus = (c.review_status || "new").toLowerCase();
-      const reviewedByName = resolveReviewerName(c.reviewed_by);
+      var so = getSO(c);
+      var severity = (c.severity || "unknown").toLowerCase();
+      var reviewStatus = (c.review_status || "new").toLowerCase();
+      var reviewedByName = resolveReviewerName(c.reviewed_by);
 
-      const flags = [
+      var contradictions = getContradictions(c);
+      var hasContradictions = contradictions.length > 0;
+
+      var intakeRedFlags = c.intake_red_flags || {};
+      var intakeMedicalFlags = c.intake_medical_flags || {};
+
+      var flags = [
         { label: "Airway / swallowing difficulty", val: so.difficulty_breathing_or_swallowing },
         { label: "Uncontrolled bleeding", val: so.uncontrolled_bleeding },
         { label: "Rapidly spreading swelling", val: so.feels_very_unwell_or_rapidly_increasing_swelling },
@@ -649,237 +801,161 @@
         { label: "Recent extraction", val: so.recent_extraction || c.recent_extraction }
       ];
 
-      rootEl.innerHTML = `
-        <div class="case-paper">
-          <div class="paper-header">
-            <div class="brand-block">
-              <img
-                class="brand-logo"
-                src="virtualdentist-logo.png"
-                alt="VirtualDentist.ai"
-                onerror="this.style.display='none';"
-              />
-              <div class="record-title">Clinical Triage Record</div>
-              <div class="record-subtitle">Generated for documentation / export</div>
-            </div>
+      var html = '<div class="case-paper">' +
+        '<div class="paper-header">' +
+          '<div class="brand-block">' +
+            '<img class="brand-logo" src="virtualdentist-logo.png" alt="VirtualDentist.ai" onerror="this.style.display=\'none\';" />' +
+            '<div class="record-title">Clinical Triage Record</div>' +
+            '<div class="record-subtitle">Generated for documentation / export</div>' +
+          '</div>' +
+          '<div class="header-meta">' +
+            '<div class="header-meta-row"><strong>Case ID:</strong> ' + escHtml(c.id || "-") + '</div>' +
+            '<div class="header-meta-row"><strong>Call date:</strong> ' + escHtml(formatDatetime(c.created_at)) + '</div>' +
+            '<div class="header-meta-row"><strong>Exported:</strong> ' + escHtml(formatDatetime(new Date().toISOString())) + '</div>' +
+            '<div class="severity-pill ' + escAttr(severity) + '">' + escHtml((c.severity || "unknown").toUpperCase()) + '</div>' +
+          '</div>' +
+        '</div>' +
 
-            <div class="header-meta">
-              <div class="header-meta-row"><strong>Case ID:</strong> ${escHtml(c.id || "-")}</div>
-              <div class="header-meta-row"><strong>Call date:</strong> ${escHtml(formatDatetime(c.created_at))}</div>
-              <div class="header-meta-row"><strong>Exported:</strong> ${escHtml(formatDatetime(new Date().toISOString()))}</div>
-              <div class="severity-pill ${escAttr(severity)}">${escHtml((c.severity || "unknown").toUpperCase())}</div>
-            </div>
-          </div>
+        '<div class="paper-body">' +
 
-          <div class="paper-body">
-            <div class="section">
-              <div class="section-head">
-                <div class="section-title">Patient & Call Information</div>
-              </div>
-              <div class="section-body">
-                <div class="grid-4">
-                  <div class="field">
-                    <div class="field-label">Patient Name</div>
-                    <div class="field-value">${escHtml(c.patient_name || "Unknown Patient")}</div>
-                  </div>
-                  <div class="field">
-                    <div class="field-label">Phone</div>
-                    <div class="field-value">${escHtml(formatPhone(c.patient_phone) || "-")}</div>
-                  </div>
-                  <div class="field">
-                    <div class="field-label">Call Duration</div>
-                    <div class="field-value">${escHtml(formatDuration(c.duration_seconds))}</div>
-                  </div>
-                  <div class="field">
-                    <div class="field-label">Review Status</div>
-                    <div class="field-value">
-                      <span class="status-pill ${escAttr(reviewStatus)}">${escHtml(reviewStatus)}</span>
-                    </div>
-                  </div>
-                  <div class="field">
-                    <div class="field-label">Triage Tag</div>
-                    <div class="field-value">${escHtml(formatTag(c.triage_tag))}</div>
-                  </div>
-                  <div class="field">
-                    <div class="field-label">Extraction Source</div>
-                    <div class="field-value">${escHtml(c.extraction_source || "-")}</div>
-                  </div>
-                  <div class="field">
-                    <div class="field-label">Call ID</div>
-                    <div class="field-value mono">${escHtml(c.vapi_call_id || "-")}</div>
-                  </div>
-                  <div class="field">
-                    <div class="field-label">Created At</div>
-                    <div class="field-value">${escHtml(formatDatetime(c.created_at))}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          /* Patient & Call Information */
+          '<div class="section">' +
+            '<div class="section-head"><div class="section-title">Patient & Call Information</div></div>' +
+            '<div class="section-body"><div class="grid-4">' +
+              field("Patient Name", c.patient_name || "Unknown Patient") +
+              field("Phone", formatPhone(c.patient_phone) || "-") +
+              field("Call Duration", formatDuration(c.duration_seconds)) +
+              fieldHtml("Review Status", '<span class="status-pill ' + escAttr(reviewStatus) + '">' + escHtml(reviewStatus) + '</span>') +
+              field("Triage Tag", formatTag(c.triage_tag)) +
+              field("Extraction Source", c.extraction_source || "-") +
+              fieldMono("Call ID", c.vapi_call_id || "-") +
+              field("Created At", formatDatetime(c.created_at)) +
+            '</div></div>' +
+          '</div>' +
 
-            <div class="section">
-              <div class="section-head">
-                <div class="section-title">Clinical Triage Summary</div>
-              </div>
-              <div class="section-body">
-                <div class="grid-3">
-                  <div class="field">
-                    <div class="field-label">Chief Complaint</div>
-                    <div class="field-value">${escHtml(so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-")}</div>
-                  </div>
-                  <div class="field">
-                    <div class="field-label">Onset</div>
-                    <div class="field-value">${escHtml(so.onset || c.onset || "-")}</div>
-                  </div>
-                  <div class="field">
-                    <div class="field-label">Pain Score</div>
-                    <div class="field-value">${escHtml(formatPain(so.pain_score, c.pain_score))}</div>
-                  </div>
-                  <div class="field">
-                    <div class="field-label">Location</div>
-                    <div class="field-value">${escHtml([so.jaw, so.side].filter(Boolean).join(" / ") || "-")}</div>
-                  </div>
-                  <div class="field">
-                    <div class="field-label">Severity</div>
-                    <div class="field-value">${escHtml((c.severity || "unknown").toUpperCase())}</div>
-                  </div>
-                  <div class="field">
-                    <div class="field-label">Severity Reason</div>
-                    <div class="field-value">${escHtml(c.severity_reason || "-")}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          /* Patient Intake */
+          '<div class="section">' +
+            '<div class="section-head"><div class="section-title">Patient Intake</div></div>' +
+            '<div class="section-body"><div class="grid-3">' +
+              field("Date of Birth", formatDateOnly(c.patient_dob)) +
+              field("City / Province", [c.patient_city, c.patient_province].filter(Boolean).join(", ") || "-") +
+              field("Coverage", formatTag(c.coverage_status)) +
+              field("Intake Onset", formatTag(c.onset_bucket)) +
+              field("Intake-Reported Red Flags", humanizeRedFlags(intakeRedFlags)) +
+              field("Relevant Medical History", humanizeMedicalFlags(intakeMedicalFlags)) +
+            '</div></div>' +
+          '</div>' +
 
-            <div class="section">
-              <div class="section-head">
-                <div class="section-title">Clinical Flags</div>
-              </div>
-              <div class="section-body">
-                <div class="flags-grid">
-                  ${flags.map(renderFlagRow).join("")}
-                </div>
-              </div>
-            </div>
+          /* Contradictions */
+          (hasContradictions
+            ? '<div class="section">' +
+                '<div class="section-head"><div class="section-title">\u26A0 Intake vs. Call Discrepancies</div></div>' +
+                '<div class="section-body"><div class="discrepancy-panel">' +
+                  contradictions.map(function(item) {
+                    var fLabel = CONTRADICTION_FIELD_LABELS[item.field] || formatTag(item.field || "Discrepancy");
+                    return '<div class="discrepancy-item">' +
+                      '<div class="discrepancy-field-name">' + escHtml(fLabel) + '</div>' +
+                      '<div class="discrepancy-line"><strong>Intake:</strong> ' + escHtml(item.intake_value || "-") + '</div>' +
+                      '<div class="discrepancy-line"><strong>Call:</strong> ' + escHtml(item.call_value || "-") + '</div>' +
+                      (item.clinical_note ? '<div class="discrepancy-verify"><strong>Verify:</strong> ' + escHtml(item.clinical_note) + '</div>' : '') +
+                    '</div>';
+                  }).join("") +
+                '</div></div>' +
+              '</div>'
+            : '') +
 
-            <div class="section">
-              <div class="section-head">
-                <div class="section-title">AI Clinical Note</div>
-                <div class="section-note">System-generated triage note</div>
-              </div>
-              <div class="section-body">
-                <div class="narrative mono">${escHtml(c.clinical_note || "No clinical note generated.")}</div>
-              </div>
-            </div>
+          /* Clinical Triage Summary */
+          '<div class="section">' +
+            '<div class="section-head"><div class="section-title">Clinical Triage Summary</div></div>' +
+            '<div class="section-body"><div class="grid-3">' +
+              field("Chief Complaint", so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-") +
+              field("Onset", so.onset || c.onset || "-") +
+              field("Pain Score", formatPain(so.pain_score, c.pain_score)) +
+              field("Location", [so.jaw, so.side].filter(Boolean).join(" / ") || "-") +
+              field("Severity", (c.severity || "unknown").toUpperCase()) +
+              field("Severity Reason", c.severity_reason || "-") +
+            '</div></div>' +
+          '</div>' +
 
-            ${
-              reviewStatus === "reviewed"
-                ? `
-                  <div class="section">
-                    <div class="section-head">
-                      <div class="section-title">Clinical Sign-off</div>
-                    </div>
-                    <div class="section-body">
-                      <div class="signoff-panel">
-                        <div class="signoff-grid">
-                          <div class="signoff-row">
-                            <div class="signoff-label">Reviewed by</div>
-                            <div class="signoff-value">${escHtml(reviewedByName)}</div>
-                          </div>
-                          <div class="signoff-row">
-                            <div class="signoff-label">Reviewed at</div>
-                            <div class="signoff-value">${escHtml(formatDatetime(c.reviewed_at))}</div>
-                          </div>
-                          <div class="signoff-row">
-                            <div class="signoff-label">Final disposition</div>
-                            <div class="signoff-value">${escHtml(formatDisposition(c.final_disposition))}</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                `
-                : ""
-            }
+          /* Clinical Flags */
+          '<div class="section">' +
+            '<div class="section-head"><div class="section-title">Clinical Flags</div></div>' +
+            '<div class="section-body"><div class="flags-grid">' +
+              flags.map(renderFlagRow).join("") +
+            '</div></div>' +
+          '</div>' +
 
-            <div class="section">
-              <div class="section-head">
-                <div class="section-title">Dentist Review</div>
-              </div>
-              <div class="section-body">
-                <div class="grid-3">
-                  <div class="field">
-                    <div class="field-label">Reviewed By</div>
-                    <div class="field-value">${escHtml(reviewedByName)}</div>
-                  </div>
-                  <div class="field">
-                    <div class="field-label">Reviewed At</div>
-                    <div class="field-value">${escHtml(formatDatetime(c.reviewed_at))}</div>
-                  </div>
-                  <div class="field">
-                    <div class="field-label">Final Disposition</div>
-                    <div class="field-value">${escHtml(formatDisposition(c.final_disposition))}</div>
-                  </div>
-                  <div class="field">
-                    <div class="field-label">Prescription Issued</div>
-                    <div class="field-value">${escHtml(formatBoolean(c.prescription_issued))}</div>
-                  </div>
-                  <div class="field">
-                    <div class="field-label">Patient Contacted At</div>
-                    <div class="field-value">${escHtml(formatDatetime(c.contacted_patient_at))}</div>
-                  </div>
-                  <div class="field">
-                    <div class="field-label">Action Taken</div>
-                    <div class="field-value">${escHtml(formatDisposition(c.action_taken))}</div>
-                  </div>
-                </div>
+          /* AI Clinical Note */
+          '<div class="section">' +
+            '<div class="section-head"><div class="section-title">AI Clinical Note</div><div class="section-note">System-generated triage note</div></div>' +
+            '<div class="section-body"><div class="narrative mono">' + escHtml(c.clinical_note || "No clinical note generated.") + '</div></div>' +
+          '</div>' +
 
-                <div style="height:12px;"></div>
+          /* Clinical Sign-off (only if reviewed) */
+          (reviewStatus === "reviewed"
+            ? '<div class="section">' +
+                '<div class="section-head"><div class="section-title">Clinical Sign-off</div></div>' +
+                '<div class="section-body"><div class="signoff-panel"><div class="signoff-grid">' +
+                  '<div class="signoff-row"><div class="signoff-label">Reviewed by</div><div class="signoff-value">' + escHtml(reviewedByName) + '</div></div>' +
+                  '<div class="signoff-row"><div class="signoff-label">Reviewed at</div><div class="signoff-value">' + escHtml(formatDatetime(c.reviewed_at)) + '</div></div>' +
+                  '<div class="signoff-row"><div class="signoff-label">Final disposition</div><div class="signoff-value">' + escHtml(formatDisposition(c.final_disposition)) + '</div></div>' +
+                '</div></div></div>' +
+              '</div>'
+            : '') +
 
-                <div class="field" style="min-height:120px;">
-                  <div class="field-label">Clinical Addendum</div>
-                  <div class="field-value narrative">${escHtml(c.review_notes || "-")}</div>
-                </div>
-              </div>
-            </div>
+          /* Dentist Review */
+          '<div class="section">' +
+            '<div class="section-head"><div class="section-title">Dentist Review</div></div>' +
+            '<div class="section-body"><div class="grid-3">' +
+              field("Reviewed By", reviewedByName) +
+              field("Reviewed At", formatDatetime(c.reviewed_at)) +
+              field("Final Disposition", formatDisposition(c.final_disposition)) +
+              field("Prescription Issued", formatBoolean(c.prescription_issued)) +
+              field("Patient Contacted At", formatDatetime(c.contacted_patient_at)) +
+              field("Action Taken", formatDisposition(c.action_taken)) +
+            '</div>' +
+            '<div style="height:12px;"></div>' +
+            '<div class="field" style="min-height:120px;"><div class="field-label">Clinical Addendum</div><div class="field-value narrative">' + escHtml(c.review_notes || "-") + '</div></div>' +
+            '</div>' +
+          '</div>' +
 
-            <div class="section">
-              <div class="section-head">
-                <div class="section-title">Audit & Metadata</div>
-              </div>
-              <div class="section-body">
-                <div class="grid-2">
-                  <div class="field">
-                    <div class="field-label">Case ID</div>
-                    <div class="field-value mono">${escHtml(c.id || "-")}</div>
-                  </div>
-                  <div class="field">
-                    <div class="field-label">Created Timestamp</div>
-                    <div class="field-value">${escHtml(formatDatetime(c.created_at))}</div>
-                  </div>
-                </div>
-                <div class="footer-note">
-                  Transcript omitted by default in this export format.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
+          /* Audit & Metadata */
+          '<div class="section">' +
+            '<div class="section-head"><div class="section-title">Audit & Metadata</div></div>' +
+            '<div class="section-body"><div class="grid-2">' +
+              fieldMono("Case ID", c.id || "-") +
+              field("Created Timestamp", formatDatetime(c.created_at)) +
+            '</div>' +
+            '<div class="footer-note">Transcript omitted by default in this export format.</div>' +
+            '</div>' +
+          '</div>' +
+
+        '</div>' +
+      '</div>';
+
+      rootEl.innerHTML = html;
+    }
+
+    function field(label, value) {
+      return '<div class="field"><div class="field-label">' + escHtml(label) + '</div><div class="field-value">' + escHtml(value) + '</div></div>';
+    }
+
+    function fieldMono(label, value) {
+      return '<div class="field"><div class="field-label">' + escHtml(label) + '</div><div class="field-value mono">' + escHtml(value) + '</div></div>';
+    }
+
+    function fieldHtml(label, innerHtml) {
+      return '<div class="field"><div class="field-label">' + escHtml(label) + '</div><div class="field-value">' + innerHtml + '</div></div>';
     }
 
     function renderFlagRow(flag) {
-      const present = flag.val === true;
-      return `
-        <div class="flag-row">
-          <div class="flag-dot ${present ? "present" : "absent"}"></div>
-          <div class="flag-label ${present ? "" : "muted"}">${escHtml(flag.label)}</div>
-        </div>
-      `;
+      var present = flag.val === true;
+      return '<div class="flag-row"><div class="flag-dot ' + (present ? "present" : "absent") + '"></div><div class="flag-label ' + (present ? "" : "muted") + '">' + escHtml(flag.label) + '</div></div>';
     }
 
     function formatDatetime(value) {
       if (!value) return "-";
-      const d = new Date(value);
+      var d = new Date(value);
       if (Number.isNaN(d.getTime())) return "-";
       return d.toLocaleDateString("en-CA", {
         year: "numeric",
@@ -892,19 +968,30 @@
       });
     }
 
+    function formatDateOnly(value) {
+      if (!value) return "-";
+      var d = new Date(value);
+      if (Number.isNaN(d.getTime())) return String(value);
+      return d.toLocaleDateString("en-CA", {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+      });
+    }
+
     function formatDuration(seconds) {
       if (seconds === null || seconds === undefined || Number.isNaN(Number(seconds))) return "-";
-      const s = Number(seconds);
-      const mins = Math.floor(s / 60);
-      const secs = s % 60;
-      return `${mins}m ${secs}s`;
+      var s = Number(seconds);
+      var mins = Math.floor(s / 60);
+      var secs = s % 60;
+      return mins + "m " + secs + "s";
     }
 
     function formatPhone(p) {
       if (!p) return "-";
-      const d = String(p).replace(/\D/g, "");
-      if (d.length === 10) return `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`;
-      if (d.length === 11 && d.startsWith("1")) return `1 (${d.slice(1, 4)}) ${d.slice(4, 7)}-${d.slice(7)}`;
+      var d = String(p).replace(/\D/g, "");
+      if (d.length === 10) return "(" + d.slice(0, 3) + ") " + d.slice(3, 6) + "-" + d.slice(6);
+      if (d.length === 11 && d.startsWith("1")) return "1 (" + d.slice(1, 4) + ") " + d.slice(4, 7) + "-" + d.slice(7);
       return String(p);
     }
 
@@ -912,13 +999,13 @@
       if (!tag || tag === "-") return "-";
       return String(tag)
         .replace(/_/g, " ")
-        .replace(/\b\w/g, (l) => l.toUpperCase())
+        .replace(/\b\w/g, function(l) { return l.toUpperCase(); })
         .replace(/ And /g, " & ");
     }
 
     function formatDisposition(value) {
       if (!value) return "-";
-      const map = {
+      var map = {
         booked: "Booked appointment",
         referred_er: "Referred to ER",
         rx_only: "Prescription only",
@@ -935,9 +1022,9 @@
     }
 
     function formatPain(primary, fallback) {
-      const pain = primary ?? fallback;
+      var pain = (primary != null) ? primary : fallback;
       if (pain === null || pain === undefined || pain === "") return "-";
-      return `${pain}/10`;
+      return pain + "/10";
     }
 
     function escHtml(value) {
