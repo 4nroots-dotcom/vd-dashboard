@@ -505,35 +505,35 @@
   </div>
 
   <script>
-    const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
-    const INTAKE_TRIGGER_URL = SUPABASE_URL + "/functions/v1/intake-trigger";
-    const EXPECTED_CALLER_NUMBER_DISPLAY = "1-833-959-3932";
-    const FALLBACK_DIAL_NUMBER_DISPLAY = "1-833-959-3932";
-    const FALLBACK_DIAL_NUMBER_HREF = "tel:+18339593932";
+    var SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
+    var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+    var INTAKE_TRIGGER_URL = SUPABASE_URL + "/functions/v1/intake-trigger";
+    var INTAKE_SECRET = "af0ca85c19cd7dbd62ba2d03bf7e0cda6dc04f84048d3b8f";
+    var EXPECTED_CALLER_NUMBER_DISPLAY = "1-833-959-3932";
+    var FALLBACK_DIAL_NUMBER_DISPLAY = "1-833-959-3932";
+    var FALLBACK_DIAL_NUMBER_HREF = "tel:+18339593932";
 
     if (!window.supabase || !window.supabase.createClient) {
       alert("Supabase library failed to load.");
       throw new Error("Supabase library missing");
     }
 
-    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    const welcomeScreen = document.getElementById("screen-welcome");
-    const formScreen = document.getElementById("screen-form");
-    const handoffScreen = document.getElementById("screen-handoff");
+    var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    var welcomeScreen = document.getElementById("screen-welcome");
+    var formScreen = document.getElementById("screen-form");
+    var handoffScreen = document.getElementById("screen-handoff");
 
     document.getElementById("patient-dob").max = getTodayISODate();
 
-    // Restore saved form state if present
     restoreFormState();
 
-    document.getElementById("start-assessment-btn").addEventListener("click", () => {
+    document.getElementById("start-assessment-btn").addEventListener("click", function() {
       welcomeScreen.style.display = "none";
       formScreen.classList.add("show");
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
 
-    document.getElementById("back-to-welcome-btn").addEventListener("click", () => {
+    document.getElementById("back-to-welcome-btn").addEventListener("click", function() {
       saveFormState();
       formScreen.classList.remove("show");
       welcomeScreen.style.display = "block";
@@ -546,45 +546,45 @@
     setupIntakeSubmit();
 
     function setupExclusiveCheckboxes() {
-      const redFlagNone = document.getElementById("rf-none");
-      const redFlagAvulsion = document.getElementById("rf-avulsion");
-      const redFlagIds = [
+      var redFlagNone = document.getElementById("rf-none");
+      var redFlagAvulsion = document.getElementById("rf-avulsion");
+      var redFlagIds = [
         "rf-breathing-swallowing", "rf-uncontrolled-bleeding",
         "rf-facial-swelling", "rf-fever-unwell", "rf-trauma", "rf-avulsion"
       ];
-      const medicalNone = document.getElementById("mh-none");
-      const medicalIds = [
+      var medicalNone = document.getElementById("mh-none");
+      var medicalIds = [
         "mh-allergy-antibiotics", "mh-allergy-pain", "mh-blood-thinners",
         "mh-diabetes", "mh-pregnancy", "mh-immunocompromised", "mh-other"
       ];
-      const mhOther = document.getElementById("mh-other");
+      var mhOther = document.getElementById("mh-other");
 
-      redFlagNone.addEventListener("change", () => {
+      redFlagNone.addEventListener("change", function() {
         if (redFlagNone.checked) {
-          redFlagIds.forEach(id => { const el = document.getElementById(id); if (el) el.checked = false; });
+          redFlagIds.forEach(function(id) { var el = document.getElementById(id); if (el) el.checked = false; });
           toggleAvulsionTime();
         }
       });
 
-      redFlagIds.forEach(id => {
-        const el = document.getElementById(id);
-        el.addEventListener("change", () => {
+      redFlagIds.forEach(function(id) {
+        var el = document.getElementById(id);
+        el.addEventListener("change", function() {
           if (el.checked) redFlagNone.checked = false;
           toggleAvulsionTime();
         });
       });
 
-      medicalNone.addEventListener("change", () => {
+      medicalNone.addEventListener("change", function() {
         if (medicalNone.checked) {
-          medicalIds.forEach(id => { const el = document.getElementById(id); if (el) el.checked = false; });
+          medicalIds.forEach(function(id) { var el = document.getElementById(id); if (el) el.checked = false; });
           document.getElementById("mh-other-detail").value = "";
           toggleOtherMedicalDetail();
         }
       });
 
-      medicalIds.forEach(id => {
-        const el = document.getElementById(id);
-        el.addEventListener("change", () => {
+      medicalIds.forEach(function(id) {
+        var el = document.getElementById(id);
+        el.addEventListener("change", function() {
           if (el.checked) medicalNone.checked = false;
           toggleOtherMedicalDetail();
         });
@@ -596,24 +596,24 @@
     }
 
     function toggleOtherMedicalDetail() {
-      const mhOther = document.getElementById("mh-other");
-      const wrapper = document.getElementById("mh-other-wrapper");
-      const detail = document.getElementById("mh-other-detail");
+      var mhOther = document.getElementById("mh-other");
+      var wrapper = document.getElementById("mh-other-wrapper");
+      var detail = document.getElementById("mh-other-detail");
       if (mhOther.checked) { wrapper.style.display = "block"; }
       else { wrapper.style.display = "none"; detail.value = ""; }
     }
 
     function toggleAvulsionTime() {
-      const avulsionChecked = document.getElementById("rf-avulsion").checked;
-      const wrapper = document.getElementById("avulsion-time-wrapper");
+      var avulsionChecked = document.getElementById("rf-avulsion").checked;
+      var wrapper = document.getElementById("avulsion-time-wrapper");
       if (avulsionChecked) { wrapper.style.display = "block"; }
       else { wrapper.style.display = "none"; document.getElementById("avulsion-time").value = ""; }
     }
 
     function setupPhoneFormatting() {
-      const phoneInput = document.getElementById("patient-phone");
-      phoneInput.addEventListener("input", () => {
-        const digits = normalizePhone(phoneInput.value).slice(0, 11);
+      var phoneInput = document.getElementById("patient-phone");
+      phoneInput.addEventListener("input", function() {
+        var digits = normalizePhone(phoneInput.value).slice(0, 11);
         phoneInput.value = formatPhoneForDisplay(digits);
       });
     }
@@ -623,33 +623,46 @@
     }
 
     async function handleIntakeSubmit() {
-      const submitBtn = document.getElementById("intake-submit-btn");
+      var submitBtn = document.getElementById("intake-submit-btn");
       clearIntakeError();
       submitBtn.disabled = true;
       submitBtn.textContent = "Saving...";
 
       try {
-        const formData = collectIntakeFormData();
-        const validationError = validateIntakeFormData(formData);
+        var formData = collectIntakeFormData();
+        var validationError = validateIntakeFormData(formData);
         if (validationError) { showIntakeError(validationError); return; }
 
-        const payload = buildIntakePayload(formData);
-        const resp = await fetch(INTAKE_TRIGGER_URL, {
+        var payload = buildIntakePayload(formData);
+        var resp = await fetch(INTAKE_TRIGGER_URL, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "x-vd-secret": INTAKE_SECRET
+          },
           body: JSON.stringify(payload),
         });
 
-        const result = await resp.json().catch(() => null);
-        if (!resp.ok || !result?.ok) {
-          showIntakeError(result?.error || result?.details || "Unable to save your information right now.");
+        var result = null;
+        try { result = await resp.json(); } catch (e) { result = null; }
+
+        if (!resp.ok || !result || !result.ok) {
+          var errMsg = (result && result.error) ? result.error : (result && result.details) ? result.details : "Unable to save your information right now.";
+          showIntakeError(errMsg);
+          return;
+        }
+
+        if (result.duplicate) {
+          clearFormState();
+          showHandoff(result.case_id, false, true);
           return;
         }
 
         clearFormState();
-        showHandoff(result.case_id, result.call_initiated === true);
+        showHandoff(result.case_id, result.call_initiated === true, false);
       } catch (err) {
-        showIntakeError(err?.message || "Unexpected error while saving your information.");
+        var msg = (err && err.message) ? err.message : "Unexpected error while saving your information.";
+        showIntakeError(msg);
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = "Continue";
@@ -730,23 +743,31 @@
       };
     }
 
-    function showHandoff(caseId, callInitiated) {
+    function showHandoff(caseId, callInitiated, isDuplicate) {
       formScreen.classList.remove("show");
       handoffScreen.classList.add("show");
 
-      const handoffCopy = document.getElementById("handoff-copy");
-      const handoffPanelCopy = document.getElementById("handoff-panel-copy");
-      const caseStatus = document.getElementById("success-case-id");
-      const expectCallCard = document.getElementById("expect-call-card");
-      const incomingNumberCard = document.getElementById("incoming-number-card");
-      const incomingNumberValue = document.getElementById("incoming-number-value");
-      const callActions = document.getElementById("call-actions");
+      var handoffCopy = document.getElementById("handoff-copy");
+      var handoffPanelCopy = document.getElementById("handoff-panel-copy");
+      var caseStatus = document.getElementById("success-case-id");
+      var expectCallCard = document.getElementById("expect-call-card");
+      var incomingNumberCard = document.getElementById("incoming-number-card");
+      var incomingNumberValue = document.getElementById("incoming-number-value");
+      var callActions = document.getElementById("call-actions");
 
       handoffCopy.textContent = "Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow up with recommendations as appropriate.";
       caseStatus.textContent = caseId ? "Case reference: " + caseId : "Intake submitted successfully";
       incomingNumberValue.textContent = EXPECTED_CALLER_NUMBER_DISPLAY;
 
-      if (callInitiated) {
+      if (isDuplicate) {
+        handoffPanelCopy.textContent = "We already have your information. Your phone should ring shortly. If you do not receive a call within a few minutes, please call Sam directly.";
+        expectCallCard.style.display = "block";
+        incomingNumberCard.style.display = "block";
+        callActions.innerHTML =
+          '<a class="call-btn" href="' + FALLBACK_DIAL_NUMBER_HREF + '">Call Sam now</a>' +
+          '<a class="call-number" href="' + FALLBACK_DIAL_NUMBER_HREF + '">' + FALLBACK_DIAL_NUMBER_DISPLAY + '</a>' +
+          '<div class="call-fallback">If you have already spoken with Sam, no further action is needed.</div>';
+      } else if (callInitiated) {
         handoffPanelCopy.textContent = "Your intake has been received and Sam will call the phone number you provided shortly.";
         expectCallCard.style.display = "block";
         incomingNumberCard.style.display = "block";
@@ -766,12 +787,11 @@
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    // ── Form state persistence ──────────────────────────────────────────────
-    const STATE_KEY = "vd_intake_state";
+    var STATE_KEY = "vd_intake_state";
 
     function saveFormState() {
       try {
-        const state = {
+        var state = {
           patientName: getValue("patient-name"),
           patientDob: getValue("patient-dob"),
           patientPhone: getValue("patient-phone"),
@@ -799,14 +819,14 @@
           acknowledged: isChecked("intake-acknowledge")
         };
         sessionStorage.setItem(STATE_KEY, JSON.stringify(state));
-      } catch (e) { /* sessionStorage unavailable -- silent fail */ }
+      } catch (e) { /* sessionStorage unavailable */ }
     }
 
     function restoreFormState() {
       try {
-        const raw = sessionStorage.getItem(STATE_KEY);
+        var raw = sessionStorage.getItem(STATE_KEY);
         if (!raw) return;
-        const s = JSON.parse(raw);
+        var s = JSON.parse(raw);
 
         setVal("patient-name", s.patientName);
         setVal("patient-dob", s.patientDob);
@@ -838,28 +858,27 @@
 
         toggleOtherMedicalDetail();
         toggleAvulsionTime();
-      } catch (e) { /* corrupt state -- silent fail */ }
+      } catch (e) { /* corrupt state */ }
     }
 
     function clearFormState() {
       try { sessionStorage.removeItem(STATE_KEY); } catch (e) { /* silent */ }
     }
 
-    // ── Utilities ───────────────────────────────────────────────────────────
     function getTodayISODate() {
-      const d = new Date();
+      var d = new Date();
       return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
     }
 
-    function getValue(id) { const el = document.getElementById(id); return el ? el.value.trim() : ""; }
-    function getOptionalValue(id) { const el = document.getElementById(id); if (!el) return null; const v = el.value.trim(); return v || null; }
-    function isChecked(id) { const el = document.getElementById(id); return !!(el && el.checked); }
-    function setVal(id, val) { const el = document.getElementById(id); if (el && val != null) el.value = val; }
-    function setCheck(id, val) { const el = document.getElementById(id); if (el) el.checked = !!val; }
+    function getValue(id) { var el = document.getElementById(id); return el ? el.value.trim() : ""; }
+    function getOptionalValue(id) { var el = document.getElementById(id); if (!el) return null; var v = el.value.trim(); return v || null; }
+    function isChecked(id) { var el = document.getElementById(id); return !!(el && el.checked); }
+    function setVal(id, val) { var el = document.getElementById(id); if (el && val != null) el.value = val; }
+    function setCheck(id, val) { var el = document.getElementById(id); if (el) el.checked = !!val; }
 
     function normalizePhone(value) { return value.replace(/\D/g, ""); }
-    function looksLikeNorthAmericanPhone(value) { const d = value.replace(/\D/g, ""); return d.length === 10 || (d.length === 11 && d.startsWith("1")); }
-    function formatPhoneForStorage(value) { const d = value.replace(/\D/g, ""); if (d.length === 11 && d.startsWith("1")) return d.slice(1); return d; }
+    function looksLikeNorthAmericanPhone(value) { var d = value.replace(/\D/g, ""); return d.length === 10 || (d.length === 11 && d.startsWith("1")); }
+    function formatPhoneForStorage(value) { var d = value.replace(/\D/g, ""); if (d.length === 11 && d.startsWith("1")) return d.slice(1); return d; }
     function formatPhoneForDisplay(digits) {
       if (!digits) return "";
       if (digits.length <= 10) {
@@ -868,7 +887,7 @@
         return "(" + digits.slice(0, 3) + ") " + digits.slice(3, 6) + "-" + digits.slice(6, 10);
       }
       if (digits.length === 11 && digits.startsWith("1")) {
-        const core = digits.slice(1);
+        var core = digits.slice(1);
         if (core.length < 4) return "1 " + core;
         if (core.length < 7) return "1 (" + core.slice(0, 3) + ") " + core.slice(3);
         return "1 (" + core.slice(0, 3) + ") " + core.slice(3, 6) + "-" + core.slice(6, 10);
@@ -876,19 +895,19 @@
       return digits;
     }
 
-    function isValidDateInput(value) { if (!value) return false; const d = new Date(value); return !Number.isNaN(d.getTime()); }
-    function isFutureDate(value) { const d = new Date(value); const today = new Date(); today.setHours(0,0,0,0); return d > today; }
-    function atLeastOneTrue(obj) { return Object.values(obj).some(v => v === true); }
+    function isValidDateInput(value) { if (!value) return false; var d = new Date(value); return !Number.isNaN(d.getTime()); }
+    function isFutureDate(value) { var d = new Date(value); var today = new Date(); today.setHours(0,0,0,0); return d > today; }
+    function atLeastOneTrue(obj) { return Object.values(obj).some(function(v) { return v === true; }); }
 
     function showIntakeError(message) {
-      const errEl = document.getElementById("intake-error");
+      var errEl = document.getElementById("intake-error");
       errEl.textContent = message;
       errEl.style.display = "block";
       window.scrollTo({ top: errEl.getBoundingClientRect().top + window.scrollY - 80, behavior: "smooth" });
     }
 
     function clearIntakeError() {
-      const errEl = document.getElementById("intake-error");
+      var errEl = document.getElementById("intake-error");
       errEl.textContent = "";
       errEl.style.display = "none";
     }
