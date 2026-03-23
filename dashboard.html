@@ -65,8 +65,6 @@
       font: inherit;
     }
 
-    /* AUTH */
-
     #auth-screen {
       min-height: 100vh;
       display: flex;
@@ -180,8 +178,6 @@
       white-space: pre-wrap;
     }
 
-    /* APP */
-
     #app {
       display: none;
       flex-direction: column;
@@ -217,1437 +213,288 @@
       white-space: nowrap;
     }
 
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
-    }
-
-    .header-user {
-      font-size: 12px;
-      color: var(--text-secondary);
-      display: none;
-    }
-
-    @media (min-width: 560px) {
-      .header-user {
-        display: block;
-      }
-    }
+    .header-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .header-user { font-size: 12px; color: var(--text-secondary); display: none; }
+    @media (min-width: 560px) { .header-user { display: block; } }
 
     .header-link {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 34px;
-      padding: 0 12px;
-      text-decoration: none;
-      border: 1px solid rgba(0, 200, 232, 0.18);
-      background: rgba(0, 200, 232, 0.08);
-      color: var(--cyan);
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      transition: border-color 0.2s, background 0.2s, color 0.2s;
-      white-space: nowrap;
+      display: inline-flex; align-items: center; justify-content: center; min-height: 34px; padding: 0 12px;
+      text-decoration: none; border: 1px solid rgba(0, 200, 232, 0.18); background: rgba(0, 200, 232, 0.08);
+      color: var(--cyan); border-radius: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; transition: border-color 0.2s, background 0.2s, color 0.2s; white-space: nowrap;
     }
-
-    .header-link:hover {
-      border-color: rgba(0, 200, 232, 0.35);
-      background: rgba(0, 200, 232, 0.12);
-    }
+    .header-link:hover { border-color: rgba(0, 200, 232, 0.35); background: rgba(0, 200, 232, 0.12); }
 
     .btn-signout {
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text-secondary);
-      font-size: 12px;
-      padding: 6px 12px;
-      cursor: pointer;
+      background: transparent; border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text-secondary); font-size: 12px; padding: 6px 12px; cursor: pointer;
       transition: border-color 0.2s, color 0.2s;
     }
+    .btn-signout:hover { border-color: var(--border-active); color: var(--cyan); }
 
-    .btn-signout:hover {
-      border-color: var(--border-active);
-      color: var(--cyan);
-    }
+    .tabs-shell { position: sticky; top: 58px; z-index: 140; background: rgba(15, 32, 68, 0.94); border-bottom: 1px solid var(--border); flex-shrink: 0; backdrop-filter: blur(10px); }
+    .nav-tabs { display: flex; padding: 0 12px; gap: 2px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .nav-tabs::-webkit-scrollbar { display: none; }
+    .nav-tab { background: none; border: none; color: var(--text-muted); font-size: 13px; font-weight: 500; padding: 12px 12px; cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s, opacity 0.2s; white-space: nowrap; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .nav-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+    .nav-tab:hover:not(.active) { color: var(--text-primary); }
+    .tab-badge { background: var(--urgent); color: #fff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; min-width: 18px; text-align: center; }
 
-    .tabs-shell {
-      position: sticky;
-      top: 58px;
-      z-index: 140;
-      background: rgba(15, 32, 68, 0.94);
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-      backdrop-filter: blur(10px);
-    }
+    .queue-controls { position: sticky; top: 105px; z-index: 130; background: rgba(15, 32, 68, 0.94); border-bottom: 1px solid var(--border); flex-shrink: 0; backdrop-filter: blur(10px); }
+    .filter-bar { padding: 10px 12px; display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; background: rgba(0, 0, 0, 0.14); }
+    .filter-bar::-webkit-scrollbar { display: none; }
 
-    .nav-tabs {
-      display: flex;
-      padding: 0 12px;
-      gap: 2px;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
+    .filter-chip, .sort-chip { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 20px; color: var(--text-secondary); font-size: 12px; font-weight: 600; padding: 6px 12px; cursor: pointer; transition: all 0.2s; white-space: nowrap; flex-shrink: 0; }
+    .filter-chip.active, .sort-chip.active { background: var(--cyan-faint); border-color: var(--border-active); color: var(--cyan); }
+    .sort-chip.disabled { opacity: 0.45; cursor: not-allowed; color: var(--text-muted); border-color: var(--border); background: rgba(255, 255, 255, 0.02); }
+    .controls-disabled .filter-chip, .controls-disabled .sort-chip, .controls-disabled .nav-tab { pointer-events: none; }
 
-    .nav-tabs::-webkit-scrollbar {
-      display: none;
-    }
+    .filter-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .refresh-btn { background: transparent; border: 1px solid var(--border); border-radius: 8px; color: var(--text-muted); padding: 6px 10px; cursor: pointer; font-size: 16px; transition: color 0.2s, border-color 0.2s; line-height: 1; flex-shrink: 0; }
+    .refresh-btn:hover { color: var(--cyan); border-color: var(--border-active); }
+    .refresh-btn.spinning { animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .nav-tab {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 13px;
-      font-weight: 500;
-      padding: 12px 12px;
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: color 0.2s, border-color 0.2s, opacity 0.2s;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-shrink: 0;
-    }
+    .sort-bar { padding: 8px 12px; display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; border-top: 1px solid rgba(255,255,255,0.04); background: rgba(0, 0, 0, 0.12); }
+    .sort-bar::-webkit-scrollbar { display: none; }
+    .sort-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; flex-shrink: 0; }
 
-    .nav-tab.active {
-      color: var(--cyan);
-      border-bottom-color: var(--cyan);
-    }
+    .queue-hint { display: none; padding: 8px 12px 10px; font-size: 11px; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.04); background: rgba(0, 0, 0, 0.12); }
+    .queue-hint.show { display: block; }
 
-    .nav-tab:hover:not(.active) {
-      color: var(--text-primary);
-    }
+    .desktop-layout { display: flex; flex-direction: column; flex: 1; overflow: hidden; position: relative; min-height: 0; }
+    .queue-column { display: flex; flex-direction: column; flex: 1; overflow-y: auto; width: 100%; min-height: 0; background: linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0)), var(--navy-1); }
+    #detail-column { display: none; flex-direction: column; flex: 1; position: absolute; inset: 0; background: var(--navy-1); z-index: 20; min-height: 0; overflow: hidden; }
+    #queue-panel, #detail-panel { display: flex; flex-direction: column; flex: 1; min-height: 0; }
 
-    .tab-badge {
-      background: var(--urgent);
-      color: #fff;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 1px 6px;
-      border-radius: 10px;
-      min-width: 18px;
-      text-align: center;
-    }
-
-    .queue-controls {
-      position: sticky;
-      top: 105px;
-      z-index: 130;
-      background: rgba(15, 32, 68, 0.94);
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-      backdrop-filter: blur(10px);
-    }
-
-    .filter-bar {
-      padding: 10px 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      background: rgba(0, 0, 0, 0.14);
-    }
-
-    .filter-bar::-webkit-scrollbar {
-      display: none;
-    }
-
-    .filter-chip,
-    .sort-chip {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      color: var(--text-secondary);
-      font-size: 12px;
-      font-weight: 600;
-      padding: 6px 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .filter-chip.active,
-    .sort-chip.active {
-      background: var(--cyan-faint);
-      border-color: var(--border-active);
-      color: var(--cyan);
-    }
-
-    .sort-chip.disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-      color: var(--text-muted);
-      border-color: var(--border);
-      background: rgba(255, 255, 255, 0.02);
-    }
-
-    .controls-disabled .filter-chip,
-    .controls-disabled .sort-chip,
-    .controls-disabled .nav-tab {
-      pointer-events: none;
-    }
-
-    .filter-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-
-    .refresh-btn {
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text-muted);
-      padding: 6px 10px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: color 0.2s, border-color 0.2s;
-      line-height: 1;
-      flex-shrink: 0;
-    }
-
-    .refresh-btn:hover {
-      color: var(--cyan);
-      border-color: var(--border-active);
-    }
-
-    .refresh-btn.spinning {
-      animation: spin 0.6s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .sort-bar {
-      padding: 8px 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      border-top: 1px solid rgba(255,255,255,0.04);
-      background: rgba(0, 0, 0, 0.12);
-    }
-
-    .sort-bar::-webkit-scrollbar {
-      display: none;
-    }
-
-    .sort-label {
-      font-size: 11px;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      flex-shrink: 0;
-    }
-
-    .queue-hint {
-      display: none;
-      padding: 8px 12px 10px;
-      font-size: 11px;
-      color: var(--text-muted);
-      border-top: 1px solid rgba(255,255,255,0.04);
-      background: rgba(0, 0, 0, 0.12);
-    }
-
-    .queue-hint.show {
-      display: block;
-    }
-
-    .desktop-layout {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      overflow: hidden;
-      position: relative;
-      min-height: 0;
-    }
-
-    .queue-column {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      overflow-y: auto;
-      width: 100%;
-      min-height: 0;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0)),
-        var(--navy-1);
-    }
-
-    #detail-column {
-      display: none;
-      flex-direction: column;
-      flex: 1;
-      position: absolute;
-      inset: 0;
-      background: var(--navy-1);
-      z-index: 20;
-      min-height: 0;
-      overflow: hidden;
-    }
-
-    #queue-panel,
-    #detail-panel {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      min-height: 0;
-    }
-
-    .case-list {
-      padding: 12px 16px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .case-card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
-      cursor: pointer;
-      transition: border-color 0.2s, background 0.2s, opacity 0.2s, transform 0.12s;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-    }
-
-    .case-card::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-    }
-
+    .case-list { padding: 12px 16px 20px; display: flex; flex-direction: column; gap: 10px; }
+    .case-card { background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; cursor: pointer; transition: border-color 0.2s, background 0.2s, opacity 0.2s, transform 0.12s; position: relative; overflow: hidden; box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
+    .case-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
     .case-card.urgent::before { background: var(--urgent); }
     .case-card.emergency::before { background: var(--emergency); }
     .case-card.routine::before { background: var(--routine); }
     .case-card.unknown::before { background: var(--cyan); }
-
-    .case-card:hover {
-      border-color: var(--border-active);
-      background: var(--surface-hover);
-      transform: translateY(-1px);
-    }
-
-    .case-card.active {
-      border-color: rgba(0, 200, 232, 0.5) !important;
-      background: rgba(0, 200, 232, 0.06) !important;
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.16);
-    }
-
+    .case-card:hover { border-color: var(--border-active); background: var(--surface-hover); transform: translateY(-1px); }
+    .case-card.active { border-color: rgba(0, 200, 232, 0.5) !important; background: rgba(0, 200, 232, 0.06) !important; box-shadow: 0 12px 24px rgba(0, 0, 0, 0.16); }
     .case-card.reviewed { opacity: 0.6; }
+    .case-card.draft { border-color: rgba(0, 200, 232, 0.18); background: rgba(0, 200, 232, 0.04); }
+    .case-card.removing { opacity: 0; transform: translateX(-8px); transition: opacity 0.3s ease, transform 0.3s ease; }
 
-    .case-card.draft {
-      border-color: rgba(0, 200, 232, 0.18);
-      background: rgba(0, 200, 232, 0.04);
-    }
+    .status-badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.05em; border-radius: 4px; padding: 1px 5px; margin-left: 6px; vertical-align: middle; text-transform: uppercase; }
+    .status-badge.reviewed { color: #6b839f; background: rgba(58, 80, 112, 0.16); border: 1px solid rgba(58, 80, 112, 0.28); }
+    .status-badge.draft { color: var(--cyan); background: rgba(0, 200, 232, 0.08); border: 1px solid rgba(0, 200, 232, 0.22); }
 
-    .case-card.removing {
-      opacity: 0;
-      transform: translateX(-8px);
-      transition: opacity 0.3s ease, transform 0.3s ease;
-    }
+    .case-row1 { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .severity-badge { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.06em; flex-shrink: 0; }
+    .badge-urgent { background: rgba(232, 69, 69, 0.12); color: var(--urgent); border: 1px solid rgba(232, 69, 69, 0.25); }
+    .badge-emergency { background: rgba(240, 165, 0, 0.12); color: var(--emergency); border: 1px solid rgba(240, 165, 0, 0.25); }
+    .badge-routine { background: rgba(0, 200, 122, 0.1); color: var(--routine); border: 1px solid rgba(0, 200, 122, 0.25); }
+    .badge-unknown { background: rgba(0, 200, 232, 0.08); color: var(--cyan); border: 1px solid rgba(0, 200, 232, 0.2); }
 
-    .status-badge {
-      display: inline-block;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      border-radius: 4px;
-      padding: 1px 5px;
-      margin-left: 6px;
-      vertical-align: middle;
-      text-transform: uppercase;
-    }
-
-    .status-badge.reviewed {
-      color: #6b839f;
-      background: rgba(58, 80, 112, 0.16);
-      border: 1px solid rgba(58, 80, 112, 0.28);
-    }
-
-    .status-badge.draft {
-      color: var(--cyan);
-      background: rgba(0, 200, 232, 0.08);
-      border: 1px solid rgba(0, 200, 232, 0.22);
-    }
-
-    .case-row1 {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .severity-badge {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      flex-shrink: 0;
-    }
-
-    .badge-urgent {
-      background: rgba(232, 69, 69, 0.12);
-      color: var(--urgent);
-      border: 1px solid rgba(232, 69, 69, 0.25);
-    }
-
-    .badge-emergency {
-      background: rgba(240, 165, 0, 0.12);
-      color: var(--emergency);
-      border: 1px solid rgba(240, 165, 0, 0.25);
-    }
-
-    .badge-routine {
-      background: rgba(0, 200, 122, 0.1);
-      color: var(--routine);
-      border: 1px solid rgba(0, 200, 122, 0.25);
-    }
-
-    .badge-unknown {
-      background: rgba(0, 200, 232, 0.08);
-      color: var(--cyan);
-      border: 1px solid rgba(0, 200, 232, 0.2);
-    }
-
-    .case-name {
-      font-size: 15px;
-      font-weight: 650;
-      color: var(--text-primary);
-      flex: 1;
-      min-width: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .case-time {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 11px;
-      color: var(--text-muted);
-      flex-shrink: 0;
-    }
-
-    .case-row2 {
-      font-size: 13px;
-      color: #e1edff;
-      margin-bottom: 8px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      line-height: 1.45;
-    }
-
-    .case-row3 {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 11px;
-      color: var(--text-faint);
-      flex-wrap: wrap;
-    }
-
-    .case-meta-item {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .reviewed-dot,
-    .draft-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      margin-left: auto;
-    }
-
+    .case-name { font-size: 15px; font-weight: 650; color: var(--text-primary); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .case-time { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 11px; color: var(--text-muted); flex-shrink: 0; }
+    .case-row2 { font-size: 13px; color: #e1edff; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.45; }
+    .case-row3 { display: flex; align-items: center; gap: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 11px; color: var(--text-faint); flex-wrap: wrap; }
+    .case-meta-item { display: flex; align-items: center; gap: 4px; }
+    .reviewed-dot, .draft-dot { width: 6px; height: 6px; border-radius: 50%; margin-left: auto; }
     .reviewed-dot { background: var(--routine); }
+    .draft-dot { background: var(--cyan); box-shadow: 0 0 6px rgba(0, 200, 232, 0.4); }
 
-    .draft-dot {
-      background: var(--cyan);
-      box-shadow: 0 0 6px rgba(0, 200, 232, 0.4);
-    }
+    .empty-state, .loading-state { padding: 56px 24px; text-align: center; color: var(--text-muted); }
+    .empty-icon { font-size: 38px; margin-bottom: 12px; opacity: 0.45; }
+    .empty-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--text-secondary); }
+    .empty-sub { font-size: 13px; line-height: 1.55; }
+    .loading-dots::after { content: "..."; animation: dots 1.2s steps(4, end) infinite; }
+    @keyframes dots { 0%, 100% { content: "."; } 33% { content: ".."; } 66% { content: "..."; } }
 
-    .empty-state,
-    .loading-state {
-      padding: 56px 24px;
-      text-align: center;
-      color: var(--text-muted);
-    }
+    .detail-shell { display: flex; flex-direction: column; flex: 1; min-height: 0; height: 100%; overflow: hidden; }
+    .detail-header { position: sticky; top: 0; background: rgba(15, 32, 68, 0.96); border-bottom: 1px solid var(--border); padding: 10px 12px; display: flex; align-items: center; gap: 12px; z-index: 30; flex-shrink: 0; backdrop-filter: blur(10px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12); }
+    .detail-scroll { flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+    .back-btn { background: transparent; border: 1px solid var(--border); border-radius: 8px; color: var(--text-secondary); padding: 9px 14px; cursor: pointer; font-size: 18px; line-height: 1; transition: border-color 0.2s, color 0.2s, background 0.2s; flex-shrink: 0; }
+    .back-btn:hover { border-color: var(--border-active); color: var(--cyan); background: rgba(0, 200, 232, 0.05); }
+    .detail-header-info { flex: 1; min-width: 0; }
+    .detail-patient-name { font-size: 16px; font-weight: 700; line-height: 1.2; }
+    .detail-patient-meta { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+    .detail-body { padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+    .detail-section { background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-soft); }
+    .section-header { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: rgba(255, 255, 255, 0.02); gap: 10px; }
+    .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #c0d4f0; }
+    .section-body { padding: 16px; }
 
-    .empty-icon {
-      font-size: 38px;
-      margin-bottom: 12px;
-      opacity: 0.45;
-    }
-
-    .empty-title {
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: var(--text-secondary);
-    }
-
-    .empty-sub {
-      font-size: 13px;
-      line-height: 1.55;
-    }
-
-    .loading-dots::after {
-      content: "...";
-      animation: dots 1.2s steps(4, end) infinite;
-    }
-
-    @keyframes dots {
-      0%, 100% { content: "."; }
-      33% { content: ".."; }
-      66% { content: "..."; }
-    }
-
-    .detail-shell {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      min-height: 0;
-      height: 100%;
-      overflow: hidden;
-    }
-
-    .detail-header {
-      position: sticky;
-      top: 0;
-      background: rgba(15, 32, 68, 0.96);
-      border-bottom: 1px solid var(--border);
-      padding: 10px 12px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      z-index: 30;
-      flex-shrink: 0;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-    }
-
-    .detail-scroll {
-      flex: 1;
-      min-height: 0;
-      overflow-y: auto;
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .back-btn {
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text-secondary);
-      padding: 9px 14px;
-      cursor: pointer;
-      font-size: 18px;
-      line-height: 1;
-      transition: border-color 0.2s, color 0.2s, background 0.2s;
-      flex-shrink: 0;
-    }
-
-    .back-btn:hover {
-      border-color: var(--border-active);
-      color: var(--cyan);
-      background: rgba(0, 200, 232, 0.05);
-    }
-
-    .detail-header-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .detail-patient-name {
-      font-size: 16px;
-      font-weight: 700;
-      line-height: 1.2;
-    }
-
-    .detail-patient-meta {
-      font-size: 12px;
-      color: var(--text-secondary);
-      margin-top: 3px;
-    }
-
-    .detail-body {
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .detail-section {
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: var(--shadow-soft);
-    }
-
-    .section-header {
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(255, 255, 255, 0.02);
-      gap: 10px;
-    }
-
-    .section-title {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #c0d4f0;
-    }
-
-    .section-body {
-      padding: 16px;
-    }
-
-    .severity-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 16px;
-    }
-
-    .severity-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      flex-shrink: 0;
-    }
-
+    .severity-row { display: flex; align-items: flex-start; gap: 12px; padding: 16px; }
+    .severity-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
     .severity-icon.urgent { background: rgba(232, 69, 69, 0.12); }
     .severity-icon.emergency { background: rgba(240, 165, 0, 0.12); }
     .severity-icon.routine { background: rgba(0, 200, 122, 0.1); }
     .severity-icon.unknown { background: rgba(0, 200, 232, 0.08); }
+    .severity-detail-label { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 4px; }
+    .severity-detail-value { font-size: 21px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .severity-reason { font-size: 13px; color: var(--text-secondary); font-style: italic; line-height: 1.45; }
 
-    .severity-detail-label {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); }
+    .stat-cell { background: var(--navy-1); padding: 12px 14px; }
+    .stat-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #8ab0d0; margin-bottom: 4px; }
+    .stat-value { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 15px; font-weight: 700; color: var(--text-primary); }
 
-    .severity-detail-value {
-      font-size: 21px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 4px;
-    }
+    .summary-grid { display: grid; grid-template-columns: 1fr; gap: 10px; padding: 16px; }
+    .summary-item { background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
+    .summary-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #8ab0d0; margin-bottom: 6px; }
+    .summary-value { font-size: 13px; color: #dbe8fb; line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
 
-    .severity-reason {
-      font-size: 13px;
-      color: var(--text-secondary);
-      font-style: italic;
-      line-height: 1.45;
-    }
+    .review-panel { border: 1px solid rgba(0, 200, 232, 0.14); box-shadow: 0 14px 28px rgba(0, 0, 0, 0.16); }
+    .review-grid { display: grid; gap: 12px; padding: 16px; }
+    .review-block { background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: 12px; padding: 14px; box-shadow: var(--shadow-card); }
+    .review-block-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #8ab0d0; margin-bottom: 10px; }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1px;
-      background: var(--border);
-    }
+    .signoff-block { background: var(--success-bg); border: 1px solid var(--success-border); }
+    .signoff-grid { display: grid; gap: 10px; }
+    .signoff-row { display: flex; justify-content: space-between; gap: 14px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
+    .signoff-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .signoff-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #b9d8c7; flex-shrink: 0; }
+    .signoff-value { font-size: 13px; color: #e8fff4; text-align: right; word-break: break-word; }
 
-    .stat-cell {
-      background: var(--navy-1);
-      padding: 12px 14px;
-    }
+    .form-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-secondary); margin-bottom: 6px; display: block; }
+    .form-helper { font-size: 12px; line-height: 1.5; color: var(--text-muted); margin-top: 8px; }
 
-    .stat-label {
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #8ab0d0;
-      margin-bottom: 4px;
-    }
+    .form-textarea, .form-select { width: 100%; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); outline: none; transition: border-color 0.2s, background 0.2s; }
+    .form-textarea { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 13px; line-height: 1.6; padding: 12px; resize: vertical; min-height: 104px; }
+    .form-textarea:focus, .form-select:focus { border-color: var(--border-active); background: rgba(255,255,255,0.055); }
+    .form-textarea::placeholder { color: var(--text-muted); }
+    .form-select { font-size: 13px; padding: 11px 12px; cursor: pointer; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a6080' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+    .form-select option { background: #0f2044; }
 
-    .stat-value {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    .summary-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      padding: 16px;
-    }
-
-    .summary-item {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px;
-    }
-
-    .summary-label {
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #8ab0d0;
-      margin-bottom: 6px;
-    }
-
-    .summary-value {
-      font-size: 13px;
-      color: #dbe8fb;
-      line-height: 1.55;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .review-panel {
-      border: 1px solid rgba(0, 200, 232, 0.14);
-      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.16);
-    }
-
-    .review-grid {
-      display: grid;
-      gap: 12px;
-      padding: 16px;
-    }
-
-    .review-block {
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
-      box-shadow: var(--shadow-card);
-    }
-
-    .review-block-title {
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #8ab0d0;
-      margin-bottom: 10px;
-    }
-
-    .signoff-block {
-      background: var(--success-bg);
-      border: 1px solid var(--success-border);
-    }
-
-    .signoff-grid {
-      display: grid;
-      gap: 10px;
-    }
-
-    .signoff-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 14px;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      padding-bottom: 8px;
-    }
-
-    .signoff-row:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-    }
-
-    .signoff-label {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: #b9d8c7;
-      flex-shrink: 0;
-    }
-
-    .signoff-value {
-      font-size: 13px;
-      color: #e8fff4;
-      text-align: right;
-      word-break: break-word;
-    }
-
-    .form-label {
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: var(--text-secondary);
-      margin-bottom: 6px;
-      display: block;
-    }
-
-    .form-helper {
-      font-size: 12px;
-      line-height: 1.5;
-      color: var(--text-muted);
-      margin-top: 8px;
-    }
-
-    .form-textarea,
-    .form-select {
+    .form-input-inline {
       width: 100%;
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--border);
       border-radius: 8px;
       color: var(--text-primary);
+      font-size: 13px;
+      padding: 11px 12px;
       outline: none;
       transition: border-color 0.2s, background 0.2s;
     }
+    .form-input-inline:focus { border-color: var(--border-active); background: rgba(255,255,255,0.055); }
+    .form-input-inline::placeholder { color: var(--text-muted); }
 
-    .form-textarea {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 13px;
-      line-height: 1.6;
-      padding: 12px;
-      resize: vertical;
-      min-height: 104px;
-    }
+    .decision-grid { display: grid; gap: 12px; }
+    .decision-note { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+    .semantic-note { background: rgba(0, 200, 232, 0.06); border: 1px solid rgba(0, 200, 232, 0.14); border-radius: 10px; padding: 10px 11px; color: #d8ebff; font-size: 12px; line-height: 1.55; }
+    .soft-warning { display: none; background: var(--warning-bg); border: 1px solid var(--warning-border); border-radius: 10px; padding: 10px 11px; color: #ffdca1; font-size: 12px; line-height: 1.55; }
+    .soft-warning.show { display: block; }
 
-    .form-textarea:focus,
-    .form-select:focus {
-      border-color: var(--border-active);
-      background: rgba(255,255,255,0.055);
-    }
+    .decision-toggles { display: grid; gap: 10px; }
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); gap: 12px; }
+    .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .toggle-row:first-child { padding-top: 0; }
+    .toggle-label { font-size: 13px; color: var(--text-secondary); }
 
-    .form-textarea::placeholder {
-      color: var(--text-muted);
-    }
+    .toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-track { position: absolute; inset: 0; background: #1a3260; border-radius: 12px; cursor: pointer; transition: background 0.2s; border: 1px solid var(--border); }
+    .toggle input:checked + .toggle-track { background: var(--cyan-dim); border-color: var(--cyan-dim); }
+    .toggle-track::after { content: ""; position: absolute; left: 3px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; background: white; border-radius: 50%; transition: transform 0.2s; }
+    .toggle input:checked + .toggle-track::after { transform: translateY(-50%) translateX(20px); }
 
-    .form-select {
-      font-size: 13px;
-      padding: 11px 12px;
-      cursor: pointer;
-      -webkit-appearance: none;
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a6080' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      padding-right: 32px;
-    }
+    .revenue-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); gap: 12px; }
+    .revenue-input-wrap { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+    .revenue-prefix { font-size: 13px; color: var(--text-muted); font-weight: 600; }
 
-    .form-select option {
-      background: #0f2044;
-    }
+    .action-band { display: grid; gap: 10px; padding: 0 16px 16px; }
+    .action-row { display: flex; flex-direction: column; gap: 10px; }
 
-    .decision-grid {
-      display: grid;
-      gap: 12px;
-    }
+    .btn-action, .btn-mark-reviewed, .btn-back-desktop { width: 100%; border-radius: 8px; font-size: 14px; font-weight: 700; padding: 14px; cursor: pointer; transition: opacity 0.2s, transform 0.1s; letter-spacing: 0.02em; }
+    .btn-action, .btn-back-desktop { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); color: var(--text-secondary); font-weight: 600; }
+    .btn-action:hover, .btn-back-desktop:hover { border-color: var(--border-active); color: var(--text-primary); }
+    .btn-back-desktop { display: none; }
 
-    .decision-note {
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
+    .btn-export-record { display: flex; align-items: center; justify-content: center; text-decoration: none; background: rgba(0, 200, 232, 0.1); border: 1px solid rgba(0, 200, 232, 0.24); color: var(--cyan); font-weight: 700; }
+    .btn-export-record:hover { background: rgba(0, 200, 232, 0.16); border-color: rgba(0, 200, 232, 0.34); color: #7fe8ff; }
+    .btn-export-record::before { content: "\2197"; margin-right: 8px; font-size: 13px; opacity: 0.9; }
 
-    .semantic-note {
-      background: rgba(0, 200, 232, 0.06);
-      border: 1px solid rgba(0, 200, 232, 0.14);
-      border-radius: 10px;
-      padding: 10px 11px;
-      color: #d8ebff;
-      font-size: 12px;
-      line-height: 1.55;
-    }
+    .btn-mark-reviewed { background: linear-gradient(135deg, #0a7a4a, #00a866); border: none; color: white; box-shadow: 0 14px 28px rgba(0, 168, 102, 0.2); }
+    .btn-action:active, .btn-mark-reviewed:active, .btn-back-desktop:active { transform: scale(0.98); opacity: 0.9; }
 
-    .soft-warning {
-      display: none;
-      background: var(--warning-bg);
-      border: 1px solid var(--warning-border);
-      border-radius: 10px;
-      padding: 10px 11px;
-      color: #ffdca1;
-      font-size: 12px;
-      line-height: 1.55;
-    }
-
-    .soft-warning.show {
-      display: block;
-    }
-
-    .decision-toggles {
-      display: grid;
-      gap: 10px;
-    }
-
-    .toggle-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border);
-      gap: 12px;
-    }
-
-    .toggle-row:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
-    }
-
-    .toggle-row:first-child {
-      padding-top: 0;
-    }
-
-    .toggle-label {
-      font-size: 13px;
-      color: var(--text-secondary);
-    }
-
-    .toggle {
-      position: relative;
-      width: 44px;
-      height: 24px;
-      flex-shrink: 0;
-    }
-
-    .toggle input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
-
-    .toggle-track {
-      position: absolute;
-      inset: 0;
-      background: #1a3260;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: background 0.2s;
-      border: 1px solid var(--border);
-    }
-
-    .toggle input:checked + .toggle-track {
-      background: var(--cyan-dim);
-      border-color: var(--cyan-dim);
-    }
-
-    .toggle-track::after {
-      content: "";
-      position: absolute;
-      left: 3px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 16px;
-      height: 16px;
-      background: white;
-      border-radius: 50%;
-      transition: transform 0.2s;
-    }
-
-    .toggle input:checked + .toggle-track::after {
-      transform: translateY(-50%) translateX(20px);
-    }
-
-    .action-band {
-      display: grid;
-      gap: 10px;
-      padding: 0 16px 16px;
-    }
-
-    .action-row {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .btn-action,
-    .btn-mark-reviewed,
-    .btn-back-desktop {
-      width: 100%;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 700;
-      padding: 14px;
-      cursor: pointer;
-      transition: opacity 0.2s, transform 0.1s;
-      letter-spacing: 0.02em;
-    }
-
-    .btn-action,
-    .btn-back-desktop {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border);
-      color: var(--text-secondary);
-      font-weight: 600;
-    }
-
-    .btn-action:hover,
-    .btn-back-desktop:hover {
-      border-color: var(--border-active);
-      color: var(--text-primary);
-    }
-
-    .btn-back-desktop {
-      display: none;
-    }
-
-    .btn-export-record {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      background: rgba(0, 200, 232, 0.1);
-      border: 1px solid rgba(0, 200, 232, 0.24);
-      color: var(--cyan);
-      font-weight: 700;
-    }
-
-    .btn-export-record:hover {
-      background: rgba(0, 200, 232, 0.16);
-      border-color: rgba(0, 200, 232, 0.34);
-      color: #7fe8ff;
-    }
-
-    .btn-export-record::before {
-      content: "\2197";
-      margin-right: 8px;
-      font-size: 13px;
-      opacity: 0.9;
-    }
-
-    .btn-mark-reviewed {
-      background: linear-gradient(135deg, #0a7a4a, #00a866);
-      border: none;
-      color: white;
-      box-shadow: 0 14px 28px rgba(0, 168, 102, 0.2);
-    }
-
-    .btn-action:active,
-    .btn-mark-reviewed:active,
-    .btn-back-desktop:active {
-      transform: scale(0.98);
-      opacity: 0.9;
-    }
-
-    .save-status {
-      font-size: 12px;
-      text-align: center;
-      color: var(--text-muted);
-      min-height: 18px;
-    }
-
+    .save-status { font-size: 12px; text-align: center; color: var(--text-muted); min-height: 18px; }
     .save-status.success { color: var(--routine); }
     .save-status.error { color: var(--urgent); }
 
-    .detail-state-text {
-      font-size: 11px;
-      color: var(--text-secondary);
-    }
-
+    .detail-state-text { font-size: 11px; color: var(--text-secondary); }
     .detail-state-text.reviewed { color: var(--routine); }
     .detail-state-text.draft { color: var(--cyan); }
+    .review-lock-message { text-align: center; padding: 4px 0 2px; color: #00c87a; font-size: 13px; font-weight: 700; }
 
-    .review-lock-message {
-      text-align: center;
-      padding: 4px 0 2px;
-      color: #00c87a;
-      font-size: 13px;
-      font-weight: 700;
-    }
+    .flags-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 16px; }
+    .flag-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #b0c8e8; background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.04); border-radius: 10px; padding: 10px 12px; }
+    .flag-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .flag-dot.present { background: var(--urgent); box-shadow: 0 0 6px rgba(232, 69, 69, 0.5); }
+    .flag-dot.absent { background: #4a6080; opacity: 0.38; }
 
-    .flags-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      padding: 16px;
-    }
+    .clinical-note-text, .transcript-text { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; color: #c8daf0; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+    .transcript-text { color: var(--text-secondary); max-height: 300px; overflow-y: auto; }
+    .note-lock-badge { font-size: 10px; background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px; color: var(--text-muted); letter-spacing: 0.04em; }
 
-    .flag-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: #b0c8e8;
-      background: rgba(255,255,255,0.015);
-      border: 1px solid rgba(255,255,255,0.04);
-      border-radius: 10px;
-      padding: 10px 12px;
-    }
+    .collapsible-toggle { background: none; border: none; color: var(--text-secondary); font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; padding: 0; transition: color 0.2s; }
+    .collapsible-toggle:hover { color: var(--cyan); }
+    .collapsible-body { display: none; padding: 16px; padding-top: 0; }
+    .collapsible-body.open { display: block; }
 
-    .flag-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
+    .discrepancy-section { border-color: rgba(240, 165, 0, 0.34); box-shadow: 0 14px 30px rgba(0, 0, 0, 0.16); }
+    .discrepancy-section .section-header { background: rgba(240, 165, 0, 0.08); border-bottom-color: rgba(240, 165, 0, 0.18); }
+    .discrepancy-title { color: #ffd38a; }
+    .discrepancy-list { display: grid; gap: 10px; padding: 16px; }
+    .discrepancy-item { background: rgba(240, 165, 0, 0.12); border: 1px solid rgba(240, 165, 0, 0.28); border-radius: 10px; padding: 12px; }
+    .discrepancy-field { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #ffd38a; margin-bottom: 8px; }
+    .discrepancy-line { font-size: 13px; line-height: 1.55; color: #fff0d2; word-break: break-word; }
+    .discrepancy-line + .discrepancy-line { margin-top: 6px; }
+    .discrepancy-note { margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 12px; line-height: 1.5; color: #ffe7bb; }
 
-    .flag-dot.present {
-      background: var(--urgent);
-      box-shadow: 0 0 6px rgba(232, 69, 69, 0.5);
-    }
+    #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #0f2044; border: 1px solid var(--border-active); border-radius: 10px; padding: 12px 20px; font-size: 13px; color: var(--cyan); z-index: 220; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); white-space: nowrap; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); }
+    #toast.show { transform: translateX(-50%) translateY(0); }
 
-    .flag-dot.absent {
-      background: #4a6080;
-      opacity: 0.38;
-    }
+    .metrics-link { display: none; text-align: center; color: var(--text-muted); font-size: 12px; text-decoration: none; padding: 16px; transition: color 0.2s; }
+    .metrics-link:hover { color: var(--cyan); }
+    .tel-link { color: var(--cyan); text-decoration: none; transition: opacity 0.2s; }
+    .tel-link:hover { opacity: 0.8; text-decoration: underline; }
 
-    .clinical-note-text,
-    .transcript-text {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 12px;
-      color: #c8daf0;
-      line-height: 1.7;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .transcript-text {
-      color: var(--text-secondary);
-      max-height: 300px;
-      overflow-y: auto;
-    }
-
-    .note-lock-badge {
-      font-size: 10px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 2px 8px;
-      color: var(--text-muted);
-      letter-spacing: 0.04em;
-    }
-
-    .collapsible-toggle {
-      background: none;
-      border: none;
-      color: var(--text-secondary);
-      font-size: 12px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 0;
-      transition: color 0.2s;
-    }
-
-    .collapsible-toggle:hover {
-      color: var(--cyan);
-    }
-
-    .collapsible-body {
-      display: none;
-      padding: 16px;
-      padding-top: 0;
-    }
-
-    .collapsible-body.open {
-      display: block;
-    }
-
-    .discrepancy-section {
-      border-color: rgba(240, 165, 0, 0.34);
-      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.16);
-    }
-
-    .discrepancy-section .section-header {
-      background: rgba(240, 165, 0, 0.08);
-      border-bottom-color: rgba(240, 165, 0, 0.18);
-    }
-
-    .discrepancy-title {
-      color: #ffd38a;
-    }
-
-    .discrepancy-list {
-      display: grid;
-      gap: 10px;
-      padding: 16px;
-    }
-
-    .discrepancy-item {
-      background: rgba(240, 165, 0, 0.12);
-      border: 1px solid rgba(240, 165, 0, 0.28);
-      border-radius: 10px;
-      padding: 12px;
-    }
-
-    .discrepancy-field {
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #ffd38a;
-      margin-bottom: 8px;
-    }
-
-    .discrepancy-line {
-      font-size: 13px;
-      line-height: 1.55;
-      color: #fff0d2;
-      word-break: break-word;
-    }
-
-    .discrepancy-line + .discrepancy-line {
-      margin-top: 6px;
-    }
-
-    .discrepancy-note {
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-      font-size: 12px;
-      line-height: 1.5;
-      color: #ffe7bb;
-    }
-
-    #toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(80px);
-      background: #0f2044;
-      border: 1px solid var(--border-active);
-      border-radius: 10px;
-      padding: 12px 20px;
-      font-size: 13px;
-      color: var(--cyan);
-      z-index: 220;
-      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-      white-space: nowrap;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    }
-
-    #toast.show {
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .metrics-link {
-      display: none;
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 12px;
-      text-decoration: none;
-      padding: 16px;
-      transition: color 0.2s;
-    }
-
-    .metrics-link:hover {
-      color: var(--cyan);
-    }
-
-    .tel-link {
-      color: var(--cyan);
-      text-decoration: none;
-      transition: opacity 0.2s;
-    }
-
-    .tel-link:hover {
-      opacity: 0.8;
-      text-decoration: underline;
-    }
-
-    .detail-placeholder {
-      width: 100%;
-      color: var(--text-muted);
-      text-align: center;
-      padding: 56px 24px 24px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 12px;
-    }
-
-    .detail-placeholder-icon {
-      font-size: 36px;
-      opacity: 0.28;
-    }
-
-    .detail-placeholder-text {
-      font-size: 14px;
-      max-width: 240px;
-    }
+    .detail-placeholder { width: 100%; color: var(--text-muted); text-align: center; padding: 56px 24px 24px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 12px; }
+    .detail-placeholder-icon { font-size: 36px; opacity: 0.28; }
+    .detail-placeholder-text { font-size: 14px; max-width: 240px; }
 
     @media (min-width: 768px) {
-      html, body {
-        overflow: hidden;
-      }
-
-      #app {
-        height: 100vh;
-        overflow: hidden;
-      }
-
-      .desktop-layout {
-        display: flex;
-        flex: 1 1 auto;
-        min-height: 0;
-        overflow: hidden;
-        flex-direction: row;
-      }
-
-      .queue-column {
-        width: 400px;
-        min-width: 340px;
-        max-width: 440px;
-        flex: 0 0 400px;
-        border-right: 1px solid var(--border);
-        overflow-y: auto;
-        overflow-x: hidden;
-        min-height: 0;
-        height: 100%;
-      }
-
-      #detail-column {
-        display: flex !important;
-        position: relative;
-        flex: 1 1 auto;
-        min-width: 0;
-        min-height: 0;
-        overflow: hidden;
-        height: 100%;
-      }
-
-      #detail-panel {
-        display: flex;
-        flex-direction: column;
-        flex: 1 1 auto;
-        min-width: 0;
-        min-height: 0;
-        position: relative;
-        overflow: hidden;
-        height: 100%;
-      }
-
-      .detail-placeholder {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        padding-top: 56px;
-        pointer-events: none;
-      }
-
-      .btn-back-desktop {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .summary-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .review-grid {
-        grid-template-columns: 1.05fr 0.95fr;
-      }
-
-      #app.desktop-review-focus .tabs-shell,
-      #app.desktop-review-focus .queue-controls {
-        display: none !important;
-      }
+      html, body { overflow: hidden; }
+      #app { height: 100vh; overflow: hidden; }
+      .desktop-layout { display: flex; flex: 1 1 auto; min-height: 0; overflow: hidden; flex-direction: row; }
+      .queue-column { width: 400px; min-width: 340px; max-width: 440px; flex: 0 0 400px; border-right: 1px solid var(--border); overflow-y: auto; overflow-x: hidden; min-height: 0; height: 100%; }
+      #detail-column { display: flex !important; position: relative; flex: 1 1 auto; min-width: 0; min-height: 0; overflow: hidden; height: 100%; }
+      #detail-panel { display: flex; flex-direction: column; flex: 1 1 auto; min-width: 0; min-height: 0; position: relative; overflow: hidden; height: 100%; }
+      .detail-placeholder { position: absolute; top: 0; left: 0; right: 0; bottom: 0; padding-top: 56px; pointer-events: none; }
+      .btn-back-desktop { display: inline-flex; align-items: center; justify-content: center; }
+      .summary-grid { grid-template-columns: 1fr 1fr; }
+      .review-grid { grid-template-columns: 1.05fr 0.95fr; }
+      #app.desktop-review-focus .tabs-shell, #app.desktop-review-focus .queue-controls { display: none !important; }
     }
 
     @media (max-width: 767px) {
-      .header {
-        padding: 0 12px;
-      }
-
-      .nav-tabs {
-        padding: 0 8px;
-      }
-
-      .nav-tab {
-        padding: 11px 10px;
-      }
-
-      .filter-chip,
-      .sort-chip {
-        padding: 6px 11px;
-      }
-
-      .case-list {
-        padding: 10px 12px 20px;
-      }
-
-      #app.mobile-detail-open .tabs-shell,
-      #app.mobile-detail-open .queue-controls,
-      #app.mobile-detail-open .queue-column {
-        display: none !important;
-      }
-
-      #app.mobile-detail-open #detail-column {
-        display: flex !important;
-        position: relative;
-        inset: auto;
-        flex: 1 1 auto;
-      }
+      .header { padding: 0 12px; }
+      .nav-tabs { padding: 0 8px; }
+      .nav-tab { padding: 11px 10px; }
+      .filter-chip, .sort-chip { padding: 6px 11px; }
+      .case-list { padding: 10px 12px 20px; }
+      #app.mobile-detail-open .tabs-shell, #app.mobile-detail-open .queue-controls, #app.mobile-detail-open .queue-column { display: none !important; }
+      #app.mobile-detail-open #detail-column { display: flex !important; position: relative; inset: auto; flex: 1 1 auto; }
     }
 
     @media (max-width: 680px) {
-      .flags-grid,
-      .stats-grid,
-      .summary-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .signoff-row {
-        flex-direction: column;
-        gap: 4px;
-      }
-
-      .signoff-value {
-        text-align: left;
-      }
+      .flags-grid, .stats-grid, .summary-grid { grid-template-columns: 1fr; }
+      .signoff-row { flex-direction: column; gap: 4px; }
+      .signoff-value { text-align: left; }
     }
 
     @media (max-width: 520px) {
-      .header-right {
-        gap: 8px;
-      }
-
-      .header-link,
-      .btn-signout {
-        padding-left: 10px;
-        padding-right: 10px;
-      }
-
-      .case-row3 {
-        gap: 8px;
-      }
+      .header-right { gap: 8px; }
+      .header-link, .btn-signout { padding-left: 10px; padding-right: 10px; }
+      .case-row3 { gap: 8px; }
     }
   </style>
 </head>
@@ -1656,26 +503,17 @@
     <div class="auth-card">
       <div class="auth-logo">
         <svg width="48" height="48" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <defs>
-            <linearGradient id="ag" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#1a4fa0" />
-              <stop offset="100%" stop-color="#00c8e8" />
-            </linearGradient>
-          </defs>
+          <defs><linearGradient id="ag" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1a4fa0" /><stop offset="100%" stop-color="#00c8e8" /></linearGradient></defs>
           <path d="M30 20 Q30 10 40 10 L80 10 Q90 10 90 20 L95 60 Q97 80 85 90 L70 108 Q65 115 60 115 Q55 115 50 108 L35 90 Q23 80 25 60 Z" stroke="url(#ag)" stroke-width="7" fill="none" stroke-linejoin="round" />
           <polyline points="28,58 42,58 50,40 60,76 70,50 78,58 92,58" stroke="url(#ag)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
         <div class="auth-logo-text">VirtualDentist.ai</div>
       </div>
-
       <div class="auth-title">Dentist Dashboard &middot; Secure Access</div>
-
       <label class="field-label" for="auth-email">Email</label>
       <input class="field-input" type="email" id="auth-email" placeholder="you@example.com" autocomplete="email" />
-
       <label class="field-label" for="auth-password">Password</label>
       <input class="field-input" type="password" id="auth-password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="current-password" />
-
       <button class="btn-primary" id="auth-btn" type="button">Sign In</button>
       <div class="auth-error" id="auth-error"></div>
     </div>
@@ -1685,18 +523,12 @@
     <header class="header">
       <div class="header-logo">
         <svg width="26" height="26" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <defs>
-            <linearGradient id="hg" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#1a4fa0" />
-              <stop offset="100%" stop-color="#00c8e8" />
-            </linearGradient>
-          </defs>
+          <defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1a4fa0" /><stop offset="100%" stop-color="#00c8e8" /></linearGradient></defs>
           <path d="M30 20 Q30 10 40 10 L80 10 Q90 10 90 20 L95 60 Q97 80 85 90 L70 108 Q65 115 60 115 Q55 115 50 108 L35 90 Q23 80 25 60 Z" stroke="url(#hg)" stroke-width="8" fill="none" stroke-linejoin="round" />
           <polyline points="28,58 42,58 50,40 60,76 70,50 78,58 92,58" stroke="url(#hg)" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
         VirtualDentist.ai
       </div>
-
       <div class="header-right">
         <span class="header-user" id="header-user-email"></span>
         <a class="header-link" href="metrics.html">Metrics</a>
@@ -1706,9 +538,7 @@
 
     <div class="tabs-shell" id="tabs-shell">
       <nav class="nav-tabs">
-        <button class="nav-tab active" id="tab-queue" type="button">
-          Queue <span class="tab-badge" id="queue-count-badge" style="display:none">0</span>
-        </button>
+        <button class="nav-tab active" id="tab-queue" type="button">Queue <span class="tab-badge" id="queue-count-badge" style="display:none">0</span></button>
         <button class="nav-tab" id="tab-new" type="button">New</button>
         <button class="nav-tab" id="tab-drafts" type="button">Drafts</button>
         <button class="nav-tab" id="tab-reviewed" type="button">Reviewed</button>
@@ -1722,39 +552,21 @@
         <button class="filter-chip" id="chip-urgent" type="button">Urgent</button>
         <button class="filter-chip" id="chip-emergency" type="button">Emergency</button>
         <button class="filter-chip" id="chip-routine" type="button">Routine</button>
-
-        <div class="filter-right">
-          <button class="refresh-btn" id="refresh-btn" type="button" title="Refresh">&#8635;</button>
-        </div>
+        <div class="filter-right"><button class="refresh-btn" id="refresh-btn" type="button" title="Refresh">&#8635;</button></div>
       </div>
-
       <div class="sort-bar" id="sort-bar">
         <span class="sort-label">Sort:</span>
         <button class="sort-chip" id="sort-severity" type="button">Urgency</button>
         <button class="sort-chip active" id="sort-newest" type="button">Newest</button>
         <button class="sort-chip" id="sort-oldest" type="button" style="display:none">Oldest</button>
       </div>
-
-      <div class="queue-hint" id="queue-hint">
-        Return to the case list to change queue filters or tabs.
-      </div>
+      <div class="queue-hint" id="queue-hint">Return to the case list to change queue filters or tabs.</div>
     </div>
 
     <div class="desktop-layout">
-      <div class="queue-column" id="queue-column">
-        <div id="queue-panel"></div>
-      </div>
-
-      <div id="detail-column">
-        <div id="detail-panel">
-          <div class="detail-placeholder" id="detail-placeholder">
-            <div class="detail-placeholder-icon">&#129463;</div>
-            <div class="detail-placeholder-text">Select a case to review</div>
-          </div>
-        </div>
-      </div>
+      <div class="queue-column" id="queue-column"><div id="queue-panel"></div></div>
+      <div id="detail-column"><div id="detail-panel"><div class="detail-placeholder" id="detail-placeholder"><div class="detail-placeholder-icon">&#129463;</div><div class="detail-placeholder-text">Select a case to review</div></div></div></div>
     </div>
-
     <a class="metrics-link" href="metrics.html">View Operational Metrics &rarr;</a>
   </div>
 
@@ -1763,584 +575,72 @@
   <script>
     var SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
     var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
-    var REVIEWER_NAME_MAP = {
-      "4nroots@gmail.com": "Dr. Balaji Swaminath",
-      "hamitranu@gmail.com": "Dr. Hamit Ranu"
-    };
+    var REVIEWER_NAME_MAP = { "4nroots@gmail.com": "Dr. Balaji Swaminath", "hamitranu@gmail.com": "Dr. Hamit Ranu" };
 
-    if (!window.supabase || !window.supabase.createClient) {
-      var errEl = document.getElementById("auth-error");
-      if (errEl) {
-        errEl.style.display = "block";
-        errEl.textContent = "Supabase library failed to load. Check network / CDN blocking.";
-      }
-      throw new Error("Supabase library missing");
-    }
+    if (!window.supabase || !window.supabase.createClient) { var errEl = document.getElementById("auth-error"); if (errEl) { errEl.style.display = "block"; errEl.textContent = "Supabase library failed to load. Check network / CDN blocking."; } throw new Error("Supabase library missing"); }
 
     var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    var currentTab = "queue";
-    var currentFilter = "all";
-    var currentSort = "newest";
-    var allCases = [];
-    var currentCase = null;
-    var currentUser = null;
-    var selectedCaseId = null;
-    var refreshInterval = null;
-    var isMobile = window.innerWidth < 768;
-    var queueCount = 0;
+    var currentTab = "queue"; var currentFilter = "all"; var currentSort = "newest"; var allCases = []; var currentCase = null; var currentUser = null; var selectedCaseId = null; var refreshInterval = null; var isMobile = window.innerWidth < 768; var queueCount = 0;
 
     document.getElementById("auth-btn").addEventListener("click", handleLogin);
     document.getElementById("signout-btn").addEventListener("click", handleSignOut);
     document.getElementById("refresh-btn").addEventListener("click", loadCases);
-
-    document.getElementById("auth-email").addEventListener("keydown", function(e) {
-      if (e.key === "Enter") handleLogin();
-    });
-
-    document.getElementById("auth-password").addEventListener("keydown", function(e) {
-      if (e.key === "Enter") handleLogin();
-    });
-
+    document.getElementById("auth-email").addEventListener("keydown", function(e) { if (e.key === "Enter") handleLogin(); });
+    document.getElementById("auth-password").addEventListener("keydown", function(e) { if (e.key === "Enter") handleLogin(); });
     document.getElementById("tab-queue").addEventListener("click", function() { switchTab("queue"); });
     document.getElementById("tab-new").addEventListener("click", function() { switchTab("new"); });
     document.getElementById("tab-drafts").addEventListener("click", function() { switchTab("drafts"); });
     document.getElementById("tab-reviewed").addEventListener("click", function() { switchTab("reviewed"); });
     document.getElementById("tab-all").addEventListener("click", function() { switchTab("all"); });
-
     document.getElementById("chip-all").addEventListener("click", function() { setFilter("all"); });
     document.getElementById("chip-urgent").addEventListener("click", function() { setFilter("urgent"); });
     document.getElementById("chip-emergency").addEventListener("click", function() { setFilter("emergency"); });
     document.getElementById("chip-routine").addEventListener("click", function() { setFilter("routine"); });
-
-    document.getElementById("sort-severity").addEventListener("click", function() {
-      if (currentTab === "queue") {
-        setSort("severity");
-        return;
-      }
-      if (!isUrgencySortRedundant()) setSort("severity");
-    });
-
+    document.getElementById("sort-severity").addEventListener("click", function() { if (currentTab === "queue") { setSort("severity"); return; } if (!isUrgencySortRedundant()) setSort("severity"); });
     document.getElementById("sort-newest").addEventListener("click", function() { setSort("newest"); });
     document.getElementById("sort-oldest").addEventListener("click", function() { setSort("oldest"); });
+    window.addEventListener("resize", function() { isMobile = window.innerWidth < 768; if (!isMobile) { document.getElementById("queue-column").style.display = "flex"; document.getElementById("detail-column").style.display = "flex"; } else if (!selectedCaseId) { document.getElementById("queue-column").style.display = "flex"; document.getElementById("detail-column").style.display = "none"; } syncModes(); updateControlsDisabledState(); });
 
-    window.addEventListener("resize", function() {
-      isMobile = window.innerWidth < 768;
+    function resolveReviewerName(email) { if (!email) return "-"; return REVIEWER_NAME_MAP[email] || email; }
+    function syncModes() { var app = document.getElementById("app"); if (!app) return; if (isMobile && selectedCaseId) { app.classList.add("mobile-detail-open"); } else { app.classList.remove("mobile-detail-open"); } if (!isMobile && selectedCaseId) { app.classList.add("desktop-review-focus"); } else { app.classList.remove("desktop-review-focus"); } }
 
-      if (!isMobile) {
-        document.getElementById("queue-column").style.display = "flex";
-        document.getElementById("detail-column").style.display = "flex";
-      } else if (!selectedCaseId) {
-        document.getElementById("queue-column").style.display = "flex";
-        document.getElementById("detail-column").style.display = "none";
-      }
+    async function handleLogin() { var email = document.getElementById("auth-email").value.trim(); var password = document.getElementById("auth-password").value; var btn = document.getElementById("auth-btn"); var errEl = document.getElementById("auth-error"); errEl.style.display = "none"; errEl.textContent = ""; if (!email || !password) { errEl.textContent = "Enter both email and password."; errEl.style.display = "block"; return; } btn.disabled = true; btn.textContent = "Signing in..."; try { var result = await sb.auth.signInWithPassword({ email: email, password: password }); var data = result.data; var error = result.error; if (error) { errEl.textContent = error.message || "Sign-in failed."; errEl.style.display = "block"; return; } if (!data || !data.user) { errEl.textContent = "Sign-in returned no user."; errEl.style.display = "block"; return; } showApp(data.user); } catch (err) { errEl.textContent = (err && err.message) ? err.message : "Unexpected sign-in error."; errEl.style.display = "block"; } finally { btn.disabled = false; btn.textContent = "Sign In"; } }
+    async function handleSignOut() { try { await sb.auth.signOut(); } catch (err) { console.error("Sign-out error:", err); } window.location.reload(); }
+    async function init() { try { var result = await sb.auth.getSession(); var data = result.data; var error = result.error; if (error) { console.error("Session error:", error); return; } if (data && data.session && data.session.user) { showApp(data.session.user); } else if (isMobile) { document.getElementById("detail-column").style.display = "none"; } } catch (err) { console.error("Init error:", err); } }
 
-      syncModes();
-      updateControlsDisabledState();
-    });
+    function showApp(user) { currentUser = user; document.getElementById("auth-screen").style.display = "none"; document.getElementById("app").style.display = "flex"; document.getElementById("header-user-email").textContent = resolveReviewerName(user.email || ""); if (refreshInterval) clearInterval(refreshInterval); refreshInterval = setInterval(loadCases, 90000); if (isMobile) { document.getElementById("detail-column").style.display = "none"; document.getElementById("queue-column").style.display = "flex"; } syncModes(); loadCases(); }
 
-    function resolveReviewerName(email) {
-      if (!email) return "-";
-      return REVIEWER_NAME_MAP[email] || email;
-    }
+    async function loadCases() { var btn = document.getElementById("refresh-btn"); btn.classList.add("spinning"); try { await Promise.all([loadCurrentTabCases(), loadQueueCount()]); renderQueue(); updateQueueBadge(); updateSortChipState(); updateSortBarVisibility(); updateControlsDisabledState(); syncModes(); } catch (err) { console.error("Load exception:", err); showToast("Unexpected load error"); } finally { btn.classList.remove("spinning"); } }
 
-    function syncModes() {
-      var app = document.getElementById("app");
-      if (!app) return;
+    async function loadCurrentTabCases() { var query; if (currentTab === "queue") { query = sb.from("triage_cases").select("*").or("review_status.eq.new,review_status.eq.draft,review_status.is.null").order("created_at", { ascending: false }).limit(300); } else if (currentTab === "new") { query = sb.from("triage_cases").select("*").or("review_status.eq.new,review_status.is.null").order("created_at", { ascending: false }).limit(300); } else if (currentTab === "drafts") { query = sb.from("triage_cases").select("*").eq("review_status", "draft").order("created_at", { ascending: false }).limit(300); } else if (currentTab === "reviewed") { query = sb.from("triage_cases").select("*").eq("review_status", "reviewed").order("created_at", { ascending: false }).limit(300); } else { query = sb.from("triage_cases").select("*").order("created_at", { ascending: false }).limit(300); } var result = await query; var data = result.data; var error = result.error; if (error) { console.error("Load error:", error); showToast("Error loading cases: " + (error.message || "unknown")); allCases = []; return; } allCases = Array.isArray(data) ? data : []; }
+    async function loadQueueCount() { var result = await sb.from("triage_cases").select("id", { count: "exact", head: true }).or("review_status.eq.new,review_status.eq.draft,review_status.is.null"); var count = result.count; var error = result.error; if (error) { console.error("Queue count error:", error); return; } queueCount = typeof count === "number" ? count : 0; }
+    function updateQueueBadge() { var badge = document.getElementById("queue-count-badge"); if (queueCount > 0) { badge.textContent = String(queueCount); badge.style.display = "inline-block"; } else { badge.style.display = "none"; } }
 
-      if (isMobile && selectedCaseId) {
-        app.classList.add("mobile-detail-open");
-      } else {
-        app.classList.remove("mobile-detail-open");
-      }
+    function switchTab(tab) { if (controlsShouldBeDisabled()) return; currentTab = tab; selectedCaseId = null; currentCase = null; ["queue","new","drafts","reviewed","all"].forEach(function(t) { document.getElementById("tab-" + t).classList.toggle("active", t === tab); }); currentFilter = "all"; ["all","urgent","emergency","routine"].forEach(function(c) { document.getElementById("chip-" + c).classList.toggle("active", c === "all"); }); currentSort = "newest"; ["severity","newest","oldest"].forEach(function(k) { var el = document.getElementById("sort-" + k); if (el) el.classList.toggle("active", k === "newest"); }); if (isMobile) { document.getElementById("queue-column").style.display = "flex"; document.getElementById("detail-column").style.display = "none"; } else { renderEmptyDetailPane(); } syncModes(); updateSortBarVisibility(); updateSortChipState(); updateControlsDisabledState(); loadCases(); }
+    function updateSortBarVisibility() { var sortBar = document.getElementById("sort-bar"); var oldestBtn = document.getElementById("sort-oldest"); sortBar.style.display = "flex"; oldestBtn.style.display = currentTab === "queue" ? "none" : "inline-flex"; if (currentTab === "queue" && currentSort === "oldest") { currentSort = "newest"; ["severity","newest","oldest"].forEach(function(k) { var el = document.getElementById("sort-" + k); if (el) el.classList.toggle("active", k === "newest"); }); } }
+    function renderEmptyDetailPane() { var panel = document.getElementById("detail-panel"); panel.innerHTML = '<div class="detail-placeholder" id="detail-placeholder"><div class="detail-placeholder-icon">&#129463;</div><div class="detail-placeholder-text">Select a case to review</div></div>'; }
+    function setSort(sortKey) { if (controlsShouldBeDisabled()) return; if (sortKey === "oldest" && currentTab === "queue") return; currentSort = sortKey; ["severity","newest","oldest"].forEach(function(k) { var el = document.getElementById("sort-" + k); if (el) el.classList.toggle("active", k === sortKey); }); updateSortChipState(); renderQueue(); }
+    function setFilter(filterKey) { if (controlsShouldBeDisabled()) return; currentFilter = filterKey; ["all","urgent","emergency","routine"].forEach(function(k) { document.getElementById("chip-" + k).classList.toggle("active", k === filterKey); }); if (isUrgencySortRedundant() && currentSort === "severity") { currentSort = "newest"; ["severity","newest","oldest"].forEach(function(k) { var el = document.getElementById("sort-" + k); if (el) el.classList.toggle("active", k === "newest"); }); } updateSortChipState(); renderQueue(); }
+    function isUrgencySortRedundant() { return currentFilter !== "all"; }
+    function updateSortChipState() { var severityChip = document.getElementById("sort-severity"); if (!severityChip) return; var redundant = isUrgencySortRedundant(); severityChip.classList.toggle("disabled", redundant); if (redundant && currentSort === "severity") { currentSort = "newest"; ["severity","newest","oldest"].forEach(function(k) { var el = document.getElementById("sort-" + k); if (el) el.classList.toggle("active", k === "newest"); }); } }
+    function controlsShouldBeDisabled() { return !!selectedCaseId; }
+    function updateControlsDisabledState() { var tabsShell = document.getElementById("tabs-shell"); var queueControls = document.getElementById("queue-controls"); var queueHint = document.getElementById("queue-hint"); var disabled = !!selectedCaseId; tabsShell.classList.toggle("controls-disabled", disabled); queueControls.classList.toggle("controls-disabled", disabled); queueHint.classList.toggle("show", disabled && !isMobile); }
 
-      if (!isMobile && selectedCaseId) {
-        app.classList.add("desktop-review-focus");
-      } else {
-        app.classList.remove("desktop-review-focus");
-      }
-    }
+    function renderQueue() { var panel = document.getElementById("queue-panel"); var cases = allCases.slice(); if (currentTab === "queue") { cases = cases.filter(function(c) { return c.review_status !== "reviewed"; }); } if (currentFilter !== "all") { cases = cases.filter(function(c) { return (c.severity || "unknown") === currentFilter; }); } var sevOrder = { urgent: 1, emergency: 2, routine: 3, unknown: 4 }; if (currentSort === "severity" && !isUrgencySortRedundant()) { cases.sort(function(a, b) { var aOrder = sevOrder[a.severity || "unknown"] || 9; var bOrder = sevOrder[b.severity || "unknown"] || 9; return aOrder - bOrder || new Date(b.created_at) - new Date(a.created_at); }); } else if (currentSort === "newest") { cases.sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); }); } else if (currentSort === "oldest") { cases.sort(function(a, b) { return new Date(a.created_at) - new Date(b.created_at); }); } if (!cases.length) { var emptyState = getEmptyStateCopy(); panel.innerHTML = '<div class="empty-state"><div class="empty-icon">\u2713</div><div class="empty-title">' + emptyState.emptyTitle + '</div><div class="empty-sub">' + emptyState.emptySub + '</div></div>'; return; } panel.innerHTML = '<div class="case-list">' + cases.map(renderCaseCard).join("") + '</div>'; panel.querySelectorAll(".case-card").forEach(function(el) { el.addEventListener("click", function() { openCase(el.dataset.caseId); }); }); }
+    function getEmptyStateCopy() { if (currentTab === "queue") return { emptyTitle: "No active cases", emptySub: "No new or draft cases are currently waiting in the queue." }; if (currentTab === "new") return { emptyTitle: "No new cases", emptySub: "No untouched cases match this filter." }; if (currentTab === "drafts") return { emptyTitle: "No drafts", emptySub: "No cases are currently in draft status." }; if (currentTab === "reviewed") return { emptyTitle: "No reviewed cases", emptySub: "No reviewed cases match this filter." }; return { emptyTitle: "All clear", emptySub: "No cases match this filter." }; }
 
-    async function handleLogin() {
-      var email = document.getElementById("auth-email").value.trim();
-      var password = document.getElementById("auth-password").value;
-      var btn = document.getElementById("auth-btn");
-      var errEl = document.getElementById("auth-error");
+    function renderCaseCard(c) { var so = c.structured_output || {}; var name = c.patient_name || "Unknown Patient"; var phone = c.patient_phone ? formatPhone(c.patient_phone) : "-"; var phoneRaw = c.patient_phone || ""; var complaint = so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-"; var painValue = so.pain_score != null ? so.pain_score : c.pain_score; var pain = (painValue !== null && painValue !== undefined && painValue !== "") ? ("Pain " + painValue + "/10") : ""; var time = formatTime(c.created_at); var reviewStatus = c.review_status || "new"; var reviewed = reviewStatus === "reviewed"; var draft = reviewStatus === "draft"; var isActive = c.id === selectedCaseId; var severity = c.severity || "unknown"; var phoneEl = phoneRaw ? '<a class="tel-link" href="tel:' + escAttr(phoneRaw) + '">' + escHtml(phone) + '</a>' : '<span>' + escHtml(phone) + '</span>'; return '<div class="case-card ' + escAttr(severity) + (reviewed ? " reviewed" : "") + (draft ? " draft" : "") + (isActive ? " active" : "") + '" id="card-' + escAttr(c.id) + '" data-case-id="' + escAttr(c.id) + '"><div class="case-row1"><span class="severity-badge badge-' + escAttr(severity) + '">' + escHtml(severity) + '</span><span class="case-name">' + escHtml(name) + (reviewed ? ' <span class="status-badge reviewed">Reviewed</span>' : "") + (draft ? ' <span class="status-badge draft">Draft</span>' : "") + '</span><span class="case-time">' + escHtml(time) + '</span></div><div class="case-row2">' + escHtml(complaint) + '</div><div class="case-row3"><span class="case-meta-item">' + phoneEl + '</span>' + (pain ? '<span class="case-meta-item">' + escHtml(pain) + '</span>' : "") + (reviewed ? '<span class="reviewed-dot" title="Reviewed"></span>' : "") + (draft ? '<span class="draft-dot" title="Draft"></span>' : "") + '</div></div>'; }
 
-      errEl.style.display = "none";
-      errEl.textContent = "";
-
-      if (!email || !password) {
-        errEl.textContent = "Enter both email and password.";
-        errEl.style.display = "block";
-        return;
-      }
-
-      btn.disabled = true;
-      btn.textContent = "Signing in...";
-
-      try {
-        var result = await sb.auth.signInWithPassword({ email: email, password: password });
-        var data = result.data;
-        var error = result.error;
-
-        if (error) {
-          errEl.textContent = error.message || "Sign-in failed.";
-          errEl.style.display = "block";
-          return;
-        }
-
-        if (!data || !data.user) {
-          errEl.textContent = "Sign-in returned no user.";
-          errEl.style.display = "block";
-          return;
-        }
-
-        showApp(data.user);
-      } catch (err) {
-        errEl.textContent = (err && err.message) ? err.message : "Unexpected sign-in error.";
-        errEl.style.display = "block";
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "Sign In";
-      }
-    }
-
-    async function handleSignOut() {
-      try {
-        await sb.auth.signOut();
-      } catch (err) {
-        console.error("Sign-out error:", err);
-      }
-      window.location.reload();
-    }
-
-    async function init() {
-      try {
-        var result = await sb.auth.getSession();
-        var data = result.data;
-        var error = result.error;
-        if (error) {
-          console.error("Session error:", error);
-          return;
-        }
-
-        if (data && data.session && data.session.user) {
-          showApp(data.session.user);
-        } else if (isMobile) {
-          document.getElementById("detail-column").style.display = "none";
-        }
-      } catch (err) {
-        console.error("Init error:", err);
-      }
-    }
-
-    function showApp(user) {
-      currentUser = user;
-      document.getElementById("auth-screen").style.display = "none";
-      document.getElementById("app").style.display = "flex";
-      document.getElementById("header-user-email").textContent = resolveReviewerName(user.email || "");
-
-      if (refreshInterval) clearInterval(refreshInterval);
-      refreshInterval = setInterval(loadCases, 90000);
-
-      if (isMobile) {
-        document.getElementById("detail-column").style.display = "none";
-        document.getElementById("queue-column").style.display = "flex";
-      }
-
-      syncModes();
-      loadCases();
-    }
-
-    async function loadCases() {
-      var btn = document.getElementById("refresh-btn");
-      btn.classList.add("spinning");
-
-      try {
-        await Promise.all([
-          loadCurrentTabCases(),
-          loadQueueCount()
-        ]);
-
-        renderQueue();
-        updateQueueBadge();
-        updateSortChipState();
-        updateSortBarVisibility();
-        updateControlsDisabledState();
-        syncModes();
-      } catch (err) {
-        console.error("Load exception:", err);
-        showToast("Unexpected load error");
-      } finally {
-        btn.classList.remove("spinning");
-      }
-    }
-
-    async function loadCurrentTabCases() {
-      var query;
-
-      if (currentTab === "queue") {
-        query = sb
-          .from("triage_cases")
-          .select("*")
-          .or("review_status.eq.new,review_status.eq.draft,review_status.is.null")
-          .order("created_at", { ascending: false })
-          .limit(300);
-      } else if (currentTab === "new") {
-        query = sb
-          .from("triage_cases")
-          .select("*")
-          .or("review_status.eq.new,review_status.is.null")
-          .order("created_at", { ascending: false })
-          .limit(300);
-      } else if (currentTab === "drafts") {
-        query = sb
-          .from("triage_cases")
-          .select("*")
-          .eq("review_status", "draft")
-          .order("created_at", { ascending: false })
-          .limit(300);
-      } else if (currentTab === "reviewed") {
-        query = sb
-          .from("triage_cases")
-          .select("*")
-          .eq("review_status", "reviewed")
-          .order("created_at", { ascending: false })
-          .limit(300);
-      } else {
-        query = sb
-          .from("triage_cases")
-          .select("*")
-          .order("created_at", { ascending: false })
-          .limit(300);
-      }
-
-      var result = await query;
-      var data = result.data;
-      var error = result.error;
-
-      if (error) {
-        console.error("Load error:", error);
-        showToast("Error loading cases: " + (error.message || "unknown"));
-        allCases = [];
-        return;
-      }
-
-      allCases = Array.isArray(data) ? data : [];
-    }
-
-    async function loadQueueCount() {
-      var result = await sb
-        .from("triage_cases")
-        .select("id", { count: "exact", head: true })
-        .or("review_status.eq.new,review_status.eq.draft,review_status.is.null");
-
-      var count = result.count;
-      var error = result.error;
-
-      if (error) {
-        console.error("Queue count error:", error);
-        return;
-      }
-
-      queueCount = typeof count === "number" ? count : 0;
-    }
-
-    function updateQueueBadge() {
-      var badge = document.getElementById("queue-count-badge");
-      if (queueCount > 0) {
-        badge.textContent = String(queueCount);
-        badge.style.display = "inline-block";
-      } else {
-        badge.style.display = "none";
-      }
-    }
-
-    function switchTab(tab) {
-      if (controlsShouldBeDisabled()) return;
-
-      currentTab = tab;
-      selectedCaseId = null;
-      currentCase = null;
-
-      ["queue", "new", "drafts", "reviewed", "all"].forEach(function(t) {
-        document.getElementById("tab-" + t).classList.toggle("active", t === tab);
-      });
-
-      currentFilter = "all";
-      ["all", "urgent", "emergency", "routine"].forEach(function(c) {
-        document.getElementById("chip-" + c).classList.toggle("active", c === "all");
-      });
-
-      currentSort = "newest";
-      ["severity", "newest", "oldest"].forEach(function(k) {
-        var el = document.getElementById("sort-" + k);
-        if (el) el.classList.toggle("active", k === "newest");
-      });
-
-      if (isMobile) {
-        document.getElementById("queue-column").style.display = "flex";
-        document.getElementById("detail-column").style.display = "none";
-      } else {
-        renderEmptyDetailPane();
-      }
-
-      syncModes();
-      updateSortBarVisibility();
-      updateSortChipState();
-      updateControlsDisabledState();
-      loadCases();
-    }
-
-    function updateSortBarVisibility() {
-      var sortBar = document.getElementById("sort-bar");
-      var oldestBtn = document.getElementById("sort-oldest");
-
-      sortBar.style.display = "flex";
-      oldestBtn.style.display = currentTab === "queue" ? "none" : "inline-flex";
-
-      if (currentTab === "queue" && currentSort === "oldest") {
-        currentSort = "newest";
-        ["severity", "newest", "oldest"].forEach(function(k) {
-          var el = document.getElementById("sort-" + k);
-          if (el) el.classList.toggle("active", k === "newest");
-        });
-      }
-    }
-
-    function renderEmptyDetailPane() {
-      var panel = document.getElementById("detail-panel");
-      panel.innerHTML = '<div class="detail-placeholder" id="detail-placeholder"><div class="detail-placeholder-icon">&#129463;</div><div class="detail-placeholder-text">Select a case to review</div></div>';
-    }
-
-    function setSort(sortKey) {
-      if (controlsShouldBeDisabled()) return;
-      if (sortKey === "oldest" && currentTab === "queue") return;
-
-      currentSort = sortKey;
-
-      ["severity", "newest", "oldest"].forEach(function(k) {
-        var el = document.getElementById("sort-" + k);
-        if (el) el.classList.toggle("active", k === sortKey);
-      });
-
-      updateSortChipState();
-      renderQueue();
-    }
-
-    function setFilter(filterKey) {
-      if (controlsShouldBeDisabled()) return;
-
-      currentFilter = filterKey;
-      ["all", "urgent", "emergency", "routine"].forEach(function(k) {
-        document.getElementById("chip-" + k).classList.toggle("active", k === filterKey);
-      });
-
-      if (isUrgencySortRedundant() && currentSort === "severity") {
-        currentSort = "newest";
-        ["severity", "newest", "oldest"].forEach(function(k) {
-          var el = document.getElementById("sort-" + k);
-          if (el) el.classList.toggle("active", k === "newest");
-        });
-      }
-
-      updateSortChipState();
-      renderQueue();
-    }
-
-    function isUrgencySortRedundant() {
-      return currentFilter !== "all";
-    }
-
-    function updateSortChipState() {
-      var severityChip = document.getElementById("sort-severity");
-      if (!severityChip) return;
-
-      var redundant = isUrgencySortRedundant();
-      severityChip.classList.toggle("disabled", redundant);
-
-      if (redundant && currentSort === "severity") {
-        currentSort = "newest";
-        ["severity", "newest", "oldest"].forEach(function(k) {
-          var el = document.getElementById("sort-" + k);
-          if (el) el.classList.toggle("active", k === "newest");
-        });
-      }
-    }
-
-    function controlsShouldBeDisabled() {
-      return !!selectedCaseId;
-    }
-
-    function updateControlsDisabledState() {
-      var tabsShell = document.getElementById("tabs-shell");
-      var queueControls = document.getElementById("queue-controls");
-      var queueHint = document.getElementById("queue-hint");
-      var disabled = !!selectedCaseId;
-
-      tabsShell.classList.toggle("controls-disabled", disabled);
-      queueControls.classList.toggle("controls-disabled", disabled);
-      queueHint.classList.toggle("show", disabled && !isMobile);
-    }
-
-    function renderQueue() {
-      var panel = document.getElementById("queue-panel");
-      var cases = allCases.slice();
-
-      if (currentTab === "queue") {
-        cases = cases.filter(function(c) { return c.review_status !== "reviewed"; });
-      }
-
-      if (currentFilter !== "all") {
-        cases = cases.filter(function(c) { return (c.severity || "unknown") === currentFilter; });
-      }
-
-      var sevOrder = { urgent: 1, emergency: 2, routine: 3, unknown: 4 };
-
-      if (currentSort === "severity" && !isUrgencySortRedundant()) {
-        cases.sort(function(a, b) {
-          var aOrder = sevOrder[a.severity || "unknown"] || 9;
-          var bOrder = sevOrder[b.severity || "unknown"] || 9;
-          return aOrder - bOrder || new Date(b.created_at) - new Date(a.created_at);
-        });
-      } else if (currentSort === "newest") {
-        cases.sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); });
-      } else if (currentSort === "oldest") {
-        cases.sort(function(a, b) { return new Date(a.created_at) - new Date(b.created_at); });
-      }
-
-      if (!cases.length) {
-        var emptyState = getEmptyStateCopy();
-        panel.innerHTML = '<div class="empty-state"><div class="empty-icon">' + "\u2713" + '</div><div class="empty-title">' + emptyState.emptyTitle + '</div><div class="empty-sub">' + emptyState.emptySub + '</div></div>';
-        return;
-      }
-
-      panel.innerHTML = '<div class="case-list">' + cases.map(renderCaseCard).join("") + '</div>';
-
-      panel.querySelectorAll(".case-card").forEach(function(el) {
-        el.addEventListener("click", function() { openCase(el.dataset.caseId); });
-      });
-    }
-
-    function getEmptyStateCopy() {
-      if (currentTab === "queue") {
-        return {
-          emptyTitle: "No active cases",
-          emptySub: "No new or draft cases are currently waiting in the queue."
-        };
-      }
-      if (currentTab === "new") {
-        return {
-          emptyTitle: "No new cases",
-          emptySub: "No untouched cases match this filter."
-        };
-      }
-      if (currentTab === "drafts") {
-        return {
-          emptyTitle: "No drafts",
-          emptySub: "No cases are currently in draft status."
-        };
-      }
-      if (currentTab === "reviewed") {
-        return {
-          emptyTitle: "No reviewed cases",
-          emptySub: "No reviewed cases match this filter."
-        };
-      }
-      return {
-        emptyTitle: "All clear",
-        emptySub: "No cases match this filter."
-      };
-    }
-
-    function renderCaseCard(c) {
-      var so = c.structured_output || {};
-      var name = c.patient_name || "Unknown Patient";
-      var phone = c.patient_phone ? formatPhone(c.patient_phone) : "-";
-      var phoneRaw = c.patient_phone || "";
-      var complaint = so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-";
-      var painValue = so.pain_score != null ? so.pain_score : c.pain_score;
-      var pain = (painValue !== null && painValue !== undefined && painValue !== "") ? ("Pain " + painValue + "/10") : "";
-      var time = formatTime(c.created_at);
-      var reviewStatus = c.review_status || "new";
-      var reviewed = reviewStatus === "reviewed";
-      var draft = reviewStatus === "draft";
-      var isActive = c.id === selectedCaseId;
-      var severity = c.severity || "unknown";
-
-      var phoneEl = phoneRaw
-        ? '<a class="tel-link" href="tel:' + escAttr(phoneRaw) + '">' + escHtml(phone) + '</a>'
-        : '<span>' + escHtml(phone) + '</span>';
-
-      return '<div class="case-card ' + escAttr(severity) + (reviewed ? " reviewed" : "") + (draft ? " draft" : "") + (isActive ? " active" : "") + '" id="card-' + escAttr(c.id) + '" data-case-id="' + escAttr(c.id) + '">' +
-        '<div class="case-row1">' +
-          '<span class="severity-badge badge-' + escAttr(severity) + '">' + escHtml(severity) + '</span>' +
-          '<span class="case-name">' + escHtml(name) +
-            (reviewed ? ' <span class="status-badge reviewed">Reviewed</span>' : "") +
-            (draft ? ' <span class="status-badge draft">Draft</span>' : "") +
-          '</span>' +
-          '<span class="case-time">' + escHtml(time) + '</span>' +
-        '</div>' +
-        '<div class="case-row2">' + escHtml(complaint) + '</div>' +
-        '<div class="case-row3">' +
-          '<span class="case-meta-item">' + phoneEl + '</span>' +
-          (pain ? '<span class="case-meta-item">' + escHtml(pain) + '</span>' : "") +
-          (reviewed ? '<span class="reviewed-dot" title="Reviewed"></span>' : "") +
-          (draft ? '<span class="draft-dot" title="Draft"></span>' : "") +
-        '</div>' +
-      '</div>';
-    }
-
-    async function openCase(id) {
-      selectedCaseId = id;
-
-      document.querySelectorAll(".case-card").forEach(function(el) { el.classList.remove("active"); });
-      var cardEl = document.getElementById("card-" + CSS.escape(id));
-      if (cardEl) cardEl.classList.add("active");
-
-      document.getElementById("detail-panel").innerHTML =
-        '<div class="loading-state"><span class="loading-dots">Loading</span></div>';
-
-      if (isMobile) {
-        document.getElementById("detail-column").style.display = "flex";
-      }
-
-      syncModes();
-      updateControlsDisabledState();
-
-      var c = allCases.find(function(x) { return x.id === id; });
-
-      if (!c) {
-        var result = await sb.from("triage_cases").select("*").eq("id", id).single();
-        if (result.error) {
-          console.error("Open case error:", result.error);
-          showToast("Failed to load case");
-          return;
-        }
-        c = result.data;
-      }
-
-      if (!c) return;
-
-      currentCase = c;
-      renderDetail(c);
-    }
+    async function openCase(id) { selectedCaseId = id; document.querySelectorAll(".case-card").forEach(function(el) { el.classList.remove("active"); }); var cardEl = document.getElementById("card-" + CSS.escape(id)); if (cardEl) cardEl.classList.add("active"); document.getElementById("detail-panel").innerHTML = '<div class="loading-state"><span class="loading-dots">Loading</span></div>'; if (isMobile) { document.getElementById("detail-column").style.display = "flex"; } syncModes(); updateControlsDisabledState(); var c = allCases.find(function(x) { return x.id === id; }); if (!c) { var result = await sb.from("triage_cases").select("*").eq("id", id).single(); if (result.error) { console.error("Open case error:", result.error); showToast("Failed to load case"); return; } c = result.data; } if (!c) return; currentCase = c; renderDetail(c); logCaseView(c.id); }
 
     function renderDetail(c) {
       var panel = document.getElementById("detail-panel");
       var so = c.structured_output || {};
       var name = c.patient_name || "Unknown Patient";
-      var nameNote = !c.patient_name
-        ? ' <span style="font-size:11px;color:#6a80a0;font-weight:400">(no intake form linked)</span>'
-        : "";
-
+      var nameNote = !c.patient_name ? ' <span style="font-size:11px;color:#6a80a0;font-weight:400">(no intake form linked)</span>' : "";
       var phone = c.patient_phone ? formatPhone(c.patient_phone) : null;
       var phoneRaw = c.patient_phone || "";
-      var phoneDisplay = phone
-        ? '<a class="tel-link" href="tel:' + escAttr(phoneRaw) + '">' + escHtml(phone) + '</a>'
-        : '<span style="color:#6a80a0">No phone</span>';
-
+      var phoneDisplay = phone ? '<a class="tel-link" href="tel:' + escAttr(phoneRaw) + '">' + escHtml(phone) + '</a>' : '<span style="color:#6a80a0">No phone</span>';
       var reviewedAt = c.reviewed_at ? formatDatetime(c.reviewed_at) : null;
       var reviewStatus = c.review_status || "new";
       var isReviewed = reviewStatus === "reviewed";
@@ -2348,18 +648,8 @@
       var severity = c.severity || "unknown";
       var reviewerName = resolveReviewerName(c.reviewed_by);
       var finalDispositionLabel = formatDisposition(c.final_disposition);
-
-      var sevColor =
-        severity === "urgent" ? "#e84545" :
-        severity === "emergency" ? "#f0a500" :
-        severity === "routine" ? "#00c87a" :
-        "#00c8e8";
-
-      var sevIcon =
-        severity === "urgent" ? "!" :
-        severity === "emergency" ? "\u26A0" :
-        severity === "routine" ? "\u2713" :
-        "?";
+      var sevColor = severity === "urgent" ? "#e84545" : severity === "emergency" ? "#f0a500" : severity === "routine" ? "#00c87a" : "#00c8e8";
+      var sevIcon = severity === "urgent" ? "!" : severity === "emergency" ? "\u26A0" : severity === "routine" ? "\u2713" : "?";
 
       var flags = [
         { label: "Airway / swallowing", val: so.difficulty_breathing_or_swallowing },
@@ -2385,257 +675,85 @@
       var intakeRedFlagsList = humanizeRedFlags(intakeRedFlags);
       var intakeMedicalFlagsList = humanizeMedicalFlags(intakeMedicalFlags);
 
-      /* --- FIX #3: Defensive contradictions parsing --- */
       var contradictions = c.contradictions || [];
-      if (typeof contradictions === "string") {
-        try { contradictions = JSON.parse(contradictions); } catch (e) { contradictions = []; }
-      }
+      if (typeof contradictions === "string") { try { contradictions = JSON.parse(contradictions); } catch (e) { contradictions = []; } }
       if (!Array.isArray(contradictions)) { contradictions = []; }
       var hasContradictions = contradictions.length > 0;
-      /* --- END FIX #3 --- */
 
       var contradictionsHtml = "";
-      if (hasContradictions) {
-        contradictionsHtml = '<div class="detail-section discrepancy-section">' +
-          '<div class="section-header">' +
-            '<span class="section-title discrepancy-title">\u26A0 Intake vs. Call Discrepancies</span>' +
-          '</div>' +
-          '<div class="discrepancy-list">' +
-            contradictions.map(function(item) {
-              return '<div class="discrepancy-item">' +
-                '<div class="discrepancy-field">' + escHtml(formatContradictionField(item.field)) + '</div>' +
-                '<div class="discrepancy-line"><strong>Intake:</strong> ' + escHtml(item.intake_value || "-") + '</div>' +
-                '<div class="discrepancy-line"><strong>Call:</strong> ' + escHtml(item.call_value || "-") + '</div>' +
-                (item.clinical_note
-                  ? '<div class="discrepancy-note"><strong>Verify:</strong> ' + escHtml(item.clinical_note) + '</div>'
-                  : "") +
-              '</div>';
-            }).join("") +
-          '</div>' +
-        '</div>';
-      }
+      if (hasContradictions) { contradictionsHtml = '<div class="detail-section discrepancy-section"><div class="section-header"><span class="section-title discrepancy-title">\u26A0 Intake vs. Call Discrepancies</span></div><div class="discrepancy-list">' + contradictions.map(function(item) { return '<div class="discrepancy-item"><div class="discrepancy-field">' + escHtml(formatContradictionField(item.field)) + '</div><div class="discrepancy-line"><strong>Intake:</strong> ' + escHtml(item.intake_value || "-") + '</div><div class="discrepancy-line"><strong>Call:</strong> ' + escHtml(item.call_value || "-") + '</div>' + (item.clinical_note ? '<div class="discrepancy-note"><strong>Verify:</strong> ' + escHtml(item.clinical_note) + '</div>' : "") + '</div>'; }).join("") + '</div></div>'; }
 
       var transcriptHtml = "";
-      if (c.transcript) {
-        transcriptHtml = '<div class="detail-section">' +
-          '<div class="section-header">' +
-            '<span class="section-title">Call Transcript</span>' +
-            '<button class="collapsible-toggle" id="toggle-transcript" type="button">Show \u25BC</button>' +
-          '</div>' +
-          '<div class="collapsible-body" id="transcript-body">' +
-            '<div class="transcript-text" style="padding-top:16px">' + escHtml(c.transcript) + '</div>' +
-          '</div>' +
-        '</div>';
-      }
+      if (c.transcript) { transcriptHtml = '<div class="detail-section"><div class="section-header"><span class="section-title">Call Transcript</span><button class="collapsible-toggle" id="toggle-transcript" type="button">Show \u25BC</button></div><div class="collapsible-body" id="transcript-body"><div class="transcript-text" style="padding-top:16px">' + escHtml(c.transcript) + '</div></div></div>'; }
+
+      /* Revenue display for reviewed cases */
+      var revenueDisplay = (c.revenue_generated !== null && c.revenue_generated !== undefined) ? ("$" + Number(c.revenue_generated).toFixed(2)) : "-";
+      var followUpDisplay = c.subsequent_appointment_booked === true ? "Yes" : c.subsequent_appointment_booked === false ? "No" : "-";
+
+      /* Revenue input current value */
+      var revenueInputVal = (c.revenue_generated !== null && c.revenue_generated !== undefined) ? String(c.revenue_generated) : "";
 
       var actionRowHtml;
       if (isReviewed) {
-        actionRowHtml =
-          '<div class="review-lock-message">\u2713 This case has been finalized as reviewed</div>' +
-          '<button class="btn-back-desktop" id="desktop-back-btn" type="button">Back to main screen</button>' +
-          '<a class="btn-action btn-export-record" id="export-case-btn" target="_blank" rel="noopener noreferrer">Export Clinical Record</a>';
+        actionRowHtml = '<div class="review-lock-message">\u2713 This case has been finalized as reviewed</div><button class="btn-back-desktop" id="desktop-back-btn" type="button">Back to main screen</button><a class="btn-action btn-export-record" id="export-case-btn" target="_blank" rel="noopener noreferrer">Export Clinical Record</a>';
       } else {
-        actionRowHtml =
-          '<button class="btn-mark-reviewed" id="mark-reviewed-btn" type="button">\u2713 Mark Reviewed</button>' +
-          '<button class="btn-action" id="save-draft-btn" type="button">Save Draft</button>' +
-          '<button class="btn-back-desktop" id="desktop-back-btn" type="button">Back to main screen</button>' +
-          '<a class="btn-action btn-export-record" id="export-case-btn" target="_blank" rel="noopener noreferrer">Export Clinical Record</a>';
+        actionRowHtml = '<button class="btn-mark-reviewed" id="mark-reviewed-btn" type="button">\u2713 Mark Reviewed</button><button class="btn-action" id="save-draft-btn" type="button">Save Draft</button><button class="btn-back-desktop" id="desktop-back-btn" type="button">Back to main screen</button><a class="btn-action btn-export-record" id="export-case-btn" target="_blank" rel="noopener noreferrer">Export Clinical Record</a>';
       }
 
       panel.innerHTML =
-        '<div class="detail-shell">' +
-          '<div class="detail-header">' +
-            '<button class="back-btn" id="back-btn" type="button" aria-label="Back to case list">\u2190</button>' +
-            '<div class="detail-header-info">' +
-              '<div class="detail-patient-name">' + escHtml(name) + nameNote + '</div>' +
-              '<div class="detail-patient-meta">' +
-                phoneDisplay + ' \u00B7 ' + escHtml(formatDatetime(c.created_at)) +
-                (isReviewed ? (' \u00B7 Reviewed by ' + escHtml(reviewerName)) : "") +
-              '</div>' +
-            '</div>' +
-            '<span class="severity-badge badge-' + escAttr(severity) + '">' + escHtml(severity) + '</span>' +
-          '</div>' +
+        '<div class="detail-shell"><div class="detail-header"><button class="back-btn" id="back-btn" type="button" aria-label="Back to case list">\u2190</button><div class="detail-header-info"><div class="detail-patient-name">' + escHtml(name) + nameNote + '</div><div class="detail-patient-meta">' + phoneDisplay + ' \u00B7 ' + escHtml(formatDatetime(c.created_at)) + (isReviewed ? (' \u00B7 Reviewed by ' + escHtml(reviewerName)) : "") + '</div></div><span class="severity-badge badge-' + escAttr(severity) + '">' + escHtml(severity) + '</span></div>' +
+        '<div class="detail-scroll"><div class="detail-body">' +
 
-          '<div class="detail-scroll">' +
-            '<div class="detail-body">' +
+        '<div class="detail-section"><div class="severity-row"><div class="severity-icon ' + escAttr(severity) + '">' + escHtml(sevIcon) + '</div><div><div class="severity-detail-label">Triage Classification</div><div class="severity-detail-value" style="color:' + sevColor + '">' + escHtml(String(severity).toUpperCase()) + '</div><div class="severity-reason">' + escHtml(c.severity_reason || "-") + '</div></div></div><div class="stats-grid"><div class="stat-cell"><div class="stat-label">Pain Score</div><div class="stat-value">' + formatPain(so.pain_score, c.pain_score) + '</div></div><div class="stat-cell"><div class="stat-label">Duration</div><div class="stat-value">' + formatDuration(c.duration_seconds) + '</div></div><div class="stat-cell"><div class="stat-label">Location</div><div class="stat-value" style="font-size:13px">' + escHtml([so.jaw, so.side].filter(Boolean).join(" / ") || "-") + '</div></div><div class="stat-cell"><div class="stat-label">Extraction</div><div class="stat-value" style="font-size:12px">' + escHtml(c.extraction_source || "-") + '</div></div></div></div>' +
 
-              '<div class="detail-section">' +
-                '<div class="severity-row">' +
-                  '<div class="severity-icon ' + escAttr(severity) + '">' + escHtml(sevIcon) + '</div>' +
-                  '<div>' +
-                    '<div class="severity-detail-label">Triage Classification</div>' +
-                    '<div class="severity-detail-value" style="color:' + sevColor + '">' + escHtml(String(severity).toUpperCase()) + '</div>' +
-                    '<div class="severity-reason">' + escHtml(c.severity_reason || "-") + '</div>' +
-                  '</div>' +
-                '</div>' +
-                '<div class="stats-grid">' +
-                  '<div class="stat-cell"><div class="stat-label">Pain Score</div><div class="stat-value">' + formatPain(so.pain_score, c.pain_score) + '</div></div>' +
-                  '<div class="stat-cell"><div class="stat-label">Duration</div><div class="stat-value">' + formatDuration(c.duration_seconds) + '</div></div>' +
-                  '<div class="stat-cell"><div class="stat-label">Location</div><div class="stat-value" style="font-size:13px">' + escHtml([so.jaw, so.side].filter(Boolean).join(" / ") || "-") + '</div></div>' +
-                  '<div class="stat-cell"><div class="stat-label">Extraction</div><div class="stat-value" style="font-size:12px">' + escHtml(c.extraction_source || "-") + '</div></div>' +
-                '</div>' +
-              '</div>' +
+        '<div class="detail-section"><div class="section-header"><span class="section-title">Quick Summary</span></div><div class="summary-grid"><div class="summary-item"><div class="summary-label">Chief Complaint</div><div class="summary-value">' + escHtml(so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-") + '</div></div><div class="summary-item"><div class="summary-label">Onset</div><div class="summary-value">' + escHtml(so.onset || c.onset || c.onset_bucket || "-") + '</div></div><div class="summary-item"><div class="summary-label">Reason for Current Severity</div><div class="summary-value">' + escHtml(c.severity_reason || "-") + '</div></div></div></div>' +
 
-              '<div class="detail-section">' +
-                '<div class="section-header"><span class="section-title">Quick Summary</span></div>' +
-                '<div class="summary-grid">' +
-                  '<div class="summary-item"><div class="summary-label">Chief Complaint</div><div class="summary-value">' + escHtml(so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-") + '</div></div>' +
-                  '<div class="summary-item"><div class="summary-label">Onset</div><div class="summary-value">' + escHtml(so.onset || c.onset || c.onset_bucket || "-") + '</div></div>' +
-                  '<div class="summary-item"><div class="summary-label">Reason for Current Severity</div><div class="summary-value">' + escHtml(c.severity_reason || "-") + '</div></div>' +
-                '</div>' +
-              '</div>' +
+        '<div class="detail-section"><div class="section-header"><span class="section-title">Patient Intake</span></div><div class="summary-grid"><div class="summary-item"><div class="summary-label">Date of Birth</div><div class="summary-value">' + escHtml(formatDateOnly(c.patient_dob)) + '</div></div><div class="summary-item"><div class="summary-label">City / Province</div><div class="summary-value">' + escHtml([c.patient_city, c.patient_province].filter(Boolean).join(", ") || "-") + '</div></div><div class="summary-item"><div class="summary-label">Coverage</div><div class="summary-value">' + escHtml(formatTag(c.coverage_status)) + '</div></div><div class="summary-item"><div class="summary-label">Intake Onset</div><div class="summary-value">' + escHtml(formatTag(c.onset_bucket)) + '</div></div><div class="summary-item"><div class="summary-label">Intake-Reported Red Flags</div><div class="summary-value">' + escHtml(intakeRedFlagsList) + '</div></div><div class="summary-item"><div class="summary-label">Relevant Medical History</div><div class="summary-value">' + escHtml(intakeMedicalFlagsList) + '</div></div></div></div>' +
 
-              '<div class="detail-section">' +
-                '<div class="section-header"><span class="section-title">Patient Intake</span></div>' +
-                '<div class="summary-grid">' +
-                  '<div class="summary-item"><div class="summary-label">Date of Birth</div><div class="summary-value">' + escHtml(formatDateOnly(c.patient_dob)) + '</div></div>' +
-                  '<div class="summary-item"><div class="summary-label">City / Province</div><div class="summary-value">' + escHtml([c.patient_city, c.patient_province].filter(Boolean).join(", ") || "-") + '</div></div>' +
-                  '<div class="summary-item"><div class="summary-label">Coverage</div><div class="summary-value">' + escHtml(formatTag(c.coverage_status)) + '</div></div>' +
-                  '<div class="summary-item"><div class="summary-label">Intake Onset</div><div class="summary-value">' + escHtml(formatTag(c.onset_bucket)) + '</div></div>' +
-                  '<div class="summary-item"><div class="summary-label">Intake-Reported Red Flags</div><div class="summary-value">' + escHtml(intakeRedFlagsList) + '</div></div>' +
-                  '<div class="summary-item"><div class="summary-label">Relevant Medical History</div><div class="summary-value">' + escHtml(intakeMedicalFlagsList) + '</div></div>' +
-                '</div>' +
-              '</div>' +
+        contradictionsHtml +
 
-              contradictionsHtml +
+        '<div class="detail-section"><div class="section-header"><span class="section-title">Clinical Sign-off</span></div><div class="section-body"><div class="review-block signoff-block"><div class="review-block-title">' + (isReviewed ? "Finalized Review" : "Pending Final Review") + '</div><div class="signoff-grid"><div class="signoff-row"><div class="signoff-label">Reviewed by</div><div class="signoff-value">' + escHtml(isReviewed ? reviewerName : resolveReviewerName(currentUser ? currentUser.email : "")) + '</div></div><div class="signoff-row"><div class="signoff-label">Reviewed at</div><div class="signoff-value">' + escHtml(isReviewed ? (reviewedAt || "-") : "Pending final review") + '</div></div><div class="signoff-row"><div class="signoff-label">Final disposition</div><div class="signoff-value">' + escHtml(isReviewed ? finalDispositionLabel : "Pending") + '</div></div>' + (isReviewed ? '<div class="signoff-row"><div class="signoff-label">Revenue generated</div><div class="signoff-value">' + escHtml(revenueDisplay) + '</div></div><div class="signoff-row"><div class="signoff-label">Follow-up booked</div><div class="signoff-value">' + escHtml(followUpDisplay) + '</div></div>' : '') + '<div class="signoff-row"><div class="signoff-label">Status</div><div class="signoff-value">' + escHtml(isReviewed ? "Finalized" : "Not yet finalized") + '</div></div></div></div></div></div>' +
 
-              '<div class="detail-section">' +
-                '<div class="section-header"><span class="section-title">Clinical Sign-off</span></div>' +
-                '<div class="section-body">' +
-                  '<div class="review-block signoff-block">' +
-                    '<div class="review-block-title">' + (isReviewed ? "Finalized Review" : "Pending Final Review") + '</div>' +
-                    '<div class="signoff-grid">' +
-                      '<div class="signoff-row"><div class="signoff-label">Reviewed by</div><div class="signoff-value">' + escHtml(isReviewed ? reviewerName : resolveReviewerName(currentUser ? currentUser.email : "")) + '</div></div>' +
-                      '<div class="signoff-row"><div class="signoff-label">Reviewed at</div><div class="signoff-value">' + escHtml(isReviewed ? (reviewedAt || "-") : "Pending final review") + '</div></div>' +
-                      '<div class="signoff-row"><div class="signoff-label">Final disposition</div><div class="signoff-value">' + escHtml(isReviewed ? finalDispositionLabel : "Pending") + '</div></div>' +
-                      '<div class="signoff-row"><div class="signoff-label">Status</div><div class="signoff-value">' + escHtml(isReviewed ? "Finalized" : "Not yet finalized") + '</div></div>' +
-                    '</div>' +
-                  '</div>' +
-                '</div>' +
-              '</div>' +
+        '<div class="detail-section review-panel"><div class="section-header"><span class="section-title">Dentist Review</span>' + (isReviewed ? '<span class="detail-state-text reviewed">\u2713 Finalized review ' + escHtml(reviewedAt || "") + '</span>' : isDraft ? '<span class="detail-state-text draft">Draft saved</span>' : '<span class="detail-state-text">Decision required</span>') + '</div><div class="review-grid"><div class="review-block"><div class="review-block-title">Clinical Addendum</div><label class="form-label" for="field-notes">Notes</label><textarea class="form-textarea" id="field-notes" placeholder="Add clinical notes, observations, or follow-up instructions..."' + (isReviewed ? ' readonly style="opacity:0.6"' : '') + '>' + escHtml(c.review_notes || "") + '</textarea><div class="form-helper">Use this for the dentist\'s clinical addendum or follow-up rationale.</div></div>' +
 
-              '<div class="detail-section review-panel">' +
-                '<div class="section-header">' +
-                  '<span class="section-title">Dentist Review</span>' +
-                  (isReviewed
-                    ? '<span class="detail-state-text reviewed">\u2713 Finalized review ' + escHtml(reviewedAt || "") + '</span>'
-                    : isDraft
-                      ? '<span class="detail-state-text draft">Draft saved</span>'
-                      : '<span class="detail-state-text">Decision required</span>') +
-                '</div>' +
-                '<div class="review-grid">' +
-                  '<div class="review-block">' +
-                    '<div class="review-block-title">Clinical Addendum</div>' +
-                    '<label class="form-label" for="field-notes">Notes</label>' +
-                    '<textarea class="form-textarea" id="field-notes" placeholder="Add clinical notes, observations, or follow-up instructions..."' + (isReviewed ? ' readonly style="opacity:0.6"' : '') + '>' + escHtml(c.review_notes || "") + '</textarea>' +
-                    '<div class="form-helper">Use this for the dentist\'s clinical addendum or follow-up rationale.</div>' +
-                  '</div>' +
-                  '<div class="review-block">' +
-                    '<div class="review-block-title">Decision</div>' +
-                    '<div class="decision-grid">' +
-                      '<div class="semantic-note"><strong>Semantics:</strong> Mark reviewed only when this case has a finalized operational outcome. "Patient contacted" should reflect real outreach, not intended outreach.</div>' +
-                      '<div>' +
-                        '<label class="form-label" for="field-disposition">Final Disposition</label>' +
-                        '<select class="form-select" id="field-disposition"' + (isReviewed ? ' disabled style="opacity:0.6"' : '') + '>' +
-                          '<option value="">- Select -</option>' +
-                          '<option value="booked"' + (c.final_disposition === "booked" ? " selected" : "") + '>Booked appointment</option>' +
-                          '<option value="referred_er"' + (c.final_disposition === "referred_er" ? " selected" : "") + '>Referred to ER</option>' +
-                          '<option value="rx_only"' + (c.final_disposition === "rx_only" ? " selected" : "") + '>Prescription only</option>' +
-                          '<option value="declined"' + (c.final_disposition === "declined" ? " selected" : "") + '>Patient declined care</option>' +
-                          '<option value="no_response"' + (c.final_disposition === "no_response" ? " selected" : "") + '>No response from patient</option>' +
-                        '</select>' +
-                        '<div class="form-helper">This is the dentist\'s final operational outcome for the case.</div>' +
-                      '</div>' +
-                      '<div class="decision-toggles">' +
-                        '<div class="toggle-row">' +
-                          '<span class="toggle-label">Prescription issued</span>' +
-                          '<label class="toggle"><input type="checkbox" id="field-rx"' + (c.prescription_issued ? " checked" : "") + (isReviewed ? " disabled" : "") + '><div class="toggle-track"></div></label>' +
-                        '</div>' +
-                        '<div class="toggle-row">' +
-                          '<span class="toggle-label">Patient contacted</span>' +
-                          '<label class="toggle"><input type="checkbox" id="field-contacted"' + (c.contacted_patient_at ? " checked" : "") + (isReviewed ? " disabled" : "") + '><div class="toggle-track"></div></label>' +
-                        '</div>' +
-                      '</div>' +
-                      '<div class="soft-warning" id="decision-soft-warning"></div>' +
-                      '<div class="decision-note">' +
-                        (isReviewed
-                          ? "This case is locked as reviewed. You can still export the clinical record below."
-                          : "A final disposition is required before marking reviewed. Save Draft if you are not ready to finalize.") +
-                      '</div>' +
-                    '</div>' +
-                  '</div>' +
-                '</div>' +
-                '<div class="action-band"><div class="action-row">' + actionRowHtml + '</div><div class="save-status" id="save-status"></div></div>' +
-              '</div>' +
+        '<div class="review-block"><div class="review-block-title">Decision</div><div class="decision-grid"><div class="semantic-note"><strong>Semantics:</strong> Mark reviewed only when this case has a finalized operational outcome. "Patient contacted" should reflect real outreach, not intended outreach.</div><div><label class="form-label" for="field-disposition">Final Disposition</label><select class="form-select" id="field-disposition"' + (isReviewed ? ' disabled style="opacity:0.6"' : '') + '><option value="">- Select -</option><option value="booked"' + (c.final_disposition === "booked" ? " selected" : "") + '>Booked appointment</option><option value="referred_er"' + (c.final_disposition === "referred_er" ? " selected" : "") + '>Referred to ER</option><option value="rx_only"' + (c.final_disposition === "rx_only" ? " selected" : "") + '>Prescription only</option><option value="declined"' + (c.final_disposition === "declined" ? " selected" : "") + '>Patient declined care</option><option value="no_response"' + (c.final_disposition === "no_response" ? " selected" : "") + '>No response from patient</option></select><div class="form-helper">This is the dentist\'s final operational outcome for the case.</div></div>' +
 
-              '<div class="detail-section">' +
-                '<div class="section-header"><span class="section-title">Clinical Flags</span></div>' +
-                '<div class="flags-grid">' +
-                  flags.map(function(f) {
-                    return '<div class="flag-item"><div class="flag-dot ' + (f.val === true ? "present" : "absent") + '"></div><span' + (f.val === true ? ' style="color:#e8f0fe"' : '') + '>' + escHtml(f.label) + '</span></div>';
-                  }).join("") +
-                '</div>' +
-              '</div>' +
+        '<div class="decision-toggles"><div class="toggle-row"><span class="toggle-label">Prescription issued</span><label class="toggle"><input type="checkbox" id="field-rx"' + (c.prescription_issued ? " checked" : "") + (isReviewed ? " disabled" : "") + '><div class="toggle-track"></div></label></div><div class="toggle-row"><span class="toggle-label">Patient contacted</span><label class="toggle"><input type="checkbox" id="field-contacted"' + (c.contacted_patient_at ? " checked" : "") + (isReviewed ? " disabled" : "") + '><div class="toggle-track"></div></label></div><div class="toggle-row"><span class="toggle-label">Follow-up appointment booked</span><label class="toggle"><input type="checkbox" id="field-followup"' + (c.subsequent_appointment_booked ? " checked" : "") + (isReviewed ? " disabled" : "") + '><div class="toggle-track"></div></label></div></div>' +
 
-              '<div class="detail-section">' +
-                '<div class="section-header">' +
-                  '<span class="section-title">AI Clinical Note</span>' +
-                  '<span class="note-lock-badge">Draft \u00B7 Read Only</span>' +
-                '</div>' +
-                '<div class="section-body"><div class="clinical-note-text">' + escHtml(c.clinical_note || "No clinical note generated.") + '</div></div>' +
-              '</div>' +
+        '<div class="revenue-row"><span class="toggle-label">Revenue generated</span><div class="revenue-input-wrap"><span class="revenue-prefix">$</span><input class="form-input-inline" type="number" id="field-revenue" placeholder="0.00" step="0.01" min="0" style="width:120px"' + (isReviewed ? ' readonly style="width:120px;opacity:0.6"' : '') + ' value="' + escAttr(revenueInputVal) + '" /></div></div>' +
 
-              transcriptHtml +
+        '<div class="soft-warning" id="decision-soft-warning"></div><div class="decision-note">' + (isReviewed ? "This case is locked as reviewed. You can still export the clinical record below." : "A final disposition is required before marking reviewed. Save Draft if you are not ready to finalize.") + '</div></div></div></div>' +
 
-              '<div class="detail-section">' +
-                '<div class="section-header">' +
-                  '<span class="section-title">Call Details</span>' +
-                  '<button class="collapsible-toggle" id="toggle-call-meta" type="button">Show \u25BC</button>' +
-                '</div>' +
-                '<div class="collapsible-body" id="call-meta-body">' +
-                  '<div class="stats-grid">' +
-                    '<div class="stat-cell" style="grid-column:1/-1"><div class="stat-label">Call ID</div><div class="stat-value" style="font-size:11px;word-break:break-all">' + escHtml(c.vapi_call_id || "-") + '</div></div>' +
-                    '<div class="stat-cell"><div class="stat-label">Triage Tag</div><div class="stat-value" style="font-size:12px">' + escHtml(formatTag(c.triage_tag)) + '</div></div>' +
-                    '<div class="stat-cell"><div class="stat-label">Created</div><div class="stat-value" style="font-size:11px">' + escHtml(formatDatetime(c.created_at)) + '</div></div>' +
-                  '</div>' +
-                '</div>' +
-              '</div>' +
+        '<div class="action-band"><div class="action-row">' + actionRowHtml + '</div><div class="save-status" id="save-status"></div></div></div>' +
 
-            '</div>' +
-          '</div>' +
-        '</div>';
+        '<div class="detail-section"><div class="section-header"><span class="section-title">Clinical Flags</span></div><div class="flags-grid">' + flags.map(function(f) { return '<div class="flag-item"><div class="flag-dot ' + (f.val === true ? "present" : "absent") + '"></div><span' + (f.val === true ? ' style="color:#e8f0fe"' : '') + '>' + escHtml(f.label) + '</span></div>'; }).join("") + '</div></div>' +
+
+        '<div class="detail-section"><div class="section-header"><span class="section-title">AI Clinical Note</span><span class="note-lock-badge">Draft \u00B7 Read Only</span></div><div class="section-body"><div class="clinical-note-text">' + escHtml(c.clinical_note || "No clinical note generated.") + '</div></div></div>' +
+
+        transcriptHtml +
+
+        '<div class="detail-section"><div class="section-header"><span class="section-title">Call Details</span><button class="collapsible-toggle" id="toggle-call-meta" type="button">Show \u25BC</button></div><div class="collapsible-body" id="call-meta-body"><div class="stats-grid"><div class="stat-cell" style="grid-column:1/-1"><div class="stat-label">Call ID</div><div class="stat-value" style="font-size:11px;word-break:break-all">' + escHtml(c.vapi_call_id || "-") + '</div></div><div class="stat-cell"><div class="stat-label">Triage Tag</div><div class="stat-value" style="font-size:12px">' + escHtml(formatTag(c.triage_tag)) + '</div></div><div class="stat-cell"><div class="stat-label">Created</div><div class="stat-value" style="font-size:11px">' + escHtml(formatDatetime(c.created_at)) + '</div></div></div></div></div>' +
+
+        '</div></div></div>';
 
       var backBtn = document.getElementById("back-btn");
       if (backBtn) backBtn.addEventListener("click", goBack);
-
       var desktopBackBtn = document.getElementById("desktop-back-btn");
       if (desktopBackBtn) desktopBackBtn.addEventListener("click", goBack);
-
       var saveDraftBtn = document.getElementById("save-draft-btn");
       if (saveDraftBtn) saveDraftBtn.addEventListener("click", function() { saveReview(c.id, false); });
-
       var markReviewedBtn = document.getElementById("mark-reviewed-btn");
       if (markReviewedBtn) markReviewedBtn.addEventListener("click", function() { saveReview(c.id, true); });
-
       var exportBtn = document.getElementById("export-case-btn");
-      if (exportBtn) {
-        exportBtn.href = "case-export.html?id=" + encodeURIComponent(c.id);
-      }
-
+      if (exportBtn) { exportBtn.href = "case-export.html?id=" + encodeURIComponent(c.id); }
       var toggleTranscript = document.getElementById("toggle-transcript");
-      if (toggleTranscript) {
-        toggleTranscript.addEventListener("click", function() { toggleCollapsible("transcript-body", toggleTranscript); });
-      }
-
+      if (toggleTranscript) { toggleTranscript.addEventListener("click", function() { toggleCollapsible("transcript-body", toggleTranscript); }); }
       var toggleCallMeta = document.getElementById("toggle-call-meta");
-      if (toggleCallMeta) {
-        toggleCallMeta.addEventListener("click", function() { toggleCollapsible("call-meta-body", toggleCallMeta); });
-      }
+      if (toggleCallMeta) { toggleCallMeta.addEventListener("click", function() { toggleCollapsible("call-meta-body", toggleCallMeta); }); }
 
       var dispositionEl = document.getElementById("field-disposition");
       var rxEl = document.getElementById("field-rx");
       var contactedEl = document.getElementById("field-contacted");
-
       if (dispositionEl && rxEl && contactedEl && !isReviewed) {
         var syncSoftWarnings = function() { updateDecisionSoftWarning(dispositionEl.value, rxEl.checked, contactedEl.checked); };
         dispositionEl.addEventListener("change", syncSoftWarnings);
@@ -2645,44 +763,17 @@
       }
     }
 
-    function updateDecisionSoftWarning(disposition, rxIssued, contacted) {
-      var warningEl = document.getElementById("decision-soft-warning");
-      if (!warningEl) return;
+    function updateDecisionSoftWarning(disposition, rxIssued, contacted) { var warningEl = document.getElementById("decision-soft-warning"); if (!warningEl) return; var message = ""; if (disposition === "rx_only" && !rxIssued) { message = "Prescription only is selected, but \"Prescription issued\" is still off. Turn it on if a prescription was actually issued."; } else if (disposition === "no_response" && contacted) { message = "No response is selected, but \"Patient contacted\" is on. Leave it on only if real outreach occurred and that matches your workflow meaning."; } warningEl.textContent = message; warningEl.classList.toggle("show", !!message); }
 
-      var message = "";
-
-      if (disposition === "rx_only" && !rxIssued) {
-        message = "Prescription only is selected, but \"Prescription issued\" is still off. Turn it on if a prescription was actually issued.";
-      } else if (disposition === "no_response" && contacted) {
-        message = "No response is selected, but \"Patient contacted\" is on. Leave it on only if real outreach occurred and that matches your workflow meaning.";
-      }
-
-      warningEl.textContent = message;
-      warningEl.classList.toggle("show", !!message);
-    }
-
-    function goBack() {
-      currentCase = null;
-      selectedCaseId = null;
-
-      document.querySelectorAll(".case-card").forEach(function(el) { el.classList.remove("active"); });
-
-      if (isMobile) {
-        document.getElementById("queue-column").style.display = "flex";
-        document.getElementById("detail-column").style.display = "none";
-      } else {
-        renderEmptyDetailPane();
-      }
-
-      syncModes();
-      updateControlsDisabledState();
-    }
+    function goBack() { currentCase = null; selectedCaseId = null; document.querySelectorAll(".case-card").forEach(function(el) { el.classList.remove("active"); }); if (isMobile) { document.getElementById("queue-column").style.display = "flex"; document.getElementById("detail-column").style.display = "none"; } else { renderEmptyDetailPane(); } syncModes(); updateControlsDisabledState(); }
 
     async function saveReview(id, markReviewed) {
       var notesEl = document.getElementById("field-notes");
       var dispositionEl = document.getElementById("field-disposition");
       var rxEl = document.getElementById("field-rx");
       var contactedEl = document.getElementById("field-contacted");
+      var followupEl = document.getElementById("field-followup");
+      var revenueEl = document.getElementById("field-revenue");
       var statusEl = document.getElementById("save-status");
 
       if (!notesEl || !dispositionEl || !rxEl || !contactedEl || !statusEl) return;
@@ -2691,18 +782,12 @@
       var disposition = dispositionEl.value;
       var rxIssued = rxEl.checked;
       var contacted = contactedEl.checked;
+      var followupBooked = followupEl ? followupEl.checked : false;
+      var revenueRaw = revenueEl ? revenueEl.value.trim() : "";
+      var revenueVal = revenueRaw ? parseFloat(revenueRaw) : null;
+      if (revenueVal !== null && (isNaN(revenueVal) || revenueVal < 0)) revenueVal = null;
 
-      if (markReviewed && !disposition) {
-        statusEl.textContent = "Please select a final disposition before marking reviewed.";
-        statusEl.className = "save-status error";
-        dispositionEl.style.borderColor = "rgba(232,69,69,0.5)";
-        setTimeout(function() {
-          statusEl.textContent = "";
-          statusEl.className = "save-status";
-          dispositionEl.style.borderColor = "";
-        }, 3000);
-        return;
-      }
+      if (markReviewed && !disposition) { statusEl.textContent = "Please select a final disposition before marking reviewed."; statusEl.className = "save-status error"; dispositionEl.style.borderColor = "rgba(232,69,69,0.5)"; setTimeout(function() { statusEl.textContent = ""; statusEl.className = "save-status"; dispositionEl.style.borderColor = ""; }, 3000); return; }
 
       statusEl.textContent = "Saving...";
       statusEl.className = "save-status";
@@ -2711,287 +796,60 @@
         review_notes: notes || null,
         final_disposition: disposition || null,
         prescription_issued: rxIssued,
-        action_taken: disposition || null
+        action_taken: disposition || null,
+        revenue_generated: revenueVal,
+        subsequent_appointment_booked: followupBooked
       };
 
-      if (contacted) {
-        update.contacted_patient_at = (currentCase && currentCase.contacted_patient_at) ? currentCase.contacted_patient_at : new Date().toISOString();
-      } else {
-        update.contacted_patient_at = null;
-      }
-
-      if (markReviewed) {
-        update.review_status = "reviewed";
-        update.reviewed_at = new Date().toISOString();
-        update.reviewed_by = currentUser ? (currentUser.email || null) : null;
-      } else {
-        update.review_status = "draft";
-      }
+      if (contacted) { update.contacted_patient_at = (currentCase && currentCase.contacted_patient_at) ? currentCase.contacted_patient_at : new Date().toISOString(); } else { update.contacted_patient_at = null; }
+      if (markReviewed) { update.review_status = "reviewed"; update.reviewed_at = new Date().toISOString(); update.reviewed_by = currentUser ? (currentUser.email || null) : null; } else { update.review_status = "draft"; }
 
       try {
         var result = await sb.from("triage_cases").update(update).eq("id", id);
-
-        if (result.error) {
-          statusEl.textContent = "Error saving - " + result.error.message;
-          statusEl.className = "save-status error";
-          return;
-        }
-
+        if (result.error) { statusEl.textContent = "Error saving - " + result.error.message; statusEl.className = "save-status error"; return; }
         var idx = allCases.findIndex(function(x) { return x.id === id; });
-        if (idx >= 0) {
-          allCases[idx] = Object.assign({}, allCases[idx], update);
-        }
-
-        if (currentCase && currentCase.id === id) {
-          currentCase = Object.assign({}, currentCase, update);
-        }
-
+        if (idx >= 0) { allCases[idx] = Object.assign({}, allCases[idx], update); }
+        if (currentCase && currentCase.id === id) { currentCase = Object.assign({}, currentCase, update); }
         statusEl.textContent = markReviewed ? "\u2713 Marked as reviewed" : "\u2713 Draft saved";
         statusEl.className = "save-status success";
         showToast(markReviewed ? "Case marked reviewed" : "Draft saved");
+        if (markReviewed) { var cardEl = document.getElementById("card-" + CSS.escape(id)); if (cardEl) { cardEl.classList.add("removing"); } setTimeout(function() { renderQueue(); loadQueueCount().then(updateQueueBadge); if (currentCase) renderDetail(currentCase); }, 350); if (isMobile && currentTab === "queue") { setTimeout(goBack, 1200); } } else { renderQueue(); loadQueueCount().then(updateQueueBadge); if (currentCase) renderDetail(currentCase); }
+        setTimeout(function() { statusEl.textContent = ""; statusEl.className = "save-status"; }, 3000);
+      } catch (err) { statusEl.textContent = "Unexpected save error"; statusEl.className = "save-status error"; console.error("Save review exception:", err); }
+    }
 
-        if (markReviewed) {
-          var cardEl = document.getElementById("card-" + CSS.escape(id));
-          if (cardEl) {
-            cardEl.classList.add("removing");
-          }
-
-          setTimeout(function() {
-            renderQueue();
-            loadQueueCount().then(updateQueueBadge);
-            if (currentCase) renderDetail(currentCase);
-          }, 350);
-
-          if (isMobile && currentTab === "queue") {
-            setTimeout(goBack, 1200);
-          }
-        } else {
-          renderQueue();
-          loadQueueCount().then(updateQueueBadge);
-          if (currentCase) renderDetail(currentCase);
-        }
-
-        setTimeout(function() {
-          statusEl.textContent = "";
-          statusEl.className = "save-status";
-        }, 3000);
-      } catch (err) {
-        statusEl.textContent = "Unexpected save error";
-        statusEl.className = "save-status error";
-        console.error("Save review exception:", err);
+    async function logCaseView(caseId) {
+      if (!currentUser || !caseId) return;
+      try {
+        await sb.from("audit_log").insert({
+          user_email: currentUser.email || "",
+          user_name: resolveReviewerName(currentUser.email),
+          action: "case_viewed",
+          case_id: caseId
+        });
+      } catch (e) {
+        console.error("Audit log error:", e);
       }
     }
 
-    function toggleCollapsible(id, btn) {
-      var body = document.getElementById(id);
-      if (!body) return;
-      var isOpen = body.classList.toggle("open");
-      if (btn) btn.textContent = isOpen ? "Hide \u25B2" : "Show \u25BC";
-    }
+    function toggleCollapsible(id, btn) { var body = document.getElementById(id); if (!body) return; var isOpen = body.classList.toggle("open"); if (btn) btn.textContent = isOpen ? "Hide \u25B2" : "Show \u25BC"; }
+    function formatTag(tag) { if (!tag || tag === "-") return "-"; return String(tag).replace(/_/g, " ").replace(/\b\w/g, function(l) { return l.toUpperCase(); }).replace(/ And /g, " & "); }
+    function formatDisposition(value) { if (!value) return "-"; var labels = { booked: "Booked appointment", referred_er: "Referred to ER", rx_only: "Prescription only", declined: "Patient declined care", no_response: "No response from patient" }; return labels[value] || formatTag(value); }
+    function formatContradictionField(field) { if (!field) return "Discrepancy"; var labels = { fever: "Fever", swelling: "Swelling", trauma: "Trauma", bleeding: "Bleeding", uncontrolled_bleeding: "Uncontrolled bleeding", breathing_swallowing: "Airway / Swallowing", difficulty_breathing_or_swallowing: "Airway / Swallowing", feeling_unwell: "Feeling Unwell", avulsed_tooth: "Avulsed tooth", jaw_fracture_signs: "Jaw fracture signs", immunocompromised: "Immunocompromised", pregnant: "Pregnancy", anticoagulant: "Blood Thinners", recent_extraction: "Recent extraction", pericoronitis_signs: "Pericoronitis signs" }; return labels[field] || formatTag(field); }
+    function formatPhone(p) { if (!p) return "-"; var d = String(p).replace(/\D/g, ""); if (d.length === 10) return "(" + d.slice(0, 3) + ") " + d.slice(3, 6) + "-" + d.slice(6); if (d.length === 11 && d.startsWith("1")) return "1 (" + d.slice(1, 4) + ") " + d.slice(4, 7) + "-" + d.slice(7); return String(p); }
+    function formatTime(iso) { if (!iso) return "-"; var d = new Date(iso); if (Number.isNaN(d.getTime())) return "-"; var now = new Date(); var diffMs = now - d; var diffH = diffMs / 3600000; if (diffH < 1) return Math.max(1, Math.round(diffMs / 60000)) + "m ago"; if (diffH < 24) return Math.round(diffH) + "h ago"; return d.toLocaleDateString("en-CA", { month: "short", day: "numeric" }); }
+    function formatDatetime(iso) { if (!iso) return "-"; var d = new Date(iso); if (Number.isNaN(d.getTime())) return "-"; return d.toLocaleDateString("en-CA", { month: "short", day: "numeric" }) + " " + d.toLocaleTimeString("en-CA", { hour: "2-digit", minute: "2-digit", hour12: true }); }
+    function formatDateOnly(value) { if (!value) return "-"; var d = new Date(value); if (Number.isNaN(d.getTime())) return String(value); return d.toLocaleDateString("en-CA", { year: "numeric", month: "short", day: "numeric" }); }
+    function formatDuration(seconds) { if (seconds === null || seconds === undefined || Number.isNaN(Number(seconds))) return "-"; var s = Number(seconds); var mins = Math.floor(s / 60); var secs = s % 60; return mins + "m " + secs + "s"; }
+    function formatPain(primary, fallback) { var pain = (primary != null) ? primary : fallback; if (pain === null || pain === undefined || pain === "") return "-"; return pain + "/10"; }
 
-    function formatTag(tag) {
-      if (!tag || tag === "-") return "-";
-      return String(tag)
-        .replace(/_/g, " ")
-        .replace(/\b\w/g, function(l) { return l.toUpperCase(); })
-        .replace(/ And /g, " & ");
-    }
+    function humanizeRedFlags(obj) { if (!obj) return "None reported"; if (typeof obj === "string") return obj || "None reported"; if (Array.isArray(obj)) return obj.length ? obj.join(", ") : "None reported"; if (typeof obj !== "object") return "None reported"; if (obj.none_of_the_above === true) return "None reported"; var labels = { trouble_breathing_or_swallowing: "Trouble breathing or swallowing", uncontrolled_bleeding: "Uncontrolled bleeding", facial_swelling: "Facial swelling", fever_or_feeling_unwell: "Fever or feeling unwell", injury_to_teeth_jaw_face: "Injury to teeth, jaw, or face" }; var items = Object.entries(obj).filter(function(entry) { return entry[0] !== "none_of_the_above" && entry[1] === true; }).map(function(entry) { return labels[entry[0]] || formatTag(entry[0]); }); return items.length ? items.join(", ") : "None reported"; }
 
-    function formatDisposition(value) {
-      if (!value) return "-";
-      var labels = {
-        booked: "Booked appointment",
-        referred_er: "Referred to ER",
-        rx_only: "Prescription only",
-        declined: "Patient declined care",
-        no_response: "No response from patient"
-      };
-      return labels[value] || formatTag(value);
-    }
+    function humanizeMedicalFlags(obj) { if (!obj) return "No relevant medical history reported"; if (typeof obj === "string") return obj || "No relevant medical history reported"; if (Array.isArray(obj)) return obj.length ? obj.join(", ") : "No relevant medical history reported"; if (typeof obj !== "object") return "No relevant medical history reported"; if (obj.none_of_the_above === true) return "No relevant medical history reported"; var labels = { allergy_antibiotics: "Allergy to antibiotics", allergy_pain_medication: "Allergy to pain medication", blood_thinners: "Blood thinners", diabetes: "Diabetes", pregnancy: "Pregnancy", immunocompromised: "Immunocompromised", other_important_medical_condition: "Other important medical condition" }; var items = []; Object.entries(obj).forEach(function(entry) { var key = entry[0]; var value = entry[1]; if (key === "none_of_the_above" || key === "other_medical_detail") return; if (value !== true) return; if (key === "other_important_medical_condition") { if (obj.other_medical_detail) { items.push("Other important medical condition: " + obj.other_medical_detail); } else { items.push("Other important medical condition"); } return; } items.push(labels[key] || formatTag(key)); }); return items.length ? items.join(", ") : "No relevant medical history reported"; }
 
-    function formatContradictionField(field) {
-      if (!field) return "Discrepancy";
-
-      var labels = {
-        fever: "Fever",
-        swelling: "Swelling",
-        trauma: "Trauma",
-        bleeding: "Bleeding",
-        uncontrolled_bleeding: "Uncontrolled bleeding",
-        breathing_swallowing: "Airway / Swallowing",
-        difficulty_breathing_or_swallowing: "Airway / Swallowing",
-        feeling_unwell: "Feeling Unwell",
-        avulsed_tooth: "Avulsed tooth",
-        jaw_fracture_signs: "Jaw fracture signs",
-        immunocompromised: "Immunocompromised",
-        pregnant: "Pregnancy",
-        anticoagulant: "Blood Thinners",
-        recent_extraction: "Recent extraction",
-        pericoronitis_signs: "Pericoronitis signs"
-      };
-
-      return labels[field] || formatTag(field);
-    }
-
-    function formatPhone(p) {
-      if (!p) return "-";
-      var d = String(p).replace(/\D/g, "");
-      if (d.length === 10) return "(" + d.slice(0, 3) + ") " + d.slice(3, 6) + "-" + d.slice(6);
-      if (d.length === 11 && d.startsWith("1")) return "1 (" + d.slice(1, 4) + ") " + d.slice(4, 7) + "-" + d.slice(7);
-      return String(p);
-    }
-
-    function formatTime(iso) {
-      if (!iso) return "-";
-      var d = new Date(iso);
-      if (Number.isNaN(d.getTime())) return "-";
-
-      var now = new Date();
-      var diffMs = now - d;
-      var diffH = diffMs / 3600000;
-
-      if (diffH < 1) return Math.max(1, Math.round(diffMs / 60000)) + "m ago";
-      if (diffH < 24) return Math.round(diffH) + "h ago";
-
-      return d.toLocaleDateString("en-CA", {
-        month: "short",
-        day: "numeric"
-      });
-    }
-
-    function formatDatetime(iso) {
-      if (!iso) return "-";
-      var d = new Date(iso);
-      if (Number.isNaN(d.getTime())) return "-";
-
-      return (
-        d.toLocaleDateString("en-CA", { month: "short", day: "numeric" }) +
-        " " +
-        d.toLocaleTimeString("en-CA", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true
-        })
-      );
-    }
-
-    function formatDateOnly(value) {
-      if (!value) return "-";
-      var d = new Date(value);
-      if (Number.isNaN(d.getTime())) return String(value);
-      return d.toLocaleDateString("en-CA", {
-        year: "numeric",
-        month: "short",
-        day: "numeric"
-      });
-    }
-
-    function formatDuration(seconds) {
-      if (seconds === null || seconds === undefined || Number.isNaN(Number(seconds))) return "-";
-      var s = Number(seconds);
-      var mins = Math.floor(s / 60);
-      var secs = s % 60;
-      return mins + "m " + secs + "s";
-    }
-
-    function formatPain(primary, fallback) {
-      var pain = (primary != null) ? primary : fallback;
-      if (pain === null || pain === undefined || pain === "") return "-";
-      return pain + "/10";
-    }
-
-    /* --- FIX #1: Defensive red flags parsing --- */
-    function humanizeRedFlags(obj) {
-      if (!obj) return "None reported";
-      if (typeof obj === "string") return obj || "None reported";
-      if (Array.isArray(obj)) return obj.length ? obj.join(", ") : "None reported";
-      if (typeof obj !== "object") return "None reported";
-
-      if (obj.none_of_the_above === true) {
-        return "None reported";
-      }
-
-      var labels = {
-        trouble_breathing_or_swallowing: "Trouble breathing or swallowing",
-        uncontrolled_bleeding: "Uncontrolled bleeding",
-        facial_swelling: "Facial swelling",
-        fever_or_feeling_unwell: "Fever or feeling unwell",
-        injury_to_teeth_jaw_face: "Injury to teeth, jaw, or face"
-      };
-
-      var items = Object.entries(obj)
-        .filter(function(entry) { return entry[0] !== "none_of_the_above" && entry[1] === true; })
-        .map(function(entry) { return labels[entry[0]] || formatTag(entry[0]); });
-
-      return items.length ? items.join(", ") : "None reported";
-    }
-    /* --- END FIX #1 --- */
-
-    /* --- FIX #2: Defensive medical flags parsing --- */
-    function humanizeMedicalFlags(obj) {
-      if (!obj) return "No relevant medical history reported";
-      if (typeof obj === "string") return obj || "No relevant medical history reported";
-      if (Array.isArray(obj)) return obj.length ? obj.join(", ") : "No relevant medical history reported";
-      if (typeof obj !== "object") return "No relevant medical history reported";
-
-      if (obj.none_of_the_above === true) {
-        return "No relevant medical history reported";
-      }
-
-      var labels = {
-        allergy_antibiotics: "Allergy to antibiotics",
-        allergy_pain_medication: "Allergy to pain medication",
-        blood_thinners: "Blood thinners",
-        diabetes: "Diabetes",
-        pregnancy: "Pregnancy",
-        immunocompromised: "Immunocompromised",
-        other_important_medical_condition: "Other important medical condition"
-      };
-
-      var items = [];
-
-      Object.entries(obj).forEach(function(entry) {
-        var key = entry[0];
-        var value = entry[1];
-        if (key === "none_of_the_above" || key === "other_medical_detail") return;
-        if (value !== true) return;
-
-        if (key === "other_important_medical_condition") {
-          if (obj.other_medical_detail) {
-            items.push("Other important medical condition: " + obj.other_medical_detail);
-          } else {
-            items.push("Other important medical condition");
-          }
-          return;
-        }
-
-        items.push(labels[key] || formatTag(key));
-      });
-
-      return items.length ? items.join(", ") : "No relevant medical history reported";
-    }
-    /* --- END FIX #2 --- */
-
-    function showToast(msg) {
-      var t = document.getElementById("toast");
-      t.textContent = msg;
-      t.classList.add("show");
-      setTimeout(function() { t.classList.remove("show"); }, 2800);
-    }
-
-    function escHtml(value) {
-      if (value === null || value === undefined) return "";
-      return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-    }
-
-    function escAttr(value) {
-      return escHtml(value);
-    }
+    function showToast(msg) { var t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show"); setTimeout(function() { t.classList.remove("show"); }, 2800); }
+    function escHtml(value) { if (value === null || value === undefined) return ""; return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
+    function escAttr(value) { return escHtml(value); }
 
     init();
   </script>
