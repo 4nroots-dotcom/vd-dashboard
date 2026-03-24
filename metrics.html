@@ -39,829 +39,151 @@
       --success: #00c87a;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at top center, rgba(51, 108, 190, 0.16), transparent 28%),
-        radial-gradient(circle at bottom left, rgba(0, 200, 232, 0.06), transparent 24%),
-        linear-gradient(180deg, var(--navy-0) 0%, var(--navy-1) 100%);
-      color: var(--text-primary);
-      font-size: 14px;
-      line-height: 1.5;
-      min-height: 100vh;
-      overscroll-behavior: none;
-    }
-
-    button, input, a {
-      font: inherit;
-    }
-
-    #auth-screen {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      background: radial-gradient(ellipse at 50% 0%, #0f2a50 0%, #071323 72%);
-    }
-
-    .auth-card {
-      width: 100%;
-      max-width: 390px;
-      background: linear-gradient(180deg, rgba(18, 39, 81, 0.95) 0%, rgba(11, 27, 58, 0.95) 100%);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 38px 30px;
-      box-shadow: 0 32px 80px rgba(0,0,0,0.52);
-      backdrop-filter: blur(10px);
-    }
-
-    .auth-logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
-
-    .auth-logo-text {
-      font-size: 18px;
-      font-weight: 700;
-      background: linear-gradient(135deg, #1a7fc4, #00c8e8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .auth-subtitle {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-bottom: 28px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-
-    .field-label {
-      display: block;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 8px;
-    }
-
-    .field-input {
-      width: 100%;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text-primary);
-      font-size: 14px;
-      padding: 12px 14px;
-      outline: none;
-      transition: border-color 0.2s, background 0.2s;
-      margin-bottom: 16px;
-    }
-
-    .field-input:focus {
-      border-color: rgba(0,200,232,0.3);
-      background: rgba(255,255,255,0.08);
-    }
-
-    .field-input::placeholder {
-      color: var(--text-faint);
-    }
-
-    .btn-primary {
-      width: 100%;
-      background: linear-gradient(135deg, #4c8fd2 0%, #69cbe7 100%);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 700;
-      padding: 14px;
-      cursor: pointer;
-      transition: opacity 0.2s, transform 0.1s;
-      margin-top: 4px;
-      box-shadow: 0 14px 30px rgba(49,128,212,0.24);
-    }
-
-    .btn-primary:active {
-      transform: scale(0.985);
-      opacity: 0.92;
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-    }
-
-    .auth-error {
-      background: rgba(232,69,69,0.12);
-      border: 1px solid rgba(232,69,69,0.3);
-      border-radius: 8px;
-      color: #ff9b9b;
-      font-size: 13px;
-      padding: 10px 12px;
-      margin-top: 12px;
-      display: none;
-      white-space: pre-wrap;
-    }
-
-    #app {
-      display: none;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    .header {
-      background: rgba(15, 32, 68, 0.94);
-      border-bottom: 1px solid var(--border);
-      padding: 0 18px;
-      min-height: 58px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 120;
-      backdrop-filter: blur(10px);
-    }
-
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .header-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 15px;
-      font-weight: 650;
-      background: linear-gradient(135deg, #1a7fc4, #00c8e8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      white-space: nowrap;
-    }
-
-    .page-badge {
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #08111e;
-      background: linear-gradient(135deg, #4c8fd2, #69cbe7);
-      border-radius: 999px;
-      padding: 4px 10px;
-      white-space: nowrap;
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .header-user {
-      font-size: 12px;
-      color: var(--text-secondary);
-      display: none;
-    }
-
-    @media (min-width: 520px) {
-      .header-user {
-        display: block;
-      }
-    }
-
-    .btn-signout {
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text-secondary);
-      font-size: 12px;
-      padding: 6px 12px;
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
-    }
-
-    .btn-signout:hover {
-      border-color: rgba(0,200,232,0.3);
-      color: var(--cyan);
-    }
-
-    .toolbar {
-      background: rgba(15, 32, 68, 0.9);
-      border-bottom: 1px solid var(--border);
-      padding: 10px 18px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      backdrop-filter: blur(10px);
-    }
-
-    @media (min-width: 768px) {
-      .toolbar {
-        position: sticky;
-        top: 58px;
-        z-index: 110;
-      }
-    }
-
-    .toolbar-label {
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      margin-right: 2px;
-    }
-
-    .period-chip {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      color: var(--text-secondary);
-      font-size: 12px;
-      font-weight: 600;
-      padding: 6px 14px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .period-chip.active {
-      background: rgba(0,200,232,0.08);
-      border-color: rgba(0,200,232,0.3);
-      color: var(--cyan);
-    }
-
-    .toolbar-right {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .refresh-btn {
-      background: transparent;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text-muted);
-      padding: 6px 10px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: color 0.2s, border-color 0.2s;
-      line-height: 1;
-    }
-
-    .refresh-btn:hover {
-      color: var(--cyan);
-      border-color: rgba(0,200,232,0.3);
-    }
-
-    .refresh-btn.spinning {
-      animation: spin 0.6s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    .last-updated {
-      font-size: 11px;
-      color: var(--text-muted);
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    }
-
-    .back-link {
-      font-size: 12px;
-      color: var(--text-secondary);
-      text-decoration: none;
-      transition: color 0.2s;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .back-link:hover {
-      color: var(--cyan);
-    }
-
-    .main {
-      flex: 1;
-      padding: 18px;
-      max-width: 1160px;
-      margin: 0 auto;
-      width: 100%;
-    }
-
-    .loading-overlay {
-      padding: 72px 24px;
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 13px;
-    }
-
-    .loading-dots::after {
-      content: "...";
-      animation: dots 1.2s steps(4,end) infinite;
-    }
-
-    @keyframes dots {
-      0%,100% { content: "."; }
-      33% { content: ".."; }
-      66% { content: "..."; }
-    }
-
-    .section-head {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 22px 0 12px;
-    }
-
-    .section-head:first-child {
-      margin-top: 0;
-    }
-
-    .section-label {
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--text-muted);
-      white-space: nowrap;
-    }
-
-    .section-line {
-      flex: 1;
-      height: 1px;
-      background: rgba(255,255,255,0.06);
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    @media (min-width: 760px) {
-      .hero-grid {
-        grid-template-columns: repeat(4, 1fr);
-      }
-    }
-
-    .hero-card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.025));
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px;
-      position: relative;
-      overflow: hidden;
-      min-height: 116px;
-      box-shadow: var(--shadow-md);
-    }
-
-    .hero-card::after {
-      content: "";
-      position: absolute;
-      inset: 0 auto auto 0;
-      width: 100%;
-      height: 3px;
-      background: var(--accent, rgba(0,200,232,0.3));
-    }
-
-    .hc-label {
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-muted);
-      margin-bottom: 10px;
-    }
-
-    .hc-value {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--accent-color, var(--text-primary));
-      line-height: 1.02;
-      margin-bottom: 8px;
-      word-break: break-word;
-    }
-
-    .hc-sub {
-      font-size: 12px;
-      color: var(--text-secondary);
-      line-height: 1.45;
-    }
-
-    .panel {
-      background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.02));
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: var(--shadow-md);
-    }
-
-    .panel-head {
-      padding: 13px 18px;
-      border-bottom: 1px solid var(--border-soft);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      background: rgba(255,255,255,0.02);
-    }
-
-    .panel-title {
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-muted);
-    }
-
-    .panel-subtle {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 11px;
-      color: var(--text-secondary);
-    }
-
-    .panel-body {
-      padding: 16px;
-    }
-
-    .panel-divider {
-      height: 1px;
-      background: rgba(255,255,255,0.05);
-      margin: 14px 0;
-    }
-
-    .panel-sub-label {
-      font-size: 10px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.09em;
-      color: var(--text-muted);
-      margin-bottom: 10px;
-    }
-
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    @media (min-width: 860px) {
-      .two-col {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    .mini-list {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .mini-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .mini-row:last-child {
-      border-bottom: none;
-    }
-
-    .mini-row-label {
-      font-size: 13px;
-      color: var(--text-secondary);
-    }
-
-    .mini-row-val {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-primary);
-      text-align: right;
-    }
-
+      background: radial-gradient(circle at top center, rgba(51, 108, 190, 0.16), transparent 28%), radial-gradient(circle at bottom left, rgba(0, 200, 232, 0.06), transparent 24%), linear-gradient(180deg, var(--navy-0) 0%, var(--navy-1) 100%);
+      color: var(--text-primary); font-size: 14px; line-height: 1.5; min-height: 100vh; overscroll-behavior: none;
+    }
+
+    button, input, a { font: inherit; }
+
+    #auth-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: radial-gradient(ellipse at 50% 0%, #0f2a50 0%, #071323 72%); }
+    .auth-card { width: 100%; max-width: 390px; background: linear-gradient(180deg, rgba(18, 39, 81, 0.95) 0%, rgba(11, 27, 58, 0.95) 100%); border: 1px solid var(--border); border-radius: 18px; padding: 38px 30px; box-shadow: 0 32px 80px rgba(0,0,0,0.52); backdrop-filter: blur(10px); }
+    .auth-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .auth-logo-text { font-size: 18px; font-weight: 700; background: linear-gradient(135deg, #1a7fc4, #00c8e8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .auth-subtitle { font-size: 11px; color: var(--text-muted); margin-bottom: 28px; letter-spacing: 0.1em; text-transform: uppercase; }
+    .field-label { display: block; font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .field-input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 14px; padding: 12px 14px; outline: none; transition: border-color 0.2s, background 0.2s; margin-bottom: 16px; }
+    .field-input:focus { border-color: rgba(0,200,232,0.3); background: rgba(255,255,255,0.08); }
+    .field-input::placeholder { color: var(--text-faint); }
+    .btn-primary { width: 100%; background: linear-gradient(135deg, #4c8fd2 0%, #69cbe7 100%); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; padding: 14px; cursor: pointer; transition: opacity 0.2s, transform 0.1s; margin-top: 4px; box-shadow: 0 14px 30px rgba(49,128,212,0.24); }
+    .btn-primary:active { transform: scale(0.985); opacity: 0.92; }
+    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+    .auth-error { background: rgba(232,69,69,0.12); border: 1px solid rgba(232,69,69,0.3); border-radius: 8px; color: #ff9b9b; font-size: 13px; padding: 10px 12px; margin-top: 12px; display: none; white-space: pre-wrap; }
+
+    #app { display: none; flex-direction: column; min-height: 100vh; }
+    .header { background: rgba(15, 32, 68, 0.94); border-bottom: 1px solid var(--border); padding: 0 18px; min-height: 58px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 120; backdrop-filter: blur(10px); }
+    .header-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .header-logo { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 650; background: linear-gradient(135deg, #1a7fc4, #00c8e8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; white-space: nowrap; }
+    .page-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #08111e; background: linear-gradient(135deg, #4c8fd2, #69cbe7); border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
+    .header-right { display: flex; align-items: center; gap: 10px; }
+    .header-user { font-size: 12px; color: var(--text-secondary); display: none; }
+    @media (min-width: 520px) { .header-user { display: block; } }
+    .btn-signout { background: transparent; border: 1px solid var(--border); border-radius: 8px; color: var(--text-secondary); font-size: 12px; padding: 6px 12px; cursor: pointer; transition: border-color 0.2s, color 0.2s; }
+    .btn-signout:hover { border-color: rgba(0,200,232,0.3); color: var(--cyan); }
+
+    .toolbar { background: rgba(15, 32, 68, 0.9); border-bottom: 1px solid var(--border); padding: 10px 18px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; backdrop-filter: blur(10px); }
+    @media (min-width: 768px) { .toolbar { position: sticky; top: 58px; z-index: 110; } }
+    .toolbar-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-right: 2px; }
+    .period-chip { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 20px; color: var(--text-secondary); font-size: 12px; font-weight: 600; padding: 6px 14px; cursor: pointer; transition: all 0.2s; }
+    .period-chip.active { background: rgba(0,200,232,0.08); border-color: rgba(0,200,232,0.3); color: var(--cyan); }
+    .toolbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .refresh-btn { background: transparent; border: 1px solid var(--border); border-radius: 8px; color: var(--text-muted); padding: 6px 10px; cursor: pointer; font-size: 16px; transition: color 0.2s, border-color 0.2s; line-height: 1; }
+    .refresh-btn:hover { color: var(--cyan); border-color: rgba(0,200,232,0.3); }
+    .refresh-btn.spinning { animation: spin 0.6s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .last-updated { font-size: 11px; color: var(--text-muted); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    .back-link { font-size: 12px; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; font-weight: 600; white-space: nowrap; }
+    .back-link:hover { color: var(--cyan); }
+
+    .main { flex: 1; padding: 18px; max-width: 1160px; margin: 0 auto; width: 100%; }
+    .loading-overlay { padding: 72px 24px; text-align: center; color: var(--text-muted); font-size: 13px; }
+    .loading-dots::after { content: "..."; animation: dots 1.2s steps(4,end) infinite; }
+    @keyframes dots { 0%,100% { content: "."; } 33% { content: ".."; } 66% { content: "..."; } }
+
+    .section-head { display: flex; align-items: center; gap: 10px; margin: 22px 0 12px; }
+    .section-head:first-child { margin-top: 0; }
+    .section-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-muted); white-space: nowrap; }
+    .section-line { flex: 1; height: 1px; background: rgba(255,255,255,0.06); }
+
+    .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+    @media (min-width: 760px) { .hero-grid { grid-template-columns: repeat(4, 1fr); } }
+    .hero-card { background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.025)); border: 1px solid var(--border); border-radius: 14px; padding: 16px; position: relative; overflow: hidden; min-height: 116px; box-shadow: var(--shadow-md); }
+    .hero-card::after { content: ""; position: absolute; inset: 0 auto auto 0; width: 100%; height: 3px; background: var(--accent, rgba(0,200,232,0.3)); }
+    .hc-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 10px; }
+    .hc-value { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 28px; font-weight: 700; color: var(--accent-color, var(--text-primary)); line-height: 1.02; margin-bottom: 8px; word-break: break-word; }
+    .hc-sub { font-size: 12px; color: var(--text-secondary); line-height: 1.45; }
+
+    .panel { background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.02)); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow-md); }
+    .panel-head { padding: 13px 18px; border-bottom: 1px solid var(--border-soft); display: flex; align-items: center; justify-content: space-between; gap: 10px; background: rgba(255,255,255,0.02); }
+    .panel-title { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); }
+    .panel-subtle { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 11px; color: var(--text-secondary); }
+    .panel-body { padding: 16px; }
+    .panel-divider { height: 1px; background: rgba(255,255,255,0.05); margin: 14px 0; }
+    .panel-sub-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.09em; color: var(--text-muted); margin-bottom: 10px; }
+
+    .two-col { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 10px; }
+    @media (min-width: 860px) { .two-col { grid-template-columns: 1fr 1fr; } }
+
+    .mini-list { display: flex; flex-direction: column; }
+    .mini-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .mini-row:last-child { border-bottom: none; }
+    .mini-row-label { font-size: 13px; color: var(--text-secondary); }
+    .mini-row-val { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 13px; font-weight: 700; color: var(--text-primary); text-align: right; }
     .mini-row-val.ok { color: var(--success); }
     .mini-row-val.warn { color: var(--warning); }
     .mini-row-val.danger { color: var(--danger); }
     .mini-row-val.cyan { color: var(--cyan); }
 
-    .stack-list {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .stack-row-label {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 6px;
-      gap: 10px;
-    }
-
-    .stack-name {
-      font-size: 11px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
+    .stack-list { display: flex; flex-direction: column; gap: 14px; }
+    .stack-row-label { display: flex; justify-content: space-between; margin-bottom: 6px; gap: 10px; }
+    .stack-name { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
     .stack-name.urgent { color: var(--urgent); }
     .stack-name.emergency { color: var(--emergency); }
     .stack-name.routine { color: var(--routine); }
     .stack-name.cyan { color: var(--cyan); }
-
-    .stack-stats {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 12px;
-      color: var(--text-secondary);
-    }
-
-    .stack-track {
-      height: 8px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .stack-fill {
-      height: 100%;
-      border-radius: 4px;
-      transition: width 0.7s cubic-bezier(0.4,0,0.2,1);
-    }
-
+    .stack-stats { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; color: var(--text-secondary); }
+    .stack-track { height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }
+    .stack-fill { height: 100%; border-radius: 4px; transition: width 0.7s cubic-bezier(0.4,0,0.2,1); }
     .stack-fill.urgent { background: linear-gradient(90deg, #8b2020, #e84545); }
     .stack-fill.emergency { background: linear-gradient(90deg, #8b6000, #f0a500); }
     .stack-fill.routine { background: linear-gradient(90deg, #007040, #00c87a); }
     .stack-fill.cyan { background: linear-gradient(90deg, #1a7fc4, #00c8e8); }
 
-    .histogram {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-      align-items: end;
-      height: 160px;
-      margin-top: 8px;
-    }
+    .histogram { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; align-items: end; height: 160px; margin-top: 8px; }
+    .hist-col { display: flex; flex-direction: column; align-items: center; justify-content: end; gap: 8px; height: 100%; }
+    .hist-bar-wrap { flex: 1; width: 100%; display: flex; align-items: end; }
+    .hist-bar { width: 100%; min-height: 8px; border-radius: 8px 8px 3px 3px; background: linear-gradient(180deg, rgba(0,200,232,0.95), rgba(0,151,178,0.55)); transition: height 0.7s cubic-bezier(0.4,0,0.2,1); }
+    .hist-label { font-size: 10px; color: var(--text-secondary); text-align: center; line-height: 1.2; }
+    .hist-count { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 11px; color: var(--text-primary); font-weight: 700; }
 
-    .hist-col {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: end;
-      gap: 8px;
-      height: 100%;
-    }
+    .tod-chart { display: flex; align-items: flex-end; gap: 2px; height: 74px; }
+    .tod-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; justify-content: flex-end; }
+    .tod-bar { width: 100%; border-radius: 2px 2px 0 0; min-height: 2px; transition: height 0.6s cubic-bezier(0.4,0,0.2,1); }
+    .tod-bar.biz { background: rgba(0,200,232,0.2); border: 1px solid rgba(0,200,232,0.15); border-bottom: none; }
+    .tod-bar.after { background: rgba(240,165,0,0.22); border: 1px solid rgba(240,165,0,0.18); border-bottom: none; }
+    .tod-tick { font-size: 8px; color: var(--text-faint); font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    .tod-legend { display: flex; gap: 14px; margin-top: 10px; flex-wrap: wrap; }
+    .tod-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text-muted); }
+    .tod-legend-dot { width: 8px; height: 8px; border-radius: 2px; }
 
-    .hist-bar-wrap {
-      flex: 1;
-      width: 100%;
-      display: flex;
-      align-items: end;
-    }
+    .flag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    @media (max-width: 520px) { .flag-grid { grid-template-columns: 1fr; } }
+    .flag-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 12px; display: flex; align-items: center; gap: 10px; }
+    .flag-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .flag-label { font-size: 12px; color: var(--text-secondary); flex: 1; }
+    .flag-count { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 16px; font-weight: 700; }
 
-    .hist-bar {
-      width: 100%;
-      min-height: 8px;
-      border-radius: 8px 8px 3px 3px;
-      background: linear-gradient(180deg, rgba(0,200,232,0.95), rgba(0,151,178,0.55));
-      transition: height 0.7s cubic-bezier(0.4,0,0.2,1);
-    }
+    .ext-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .ext-row:last-child { border-bottom: none; }
+    .ext-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .ext-label { font-size: 13px; color: var(--text-secondary); flex: 1; }
+    .ext-bar-wrap { width: 72px; }
+    .ext-bar-track { height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; }
+    .ext-bar-fill { height: 100%; border-radius: 2px; transition: width 0.6s; }
+    .ext-count { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 13px; color: var(--text-primary); width: 28px; text-align: right; font-weight: 700; }
+    .ext-pct { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 11px; color: var(--text-muted); width: 36px; text-align: right; }
 
-    .hist-label {
-      font-size: 10px;
-      color: var(--text-secondary);
-      text-align: center;
-      line-height: 1.2;
-    }
+    .no-data { color: var(--text-muted); font-size: 13px; text-align: center; padding: 22px; }
 
-    .hist-count {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 11px;
-      color: var(--text-primary);
-      font-weight: 700;
-    }
-
-    .tod-chart {
-      display: flex;
-      align-items: flex-end;
-      gap: 2px;
-      height: 74px;
-    }
-
-    .tod-col {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      height: 100%;
-      justify-content: flex-end;
-    }
-
-    .tod-bar {
-      width: 100%;
-      border-radius: 2px 2px 0 0;
-      min-height: 2px;
-      transition: height 0.6s cubic-bezier(0.4,0,0.2,1);
-    }
-
-    .tod-bar.biz {
-      background: rgba(0,200,232,0.2);
-      border: 1px solid rgba(0,200,232,0.15);
-      border-bottom: none;
-    }
-
-    .tod-bar.after {
-      background: rgba(240,165,0,0.22);
-      border: 1px solid rgba(240,165,0,0.18);
-      border-bottom: none;
-    }
-
-    .tod-tick {
-      font-size: 8px;
-      color: var(--text-faint);
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    }
-
-    .tod-legend {
-      display: flex;
-      gap: 14px;
-      margin-top: 10px;
-      flex-wrap: wrap;
-    }
-
-    .tod-legend-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .tod-legend-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 2px;
-    }
-
-    .flag-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    @media (max-width: 520px) {
-      .flag-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .flag-card {
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 10px;
-      padding: 12px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .flag-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .flag-label {
-      font-size: 12px;
-      color: var(--text-secondary);
-      flex: 1;
-    }
-
-    .flag-count {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 16px;
-      font-weight: 700;
-    }
-
-    .ext-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .ext-row:last-child {
-      border-bottom: none;
-    }
-
-    .ext-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .ext-label {
-      font-size: 13px;
-      color: var(--text-secondary);
-      flex: 1;
-    }
-
-    .ext-bar-wrap {
-      width: 72px;
-    }
-
-    .ext-bar-track {
-      height: 4px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 2px;
-    }
-
-    .ext-bar-fill {
-      height: 100%;
-      border-radius: 2px;
-      transition: width 0.6s;
-    }
-
-    .ext-count {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 13px;
-      color: var(--text-primary);
-      width: 28px;
-      text-align: right;
-      font-weight: 700;
-    }
-
-    .ext-pct {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 11px;
-      color: var(--text-muted);
-      width: 36px;
-      text-align: right;
-    }
-
-    .no-data {
-      color: var(--text-muted);
-      font-size: 13px;
-      text-align: center;
-      padding: 22px;
-    }
-
-    #toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(80px);
-      background: #0f2044;
-      border: 1px solid rgba(0,200,232,0.3);
-      border-radius: 10px;
-      padding: 12px 20px;
-      font-size: 13px;
-      color: var(--cyan);
-      z-index: 1000;
-      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
-      white-space: nowrap;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-    }
-
-    #toast.show {
-      transform: translateX(-50%) translateY(0);
-    }
+    #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #0f2044; border: 1px solid rgba(0,200,232,0.3); border-radius: 10px; padding: 12px 20px; font-size: 13px; color: var(--cyan); z-index: 1000; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); white-space: nowrap; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+    #toast.show { transform: translateX(-50%) translateY(0); }
 
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb {
-      background: #1a3260;
-      border-radius: 2px;
-    }
+    ::-webkit-scrollbar-thumb { background: #1a3260; border-radius: 2px; }
   </style>
 </head>
 <body>
@@ -869,25 +191,17 @@
     <div class="auth-card">
       <div class="auth-logo">
         <svg width="40" height="40" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="ag" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#1a7fc4"/>
-              <stop offset="100%" stop-color="#00c8e8"/>
-            </linearGradient>
-          </defs>
+          <defs><linearGradient id="ag" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1a7fc4"/><stop offset="100%" stop-color="#00c8e8"/></linearGradient></defs>
           <path d="M30 20 Q30 10 40 10 L80 10 Q90 10 90 20 L95 60 Q97 80 85 90 L70 108 Q65 115 60 115 Q55 115 50 108 L35 90 Q23 80 25 60 Z" stroke="url(#ag)" stroke-width="7" fill="none" stroke-linejoin="round"/>
           <polyline points="28,58 42,58 50,40 60,76 70,50 78,58 92,58" stroke="url(#ag)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <div class="auth-logo-text">VirtualDentist.ai</div>
       </div>
       <div class="auth-subtitle">Operational Metrics</div>
-
       <label class="field-label" for="auth-email">Email</label>
       <input class="field-input" type="email" id="auth-email" placeholder="you@example.com" autocomplete="email" />
-
       <label class="field-label" for="auth-password">Password</label>
       <input class="field-input" type="password" id="auth-password" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="current-password" />
-
       <button class="btn-primary" id="auth-btn" type="button">Sign In</button>
       <div class="auth-error" id="auth-error"></div>
     </div>
@@ -898,12 +212,7 @@
       <div class="header-left">
         <div class="header-logo">
           <svg width="24" height="24" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="hg" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#1a7fc4"/>
-                <stop offset="100%" stop-color="#00c8e8"/>
-              </linearGradient>
-            </defs>
+            <defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1a7fc4"/><stop offset="100%" stop-color="#00c8e8"/></linearGradient></defs>
             <path d="M30 20 Q30 10 40 10 L80 10 Q90 10 90 20 L95 60 Q97 80 85 90 L70 108 Q65 115 60 115 Q55 115 50 108 L35 90 Q23 80 25 60 Z" stroke="url(#hg)" stroke-width="8" fill="none" stroke-linejoin="round"/>
             <polyline points="28,58 42,58 50,40 60,76 70,50 78,58 92,58" stroke="url(#hg)" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
@@ -923,7 +232,6 @@
       <button class="period-chip" id="chip-30" type="button">30 days</button>
       <button class="period-chip" id="chip-90" type="button">90 days</button>
       <button class="period-chip active" id="chip-0" type="button">All time</button>
-
       <div class="toolbar-right">
         <span class="last-updated" id="last-updated"></span>
         <button class="refresh-btn" id="refresh-btn" type="button" title="Refresh">&#8635;</button>
@@ -941,391 +249,109 @@
   <script>
     var SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
     var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
-    var REVIEWER_NAME_MAP = {
-      "4nroots@gmail.com": "Dr. Balaji Swaminath",
-      "hamitranu@gmail.com": "Dr. Hamit Ranu"
-    };
+    var REVIEWER_NAME_MAP = { "4nroots@gmail.com": "Dr. Balaji Swaminath", "hamitranu@gmail.com": "Dr. Hamit Ranu" };
+    var TRIAGE_TAG_LABELS = { facial_trauma_high_energy: "Facial trauma (high energy)", post_extraction_possible_dry_socket: "Post-extraction / dry socket", pericoronitis_possible: "Pericoronitis", suspected_odontogenic_infection: "Odontogenic infection", broken_tooth_trauma_low_energy: "Broken tooth (low energy)", suspected_irreversible_pulpitis: "Irreversible pulpitis", soft_tissue_lesion_unspecified: "Soft tissue lesion", tooth_structure_loss_no_pain: "Tooth structure loss (no pain)", routine_dental_pain: "Routine dental pain", acute_dental_pain_unspecified: "Acute dental pain (unspecified)" };
 
-    /* --- Triage tag labels --- */
-    var TRIAGE_TAG_LABELS = {
-      facial_trauma_high_energy: "Facial trauma (high energy)",
-      post_extraction_possible_dry_socket: "Post-extraction / dry socket",
-      pericoronitis_possible: "Pericoronitis",
-      suspected_odontogenic_infection: "Odontogenic infection",
-      broken_tooth_trauma_low_energy: "Broken tooth (low energy)",
-      suspected_irreversible_pulpitis: "Irreversible pulpitis",
-      soft_tissue_lesion_unspecified: "Soft tissue lesion",
-      tooth_structure_loss_no_pain: "Tooth structure loss (no pain)",
-      routine_dental_pain: "Routine dental pain",
-      acute_dental_pain_unspecified: "Acute dental pain (unspecified)"
-    };
+    function resolveReviewerName(email) { if (!email) return ""; return REVIEWER_NAME_MAP[email] || email; }
+    function getSO(c) { var so = c.structured_output; if (!so) return {}; if (typeof so === "string") { try { return JSON.parse(so); } catch (e) { return {}; } } return so; }
+    function getContradictions(c) { var raw = c.contradictions; if (!raw) return []; if (typeof raw === "string") { try { raw = JSON.parse(raw); } catch (e) { return []; } } if (!Array.isArray(raw)) return []; return raw; }
 
-    function resolveReviewerName(email) {
-      if (!email) return "";
-      return REVIEWER_NAME_MAP[email] || email;
-    }
-
-    function getSO(c) {
-      var so = c.structured_output;
-      if (!so) return {};
-      if (typeof so === "string") {
-        try { return JSON.parse(so); } catch (e) { return {}; }
-      }
-      return so;
-    }
-
-    function getContradictions(c) {
-      var raw = c.contradictions;
-      if (!raw) return [];
-      if (typeof raw === "string") {
-        try { raw = JSON.parse(raw); } catch (e) { return []; }
-      }
-      if (!Array.isArray(raw)) return [];
-      return raw;
-    }
-
-    if (!window.supabase || !window.supabase.createClient) {
-      document.getElementById("auth-error").style.display = "block";
-      document.getElementById("auth-error").textContent =
-        "Supabase library failed to load. Check network / CDN blocking.";
-      throw new Error("Supabase library missing");
-    }
+    if (!window.supabase || !window.supabase.createClient) { document.getElementById("auth-error").style.display = "block"; document.getElementById("auth-error").textContent = "Supabase library failed to load. Check network / CDN blocking."; throw new Error("Supabase library missing"); }
 
     var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    var currentPeriod = 0;
-    var currentUser = null;
+    var currentPeriod = 0; var currentUser = null;
 
     document.getElementById("auth-btn").addEventListener("click", handleLogin);
     document.getElementById("signout-btn").addEventListener("click", handleSignOut);
     document.getElementById("refresh-btn").addEventListener("click", loadMetrics);
-
     document.getElementById("chip-7").addEventListener("click", function() { setPeriod(7); });
     document.getElementById("chip-30").addEventListener("click", function() { setPeriod(30); });
     document.getElementById("chip-90").addEventListener("click", function() { setPeriod(90); });
     document.getElementById("chip-0").addEventListener("click", function() { setPeriod(0); });
+    document.getElementById("auth-email").addEventListener("keydown", function(e) { if (e.key === "Enter") handleLogin(); });
+    document.getElementById("auth-password").addEventListener("keydown", function(e) { if (e.key === "Enter") handleLogin(); });
 
-    document.getElementById("auth-email").addEventListener("keydown", function(e) {
-      if (e.key === "Enter") handleLogin();
-    });
-
-    document.getElementById("auth-password").addEventListener("keydown", function(e) {
-      if (e.key === "Enter") handleLogin();
-    });
-
-    async function handleLogin() {
-      var email = document.getElementById("auth-email").value.trim();
-      var password = document.getElementById("auth-password").value;
-      var btn = document.getElementById("auth-btn");
-      var errEl = document.getElementById("auth-error");
-
-      errEl.style.display = "none";
-      errEl.textContent = "";
-
-      if (!email || !password) {
-        errEl.textContent = "Enter both email and password.";
-        errEl.style.display = "block";
-        return;
-      }
-
-      btn.disabled = true;
-      btn.textContent = "Signing in...";
-
-      try {
-        var result = await sb.auth.signInWithPassword({ email: email, password: password });
-        var data = result.data;
-        var error = result.error;
-
-        if (error) {
-          errEl.textContent = error.message || "Sign-in failed.";
-          errEl.style.display = "block";
-          return;
-        }
-
-        if (!data || !data.user) {
-          errEl.textContent = "Sign-in returned no user.";
-          errEl.style.display = "block";
-          return;
-        }
-
-        showApp(data.user);
-      } catch (err) {
-        errEl.textContent = (err && err.message) ? err.message : "Unexpected sign-in error.";
-        errEl.style.display = "block";
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "Sign In";
-      }
-    }
-
-    async function handleSignOut() {
-      try {
-        await sb.auth.signOut();
-      } catch (err) {
-        console.error("Sign-out error:", err);
-      }
-      window.location.reload();
-    }
-
-    async function init() {
-      try {
-        var result = await sb.auth.getSession();
-        var data = result.data;
-        var error = result.error;
-        if (error) {
-          console.error("Session error:", error);
-          return;
-        }
-        if (data && data.session && data.session.user) {
-          showApp(data.session.user);
-        }
-      } catch (err) {
-        console.error("Init error:", err);
-      }
-    }
-
-    function showApp(user) {
-      currentUser = user;
-      document.getElementById("auth-screen").style.display = "none";
-      document.getElementById("app").style.display = "flex";
-      document.getElementById("header-user-email").textContent = resolveReviewerName(user.email || "");
-      loadMetrics();
-    }
-
-    function setPeriod(days) {
-      currentPeriod = days;
-      [7, 30, 90, 0].forEach(function(d) {
-        document.getElementById("chip-" + d).classList.toggle("active", d === days);
-      });
-      loadMetrics();
-    }
+    async function handleLogin() { var email = document.getElementById("auth-email").value.trim(); var password = document.getElementById("auth-password").value; var btn = document.getElementById("auth-btn"); var errEl = document.getElementById("auth-error"); errEl.style.display = "none"; errEl.textContent = ""; if (!email || !password) { errEl.textContent = "Enter both email and password."; errEl.style.display = "block"; return; } btn.disabled = true; btn.textContent = "Signing in..."; try { var result = await sb.auth.signInWithPassword({ email: email, password: password }); var data = result.data; var error = result.error; if (error) { errEl.textContent = error.message || "Sign-in failed."; errEl.style.display = "block"; return; } if (!data || !data.user) { errEl.textContent = "Sign-in returned no user."; errEl.style.display = "block"; return; } showApp(data.user); } catch (err) { errEl.textContent = (err && err.message) ? err.message : "Unexpected sign-in error."; errEl.style.display = "block"; } finally { btn.disabled = false; btn.textContent = "Sign In"; } }
+    async function handleSignOut() { try { await sb.auth.signOut(); } catch (err) { console.error("Sign-out error:", err); } window.location.reload(); }
+    async function init() { try { var result = await sb.auth.getSession(); var data = result.data; var error = result.error; if (error) { console.error("Session error:", error); return; } if (data && data.session && data.session.user) { showApp(data.session.user); } } catch (err) { console.error("Init error:", err); } }
+    function showApp(user) { currentUser = user; document.getElementById("auth-screen").style.display = "none"; document.getElementById("app").style.display = "flex"; document.getElementById("header-user-email").textContent = resolveReviewerName(user.email || ""); loadMetrics(); }
+    function setPeriod(days) { currentPeriod = days; [7, 30, 90, 0].forEach(function(d) { document.getElementById("chip-" + d).classList.toggle("active", d === days); }); loadMetrics(); }
 
     async function loadMetrics() {
       var btn = document.getElementById("refresh-btn");
       btn.classList.add("spinning");
-
       try {
-        var query = sb
-          .from("triage_cases")
-          .select("id, created_at, severity, extraction_source, review_status, reviewed_at, reviewed_by, contacted_patient_at, final_disposition, prescription_issued, duration_seconds, structured_output, triage_tag, contradictions")
+        var query = sb.from("triage_cases")
+          .select("id, created_at, severity, extraction_source, review_status, reviewed_at, reviewed_by, contacted_patient_at, final_disposition, prescription_issued, duration_seconds, structured_output, triage_tag, contradictions, revenue_generated, subsequent_appointment_booked")
           .order("created_at", { ascending: true });
-
-        if (currentPeriod > 0) {
-          var since = new Date();
-          since.setDate(since.getDate() - currentPeriod);
-          query = query.gte("created_at", since.toISOString());
-        }
-
-        var result = await query;
-        var data = result.data;
-        var error = result.error;
-        btn.classList.remove("spinning");
-
-        if (error) {
-          console.error("Metrics load error:", error);
-          showToast("Error loading data: " + (error.message || "unknown"));
-          return;
-        }
-
-        var now = new Date();
-        document.getElementById("last-updated").textContent =
-          "Updated " +
-          now.toLocaleTimeString("en-CA", {
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true
-          });
-
+        if (currentPeriod > 0) { var since = new Date(); since.setDate(since.getDate() - currentPeriod); query = query.gte("created_at", since.toISOString()); }
+        var result = await query; var data = result.data; var error = result.error; btn.classList.remove("spinning");
+        if (error) { console.error("Metrics load error:", error); showToast("Error loading data: " + (error.message || "unknown")); return; }
+        var now = new Date(); document.getElementById("last-updated").textContent = "Updated " + now.toLocaleTimeString("en-CA", { hour: "2-digit", minute: "2-digit", hour12: true });
         renderMetrics(Array.isArray(data) ? data : []);
-      } catch (err) {
-        btn.classList.remove("spinning");
-        console.error("Metrics exception:", err);
-        showToast("Unexpected metrics error: " + ((err && err.message) ? err.message : "unknown"));
-      }
+      } catch (err) { btn.classList.remove("spinning"); console.error("Metrics exception:", err); showToast("Unexpected metrics error: " + ((err && err.message) ? err.message : "unknown")); }
     }
 
     function renderMetrics(cases) {
       var total = cases.length;
-
       var urgent = cases.filter(function(c) { return c.severity === "urgent"; }).length;
       var emergency = cases.filter(function(c) { return c.severity === "emergency"; }).length;
       var routine = cases.filter(function(c) { return c.severity === "routine"; }).length;
-
       var pendingReview = cases.filter(function(c) { return c.review_status !== "reviewed"; }).length;
       var clinicallyReviewed = cases.filter(function(c) { return !!c.reviewed_by; }).length;
       var clearedReviewed = cases.filter(function(c) { return c.review_status === "reviewed"; }).length;
-      var pendingUrgentEmergency = cases.filter(function(c) {
-        return (c.severity === "urgent" || c.severity === "emergency") && !c.reviewed_by;
-      }).length;
-
+      var pendingUrgentEmergency = cases.filter(function(c) { return (c.severity === "urgent" || c.severity === "emergency") && !c.reviewed_by; }).length;
       var contacted = cases.filter(function(c) { return !!c.contacted_patient_at; }).length;
-      var contactedAfterClinicalReview = cases.filter(function(c) {
-        return !!c.contacted_patient_at && !!c.reviewed_by;
-      }).length;
+      var contactedAfterClinicalReview = cases.filter(function(c) { return !!c.contacted_patient_at && !!c.reviewed_by; }).length;
       var erRef = cases.filter(function(c) { return c.final_disposition === "referred_er"; }).length;
       var rxIssued = cases.filter(function(c) { return c.prescription_issued === true; }).length;
 
-      var reviewMinutes = cases
-        .filter(function(c) { return c.created_at && c.reviewed_at && c.reviewed_by; })
-        .map(function(c) { return (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000; })
-        .filter(function(n) { return Number.isFinite(n) && n >= 0; });
+      var reviewMinutes = cases.filter(function(c) { return c.created_at && c.reviewed_at && c.reviewed_by; }).map(function(c) { return (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000; }).filter(function(n) { return Number.isFinite(n) && n >= 0; });
+      var contactMinutes = cases.filter(function(c) { return c.created_at && c.contacted_patient_at; }).map(function(c) { return (new Date(c.contacted_patient_at) - new Date(c.created_at)) / 60000; }).filter(function(n) { return Number.isFinite(n) && n >= 0; });
+      var avgTTR = reviewMinutes.length ? Math.round(reviewMinutes.reduce(function(a, b) { return a + b; }, 0) / reviewMinutes.length) : null;
+      var avgTTC = contactMinutes.length ? Math.round(contactMinutes.reduce(function(a, b) { return a + b; }, 0) / contactMinutes.length) : null;
 
-      var contactMinutes = cases
-        .filter(function(c) { return c.created_at && c.contacted_patient_at; })
-        .map(function(c) { return (new Date(c.contacted_patient_at) - new Date(c.created_at)) / 60000; })
-        .filter(function(n) { return Number.isFinite(n) && n >= 0; });
-
-      var avgTTR = reviewMinutes.length
-        ? Math.round(reviewMinutes.reduce(function(a, b) { return a + b; }, 0) / reviewMinutes.length)
-        : null;
-
-      var avgTTC = contactMinutes.length
-        ? Math.round(contactMinutes.reduce(function(a, b) { return a + b; }, 0) / contactMinutes.length)
-        : null;
-
-      var durations = cases
-        .map(function(c) { return c.duration_seconds; })
-        .filter(function(n) { return Number.isFinite(n) && n > 0; });
-
-      var avgDur = durations.length
-        ? Math.round(durations.reduce(function(a, b) { return a + b; }, 0) / durations.length)
-        : null;
-
-      var durationBuckets = [
-        { label: "<30s", count: 0 },
-        { label: "30-60s", count: 0 },
-        { label: "1-2m", count: 0 },
-        { label: "2-4m", count: 0 },
-        { label: ">4m", count: 0 }
-      ];
-
-      durations.forEach(function(d) {
-        if (d < 30) durationBuckets[0].count++;
-        else if (d < 60) durationBuckets[1].count++;
-        else if (d < 120) durationBuckets[2].count++;
-        else if (d < 240) durationBuckets[3].count++;
-        else durationBuckets[4].count++;
-      });
-
+      var durations = cases.map(function(c) { return c.duration_seconds; }).filter(function(n) { return Number.isFinite(n) && n > 0; });
+      var avgDur = durations.length ? Math.round(durations.reduce(function(a, b) { return a + b; }, 0) / durations.length) : null;
+      var durationBuckets = [ { label: "<30s", count: 0 }, { label: "30-60s", count: 0 }, { label: "1-2m", count: 0 }, { label: "2-4m", count: 0 }, { label: ">4m", count: 0 } ];
+      durations.forEach(function(d) { if (d < 30) durationBuckets[0].count++; else if (d < 60) durationBuckets[1].count++; else if (d < 120) durationBuckets[2].count++; else if (d < 240) durationBuckets[3].count++; else durationBuckets[4].count++; });
       var maxDurationBucket = Math.max.apply(null, durationBuckets.map(function(b) { return b.count; }).concat([1]));
 
       var usableCalls = cases.filter(isUsableCall).length;
       var incompleteCalls = total - usableCalls;
-
-      var afterHours = cases.filter(function(c) {
-        var d = new Date(c.created_at);
-        var h = d.getHours();
-        var dow = d.getDay();
-        return dow === 0 || dow === 6 || h < 8 || h >= 18;
-      }).length;
+      var afterHours = cases.filter(function(c) { var d = new Date(c.created_at); var h = d.getHours(); var dow = d.getDay(); return dow === 0 || dow === 6 || h < 8 || h >= 18; }).length;
 
       var hourCounts = new Array(24).fill(0);
-      cases.forEach(function(c) {
-        var hour = new Date(c.created_at).getHours();
-        hourCounts[hour]++;
-      });
+      cases.forEach(function(c) { var hour = new Date(c.created_at).getHours(); hourCounts[hour]++; });
       var maxHour = Math.max.apply(null, hourCounts.concat([1]));
 
-      var extCounts = {};
-      cases.forEach(function(c) {
-        var s = c.extraction_source || "none";
-        extCounts[s] = (extCounts[s] || 0) + 1;
-      });
+      var extCounts = {}; cases.forEach(function(c) { var s = c.extraction_source || "none"; extCounts[s] = (extCounts[s] || 0) + 1; });
+      var dispoCounts = {}; cases.forEach(function(c) { if (c.final_disposition) { dispoCounts[c.final_disposition] = (dispoCounts[c.final_disposition] || 0) + 1; } });
+      var tagCounts = {}; cases.forEach(function(c) { var tag = c.triage_tag || "untagged"; tagCounts[tag] = (tagCounts[tag] || 0) + 1; });
 
-      var dispoCounts = {};
-      cases.forEach(function(c) {
-        if (c.final_disposition) {
-          dispoCounts[c.final_disposition] = (dispoCounts[c.final_disposition] || 0) + 1;
-        }
-      });
+      var reviewerCounts = {}; var reviewerTTR = {};
+      cases.forEach(function(c) { if (!c.reviewed_by) return; var name = resolveReviewerName(c.reviewed_by); reviewerCounts[name] = (reviewerCounts[name] || 0) + 1; if (c.created_at && c.reviewed_at) { var mins = (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000; if (Number.isFinite(mins) && mins >= 0) { if (!reviewerTTR[name]) reviewerTTR[name] = []; reviewerTTR[name].push(mins); } } });
 
-      /* --- NEW: Triage tag distribution --- */
-      var tagCounts = {};
-      cases.forEach(function(c) {
-        var tag = c.triage_tag || "untagged";
-        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
-      });
+      /* Revenue & follow-up metrics */
+      var revenueCases = cases.filter(function(c) { return typeof c.revenue_generated === "number" && c.revenue_generated > 0; });
+      var totalRevenue = revenueCases.reduce(function(sum, c) { return sum + c.revenue_generated; }, 0);
+      var avgRevenue = revenueCases.length > 0 ? Math.round(totalRevenue / revenueCases.length) : null;
+      var followUpBooked = cases.filter(function(c) { return c.subsequent_appointment_booked === true; }).length;
+      var reviewedCasesForFollowUp = cases.filter(function(c) { return c.review_status === "reviewed"; }).length;
 
-      /* --- NEW: Reviewer breakdown --- */
-      var reviewerCounts = {};
-      var reviewerTTR = {};
-      cases.forEach(function(c) {
-        if (!c.reviewed_by) return;
-        var name = resolveReviewerName(c.reviewed_by);
-        reviewerCounts[name] = (reviewerCounts[name] || 0) + 1;
-        if (c.created_at && c.reviewed_at) {
-          var mins = (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000;
-          if (Number.isFinite(mins) && mins >= 0) {
-            if (!reviewerTTR[name]) reviewerTTR[name] = [];
-            reviewerTTR[name].push(mins);
-          }
-        }
-      });
+      var casesWithContradictions = 0; var contradictionFieldCounts = {};
+      cases.forEach(function(c) { var contras = getContradictions(c); if (contras.length > 0) { casesWithContradictions++; contras.forEach(function(item) { var field = item.field || "unknown"; contradictionFieldCounts[field] = (contradictionFieldCounts[field] || 0) + 1; }); } });
 
-      /* --- NEW: Contradiction metrics --- */
-      var casesWithContradictions = 0;
-      var contradictionFieldCounts = {};
-      cases.forEach(function(c) {
-        var contras = getContradictions(c);
-        if (contras.length > 0) {
-          casesWithContradictions++;
-          contras.forEach(function(item) {
-            var field = item.field || "unknown";
-            contradictionFieldCounts[field] = (contradictionFieldCounts[field] || 0) + 1;
-          });
-        }
-      });
-
-      var flags = {
-        fever: 0,
-        trauma: 0,
-        swelling: 0,
-        airway: 0,
-        bleeding: 0,
-        nocturnal: 0,
-        cold_lingers: 0,
-        immunocompromised: 0
-      };
-
-      cases.forEach(function(c) {
-        var so = getSO(c);
-        if (so.fever) flags.fever++;
-        if (so.trauma) flags.trauma++;
-        if (so.swelling_present || so.swelling) flags.swelling++;
-        if (so.difficulty_breathing_or_swallowing) flags.airway++;
-        if (so.uncontrolled_bleeding) flags.bleeding++;
-        if (so.nocturnal_pain) flags.nocturnal++;
-        if (so.cold_pain_lingers_over_10_seconds) flags.cold_lingers++;
-        if (so.immunocompromised) flags.immunocompromised++;
-      });
+      var flags = { fever: 0, trauma: 0, swelling: 0, airway: 0, bleeding: 0, nocturnal: 0, cold_lingers: 0, immunocompromised: 0 };
+      cases.forEach(function(c) { var so = getSO(c); if (so.fever) flags.fever++; if (so.trauma) flags.trauma++; if (so.swelling_present || so.swelling) flags.swelling++; if (so.difficulty_breathing_or_swallowing) flags.airway++; if (so.uncontrolled_bleeding) flags.bleeding++; if (so.nocturnal_pain) flags.nocturnal++; if (so.cold_pain_lingers_over_10_seconds) flags.cold_lingers++; if (so.immunocompromised) flags.immunocompromised++; });
 
       var nullPain = cases.filter(function(c) { var so = getSO(c); return so.pain_score == null; }).length;
       var nullComplaint = cases.filter(function(c) { var so = getSO(c); return !so.chief_complaint; }).length;
       var nullOnset = cases.filter(function(c) { var so = getSO(c); return !so.onset; }).length;
       var nullLoc = cases.filter(function(c) { var so = getSO(c); return !so.jaw && !so.side; }).length;
 
-      var dispoLabels = {
-        booked: "Appointment booked",
-        referred_er: "Referred to ER",
-        rx_only: "Prescription only",
-        declined: "Patient declined",
-        no_response: "No response"
-      };
-
-      var contradictionFieldLabels = {
-        fever: "Fever",
-        swelling: "Swelling",
-        trauma: "Trauma",
-        bleeding: "Bleeding",
-        uncontrolled_bleeding: "Uncontrolled bleeding",
-        breathing_swallowing: "Airway / Swallowing",
-        difficulty_breathing_or_swallowing: "Airway / Swallowing",
-        feeling_unwell: "Feeling Unwell",
-        immunocompromised: "Immunocompromised",
-        pregnant: "Pregnancy",
-        anticoagulant: "Blood Thinners",
-        recent_extraction: "Recent extraction"
-      };
+      var dispoLabels = { booked: "Appointment booked", referred_er: "Referred to ER", rx_only: "Prescription only", declined: "Patient declined", no_response: "No response" };
+      var contradictionFieldLabels = { fever: "Fever", swelling: "Swelling", trauma: "Trauma", bleeding: "Bleeding", uncontrolled_bleeding: "Uncontrolled bleeding", breathing_swallowing: "Airway / Swallowing", difficulty_breathing_or_swallowing: "Airway / Swallowing", feeling_unwell: "Feeling Unwell", immunocompromised: "Immunocompromised", pregnant: "Pregnancy", anticoagulant: "Blood Thinners", recent_extraction: "Recent extraction" };
 
       var html = "";
 
@@ -1351,297 +377,90 @@
       html += secHead("Outcomes");
       html += '<div class="two-col">';
 
-      /* Disposition panel */
-      var dispoTotal = 0;
-      Object.keys(dispoCounts).forEach(function(k) { dispoTotal += dispoCounts[k]; });
+      var dispoTotal = 0; Object.keys(dispoCounts).forEach(function(k) { dispoTotal += dispoCounts[k]; });
 
-      html += '<div class="panel">' +
-        '<div class="panel-head"><div class="panel-title">Final Disposition</div><div class="panel-subtle">' + dispoTotal + ' recorded</div></div>' +
-        '<div class="panel-body">';
+      html += '<div class="panel"><div class="panel-head"><div class="panel-title">Final Disposition</div><div class="panel-subtle">' + dispoTotal + ' recorded</div></div><div class="panel-body">';
+      if (dispoTotal === 0) { html += '<div class="no-data">No dispositions recorded yet</div>'; }
+      else { html += '<div class="stack-list">'; Object.entries(dispoCounts).sort(function(a, b) { return b[1] - a[1]; }).forEach(function(entry) { var key = entry[0]; var count = entry[1]; var pp = p(count, dispoTotal); html += '<div><div class="stack-row-label"><span class="stack-name cyan">' + escHtml(dispoLabels[key] || key) + '</span><span class="stack-stats">' + count + ' \u00B7 ' + pp + '%</span></div><div class="stack-track"><div class="stack-fill cyan" style="width:' + pp + '%"></div></div></div>'; }); html += '</div>'; }
 
-      if (dispoTotal === 0) {
-        html += '<div class="no-data">No dispositions recorded yet</div>';
-      } else {
-        html += '<div class="stack-list">';
-        Object.entries(dispoCounts)
-          .sort(function(a, b) { return b[1] - a[1]; })
-          .forEach(function(entry) {
-            var key = entry[0];
-            var count = entry[1];
-            var pp = p(count, dispoTotal);
-            html += '<div>' +
-              '<div class="stack-row-label"><span class="stack-name cyan">' + escHtml(dispoLabels[key] || key) + '</span><span class="stack-stats">' + count + ' \u00B7 ' + pp + '%</span></div>' +
-              '<div class="stack-track"><div class="stack-fill cyan" style="width:' + pp + '%"></div></div>' +
-            '</div>';
-          });
-        html += '</div>';
-      }
+      html += '<div class="panel-divider"></div><div class="panel-sub-label">Review Status</div><div class="mini-list">' +
+        '<div class="mini-row"><span class="mini-row-label">Clinically reviewed</span><span class="mini-row-val cyan">' + clinicallyReviewed + ' / ' + total + ' (' + p(clinicallyReviewed, total) + '%)</span></div>' +
+        '<div class="mini-row"><span class="mini-row-label">Cleared / reviewed flag</span><span class="mini-row-val">' + clearedReviewed + '</span></div>' +
+        '<div class="mini-row"><span class="mini-row-label">Patients contacted</span><span class="mini-row-val">' + contacted + '</span></div>' +
+        '<div class="mini-row"><span class="mini-row-label">Follow-up appointments booked</span><span class="mini-row-val cyan">' + followUpBooked + ' / ' + reviewedCasesForFollowUp + (reviewedCasesForFollowUp > 0 ? (' (' + p(followUpBooked, reviewedCasesForFollowUp) + '%)') : '') + '</span></div>' +
+        '<div class="mini-row"><span class="mini-row-label">Total revenue generated</span><span class="mini-row-val ok">$' + totalRevenue.toFixed(2) + '</span></div>' +
+        '<div class="mini-row"><span class="mini-row-label">Avg revenue per case</span><span class="mini-row-val">' + (avgRevenue !== null ? ('$' + avgRevenue.toFixed(2)) : '\u2014') + '</span></div>' +
+      '</div>';
 
-      html += '<div class="panel-divider"></div>' +
-        '<div class="panel-sub-label">Review Status</div>' +
-        '<div class="mini-list">' +
-          '<div class="mini-row"><span class="mini-row-label">Clinically reviewed</span><span class="mini-row-val cyan">' + clinicallyReviewed + ' / ' + total + ' (' + p(clinicallyReviewed, total) + '%)</span></div>' +
-          '<div class="mini-row"><span class="mini-row-label">Cleared / reviewed flag</span><span class="mini-row-val">' + clearedReviewed + '</span></div>' +
-          '<div class="mini-row"><span class="mini-row-label">Patients contacted</span><span class="mini-row-val">' + contacted + '</span></div>' +
-        '</div>';
-
-      /* --- NEW: Reviewer breakdown --- */
       var reviewerKeys = Object.keys(reviewerCounts);
-      if (reviewerKeys.length > 0) {
-        html += '<div class="panel-divider"></div>' +
-          '<div class="panel-sub-label">Reviewer Breakdown</div>' +
-          '<div class="mini-list">';
-        reviewerKeys.sort(function(a, b) { return reviewerCounts[b] - reviewerCounts[a]; }).forEach(function(name) {
-          var rCount = reviewerCounts[name];
-          var rTimes = reviewerTTR[name] || [];
-          var rAvg = rTimes.length ? Math.round(rTimes.reduce(function(a, b) { return a + b; }, 0) / rTimes.length) : null;
-          html += '<div class="mini-row"><span class="mini-row-label">' + escHtml(name) + '</span><span class="mini-row-val cyan">' + rCount + ' reviewed' + (rAvg !== null ? (' \u00B7 avg ' + fmtMin(rAvg)) : '') + '</span></div>';
-        });
-        html += '</div>';
-      }
+      if (reviewerKeys.length > 0) { html += '<div class="panel-divider"></div><div class="panel-sub-label">Reviewer Breakdown</div><div class="mini-list">'; reviewerKeys.sort(function(a, b) { return reviewerCounts[b] - reviewerCounts[a]; }).forEach(function(name) { var rCount = reviewerCounts[name]; var rTimes = reviewerTTR[name] || []; var rAvg = rTimes.length ? Math.round(rTimes.reduce(function(a, b) { return a + b; }, 0) / rTimes.length) : null; html += '<div class="mini-row"><span class="mini-row-label">' + escHtml(name) + '</span><span class="mini-row-val cyan">' + rCount + ' reviewed' + (rAvg !== null ? (' \u00B7 avg ' + fmtMin(rAvg)) : '') + '</span></div>'; }); html += '</div>'; }
 
       html += '</div></div>';
 
       /* Severity panel */
-      html += '<div class="panel">' +
-        '<div class="panel-head"><div class="panel-title">Severity Distribution</div><div class="panel-subtle">' + total + ' call' + (total !== 1 ? 's' : '') + '</div></div>' +
-        '<div class="panel-body"><div class="stack-list">' +
-          stackBar("urgent", "Urgent", urgent, total) +
-          stackBar("emergency", "Emergency", emergency, total) +
-          stackBar("routine", "Routine", routine, total) +
-        '</div>';
+      html += '<div class="panel"><div class="panel-head"><div class="panel-title">Severity Distribution</div><div class="panel-subtle">' + total + ' call' + (total !== 1 ? 's' : '') + '</div></div><div class="panel-body"><div class="stack-list">' +
+        stackBar("urgent", "Urgent", urgent, total) + stackBar("emergency", "Emergency", emergency, total) + stackBar("routine", "Routine", routine, total) + '</div>';
 
-      /* --- NEW: Triage tag distribution --- */
       var tagKeys = Object.keys(tagCounts);
-      if (tagKeys.length > 0) {
-        html += '<div class="panel-divider"></div>' +
-          '<div class="panel-sub-label">Triage Tag Distribution</div>' +
-          '<div class="stack-list">';
-        tagKeys.sort(function(a, b) { return tagCounts[b] - tagCounts[a]; }).forEach(function(tag) {
-          var tCount = tagCounts[tag];
-          var tPct = p(tCount, total);
-          var tagLabel = TRIAGE_TAG_LABELS[tag] || formatTag(tag);
-          html += '<div>' +
-            '<div class="stack-row-label"><span class="stack-name cyan">' + escHtml(tagLabel) + '</span><span class="stack-stats">' + tCount + ' \u00B7 ' + tPct + '%</span></div>' +
-            '<div class="stack-track"><div class="stack-fill cyan" style="width:' + tPct + '%"></div></div>' +
-          '</div>';
-        });
-        html += '</div>';
-      }
+      if (tagKeys.length > 0) { html += '<div class="panel-divider"></div><div class="panel-sub-label">Triage Tag Distribution</div><div class="stack-list">'; tagKeys.sort(function(a, b) { return tagCounts[b] - tagCounts[a]; }).forEach(function(tag) { var tCount = tagCounts[tag]; var tPct = p(tCount, total); var tagLabel = TRIAGE_TAG_LABELS[tag] || formatTag(tag); html += '<div><div class="stack-row-label"><span class="stack-name cyan">' + escHtml(tagLabel) + '</span><span class="stack-stats">' + tCount + ' \u00B7 ' + tPct + '%</span></div><div class="stack-track"><div class="stack-fill cyan" style="width:' + tPct + '%"></div></div></div>'; }); html += '</div>'; }
 
-      html += '</div></div>';
-      html += '</div>';
+      html += '</div></div></div>';
 
       /* === QUALITY & DIAGNOSTICS === */
       html += secHead("Quality & diagnostics");
       html += '<div class="two-col">';
 
-      /* Duration panel */
-      html += '<div class="panel">' +
-        '<div class="panel-head"><div class="panel-title">Call Duration Distribution</div><div class="panel-subtle">Avg ' + fmtDur(avgDur) + '</div></div>' +
-        '<div class="panel-body">';
+      html += '<div class="panel"><div class="panel-head"><div class="panel-title">Call Duration Distribution</div><div class="panel-subtle">Avg ' + fmtDur(avgDur) + '</div></div><div class="panel-body">';
+      if (!durations.length) { html += '<div class="no-data">No duration data available</div>'; }
+      else { html += '<div class="histogram">'; durationBuckets.forEach(function(bucket) { var height = Math.max((bucket.count / maxDurationBucket) * 100, bucket.count > 0 ? 8 : 0); html += '<div class="hist-col"><div class="hist-bar-wrap"><div class="hist-bar" style="height:' + height + '%"></div></div><div class="hist-count">' + bucket.count + '</div><div class="hist-label">' + bucket.label + '</div></div>'; }); html += '</div>'; }
 
-      if (!durations.length) {
-        html += '<div class="no-data">No duration data available</div>';
-      } else {
-        html += '<div class="histogram">';
-        durationBuckets.forEach(function(bucket) {
-          var height = Math.max((bucket.count / maxDurationBucket) * 100, bucket.count > 0 ? 8 : 0);
-          html += '<div class="hist-col"><div class="hist-bar-wrap"><div class="hist-bar" style="height:' + height + '%"></div></div><div class="hist-count">' + bucket.count + '</div><div class="hist-label">' + bucket.label + '</div></div>';
-        });
-        html += '</div>';
-      }
+      html += '<div class="panel-divider"></div><div class="panel-sub-label">Data Quality</div><div class="mini-list">' +
+        nullRow("Pain score missing", nullPain, total) + nullRow("Chief complaint missing", nullComplaint, total) + nullRow("Onset missing", nullOnset, total) + nullRow("Location missing", nullLoc, total) +
+        '<div class="mini-row"><span class="mini-row-label">Incomplete / likely partial</span><span class="mini-row-val ' + (p(incompleteCalls, total) > 15 ? "warn" : "ok") + '">' + incompleteCalls + ' (' + p(incompleteCalls, total) + '%)</span></div></div></div></div>';
 
-      html += '<div class="panel-divider"></div>' +
-        '<div class="panel-sub-label">Data Quality</div>' +
-        '<div class="mini-list">' +
-          nullRow("Pain score missing", nullPain, total) +
-          nullRow("Chief complaint missing", nullComplaint, total) +
-          nullRow("Onset missing", nullOnset, total) +
-          nullRow("Location missing", nullLoc, total) +
-          '<div class="mini-row"><span class="mini-row-label">Incomplete / likely partial</span><span class="mini-row-val ' + (p(incompleteCalls, total) > 15 ? "warn" : "ok") + '">' + incompleteCalls + ' (' + p(incompleteCalls, total) + '%)</span></div>' +
-        '</div></div></div>';
-
-      /* Hour of day panel */
-      html += '<div class="panel">' +
-        '<div class="panel-head"><div class="panel-title">Calls by Hour of Day</div><div class="panel-subtle">' + afterHours + ' after-hours</div></div>' +
-        '<div class="panel-body"><div class="tod-chart">';
-
-      for (var h = 0; h < 24; h++) {
-        var cnt = hourCounts[h];
-        var ht = Math.max((cnt / maxHour) * 100, cnt > 0 ? 6 : 0);
-        var isAfter = h < 8 || h >= 18;
-        var lbl = h === 0 ? "12a" : h === 6 ? "6a" : h === 12 ? "12p" : h === 18 ? "6p" : "";
-        html += '<div class="tod-col"><div class="tod-bar ' + (isAfter ? "after" : "biz") + '" style="height:' + ht + '%" title="' + cnt + ' call' + (cnt !== 1 ? 's' : '') + ' at ' + h + ':00"></div><div class="tod-tick">' + lbl + '</div></div>';
-      }
-
-      html += '</div>' +
-        '<div class="tod-legend">' +
-          '<div class="tod-legend-item"><div class="tod-legend-dot" style="background:rgba(0,200,232,0.2);border:1px solid rgba(0,200,232,0.15)"></div>Business hours (8am\u20136pm)</div>' +
-          '<div class="tod-legend-item"><div class="tod-legend-dot" style="background:rgba(240,165,0,0.22);border:1px solid rgba(240,165,0,0.18)"></div>After hours</div>' +
-        '</div>' +
-        '<div class="panel-divider"></div>' +
-        '<div class="panel-sub-label">Operational Signals</div>' +
-        '<div class="mini-list">' +
-          '<div class="mini-row"><span class="mini-row-label">After-hours share</span><span class="mini-row-val ' + (p(afterHours, total) > 40 ? "warn" : "cyan") + '">' + afterHours + ' (' + p(afterHours, total) + '%)</span></div>' +
-          '<div class="mini-row"><span class="mini-row-label">ER referrals</span><span class="mini-row-val">' + erRef + '</span></div>' +
-          '<div class="mini-row"><span class="mini-row-label">Rx issued</span><span class="mini-row-val">' + rxIssued + '</span></div>' +
-        '</div></div></div>';
-
-      html += '</div>';
+      html += '<div class="panel"><div class="panel-head"><div class="panel-title">Calls by Hour of Day</div><div class="panel-subtle">' + afterHours + ' after-hours</div></div><div class="panel-body"><div class="tod-chart">';
+      for (var h = 0; h < 24; h++) { var cnt = hourCounts[h]; var ht = Math.max((cnt / maxHour) * 100, cnt > 0 ? 6 : 0); var isAfter = h < 8 || h >= 18; var lbl = h === 0 ? "12a" : h === 6 ? "6a" : h === 12 ? "12p" : h === 18 ? "6p" : ""; html += '<div class="tod-col"><div class="tod-bar ' + (isAfter ? "after" : "biz") + '" style="height:' + ht + '%" title="' + cnt + ' call' + (cnt !== 1 ? 's' : '') + ' at ' + h + ':00"></div><div class="tod-tick">' + lbl + '</div></div>'; }
+      html += '</div><div class="tod-legend"><div class="tod-legend-item"><div class="tod-legend-dot" style="background:rgba(0,200,232,0.2);border:1px solid rgba(0,200,232,0.15)"></div>Business hours (8am\u20136pm)</div><div class="tod-legend-item"><div class="tod-legend-dot" style="background:rgba(240,165,0,0.22);border:1px solid rgba(240,165,0,0.18)"></div>After hours</div></div>' +
+        '<div class="panel-divider"></div><div class="panel-sub-label">Operational Signals</div><div class="mini-list">' +
+        '<div class="mini-row"><span class="mini-row-label">After-hours share</span><span class="mini-row-val ' + (p(afterHours, total) > 40 ? "warn" : "cyan") + '">' + afterHours + ' (' + p(afterHours, total) + '%)</span></div>' +
+        '<div class="mini-row"><span class="mini-row-label">ER referrals</span><span class="mini-row-val">' + erRef + '</span></div>' +
+        '<div class="mini-row"><span class="mini-row-label">Rx issued</span><span class="mini-row-val">' + rxIssued + '</span></div></div></div></div></div>';
 
       /* === CLINICAL & TECHNICAL DIAGNOSTICS === */
       html += secHead("Clinical & technical diagnostics");
       html += '<div class="two-col">';
 
-      /* Red flag panel */
-      html += '<div class="panel">' +
-        '<div class="panel-head"><div class="panel-title">Red Flag Frequency</div></div>' +
-        '<div class="panel-body"><div class="flag-grid">' +
-          flagCard("Fever", flags.fever, "#f0a500") +
-          flagCard("Swelling", flags.swelling, "#e84545") +
-          flagCard("Trauma", flags.trauma, "#e84545") +
-          flagCard("Nocturnal pain", flags.nocturnal, "#f0a500") +
-          flagCard("Cold lingers", flags.cold_lingers, "#00c8e8") +
-          flagCard("Airway concern", flags.airway, "#e84545") +
-          flagCard("Bleeding", flags.bleeding, "#e84545") +
-          flagCard("Immunocomp.", flags.immunocompromised, "#f0a500") +
-        '</div></div></div>';
+      html += '<div class="panel"><div class="panel-head"><div class="panel-title">Red Flag Frequency</div></div><div class="panel-body"><div class="flag-grid">' +
+        flagCard("Fever", flags.fever, "#f0a500") + flagCard("Swelling", flags.swelling, "#e84545") + flagCard("Trauma", flags.trauma, "#e84545") + flagCard("Nocturnal pain", flags.nocturnal, "#f0a500") + flagCard("Cold lingers", flags.cold_lingers, "#00c8e8") + flagCard("Airway concern", flags.airway, "#e84545") + flagCard("Bleeding", flags.bleeding, "#e84545") + flagCard("Immunocomp.", flags.immunocompromised, "#f0a500") +
+      '</div></div></div>';
 
-      /* Extraction source panel */
-      html += '<div class="panel">' +
-        '<div class="panel-head"><div class="panel-title">Extraction Source</div></div>' +
-        '<div class="panel-body">' +
-          extractionRow("Vapi (primary)", extCounts["vapi"] || 0, total, "#00c8e8") +
-          extractionRow("OpenAI (fallback)", extCounts["openai"] || 0, total, "#a78bfa") +
-          extractionRow("None / unknown", extCounts["none"] || 0, total, "#5f7597") +
-
-        /* --- NEW: Contradiction metrics --- */
-        '<div class="panel-divider"></div>' +
-        '<div class="panel-sub-label">Intake vs. Call Discrepancies</div>' +
-        '<div class="mini-list">' +
-          '<div class="mini-row"><span class="mini-row-label">Cases with discrepancies</span><span class="mini-row-val ' + (casesWithContradictions > 0 ? "warn" : "ok") + '">' + casesWithContradictions + ' / ' + total + '</span></div>';
+      html += '<div class="panel"><div class="panel-head"><div class="panel-title">Extraction Source</div></div><div class="panel-body">' +
+        extractionRow("Vapi (primary)", extCounts["vapi"] || 0, total, "#00c8e8") + extractionRow("OpenAI (fallback)", extCounts["openai"] || 0, total, "#a78bfa") + extractionRow("None / unknown", extCounts["none"] || 0, total, "#5f7597") +
+        '<div class="panel-divider"></div><div class="panel-sub-label">Intake vs. Call Discrepancies</div><div class="mini-list">' +
+        '<div class="mini-row"><span class="mini-row-label">Cases with discrepancies</span><span class="mini-row-val ' + (casesWithContradictions > 0 ? "warn" : "ok") + '">' + casesWithContradictions + ' / ' + total + '</span></div>';
 
       var contraFieldKeys = Object.keys(contradictionFieldCounts);
-      if (contraFieldKeys.length > 0) {
-        contraFieldKeys.sort(function(a, b) { return contradictionFieldCounts[b] - contradictionFieldCounts[a]; }).forEach(function(field) {
-          var fLabel = contradictionFieldLabels[field] || formatTag(field);
-          html += '<div class="mini-row"><span class="mini-row-label">' + escHtml(fLabel) + '</span><span class="mini-row-val">' + contradictionFieldCounts[field] + '</span></div>';
-        });
-      }
+      if (contraFieldKeys.length > 0) { contraFieldKeys.sort(function(a, b) { return contradictionFieldCounts[b] - contradictionFieldCounts[a]; }).forEach(function(field) { var fLabel = contradictionFieldLabels[field] || formatTag(field); html += '<div class="mini-row"><span class="mini-row-label">' + escHtml(fLabel) + '</span><span class="mini-row-val">' + contradictionFieldCounts[field] + '</span></div>'; }); }
 
-      html += '</div></div></div>';
-      html += '</div>';
-
+      html += '</div></div></div></div>';
       html += '<div style="height:40px"></div>';
 
       document.getElementById("main-content").innerHTML = html;
     }
 
-    function isUsableCall(c) {
-      var so = getSO(c);
-      var hasComplaint = !!so.chief_complaint;
-      var hasPain = so.pain_score != null;
-      var hasOnset = !!so.onset;
-      var hasLocation = !!so.jaw || !!so.side;
-      var hasFlags =
-        !!so.swelling ||
-        !!so.swelling_present ||
-        !!so.trauma ||
-        !!so.fever ||
-        !!so.uncontrolled_bleeding ||
-        !!so.difficulty_breathing_or_swallowing ||
-        !!so.nocturnal_pain ||
-        !!so.cold_pain_lingers_over_10_seconds;
-
-      return hasComplaint || hasPain || hasOnset || hasLocation || hasFlags;
-    }
-
-    function secHead(label) {
-      return '<div class="section-head"><span class="section-label">' + escHtml(label) + '</span><div class="section-line"></div></div>';
-    }
-
-    function hc(label, value, sub, accent, accentColor) {
-      return '<div class="hero-card" style="--accent:' + accent + ';--accent-color:' + accentColor + '">' +
-        '<div class="hc-label">' + escHtml(label) + '</div>' +
-        '<div class="hc-value">' + escHtml(String(value)) + '</div>' +
-        (sub ? '<div class="hc-sub">' + escHtml(sub) + '</div>' : '') +
-      '</div>';
-    }
-
-    function stackBar(cls, label, count, total) {
-      var pp = total > 0 ? Math.round((count / total) * 100) : 0;
-      return '<div>' +
-        '<div class="stack-row-label"><span class="stack-name ' + cls + '">' + escHtml(label) + '</span><span class="stack-stats">' + count + ' \u00B7 ' + pp + '%</span></div>' +
-        '<div class="stack-track"><div class="stack-fill ' + cls + '" style="width:' + pp + '%"></div></div>' +
-      '</div>';
-    }
-
-    function flagCard(label, count, color) {
-      var active = count > 0;
-      return '<div class="flag-card">' +
-        '<div class="flag-dot" style="background:' + color + ';' + (active ? 'box-shadow:0 0 5px ' + color + '80' : 'opacity:0.25') + '"></div>' +
-        '<div class="flag-label">' + escHtml(label) + '</div>' +
-        '<div class="flag-count" style="color:' + (active ? color : '#5f7597') + '">' + count + '</div>' +
-      '</div>';
-    }
-
-    function nullRow(label, count, total) {
-      var pp = total > 0 ? Math.round((count / total) * 100) : 0;
-      var cls = pp > 20 ? "danger" : pp > 10 ? "warn" : "ok";
-      return '<div class="mini-row"><span class="mini-row-label">' + escHtml(label) + '</span><span class="mini-row-val ' + cls + '">' + count + ' (' + pp + '%)</span></div>';
-    }
-
-    function extractionRow(label, count, total, color) {
-      var pp = total > 0 ? Math.round((count / total) * 100) : 0;
-      return '<div class="ext-row">' +
-        '<div class="ext-dot" style="background:' + color + '"></div>' +
-        '<div class="ext-label">' + escHtml(label) + '</div>' +
-        '<div class="ext-bar-wrap"><div class="ext-bar-track"><div class="ext-bar-fill" style="width:' + pp + '%;background:' + color + '"></div></div></div>' +
-        '<div class="ext-count">' + count + '</div>' +
-        '<div class="ext-pct">' + pp + '%</div>' +
-      '</div>';
-    }
-
-    function formatTag(tag) {
-      if (!tag || tag === "-") return "-";
-      return String(tag)
-        .replace(/_/g, " ")
-        .replace(/\b\w/g, function(l) { return l.toUpperCase(); })
-        .replace(/ And /g, " & ");
-    }
-
-    function p(n, d) {
-      return d > 0 ? Math.round((n / d) * 100) : 0;
-    }
-
-    function fmtDur(s) {
-      if (s == null) return "\u2014";
-      return Math.floor(s / 60) + "m " + (s % 60) + "s";
-    }
-
-    function fmtMin(m) {
-      if (m == null) return "\u2014";
-      if (m >= 60) return Math.floor(m / 60) + "h " + Math.round(m % 60) + "m";
-      return Math.round(m) + " min";
-    }
-
-    function showToast(msg) {
-      var t = document.getElementById("toast");
-      t.textContent = msg;
-      t.classList.add("show");
-      setTimeout(function() { t.classList.remove("show"); }, 2800);
-    }
-
-    function escHtml(value) {
-      if (value === null || value === undefined) return "";
-      return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-    }
+    function isUsableCall(c) { var so = getSO(c); var hasComplaint = !!so.chief_complaint; var hasPain = so.pain_score != null; var hasOnset = !!so.onset; var hasLocation = !!so.jaw || !!so.side; var hasFlags = !!so.swelling || !!so.swelling_present || !!so.trauma || !!so.fever || !!so.uncontrolled_bleeding || !!so.difficulty_breathing_or_swallowing || !!so.nocturnal_pain || !!so.cold_pain_lingers_over_10_seconds; return hasComplaint || hasPain || hasOnset || hasLocation || hasFlags; }
+    function secHead(label) { return '<div class="section-head"><span class="section-label">' + escHtml(label) + '</span><div class="section-line"></div></div>'; }
+    function hc(label, value, sub, accent, accentColor) { return '<div class="hero-card" style="--accent:' + accent + ';--accent-color:' + accentColor + '"><div class="hc-label">' + escHtml(label) + '</div><div class="hc-value">' + escHtml(String(value)) + '</div>' + (sub ? '<div class="hc-sub">' + escHtml(sub) + '</div>' : '') + '</div>'; }
+    function stackBar(cls, label, count, total) { var pp = total > 0 ? Math.round((count / total) * 100) : 0; return '<div><div class="stack-row-label"><span class="stack-name ' + cls + '">' + escHtml(label) + '</span><span class="stack-stats">' + count + ' \u00B7 ' + pp + '%</span></div><div class="stack-track"><div class="stack-fill ' + cls + '" style="width:' + pp + '%"></div></div></div>'; }
+    function flagCard(label, count, color) { var active = count > 0; return '<div class="flag-card"><div class="flag-dot" style="background:' + color + ';' + (active ? 'box-shadow:0 0 5px ' + color + '80' : 'opacity:0.25') + '"></div><div class="flag-label">' + escHtml(label) + '</div><div class="flag-count" style="color:' + (active ? color : '#5f7597') + '">' + count + '</div></div>'; }
+    function nullRow(label, count, total) { var pp = total > 0 ? Math.round((count / total) * 100) : 0; var cls = pp > 20 ? "danger" : pp > 10 ? "warn" : "ok"; return '<div class="mini-row"><span class="mini-row-label">' + escHtml(label) + '</span><span class="mini-row-val ' + cls + '">' + count + ' (' + pp + '%)</span></div>'; }
+    function extractionRow(label, count, total, color) { var pp = total > 0 ? Math.round((count / total) * 100) : 0; return '<div class="ext-row"><div class="ext-dot" style="background:' + color + '"></div><div class="ext-label">' + escHtml(label) + '</div><div class="ext-bar-wrap"><div class="ext-bar-track"><div class="ext-bar-fill" style="width:' + pp + '%;background:' + color + '"></div></div></div><div class="ext-count">' + count + '</div><div class="ext-pct">' + pp + '%</div></div>'; }
+    function formatTag(tag) { if (!tag || tag === "-") return "-"; return String(tag).replace(/_/g, " ").replace(/\b\w/g, function(l) { return l.toUpperCase(); }).replace(/ And /g, " & "); }
+    function p(n, d) { return d > 0 ? Math.round((n / d) * 100) : 0; }
+    function fmtDur(s) { if (s == null) return "\u2014"; return Math.floor(s / 60) + "m " + (s % 60) + "s"; }
+    function fmtMin(m) { if (m == null) return "\u2014"; if (m >= 60) return Math.floor(m / 60) + "h " + Math.round(m % 60) + "m"; return Math.round(m) + " min"; }
+    function showToast(msg) { var t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show"); setTimeout(function() { t.classList.remove("show"); }, 2800); }
+    function escHtml(value) { if (value === null || value === undefined) return ""; return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
 
     init();
   </script>
