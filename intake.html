@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>VirtualDentist.ai - Intake</title>
+  <title>Martindale Dental &mdash; Emergency Dental Triage</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <meta name="format-detection" content="telephone=no">
 
@@ -54,10 +54,82 @@
 
     .shell { width: 100%; max-width: var(--maxw); margin: 0 auto; }
 
+    /* ── DUAL-BRAND HEADER ── */
     .brand { display: flex; justify-content: center; margin: 8px 0 18px; }
-    .brand-lockup { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; filter: drop-shadow(0 8px 24px rgba(0,0,0,0.18)); }
-    .brand-mark { width: 44px; height: 44px; display: block; flex-shrink: 0; }
-    .brand-wordmark { font-size: 18px; font-weight: 700; letter-spacing: 0.01em; color: #79c8f3; line-height: 1; }
+
+    .brand-dual {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      filter: drop-shadow(0 8px 24px rgba(0,0,0,0.18));
+    }
+
+    /* Practice identity — primary */
+    .brand-practice {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-practice-logo {
+      height: 42px;
+      width: auto;
+      display: block;
+    }
+
+    /* Fallback text shown when logo image is not yet available */
+    .brand-practice-name {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: var(--white);
+      line-height: 1;
+    }
+
+    .brand-practice-location {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      line-height: 1;
+      margin-top: 3px;
+    }
+
+    /* Powered-by line — secondary */
+    .brand-powered {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0.72;
+    }
+
+    .brand-powered-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .brand-lockup {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      text-decoration: none;
+    }
+
+    .brand-mark { width: 20px; height: 20px; display: block; flex-shrink: 0; }
+    .brand-wordmark { font-size: 13px; font-weight: 700; letter-spacing: 0.01em; color: #79c8f3; line-height: 1; }
+
+    /* Divider between practice and powered-by */
+    .brand-divider {
+      width: 40px;
+      height: 1px;
+      background: rgba(255,255,255,0.10);
+    }
 
     .card {
       background: linear-gradient(180deg, rgba(18, 39, 81, 0.92) 0%, rgba(11, 27, 58, 0.92) 100%);
@@ -175,7 +247,6 @@
     .handoff-card { display: none; margin-top: 18px; padding: 20px 20px 24px; text-align: center; }
     .handoff-card.show { display: block; }
     .handoff-top-logo { display: flex; justify-content: center; margin-bottom: 14px; }
-    .handoff-top-logo .brand-lockup { transform: scale(0.95); transform-origin: center; }
     .handoff-icon { width: 54px; height: 54px; border-radius: 999px; background: rgba(0, 200, 122, 0.1); border: 1px solid rgba(0, 200, 122, 0.24); display: inline-flex; align-items: center; justify-content: center; font-size: 28px; color: var(--success); margin-bottom: 14px; }
     .handoff-title { font-size: clamp(28px, 6vw, 38px); font-weight: 780; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 14px; color: var(--white); }
 
@@ -226,6 +297,8 @@
       .trust-item { align-items: flex-start; font-size: 14px; }
       .hero-secondary { grid-area: secondary; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); align-items: start; gap: 22px; }
       .legal-note { grid-area: legal; }
+      .brand-dual { flex-direction: row; align-items: center; gap: 16px; }
+      .brand-divider { width: 1px; height: 32px; }
     }
 
     @media (max-width: 760px) {
@@ -237,8 +310,8 @@
     }
 
     @media (max-width: 420px) {
-      .brand-wordmark { font-size: 17px; }
-      .brand-mark { width: 40px; height: 40px; }
+      .brand-practice-name { font-size: 18px; }
+      .brand-mark { width: 18px; height: 18px; }
       .hero-title { font-size: clamp(30px, 8vw, 42px); }
       .incoming-number-value { font-size: 26px; }
       .expect-call-title { font-size: 19px; }
@@ -248,259 +321,292 @@
 </head>
 <body>
   <div class="shell">
+
+    <!-- ── DUAL BRAND HEADER ── -->
     <div class="brand">
-      <a href="#" class="brand-lockup" aria-label="VirtualDentist.ai home">
-        <svg class="brand-mark" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <defs>
-            <linearGradient id="intakeLogoGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#1a4fa0" />
-              <stop offset="100%" stop-color="#00c8e8" />
-            </linearGradient>
-          </defs>
-          <path d="M30 20 Q30 10 40 10 L80 10 Q90 10 90 20 L95 60 Q97 80 85 90 L70 108 Q65 115 60 115 Q55 115 50 108 L35 90 Q23 80 25 60 Z" stroke="url(#intakeLogoGrad)" stroke-width="7" fill="none" stroke-linejoin="round" />
-          <polyline points="28,58 42,58 50,40 60,76 70,50 78,58 92,58" stroke="url(#intakeLogoGrad)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-        <span class="brand-wordmark">VirtualDentist.ai</span>
-      </a>
+      <div class="brand-dual">
+
+        <!-- Primary: Martindale Dental -->
+        <div class="brand-practice">
+          <div>
+            <svg xmlns="http://www.w3.org/2000/svg" style="height:52px;width:auto;display:block;" viewBox="70 36 454 300" shape-rendering="geometricPrecision" aria-label="Martindale Dental logo">
+              <path d="M 292 41 L 184 138 L 180 136 L 75 42 L 75 258 L 291 258 L 292 257 Z M 487 304 L 485 306 L 486 307 L 492 304 L 499 305 L 502 308 L 502 313 L 501 314 L 491 314 L 485 317 L 484 319 L 485 327 L 489 329 L 496 329 L 501 325 L 504 329 L 504 309 L 503 306 L 499 303 Z M 501 315 L 502 316 L 502 322 L 497 327 L 492 328 L 489 327 L 486 324 L 486 320 L 490 316 Z M 433 303 L 433 328 L 435 329 L 435 315 L 437 309 L 441 305 L 447 304 L 452 308 L 453 311 L 453 329 L 455 329 L 455 310 L 454 307 L 450 303 L 442 303 L 436 308 L 435 303 Z M 408 303 L 403 306 L 400 312 L 401 323 L 408 329 L 417 329 L 421 327 L 423 324 L 422 323 L 419 326 L 414 328 L 408 327 L 403 322 L 402 317 L 403 316 L 424 316 L 423 308 L 417 303 Z M 402 312 L 406 306 L 411 304 L 414 304 L 418 306 L 422 311 L 421 314 L 403 314 Z M 326 303 L 322 305 L 318 310 L 317 314 L 318 321 L 320 325 L 326 329 L 335 329 L 341 324 L 339 323 L 336 326 L 329 328 L 324 326 L 321 323 L 319 317 L 320 316 L 342 316 L 341 309 L 338 305 L 334 303 Z M 319 313 L 321 309 L 325 305 L 328 304 L 334 305 L 340 312 L 339 314 L 320 314 Z M 277 304 L 275 306 L 276 307 L 283 304 L 289 305 L 292 308 L 293 312 L 291 314 L 282 314 L 277 316 L 274 319 L 274 325 L 279 329 L 286 329 L 292 325 L 293 329 L 295 329 L 294 326 L 294 308 L 293 306 L 289 303 Z M 291 315 L 293 317 L 293 319 L 289 326 L 282 328 L 279 327 L 276 324 L 276 320 L 279 317 L 284 315 Z M 207 303 L 208 308 L 208 329 L 210 328 L 210 311 L 215 305 L 218 304 L 223 305 L 227 310 L 227 329 L 229 329 L 229 310 L 227 305 L 224 303 L 216 303 L 210 307 L 209 303 Z M 196 303 L 196 329 L 198 329 L 198 303 Z M 165 303 L 160 303 L 156 307 L 154 306 L 154 303 L 152 303 L 152 328 L 154 329 L 155 310 L 160 305 L 164 305 Z M 124 305 L 124 307 L 131 304 L 137 305 L 140 308 L 141 313 L 140 314 L 130 314 L 125 316 L 122 320 L 123 326 L 127 329 L 135 329 L 140 325 L 141 329 L 143 329 L 142 307 L 137 303 L 128 303 Z M 140 315 L 141 320 L 140 323 L 137 326 L 130 328 L 125 325 L 124 320 L 127 317 L 132 315 Z M 76 303 L 76 329 L 78 329 L 78 313 L 79 310 L 82 306 L 87 304 L 91 305 L 94 309 L 94 328 L 96 329 L 96 312 L 97 309 L 101 305 L 104 304 L 109 305 L 112 309 L 113 329 L 115 328 L 115 313 L 114 308 L 111 304 L 101 303 L 96 308 L 91 303 L 84 303 L 79 308 L 78 303 Z M 467 297 L 468 298 L 467 302 L 462 303 L 462 305 L 466 305 L 468 308 L 467 309 L 468 310 L 468 319 L 467 320 L 468 321 L 467 323 L 468 327 L 471 329 L 477 329 L 477 327 L 474 328 L 469 323 L 469 307 L 471 305 L 477 305 L 477 303 L 470 303 L 469 302 L 469 296 Z M 177 296 L 177 302 L 176 303 L 171 303 L 171 305 L 176 305 L 177 306 L 177 325 L 180 329 L 187 329 L 187 327 L 183 328 L 179 324 L 179 306 L 180 305 L 187 305 L 187 303 L 180 303 L 179 302 L 179 296 Z M 198 290 L 195 292 L 196 294 L 199 293 Z M 515 286 L 515 328 L 517 329 L 517 286 Z M 391 286 L 389 286 L 389 306 L 388 307 L 382 303 L 373 303 L 369 305 L 365 311 L 365 321 L 368 326 L 371 328 L 382 329 L 386 327 L 388 324 L 389 328 L 391 329 Z M 380 304 L 384 306 L 388 310 L 390 315 L 388 322 L 384 326 L 379 328 L 373 327 L 367 320 L 368 310 L 373 305 Z M 306 286 L 306 329 L 308 328 L 308 287 Z M 265 286 L 263 286 L 263 307 L 262 308 L 260 305 L 256 303 L 247 303 L 243 305 L 239 310 L 238 314 L 239 322 L 243 327 L 247 329 L 256 329 L 262 324 L 263 329 L 265 329 Z M 250 304 L 258 306 L 263 312 L 262 322 L 258 326 L 252 328 L 247 327 L 244 325 L 240 318 L 240 314 L 242 309 L 245 306 Z" fill="rgb(255,255,255)" fill-rule="evenodd"/>
+              <path d="M 336 41 L 359 43 L 386 50 L 402 57 L 421 70 L 436 87 L 445 105 L 448 114 L 451 130 L 452 157 L 451 158 L 451 168 L 450 169 L 449 179 L 444 195 L 435 212 L 418 230 L 403 240 L 378 250 L 350 256 L 331 257 L 516 257 L 516 41 Z M 75 41 L 77 43 L 74 41 L 74 257 L 74 42 Z" fill="rgb(113,187,85)" fill-rule="evenodd"/>
+            </svg>
+            <div class="brand-practice-location" style="margin-top:5px;">Jackson Square &middot; Hamilton</div>
+          </div>
+        </div>
+
+        <div class="brand-divider"></div>
+
+        <!-- Secondary: Powered by VirtualDentist.ai -->
+        <div class="brand-powered">
+          <span class="brand-powered-label">Triage powered by</span>
+          <a href="https://virtualdentist.ai" class="brand-lockup" aria-label="VirtualDentist.ai" target="_blank" rel="noopener">
+            <svg class="brand-mark" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <defs>
+                <linearGradient id="intakeLogoGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#1a4fa0" />
+                  <stop offset="100%" stop-color="#00c8e8" />
+                </linearGradient>
+              </defs>
+              <path d="M30 20 Q30 10 40 10 L80 10 Q90 10 90 20 L95 60 Q97 80 85 90 L70 108 Q65 115 60 115 Q55 115 50 108 L35 90 Q23 80 25 60 Z" stroke="url(#intakeLogoGrad)" stroke-width="7" fill="none" stroke-linejoin="round" />
+              <polyline points="28,58 42,58 50,40 60,76 70,50 78,58 92,58" stroke="url(#intakeLogoGrad)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span class="brand-wordmark">VirtualDentist.ai</span>
+          </a>
+        </div>
+
+      </div>
     </div>
 
-```
-<section id="screen-welcome" class="card hero">
-  <div class="hero-inner">
-    <div class="hero-copy-block">
-      <div class="hero-kicker">Ontario Dental Emergency Triage</div>
-      <div class="hero-title">Are you having a dental emergency?</div>
-      <div class="hero-sub">Tell us what is happening, and we'll help assess the situation and guide next steps.</div>
-      <div class="hero-cost">This service is available at no cost.</div>
-      <div class="hero-cta-block">
-        <button class="hero-primary-btn" id="start-assessment-btn" type="button">Start assessment</button>
-        <div class="trust-row">
-          <div class="trust-item"><span class="trust-dot"></span><span>Secure and private</span></div>
-          <div class="trust-item"><span class="trust-dot"></span><span>Speak first with Sam, our AI dental triage assistant</span></div>
-          <div class="trust-item"><span class="trust-dot"></span><span>A licensed Ontario dentist reviews the case and may follow up as appropriate</span></div>
+    <section id="screen-welcome" class="card hero">
+      <div class="hero-inner">
+        <div class="hero-copy-block">
+          <div class="hero-kicker">Martindale Dental &middot; Jackson Square</div>
+          <div class="hero-title">Are you having a dental emergency?</div>
+          <div class="hero-sub">Tell us what is happening, and we'll help assess the situation and guide next steps.</div>
+          <div class="hero-cost">This service is available at no cost.</div>
+          <div class="hero-cta-block">
+            <button class="hero-primary-btn" id="start-assessment-btn" type="button">Start assessment</button>
+            <div class="trust-row">
+              <div class="trust-item"><span class="trust-dot"></span><span>Secure and private</span></div>
+              <div class="trust-item"><span class="trust-dot"></span><span>Speak first with Sam, our AI dental triage assistant</span></div>
+              <div class="trust-item"><span class="trust-dot"></span><span>A licensed Ontario dentist reviews the case and may follow up as appropriate</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-image-block">
+          <div class="hero-image-shell">
+            <img class="hero-image" src="intake-hero.png" alt="Person holding jaw in dental discomfort" />
+          </div>
+        </div>
+
+        <div class="hero-secondary">
+          <div class="warning-panel">
+            If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, seek emergency care immediately by calling 911.
+          </div>
+          <div class="flow-block">
+            <div class="flow-title">Next step: speak with Sam</div>
+            <div class="flow-copy">
+              Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist from Martindale Dental reviews the case and may follow up with recommendations as appropriate. After you submit, Sam will call the number you provide.
+            </div>
+          </div>
+        </div>
+
+        <div class="legal-note">
+          This service is provided by Martindale Dental at Jackson Square, powered by VirtualDentist.ai. It provides dental triage guidance and does not replace emergency medical care or an in-person dental examination.
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="hero-image-block">
-      <div class="hero-image-shell">
-        <img class="hero-image" src="intake-hero.png" alt="Person holding jaw in dental discomfort" />
+    <section id="screen-form" class="card form-card">
+      <div class="form-top">
+        <div>
+          <div class="form-title">Before we begin</div>
+          <div class="form-sub">Please share a few details so we can better understand your concern before connecting you to Sam.</div>
+        </div>
+        <div class="step-pill">Step 1 of 2</div>
       </div>
-    </div>
 
-    <div class="hero-secondary">
-      <div class="warning-panel">
-        If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, seek emergency care immediately by calling 911.
-      </div>
-      <div class="flow-block">
-        <div class="flow-title">Next step: speak with Sam</div>
-        <div class="flow-copy">
-          Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow up with recommendations as appropriate. After you submit, Sam will call the number you provide.
+      <div class="section">
+        <div class="section-title">About you</div>
+
+        <div class="grid-2" style="margin-top:0;">
+          <div class="field full">
+            <label for="patient-name">Full name</label>
+            <input class="input" id="patient-name" type="text" placeholder="First and last name" autocomplete="name" />
+          </div>
+
+          <div class="field">
+            <label for="patient-dob">Date of birth</label>
+            <input class="input" id="patient-dob" type="date" max="" autocomplete="bday" />
+          </div>
+
+          <div class="field">
+            <label for="patient-phone">Phone number</label>
+            <input class="input" id="patient-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="10-digit number" />
+            <div class="helper phone-helper-strong">Sam will call this number shortly after you submit.</div>
+          </div>
+
+          <div class="field">
+            <label for="patient-city">City</label>
+            <input class="input" id="patient-city" type="text" placeholder="City" autocomplete="address-level2" />
+          </div>
+
+          <input type="hidden" id="patient-province" value="ON" />
         </div>
       </div>
-    </div>
 
-    <div class="legal-note">
-      This service provides dental triage guidance and does not replace emergency medical care or an in-person dental examination.
-    </div>
-  </div>
-</section>
+      <div class="section">
+        <div class="section-title">Today's concern</div>
 
-<section id="screen-form" class="card form-card">
-  <div class="form-top">
-    <div>
-      <div class="form-title">Before we begin</div>
-      <div class="form-sub">Please share a few details so we can better understand your concern before connecting you to Sam.</div>
-    </div>
-    <div class="step-pill">Step 1 of 2</div>
-  </div>
+        <div class="field">
+          <label for="chief-complaint">What's been bothering you today?</label>
+          <textarea class="textarea" id="chief-complaint" placeholder="e.g. My back tooth has been throbbing for two days and is sensitive to cold"></textarea>
+        </div>
 
-  <div class="section">
-    <div class="section-title">About you</div>
+        <div class="field" style="margin-top:14px;">
+          <label for="onset-bucket">When did this start?</label>
+          <select class="select" id="onset-bucket">
+            <option value="">Select one</option>
+            <option value="today">Today</option>
+            <option value="last_few_days">Within the last few days</option>
+            <option value="about_a_week">About a week ago</option>
+            <option value="more_than_a_week">More than a week ago</option>
+            <option value="not_sure">Not sure</option>
+          </select>
+        </div>
 
-    <div class="grid-2" style="margin-top:0;">
-      <div class="field full">
-        <label for="patient-name">Full name</label>
-        <input class="input" id="patient-name" type="text" placeholder="First and last name" autocomplete="name" />
+        <div class="field" style="margin-top:14px;">
+          <label>Are any of these happening right now?</label>
+          <div class="check-group">
+            <label class="choice"><input type="checkbox" id="rf-breathing-swallowing" /><span>Trouble breathing or swallowing</span></label>
+            <label class="choice"><input type="checkbox" id="rf-uncontrolled-bleeding" /><span>Uncontrolled bleeding</span></label>
+            <label class="choice"><input type="checkbox" id="rf-facial-swelling" /><span>Facial swelling</span></label>
+            <label class="choice"><input type="checkbox" id="rf-fever-unwell" /><span>Fever or feeling unwell</span></label>
+            <label class="choice"><input type="checkbox" id="rf-trauma" /><span>Injury to the teeth, jaw, or face</span></label>
+            <label class="choice"><input type="checkbox" id="rf-avulsion" /><span>Tooth completely knocked out</span></label>
+            <label class="choice"><input type="checkbox" id="rf-none" /><span>None of the above</span></label>
+          </div>
+        </div>
+
+        <div class="conditional-field" id="avulsion-time-wrapper">
+          <div class="field">
+            <label for="avulsion-time">How long ago did the tooth come out?</label>
+            <div class="helper" style="margin-bottom:6px;">This helps the dentist assess the urgency.</div>
+            <select class="select" id="avulsion-time">
+              <option value="">Select one</option>
+              <option value="under_5">Just now (under 5 minutes)</option>
+              <option value="5_to_15">5 to 15 minutes ago</option>
+              <option value="15_to_30">15 to 30 minutes ago</option>
+              <option value="30_to_60">30 to 60 minutes ago</option>
+              <option value="over_60">More than 60 minutes ago</option>
+              <option value="not_sure">Not sure</option>
+            </select>
+          </div>
+        </div>
       </div>
 
-      <div class="field">
-        <label for="patient-dob">Date of birth</label>
-        <input class="input" id="patient-dob" type="date" max="" autocomplete="bday" />
+      <div class="section">
+        <div class="section-title">Relevant medical information</div>
+        <div class="helper" style="margin-bottom:10px;">Select any that apply.</div>
+        <div class="check-group">
+          <label class="choice"><input type="checkbox" id="mh-allergy-antibiotics" /><span>Allergy to antibiotics</span></label>
+          <label class="choice"><input type="checkbox" id="mh-allergy-pain" /><span>Allergy to pain medication</span></label>
+          <label class="choice"><input type="checkbox" id="mh-blood-thinners" /><span>Blood thinners</span></label>
+          <label class="choice"><input type="checkbox" id="mh-diabetes" /><span>Diabetes</span></label>
+          <label class="choice"><input type="checkbox" id="mh-pregnancy" /><span>Pregnancy</span></label>
+          <label class="choice"><input type="checkbox" id="mh-immunocompromised" /><span>Immunocompromised</span></label>
+          <label class="choice"><input type="checkbox" id="mh-other" /><span>Other important medical condition</span></label>
+          <label class="choice"><input type="checkbox" id="mh-none" /><span>None of the above</span></label>
+        </div>
+        <div class="conditional-field" id="mh-other-wrapper">
+          <div class="field">
+            <label for="mh-other-detail">Please tell us more</label>
+            <textarea class="textarea" id="mh-other-detail" placeholder="Anything important we should know"></textarea>
+          </div>
+        </div>
       </div>
 
-      <div class="field">
-        <label for="patient-phone">Phone number</label>
-        <input class="input" id="patient-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="10-digit number" />
-        <div class="helper phone-helper-strong">Sam will call this number shortly after you submit.</div>
+      <div class="section">
+        <div class="section-title">Coverage information (optional)</div>
+        <div class="helper" style="margin-bottom:10px;">This helps with follow-up planning only.</div>
+        <div class="field">
+          <label for="coverage-status">Coverage information</label>
+          <select class="select" id="coverage-status">
+            <option value="">Select one</option>
+            <option value="private_insurance">Private dental insurance</option>
+            <option value="cdcp">CDCP</option>
+            <option value="odsp">ODSP</option>
+            <option value="ow">OW</option>
+            <option value="no_coverage">No dental coverage</option>
+            <option value="prefer_not_to_say">Prefer not to say</option>
+          </select>
+        </div>
       </div>
 
-      <div class="field">
-        <label for="patient-city">City</label>
-        <input class="input" id="patient-city" type="text" placeholder="City" autocomplete="address-level2" />
+      <div class="pre-submit-note">
+        After you submit, Sam will call the phone number you provided to continue your triage assessment. The call will come from
+        <span class="plain-phone"><span>1-833</span>-<span>959</span>-<span>3932</span></span>.
+        After the call, you may receive a single SMS with Martindale Dental's contact information and next steps.
       </div>
 
-      <input type="hidden" id="patient-province" value="ON" />
-    </div>
-  </div>
+      <label class="ack">
+        <input type="checkbox" id="intake-acknowledge" />
+        <span>
+          By continuing, you understand that you will next speak with Sam, an AI dental triage assistant provided by VirtualDentist.ai on behalf of Martindale Dental, that you may receive an SMS follow-up with Martindale Dental's contact information, and that this service does not replace emergency or in-person dental care.
+        </span>
+      </label>
 
-  <div class="section">
-    <div class="section-title">Today's concern</div>
+      <div id="intake-error" class="error-box"></div>
 
-    <div class="field">
-      <label for="chief-complaint">What's been bothering you today?</label>
-      <textarea class="textarea" id="chief-complaint" placeholder="e.g. My back tooth has been throbbing for two days and is sensitive to cold"></textarea>
-    </div>
-
-    <div class="field" style="margin-top:14px;">
-      <label for="onset-bucket">When did this start?</label>
-      <select class="select" id="onset-bucket">
-        <option value="">Select one</option>
-        <option value="today">Today</option>
-        <option value="last_few_days">Within the last few days</option>
-        <option value="about_a_week">About a week ago</option>
-        <option value="more_than_a_week">More than a week ago</option>
-        <option value="not_sure">Not sure</option>
-      </select>
-    </div>
-
-    <div class="field" style="margin-top:14px;">
-      <label>Are any of these happening right now?</label>
-      <div class="check-group">
-        <label class="choice"><input type="checkbox" id="rf-breathing-swallowing" /><span>Trouble breathing or swallowing</span></label>
-        <label class="choice"><input type="checkbox" id="rf-uncontrolled-bleeding" /><span>Uncontrolled bleeding</span></label>
-        <label class="choice"><input type="checkbox" id="rf-facial-swelling" /><span>Facial swelling</span></label>
-        <label class="choice"><input type="checkbox" id="rf-fever-unwell" /><span>Fever or feeling unwell</span></label>
-        <label class="choice"><input type="checkbox" id="rf-trauma" /><span>Injury to the teeth, jaw, or face</span></label>
-        <label class="choice"><input type="checkbox" id="rf-avulsion" /><span>Tooth completely knocked out</span></label>
-        <label class="choice"><input type="checkbox" id="rf-none" /><span>None of the above</span></label>
+      <div class="action-bar">
+        <button class="btn-secondary" id="back-to-welcome-btn" type="button">Back</button>
+        <button class="btn-primary" id="intake-submit-btn" type="button">Continue</button>
       </div>
-    </div>
+    </section>
 
-    <div class="conditional-field" id="avulsion-time-wrapper">
-      <div class="field">
-        <label for="avulsion-time">How long ago did the tooth come out?</label>
-        <div class="helper" style="margin-bottom:6px;">This helps the dentist assess the urgency.</div>
-        <select class="select" id="avulsion-time">
-          <option value="">Select one</option>
-          <option value="under_5">Just now (under 5 minutes)</option>
-          <option value="5_to_15">5 to 15 minutes ago</option>
-          <option value="15_to_30">15 to 30 minutes ago</option>
-          <option value="30_to_60">30 to 60 minutes ago</option>
-          <option value="over_60">More than 60 minutes ago</option>
-          <option value="not_sure">Not sure</option>
-        </select>
+    <section id="screen-handoff" class="card handoff-card">
+      <div class="handoff-top-logo">
+        <div class="brand-dual">
+          <div class="brand-practice">
+            <div>
+              <div class="brand-practice-name">Martindale Dental</div>
+              <div class="brand-practice-location">Jackson Square &middot; Hamilton</div>
+            </div>
+          </div>
+          <div class="brand-divider"></div>
+          <div class="brand-powered">
+            <span class="brand-powered-label">Powered by</span>
+            <div class="brand-lockup">
+              <svg class="brand-mark" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="handoffLogoGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#1a4fa0" />
+                    <stop offset="100%" stop-color="#00c8e8" />
+                  </linearGradient>
+                </defs>
+                <path d="M30 20 Q30 10 40 10 L80 10 Q90 10 90 20 L95 60 Q97 80 85 90 L70 108 Q65 115 60 115 Q55 115 50 108 L35 90 Q23 80 25 60 Z" stroke="url(#handoffLogoGrad)" stroke-width="7" fill="none" stroke-linejoin="round" />
+                <polyline points="28,58 42,58 50,40 60,76 70,50 78,58 92,58" stroke="url(#handoffLogoGrad)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <span class="brand-wordmark">VirtualDentist.ai</span>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="section">
-    <div class="section-title">Relevant medical information</div>
-    <div class="helper" style="margin-bottom:10px;">Select any that apply.</div>
-    <div class="check-group">
-      <label class="choice"><input type="checkbox" id="mh-allergy-antibiotics" /><span>Allergy to antibiotics</span></label>
-      <label class="choice"><input type="checkbox" id="mh-allergy-pain" /><span>Allergy to pain medication</span></label>
-      <label class="choice"><input type="checkbox" id="mh-blood-thinners" /><span>Blood thinners</span></label>
-      <label class="choice"><input type="checkbox" id="mh-diabetes" /><span>Diabetes</span></label>
-      <label class="choice"><input type="checkbox" id="mh-pregnancy" /><span>Pregnancy</span></label>
-      <label class="choice"><input type="checkbox" id="mh-immunocompromised" /><span>Immunocompromised</span></label>
-      <label class="choice"><input type="checkbox" id="mh-other" /><span>Other important medical condition</span></label>
-      <label class="choice"><input type="checkbox" id="mh-none" /><span>None of the above</span></label>
-    </div>
-    <div class="conditional-field" id="mh-other-wrapper">
-      <div class="field">
-        <label for="mh-other-detail">Please tell us more</label>
-        <textarea class="textarea" id="mh-other-detail" placeholder="Anything important we should know"></textarea>
+      <div class="handoff-icon">&#x2713;</div>
+      <div class="handoff-title">Next step: answer Sam's call</div>
+
+      <div class="incoming-number-card" id="incoming-number-card">
+        <div class="incoming-number-label">Answer the call from</div>
+        <div class="incoming-number-value" id="incoming-number-value">1-833-959-3932</div>
+        <div class="incoming-number-sub">Saving this number now may help you recognize the call quickly.</div>
       </div>
-    </div>
-  </div>
 
-  <div class="section">
-    <div class="section-title">Coverage information (optional)</div>
-    <div class="helper" style="margin-bottom:10px;">This helps with follow-up planning only.</div>
-    <div class="field">
-      <label for="coverage-status">Coverage information</label>
-      <select class="select" id="coverage-status">
-        <option value="">Select one</option>
-        <option value="private_insurance">Private dental insurance</option>
-        <option value="cdcp">CDCP</option>
-        <option value="odsp">ODSP</option>
-        <option value="ow">OW</option>
-        <option value="no_coverage">No dental coverage</option>
-        <option value="prefer_not_to_say">Prefer not to say</option>
-      </select>
-    </div>
-  </div>
+      <div class="expect-call-card" id="expect-call-card">
+        <div class="expect-call-title">Sam is calling now or shortly</div>
+        <div class="expect-call-copy">Please keep your phone nearby and answer the call when it comes through. The call will come from 1-833-959-3932.</div>
+      </div>
 
-  <div class="pre-submit-note">
-    After you submit, Sam will call the phone number you provided to continue your triage assessment. The call will come from
-    <span class="plain-phone"><span>1-833</span>-<span>959</span>-<span>3932</span></span>.
-    After the call, you may receive a single SMS with your dental practice's contact information and next steps.
-  </div>
+      <div class="handoff-image-shell">
+        <img class="handoff-image" src="intake-sam-handoff.jpg" alt="Calm dental care coordinator speaking on the phone" />
+      </div>
 
-  <label class="ack">
-    <input type="checkbox" id="intake-acknowledge" />
-    <span>
-      By continuing, you understand that you will next speak with Sam, our AI dental triage assistant, that you may receive an SMS follow-up with your dental practice's contact information, and that this service does not replace emergency or in-person dental care.
-    </span>
-  </label>
+      <div class="handoff-copy" id="handoff-copy">
+        Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist from Martindale Dental reviews the case and may follow up with recommendations as appropriate.
+      </div>
 
-  <div id="intake-error" class="error-box"></div>
+      <div class="handoff-panel">
+        <div class="handoff-panel-title">What happens now</div>
+        <div class="handoff-panel-copy" id="handoff-panel-copy">Your intake has been received.</div>
+      </div>
 
-  <div class="action-bar">
-    <button class="btn-secondary" id="back-to-welcome-btn" type="button">Back</button>
-    <button class="btn-primary" id="intake-submit-btn" type="button">Continue</button>
-  </div>
-</section>
-
-<section id="screen-handoff" class="card handoff-card">
-  <div class="handoff-top-logo">
-    <div class="brand-lockup" aria-hidden="true">
-      <svg class="brand-mark" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="handoffLogoGrad" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#1a4fa0" />
-            <stop offset="100%" stop-color="#00c8e8" />
-          </linearGradient>
-        </defs>
-        <path d="M30 20 Q30 10 40 10 L80 10 Q90 10 90 20 L95 60 Q97 80 85 90 L70 108 Q65 115 60 115 Q55 115 50 108 L35 90 Q23 80 25 60 Z" stroke="url(#handoffLogoGrad)" stroke-width="7" fill="none" stroke-linejoin="round" />
-        <polyline points="28,58 42,58 50,40 60,76 70,50 78,58 92,58" stroke="url(#handoffLogoGrad)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
-      </svg>
-      <span class="brand-wordmark">VirtualDentist.ai</span>
-    </div>
-  </div>
-
-  <div class="handoff-icon">&#x2713;</div>
-  <div class="handoff-title">Next step: answer Sam's call</div>
-
-  <div class="incoming-number-card" id="incoming-number-card">
-    <div class="incoming-number-label">Answer the call from</div>
-    <div class="incoming-number-value" id="incoming-number-value">1-833-959-3932</div>
-    <div class="incoming-number-sub">Saving this number now may help you recognize the call quickly.</div>
-  </div>
-
-  <div class="expect-call-card" id="expect-call-card">
-    <div class="expect-call-title">Sam is calling now or shortly</div>
-    <div class="expect-call-copy">Please keep your phone nearby and answer the call when it comes through. The call will come from 1-833-959-3932.</div>
-  </div>
-
-  <div class="handoff-image-shell">
-    <img class="handoff-image" src="intake-sam-handoff.jpg" alt="Calm dental care coordinator speaking on the phone" />
-  </div>
-
-  <div class="handoff-copy" id="handoff-copy">
-    Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow up with recommendations as appropriate.
-  </div>
-
-  <div class="handoff-panel">
-    <div class="handoff-panel-title">What happens now</div>
-    <div class="handoff-panel-copy" id="handoff-panel-copy">Your intake has been received.</div>
-  </div>
-
-  <div class="call-actions" id="call-actions"></div>
-  <div class="case-status" id="success-case-id">Intake submitted successfully</div>
-</section>
-```
+      <div class="call-actions" id="call-actions"></div>
+      <div class="case-status" id="success-case-id">Intake submitted successfully</div>
+    </section>
 
   </div>
 
@@ -755,7 +861,7 @@
       var incomingNumberValue = document.getElementById("incoming-number-value");
       var callActions = document.getElementById("call-actions");
 
-      handoffCopy.textContent = "Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist reviews the case and may follow up with recommendations as appropriate.";
+      handoffCopy.textContent = "Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. A licensed Ontario dentist from Martindale Dental reviews the case and may follow up with recommendations as appropriate.";
       caseStatus.textContent = caseId ? "Case reference: " + caseId : "Intake submitted successfully";
       incomingNumberValue.textContent = EXPECTED_CALLER_NUMBER_DISPLAY;
 
