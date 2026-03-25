@@ -435,6 +435,11 @@
             <input class="input" id="patient-city" type="text" placeholder="City" autocomplete="address-level2" />
           </div>
 
+          <div class="field full">
+            <label for="patient-email">Email address <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+            <input class="input" id="patient-email" type="email" inputmode="email" autocomplete="email" placeholder="For follow-up communications only" />
+          </div>
+
           <input type="hidden" id="patient-province" value="ON" />
         </div>
       </div>
@@ -784,6 +789,7 @@
         patientProvince: getValue("patient-province") || "ON",
         chiefComplaint: getValue("chief-complaint"),
         onsetBucket: getValue("onset-bucket"),
+        patientEmail: getOptionalValue("patient-email"),
         coverageStatus: getOptionalValue("coverage-status"),
         acknowledged: isChecked("intake-acknowledge"),
         avulsionTime: document.getElementById("rf-avulsion").checked
@@ -849,6 +855,7 @@ function buildIntakePayload(data) {
         intake_red_flags: data.intakeRedFlags,
         intake_medical_flags: data.intakeMedicalFlags,
         avulsion_time_bucket: data.avulsionTime,
+        patient_email: data.patientEmail || null,
         intake_source: getIntakeSource(),
         intake_version: "v2",
         intake_acknowledged_at: new Date().toISOString()
