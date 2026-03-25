@@ -376,6 +376,7 @@ html, body {
 
 .btn-print { background: var(--navy); color: #fff; }
 .btn-pdf { background: var(--bg); color: var(--text-secondary); border: 1px solid var(--border); }
+.btn-back { background: var(--bg); color: var(--text-secondary); border: 1px solid var(--border); font-size: 13px; }
 .action-btn:hover { opacity: 0.82; }
 
 .note-scroll {
@@ -616,12 +617,12 @@ html, body {
 ```
 <div class="auth-field">
   <label for="login-email">Email</label>
-  <input class="auth-input" id="login-email" type="email" autocomplete="email" placeholder="office@martindaledental.com" />
+  <input class="auth-input" id="login-email" type="email" autocomplete="off" placeholder="office@martindaledental.com" />
 </div>
 
 <div class="auth-field">
   <label for="login-password">Password</label>
-  <input class="auth-input" id="login-password" type="password" autocomplete="current-password" />
+  <input class="auth-input" id="login-password" type="password" autocomplete="new-password" />
 </div>
 
 <button class="auth-btn" id="login-btn" type="button">Sign in</button>
@@ -679,9 +680,12 @@ html, body {
 <div class="note-panel">
 
   <div class="note-toolbar" id="note-toolbar">
-    <div>
-      <div class="note-patient-name" id="note-patient-name"></div>
-      <div class="note-patient-meta" id="note-patient-meta"></div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <button class="action-btn btn-back" id="back-btn" type="button">&#8592; Back</button>
+      <div>
+        <div class="note-patient-name" id="note-patient-name"></div>
+        <div class="note-patient-meta" id="note-patient-meta"></div>
+      </div>
     </div>
     <div class="note-actions">
       <button class="action-btn btn-pdf" id="save-pdf-btn" type="button">Save as PDF</button>
@@ -1023,6 +1027,14 @@ html, body {
   }
 
   // ---- PRINT / PDF ----
+  document.getElementById("back-btn").addEventListener("click", function() {
+    selectedCaseId = null;
+    document.querySelectorAll(".case-item").forEach(function(el) { el.classList.remove("active"); });
+    document.getElementById("note-toolbar").style.display = "none";
+    document.getElementById("note-scroll").innerHTML =
+      "<div class=\"note-placeholder\"><div class=\"placeholder-icon\">&#x1F4CB;</div><div>Select a patient from the list<br>to view their triage note.</div></div>";
+  });
+
   document.getElementById("print-btn").addEventListener("click", function() {
     window.print();
   });
