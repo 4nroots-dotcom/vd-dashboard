@@ -830,7 +830,13 @@
       return null;
     }
 
-    function buildIntakePayload(data) {
+function getIntakeSource() {
+  var params = new URLSearchParams(window.location.search);
+  return params.get("src") === "office" ? "in_office" : "web_form";
+}
+
+function buildIntakePayload(data) {
+
       return {
         patient_name: data.patientName,
         patient_dob: data.patientDob,
@@ -843,7 +849,7 @@
         intake_red_flags: data.intakeRedFlags,
         intake_medical_flags: data.intakeMedicalFlags,
         avulsion_time_bucket: data.avulsionTime,
-        intake_source: "web_form",
+        intake_source: getIntakeSource(),
         intake_version: "v2",
         intake_acknowledged_at: new Date().toISOString()
       };
