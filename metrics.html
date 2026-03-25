@@ -178,6 +178,17 @@
 
     .no-data { color: var(--text-muted); font-size: 13px; text-align: center; padding: 22px; }
 
+    /* ---- SATISFACTION ---- */
+    .sat-score-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+    .sat-score-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
+    .sat-score-value { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 32px; font-weight: 800; color: var(--cyan); line-height: 1; }
+    .sat-score-denom { font-size: 14px; color: var(--text-muted); }
+    .sat-score-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.10em; color: var(--text-muted); margin-top: 6px; }
+    .sat-feedback-item { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .sat-feedback-item:last-child { border-bottom: none; }
+    .sat-feedback-quote { font-size: 13px; color: var(--text-secondary); line-height: 1.6; font-style: italic; }
+    .sat-feedback-date { font-size: 11px; color: var(--text-faint); margin-top: 4px; }
+
     #toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #0f2044; border: 1px solid rgba(0,200,232,0.3); border-radius: 10px; padding: 12px 20px; font-size: 13px; color: var(--cyan); z-index: 1000; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); white-space: nowrap; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
     #toast.show { transform: translateX(-50%) translateY(0); }
 
@@ -281,18 +292,28 @@
       var btn = document.getElementById("refresh-btn");
       btn.classList.add("spinning");
       try {
+        // Main cases query (period-filtered)
         var query = sb.from("triage_cases")
-          .select("id, created_at, severity, extraction_source, review_status, reviewed_at, reviewed_by, contacted_patient_at, final_disposition, prescription_issued, duration_seconds, structured_output, triage_tag, contradictions, revenue_generated, subsequent_appointment_booked")
+          .select("id, created_at, severity, extraction_source, review_status, reviewed_at, reviewed_by, contacted_patient_at, final_disposition, prescription_issued, duration_seconds, structured_output, triage_tag, contradictions, revenue_generated, subsequent_appointment_booked, satisfaction_score, return_likelihood, survey_feedback, appointment_completed_at")
           .order("created_at", { ascending: true });
         if (currentPeriod > 0) { var since = new Date(); since.setDate(since.getDate() - currentPeriod); query = query.gte("created_at", since.toISOString()); }
-        var result = await query; var data = result.data; var error = result.error; btn.classList.remove("spinning");
+        var result = await query;
+
+        // Satisfaction query -- always all-time regardless of period filter
+        var satResult = await sb.from("triage_cases")
+          .select("satisfaction_score, return_likelihood, survey_feedback, created_at")
+          .not("satisfaction_score", "is", null)
+          .order("created_at", { ascending: false });
+
+        var data = result.data; var error = result.error;
+        btn.classList.remove("spinning");
         if (error) { console.error("Metrics load error:", error); showToast("Error loading data: " + (error.message || "unknown")); return; }
         var now = new Date(); document.getElementById("last-updated").textContent = "Updated " + now.toLocaleTimeString("en-CA", { hour: "2-digit", minute: "2-digit", hour12: true });
-        renderMetrics(Array.isArray(data) ? data : []);
+        renderMetrics(Array.isArray(data) ? data : [], Array.isArray(satResult.data) ? satResult.data : []);
       } catch (err) { btn.classList.remove("spinning"); console.error("Metrics exception:", err); showToast("Unexpected metrics error: " + ((err && err.message) ? err.message : "unknown")); }
     }
 
-    function renderMetrics(cases) {
+    function renderMetrics(cases, satData) {
       var total = cases.length;
       var urgent = cases.filter(function(c) { return c.severity === "urgent"; }).length;
       var emergency = cases.filter(function(c) { return c.severity === "emergency"; }).length;
@@ -332,7 +353,6 @@
       var reviewerCounts = {}; var reviewerTTR = {};
       cases.forEach(function(c) { if (!c.reviewed_by) return; var name = resolveReviewerName(c.reviewed_by); reviewerCounts[name] = (reviewerCounts[name] || 0) + 1; if (c.created_at && c.reviewed_at) { var mins = (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000; if (Number.isFinite(mins) && mins >= 0) { if (!reviewerTTR[name]) reviewerTTR[name] = []; reviewerTTR[name].push(mins); } } });
 
-      /* Revenue & follow-up metrics */
       var revenueCases = cases.filter(function(c) { return typeof c.revenue_generated === "number" && c.revenue_generated > 0; });
       var totalRevenue = revenueCases.reduce(function(sum, c) { return sum + c.revenue_generated; }, 0);
       var avgRevenue = revenueCases.length > 0 ? Math.round(totalRevenue / revenueCases.length) : null;
@@ -352,6 +372,12 @@
 
       var dispoLabels = { booked: "Appointment booked", referred_er: "Referred to ER", rx_only: "Prescription only", declined: "Patient declined", no_response: "No response" };
       var contradictionFieldLabels = { fever: "Fever", swelling: "Swelling", trauma: "Trauma", bleeding: "Bleeding", uncontrolled_bleeding: "Uncontrolled bleeding", breathing_swallowing: "Airway / Swallowing", difficulty_breathing_or_swallowing: "Airway / Swallowing", feeling_unwell: "Feeling Unwell", immunocompromised: "Immunocompromised", pregnant: "Pregnancy", anticoagulant: "Blood Thinners", recent_extraction: "Recent extraction" };
+
+      // Satisfaction metrics (all-time, from separate query)
+      var satN = satData.length;
+      var avgSat = satN > 0 ? (satData.reduce(function(s, r) { return s + (r.satisfaction_score || 0); }, 0) / satN).toFixed(1) : null;
+      var avgReturn = satN > 0 ? (satData.reduce(function(s, r) { return s + (r.return_likelihood || 0); }, 0) / satN).toFixed(1) : null;
+      var recentFeedback = satData.filter(function(r) { return r.survey_feedback; }).slice(0, 5);
 
       var html = "";
 
@@ -443,6 +469,31 @@
       if (contraFieldKeys.length > 0) { contraFieldKeys.sort(function(a, b) { return contradictionFieldCounts[b] - contradictionFieldCounts[a]; }).forEach(function(field) { var fLabel = contradictionFieldLabels[field] || formatTag(field); html += '<div class="mini-row"><span class="mini-row-label">' + escHtml(fLabel) + '</span><span class="mini-row-val">' + contradictionFieldCounts[field] + '</span></div>'; }); }
 
       html += '</div></div></div></div>';
+
+      /* === PATIENT SATISFACTION (all-time) === */
+      html += secHead("Patient satisfaction \u2014 all time");
+      html += '<div class="panel"><div class="panel-head"><div class="panel-title">Survey Responses</div><div class="panel-subtle">' + satN + ' response' + (satN !== 1 ? 's' : '') + '</div></div><div class="panel-body">';
+
+      if (satN === 0) {
+        html += '<div class="no-data">No survey responses yet. Surveys are sent when a visit is marked complete in the office dashboard.</div>';
+      } else {
+        html += '<div class="sat-score-grid">' +
+          '<div class="sat-score-card"><div class="sat-score-value">' + avgSat + '<span class="sat-score-denom">/5</span></div><div class="sat-score-label">Avg Satisfaction</div></div>' +
+          '<div class="sat-score-card"><div class="sat-score-value">' + avgReturn + '<span class="sat-score-denom">/5</span></div><div class="sat-score-label">Avg Return Likelihood</div></div>' +
+          '</div>';
+
+        if (recentFeedback.length > 0) {
+          html += '<div class="panel-divider"></div><div class="panel-sub-label">Recent Feedback</div>';
+          recentFeedback.forEach(function(r) {
+            html += '<div class="sat-feedback-item">' +
+              '<div class="sat-feedback-quote">&ldquo;' + escHtml(r.survey_feedback) + '&rdquo;</div>' +
+              '<div class="sat-feedback-date">' + new Date(r.created_at).toLocaleDateString("en-CA", { month: "short", day: "numeric", year: "numeric" }) + '</div>' +
+              '</div>';
+          });
+        }
+      }
+
+      html += '</div></div>';
       html += '<div style="height:40px"></div>';
 
       document.getElementById("main-content").innerHTML = html;
