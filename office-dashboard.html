@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -33,575 +32,603 @@
       --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
     }
 
-```
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-html, body {
-  height: 100%;
-  background: var(--bg);
-  color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-/* ---- AUTH ---- */
-.auth-screen {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 20px;
-  background: var(--bg);
-}
-
-.auth-card {
-  background: var(--surface);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-md);
-  padding: 36px 32px;
-  width: 100%;
-  max-width: 400px;
-}
-
-.auth-header {
-  text-align: center;
-  margin-bottom: 28px;
-}
-
-.auth-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--navy);
-  margin-bottom: 4px;
-  margin-top: 10px;
-}
-
-.auth-sub {
-  font-size: 13px;
-  color: var(--text-muted);
-}
-
-.auth-field { margin-bottom: 16px; }
-
-.auth-field label {
-  display: block;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-secondary);
-  margin-bottom: 6px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.auth-input {
-  width: 100%;
-  padding: 11px 14px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 14px;
-  color: var(--text-primary);
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-.auth-input:focus { border-color: var(--cyan); }
-
-.auth-btn {
-  width: 100%;
-  padding: 12px;
-  background: var(--navy);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  margin-top: 8px;
-  transition: opacity 0.2s;
-}
-
-.auth-btn:hover { opacity: 0.88; }
-.auth-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-.auth-error {
-  margin-top: 12px;
-  padding: 10px 12px;
-  background: var(--emergency-bg);
-  border: 1px solid var(--emergency-border);
-  border-radius: 8px;
-  color: var(--emergency);
-  font-size: 13px;
-  display: none;
-}
-
-/* ---- APP ---- */
-.app {
-  display: none;
-  flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
-}
-
-.app.visible { display: flex; }
-
-/* ---- HEADER ---- */
-.header {
-  background: var(--navy);
-  padding: 0 20px;
-  height: 54px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-}
-
-.header-left { display: flex; align-items: center; gap: 14px; }
-
-.header-practice { display: flex; align-items: center; gap: 10px; }
-
-.header-practice-text {}
-
-.header-practice-name {
-  font-size: 15px;
-  font-weight: 700;
-  color: #fff;
-  line-height: 1.1;
-}
-
-.header-practice-location {
-  font-size: 11px;
-  color: #7f96b8;
-}
-
-.header-divider {
-  width: 1px;
-  height: 22px;
-  background: rgba(255,255,255,0.12);
-}
-
-.header-label {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #7f96b8;
-}
-
-.header-vd {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--cyan);
-  opacity: 0.75;
-}
-
-.signout-btn {
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.16);
-  border-radius: 6px;
-  color: #7f96b8;
-  font-size: 12px;
-  padding: 5px 10px;
-  cursor: pointer;
-  transition: border-color 0.2s, color 0.2s;
-}
-
-.signout-btn:hover { border-color: rgba(255,255,255,0.32); color: #fff; }
-
-/* ---- BODY ---- */
-.body {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
-}
-
-/* ---- CASE LIST ---- */
-.case-list-panel {
-  width: 296px;
-  flex-shrink: 0;
-  background: var(--surface);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.case-list-header {
-  padding: 14px 16px 10px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
-
-.case-list-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  margin-bottom: 3px;
-}
-
-.case-list-date {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.case-list-meta {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
-
-.refresh-btn {
-  margin-top: 8px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--cyan);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-}
-
-.refresh-btn:hover { opacity: 0.7; }
-
-.case-list-scroll {
-  flex: 1;
-  overflow-y: auto;
-}
-
-.case-item {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-  transition: background 0.1s;
-}
-
-.case-item:hover { background: #F7FAFC; }
-.case-item.active { background: #EBF8FF; border-left: 3px solid var(--cyan); padding-left: 13px; }
-
-.case-item-time {
-  font-size: 11px;
-  color: var(--text-muted);
-  font-weight: 500;
-  margin-bottom: 3px;
-}
-
-.case-item-name {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: 3px;
-}
-
-.case-item-complaint {
-  font-size: 12px;
-  color: var(--text-secondary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-bottom: 6px;
-}
-
-.badge {
-  display: inline-block;
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 2px 7px;
-  border-radius: 999px;
-}
-
-.badge-emergency { background: var(--emergency-bg); color: var(--emergency); border: 1px solid var(--emergency-border); }
-.badge-urgent { background: var(--urgent-bg); color: var(--urgent); border: 1px solid var(--urgent-border); }
-.badge-routine { background: var(--routine-bg); color: var(--routine); border: 1px solid var(--routine-border); }
-.badge-pending { background: var(--pending-bg); color: var(--text-muted); border: 1px solid var(--pending-border); }
-
-.case-empty {
-  padding: 32px 16px;
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 13px;
-  line-height: 1.7;
-}
-
-/* ---- NOTE PANEL ---- */
-.note-panel {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  background: var(--bg);
-}
-
-.note-toolbar {
-  padding: 10px 20px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  display: none;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-.note-patient-name {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.note-patient-meta {
-  font-size: 12px;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
-
-.note-actions { display: flex; gap: 8px; flex-shrink: 0; }
-
-.action-btn {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 8px 14px;
-  border-radius: 7px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.18s;
-  border: none;
-}
-
-.btn-print { background: var(--navy); color: #fff; }
-.btn-pdf { background: var(--bg); color: var(--text-secondary); border: 1px solid var(--border); }
-.btn-back { background: var(--bg); color: var(--text-secondary); border: 1px solid var(--border); font-size: 13px; }
-.action-btn:hover { opacity: 0.82; }
-
-.note-scroll {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px;
-}
-
-.note-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: var(--text-muted);
-  text-align: center;
-  line-height: 1.7;
-  font-size: 14px;
-  gap: 10px;
-}
-
-.placeholder-icon { font-size: 32px; opacity: 0.35; }
-
-/* ---- NOTE CARD ---- */
-.note-card {
-  background: var(--surface);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  overflow: hidden;
-  max-width: 740px;
-  margin: 0 auto;
-}
-
-.note-print-header { display: none; }
-
-.note-disclaimer {
-  background: #FFFBEA;
-  border-bottom: 2px solid #ECC94B;
-  padding: 10px 20px;
-  font-size: 12px;
-  color: #744210;
-  line-height: 1.55;
-}
-
-.note-disclaimer-title {
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.10em;
-  text-transform: uppercase;
-  color: #975A16;
-  margin-bottom: 3px;
-}
-
-.note-body { padding: 20px; }
-
-.note-section { margin-bottom: 18px; }
-.note-section:last-child { margin-bottom: 0; }
-
-.note-section-label {
-  font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: #00a3c4;
-  padding-bottom: 5px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 8px;
-}
-
-.note-section-body {
-  font-size: 13px;
-  color: var(--text-primary);
-  line-height: 1.68;
-}
-
-.note-quote {
-  font-style: italic;
-  color: var(--text-secondary);
-  border-left: 3px solid var(--border);
-  padding-left: 12px;
-  margin-bottom: 2px;
-}
-
-.flag-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 5px;
-  font-size: 13px;
-}
-
-.flag-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.flag-dot-ok { background: #CBD5E0; }
-.flag-dot-alert { background: var(--emergency); }
-.flag-text-ok { color: var(--text-muted); }
-.flag-text-alert { color: var(--emergency); font-weight: 700; }
-
-.note-pending {
-  padding: 36px 20px;
-  text-align: center;
-  color: var(--text-muted);
-  font-size: 13px;
-  line-height: 1.7;
-}
-
-/* ---- PRINT ---- */
-@media print {
-  .auth-screen, .header, .case-list-panel, .note-toolbar, .note-placeholder { display: none !important; }
-
-  html, body {
-    height: auto;
-    overflow: visible;
-    background: #fff;
-    font-size: 12px;
-  }
-
-  .app { display: block !important; height: auto; overflow: visible; }
-  .body { display: block; overflow: visible; }
-  .note-panel { display: block; overflow: visible; background: #fff; }
-  .note-scroll { overflow: visible; padding: 0; }
-
-  .note-card {
-    box-shadow: none;
-    border: none;
-    border-radius: 0;
-    max-width: 100%;
-  }
-
-  .note-print-header {
-    display: flex !important;
-    justify-content: space-between;
-    align-items: flex-end;
-    padding-bottom: 10px;
-    margin-bottom: 14px;
-    border-bottom: 2px solid #071323;
-  }
-
-  .print-practice-name {
-    font-size: 16px;
-    font-weight: 700;
-    color: #071323;
-  }
-
-  .print-practice-sub {
-    font-size: 11px;
-    color: #718096;
-    margin-top: 2px;
-  }
-
-  .print-vd {
-    font-size: 11px;
-    color: #718096;
-    text-align: right;
-  }
-
-  .note-disclaimer { background: #fff !important; border: 1px solid #E2E8F0 !important; border-bottom-width: 1px !important; }
-  .note-section-label { color: #071323 !important; }
-
-  @page { margin: 0.75in; size: letter; }
-}
-
-/* ---- RESPONSIVE ---- */
-@media (max-width: 768px) {
-  .app { height: auto; min-height: 100vh; overflow: auto; }
-  .body { flex-direction: column; overflow: visible; height: auto; }
-
-  .case-list-panel {
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-    height: auto;
-    max-height: 260px;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-
-  .case-list-scroll { max-height: 200px; overflow-y: auto; }
-
-  .note-panel {
-    flex: none;
-    height: auto;
-    min-height: 60vh;
-    overflow: visible;
-    display: block;
-  }
-
-  .note-scroll {
-    overflow: visible;
-    height: auto;
-    padding: 12px;
-  }
-
-  .note-toolbar {
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 10px 12px;
-  }
-
-  .note-actions { width: 100%; }
-  .action-btn { flex: 1; justify-content: center; }
-
-  .note-card { border-radius: 8px; }
-  .note-body { padding: 14px; }
-
-  .header-label, .header-divider:last-of-type, .header-vd { display: none; }
-}
-
-@media (max-width: 400px) {
-  .header-practice-name { font-size: 13px; }
-  .header-practice-location { display: none; }
-}
-```
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ---- AUTH ---- */
+    .auth-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      background: var(--bg);
+    }
+
+    .auth-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      padding: 36px 32px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .auth-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 4px;
+      margin-top: 10px;
+    }
+
+    .auth-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .auth-field { margin-bottom: 16px; }
+
+    .auth-field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .auth-input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .auth-input:focus { border-color: var(--cyan); }
+
+    .auth-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.2s;
+    }
+
+    .auth-btn:hover { opacity: 0.88; }
+    .auth-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .auth-error {
+      margin-top: 12px;
+      padding: 10px 12px;
+      background: var(--emergency-bg);
+      border: 1px solid var(--emergency-border);
+      border-radius: 8px;
+      color: var(--emergency);
+      font-size: 13px;
+      display: none;
+    }
+
+    /* ---- APP ---- */
+    .app {
+      display: none;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .app.visible { display: flex; }
+
+    /* ---- HEADER ---- */
+    .header {
+      background: var(--navy);
+      padding: 0 20px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .header-left { display: flex; align-items: center; gap: 14px; }
+
+    .header-practice { display: flex; align-items: center; gap: 10px; }
+
+    .header-practice-text {}
+
+    .header-practice-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.1;
+    }
+
+    .header-practice-location {
+      font-size: 11px;
+      color: #7f96b8;
+    }
+
+    .header-divider {
+      width: 1px;
+      height: 22px;
+      background: rgba(255,255,255,0.12);
+    }
+
+    .header-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #7f96b8;
+    }
+
+    .header-vd {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--cyan);
+      opacity: 0.75;
+    }
+
+    .signout-btn {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 6px;
+      color: #7f96b8;
+      font-size: 12px;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .signout-btn:hover { border-color: rgba(255,255,255,0.32); color: #fff; }
+
+    /* ---- BODY ---- */
+    .body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ---- CASE LIST ---- */
+    .case-list-panel {
+      width: 296px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .case-list-header {
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .case-list-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+
+    .case-list-date {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .case-list-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .refresh-btn {
+      margin-top: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--cyan);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .refresh-btn:hover { opacity: 0.7; }
+
+    .search-input {
+      flex: 1;
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus { border-color: var(--cyan); }
+
+    .sort-btn {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .sort-btn.active {
+      background: var(--navy);
+      color: #fff;
+      border-color: var(--navy);
+    }
+
+    .case-list-scroll {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .case-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .case-item:hover { background: #F7FAFC; }
+    .case-item.active { background: #EBF8FF; border-left: 3px solid var(--cyan); padding-left: 13px; }
+
+    .case-item-time {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-bottom: 3px;
+    }
+
+    .case-item-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 3px;
+    }
+
+    .case-item-complaint {
+      font-size: 12px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 6px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 999px;
+    }
+
+    .badge-emergency { background: var(--emergency-bg); color: var(--emergency); border: 1px solid var(--emergency-border); }
+    .badge-urgent { background: var(--urgent-bg); color: var(--urgent); border: 1px solid var(--urgent-border); }
+    .badge-routine { background: var(--routine-bg); color: var(--routine); border: 1px solid var(--routine-border); }
+    .badge-pending { background: var(--pending-bg); color: var(--text-muted); border: 1px solid var(--pending-border); }
+
+    .case-empty {
+      padding: 32px 16px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    /* ---- NOTE PANEL ---- */
+    .note-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .note-toolbar {
+      padding: 10px 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .note-patient-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .note-patient-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .note-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 14px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.18s;
+      border: none;
+    }
+
+    .btn-print { background: var(--navy); color: #fff; }
+    .btn-pdf { background: var(--bg); color: var(--text-secondary); border: 1px solid var(--border); }
+    .btn-back { background: var(--bg); color: var(--text-secondary); border: 1px solid var(--border); font-size: 13px; }
+    .btn-complete { background: #276749; color: #fff; border: none; }
+    .action-btn:hover { opacity: 0.82; }
+
+    .note-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .note-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.7;
+      font-size: 14px;
+      gap: 10px;
+    }
+
+    .placeholder-icon { font-size: 32px; opacity: 0.35; }
+
+    /* ---- NOTE CARD ---- */
+    .note-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      max-width: 740px;
+      margin: 0 auto;
+    }
+
+    .note-print-header { display: none; }
+
+    .note-disclaimer {
+      background: #FFFBEA;
+      border-bottom: 2px solid #ECC94B;
+      padding: 10px 20px;
+      font-size: 12px;
+      color: #744210;
+      line-height: 1.55;
+    }
+
+    .note-disclaimer-title {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: #975A16;
+      margin-bottom: 3px;
+    }
+
+    .note-body { padding: 20px; }
+
+    .note-section { margin-bottom: 18px; }
+    .note-section:last-child { margin-bottom: 0; }
+
+    .note-section-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #00a3c4;
+      padding-bottom: 5px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+
+    .note-section-body {
+      font-size: 13px;
+      color: var(--text-primary);
+      line-height: 1.68;
+    }
+
+    .note-quote {
+      font-style: italic;
+      color: var(--text-secondary);
+      border-left: 3px solid var(--border);
+      padding-left: 12px;
+      margin-bottom: 2px;
+    }
+
+    .flag-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+      font-size: 13px;
+    }
+
+    .flag-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .flag-dot-ok { background: #CBD5E0; }
+    .flag-dot-alert { background: var(--emergency); }
+    .flag-text-ok { color: var(--text-muted); }
+    .flag-text-alert { color: var(--emergency); font-weight: 700; }
+
+    .note-pending {
+      padding: 36px 20px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    /* ---- PRINT ---- */
+    @media print {
+      .auth-screen, .header, .case-list-panel, .note-toolbar, .note-placeholder { display: none !important; }
+
+      html, body {
+        height: auto;
+        overflow: visible;
+        background: #fff;
+        font-size: 12px;
+      }
+
+      .app { display: block !important; height: auto; overflow: visible; }
+      .body { display: block; overflow: visible; }
+      .note-panel { display: block; overflow: visible; background: #fff; }
+      .note-scroll { overflow: visible; padding: 0; }
+
+      .note-card {
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
+        max-width: 100%;
+      }
+
+      .note-print-header {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding-bottom: 10px;
+        margin-bottom: 14px;
+        border-bottom: 2px solid #071323;
+      }
+
+      .print-practice-name {
+        font-size: 16px;
+        font-weight: 700;
+        color: #071323;
+      }
+
+      .print-practice-sub {
+        font-size: 11px;
+        color: #718096;
+        margin-top: 2px;
+      }
+
+      .print-vd {
+        font-size: 11px;
+        color: #718096;
+        text-align: right;
+      }
+
+      .note-disclaimer { background: #fff !important; border: 1px solid #E2E8F0 !important; border-bottom-width: 1px !important; }
+      .note-section-label { color: #071323 !important; }
+
+      @page { margin: 0.75in; size: letter; }
+    }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 768px) {
+      .app { height: auto; min-height: 100vh; overflow: auto; }
+      .body { flex-direction: column; overflow: visible; height: auto; }
+
+      .case-list-panel {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        height: auto;
+        max-height: 260px;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+
+      .case-list-scroll { max-height: 200px; overflow-y: auto; }
+
+      .note-panel {
+        flex: none;
+        height: auto;
+        min-height: 60vh;
+        overflow: visible;
+        display: block;
+      }
+
+      .note-scroll {
+        overflow: visible;
+        height: auto;
+        padding: 12px;
+      }
+
+      .note-toolbar {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 10px 12px;
+      }
+
+      .note-actions { width: 100%; }
+      .action-btn { flex: 1; justify-content: center; }
+
+      .note-card { border-radius: 8px; }
+      .note-body { padding: 14px; }
+
+      .header-label, .header-divider:last-of-type, .header-vd { display: none; }
+    }
+
+    @media (max-width: 400px) {
+      .header-practice-name { font-size: 13px; }
+      .header-practice-location { display: none; }
+    }
   </style>
 </head>
 <body>
 
 <!-- ===== AUTH SCREEN ===== -->
-
 <div class="auth-screen" id="auth-screen">
   <div class="auth-card">
     <div class="auth-header">
@@ -614,30 +641,25 @@ html, body {
       <div style="margin-top:8px; font-size:11px; font-weight:600; color:#00c8e8; letter-spacing:0.06em;">Powered by VirtualDentist.ai</div>
     </div>
 
-```
-<div class="auth-field">
-  <label for="login-email">Email</label>
-  <input class="auth-input" id="login-email" type="email" autocomplete="off" placeholder="office@martindaledental.com" />
-</div>
+    <div class="auth-field">
+      <label for="login-email">Email</label>
+      <input class="auth-input" id="login-email" type="email" autocomplete="off" placeholder="office@martindaledental.com" />
+    </div>
 
-<div class="auth-field">
-  <label for="login-password">Password</label>
-  <input class="auth-input" id="login-password" type="password" autocomplete="new-password" />
-</div>
+    <div class="auth-field">
+      <label for="login-password">Password</label>
+      <input class="auth-input" id="login-password" type="password" autocomplete="new-password" />
+    </div>
 
-<button class="auth-btn" id="login-btn" type="button">Sign in</button>
-<div class="auth-error" id="auth-error"></div>
-```
-
+    <button class="auth-btn" id="login-btn" type="button">Sign in</button>
+    <div class="auth-error" id="auth-error"></div>
   </div>
 </div>
 
 <!-- ===== MAIN APP ===== -->
-
 <div class="app" id="app">
 
   <!-- HEADER -->
-
   <div class="header">
     <div class="header-left">
       <div class="header-practice">
@@ -659,60 +681,68 @@ html, body {
   </div>
 
   <!-- BODY -->
-
   <div class="body">
 
-```
-<!-- CASE LIST -->
-<div class="case-list-panel">
-  <div class="case-list-header">
-    <div class="case-list-label">In-Office Cases</div>
-    <div class="case-list-date" id="list-date"></div>
-    <div class="case-list-meta" id="list-count">Loading...</div>
-    <button class="refresh-btn" id="refresh-btn" type="button">Refresh list</button>
-  </div>
-  <div class="case-list-scroll" id="case-list-scroll">
-    <div class="case-empty">Loading...</div>
-  </div>
-</div>
-
-<!-- NOTE PANEL -->
-<div class="note-panel">
-
-  <div class="note-toolbar" id="note-toolbar">
-    <div style="display:flex;align-items:center;gap:12px;">
-      <button class="action-btn btn-back" id="back-btn" type="button">&#8592; Back</button>
-      <div>
-        <div class="note-patient-name" id="note-patient-name"></div>
-        <div class="note-patient-meta" id="note-patient-meta"></div>
+    <!-- CASE LIST -->
+    <div class="case-list-panel">
+      <div class="case-list-header">
+      <div class="case-list-label">In-Office Cases</div>
+      <div class="case-list-date" id="list-date"></div>
+      <div class="case-list-meta" id="list-count">Loading...</div>
+      <div style="display:flex;gap:6px;margin-top:8px;">
+        <input class="search-input" id="search-input" type="search" placeholder="Search patient name..." />
+      </div>
+      <div style="display:flex;gap:6px;margin-top:6px;align-items:center;">
+        <span style="font-size:11px;color:var(--text-muted);">Sort:</span>
+        <button class="sort-btn active" id="sort-newest" type="button">Newest</button>
+        <button class="sort-btn" id="sort-oldest" type="button">Oldest</button>
+        <button class="refresh-btn" id="refresh-btn" type="button" style="margin-left:auto;">Refresh</button>
       </div>
     </div>
-    <div class="note-actions">
-      <button class="action-btn btn-pdf" id="save-pdf-btn" type="button">Save as PDF</button>
-      <button class="action-btn btn-print" id="print-btn" type="button">Print Note</button>
+      <div class="case-list-scroll" id="case-list-scroll">
+        <div class="case-empty">Loading...</div>
+      </div>
     </div>
-  </div>
 
-  <div class="note-scroll" id="note-scroll">
-    <div class="note-placeholder">
-      <div class="placeholder-icon">&#x1F4CB;</div>
-      <div>Select a patient from the list<br>to view their triage note.</div>
+    <!-- NOTE PANEL -->
+    <div class="note-panel">
+
+      <div class="note-toolbar" id="note-toolbar">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button class="action-btn btn-back" id="back-btn" type="button">&#8592; Back</button>
+          <div>
+            <div class="note-patient-name" id="note-patient-name"></div>
+            <div class="note-patient-meta" id="note-patient-meta"></div>
+          </div>
+        </div>
+        <div class="note-actions">
+          <button class="action-btn btn-complete" id="complete-btn" type="button">Mark Visit Complete</button>
+          <button class="action-btn btn-pdf" id="save-pdf-btn" type="button">Save as PDF</button>
+          <button class="action-btn btn-print" id="print-btn" type="button">Print Note</button>
+        </div>
+      </div>
+
+      <div class="note-scroll" id="note-scroll">
+        <div class="note-placeholder">
+          <div class="placeholder-icon">&#x1F4CB;</div>
+          <div>Select a patient from the list<br>to view their triage note.</div>
+        </div>
+      </div>
+
     </div>
-  </div>
-
-</div>
-```
-
   </div>
 </div>
 
 <script>
   var SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
   var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+  var INTAKE_SECRET = "af0ca85c19cd7dbd62ba2d03bf7e0cda6dc04f84048d3b8f";
 
   var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   var currentCases = [];
   var selectedCaseId = null;
+  var currentSortAsc = false; // newest first by default
+  var searchQuery = "";
 
   // ---- AUTH ----
   document.getElementById("login-btn").addEventListener("click", handleLogin);
@@ -770,20 +800,100 @@ html, body {
   });
 
   // ---- CASES ----
+  // ---- SEARCH & SORT ----
+  document.getElementById("search-input").addEventListener("input", function() {
+    searchQuery = this.value;
+    applySearchFilter();
+  });
+
+  document.getElementById("sort-newest").addEventListener("click", function() {
+    currentSortAsc = false;
+    document.getElementById("sort-newest").classList.add("active");
+    document.getElementById("sort-oldest").classList.remove("active");
+    loadCases();
+  });
+
+  document.getElementById("sort-oldest").addEventListener("click", function() {
+    currentSortAsc = true;
+    document.getElementById("sort-oldest").classList.add("active");
+    document.getElementById("sort-newest").classList.remove("active");
+    loadCases();
+  });
+
+  // ---- APPOINTMENT COMPLETE ----
+  async function markAppointmentComplete(caseId, patientName, patientPhone, patientEmail) {
+    var confirmed = window.confirm(
+      "Mark this visit as complete for " + patientName + "?\n\n" +
+      "This will immediately send a satisfaction survey to the patient via SMS" +
+      (patientEmail ? " and email" : "") + "."
+    );
+    if (!confirmed) return;
+
+    var completedAt = new Date().toISOString();
+    var surveyToken = generateUUID();
+
+    var updateResult = await sb
+      .from("triage_cases")
+      .update({
+        appointment_completed_at: completedAt,
+        survey_token: surveyToken
+      })
+      .eq("id", caseId);
+
+    if (updateResult.error) {
+      alert("Error marking visit complete. Please try again.");
+      return;
+    }
+
+    // Fire survey trigger edge function
+    try {
+      await fetch(SUPABASE_URL + "/functions/v1/survey-trigger", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-vd-secret": INTAKE_SECRET
+        },
+        body: JSON.stringify({
+          case_id: caseId,
+          patient_name: patientName,
+          patient_phone: patientPhone,
+          patient_email: patientEmail || null,
+          survey_token: surveyToken
+        })
+      });
+    } catch(e) {
+      console.error("Survey trigger error", e);
+    }
+
+    // Update local case list and refresh note view
+    var c = currentCases.find(function(x) { return x.id === caseId; });
+    if (c) {
+      c.appointment_completed_at = completedAt;
+      c.survey_token = surveyToken;
+    }
+    applySearchFilter();
+    selectCase(caseId);
+  }
+
+  function generateUUID() {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0;
+      var v = c === "x" ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
   document.getElementById("refresh-btn").addEventListener("click", loadCases);
 
   async function loadCases() {
     document.getElementById("list-count").textContent = "Loading...";
     document.getElementById("case-list-scroll").innerHTML = "<div class=\"case-empty\">Loading...</div>";
 
-    var since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-
     var result = await sb
       .from("triage_cases")
-      .select("id, patient_name, patient_phone, patient_dob, patient_city, chief_complaint, severity, created_at, intake_source, structured_output, review_status")
+      .select("id, patient_name, patient_phone, patient_dob, patient_city, patient_email, chief_complaint, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at")
       .eq("intake_source", "in_office")
-      .gte("created_at", since)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: currentSortAsc });
 
     if (result.error) {
       document.getElementById("case-list-scroll").innerHTML = "<div class=\"case-empty\">Unable to load cases.<br>Please refresh.</div>";
@@ -792,35 +902,56 @@ html, body {
     }
 
     currentCases = result.data || [];
-    renderCaseList();
+    applySearchFilter();
   }
 
-  function renderCaseList() {
-    var n = currentCases.length;
-    document.getElementById("list-count").textContent = n === 0 ? "No cases in the last 24 hours" : n + (n === 1 ? " case" : " cases") + " in last 24h";
+  function applySearchFilter() {
+    var q = searchQuery.toLowerCase().trim();
+    var filtered = q
+      ? currentCases.filter(function(c) { return (c.patient_name || "").toLowerCase().includes(q); })
+      : currentCases;
+    renderCaseList(filtered);
+  }
+
+  function renderCaseList(cases) {
+    if (!cases) cases = currentCases;
+    var n = cases.length;
+    var total = currentCases.length;
+    document.getElementById("list-count").textContent =
+      total === 0 ? "No in-office cases" :
+      n === total ? total + (total === 1 ? " case" : " cases") + " total" :
+      n + " of " + total + " cases";
 
     var el = document.getElementById("case-list-scroll");
 
+    if (total === 0) {
+      el.innerHTML = "<div class=\"case-empty\">No in-office cases on record.</div>";
+      return;
+    }
+
     if (n === 0) {
-      el.innerHTML = "<div class=\"case-empty\">No in-office cases in the last 24 hours.</div>";
+      el.innerHTML = "<div class=\"case-empty\">No cases match your search.</div>";
       return;
     }
 
     el.innerHTML = "";
-    currentCases.forEach(function(c) {
+    cases.forEach(function(c) {
       var item = document.createElement("div");
       item.className = "case-item" + (c.id === selectedCaseId ? " active" : "");
       item.setAttribute("data-id", c.id);
 
-      var time = new Date(c.created_at).toLocaleTimeString("en-CA", { hour: "2-digit", minute: "2-digit", hour12: true });
+      var dt = new Date(c.created_at);
+      var time = dt.toLocaleTimeString("en-CA", { hour: "2-digit", minute: "2-digit", hour12: true });
+      var date = dt.toLocaleDateString("en-CA", { month: "short", day: "numeric" });
       var name = maskName(c.patient_name);
       var complaint = c.chief_complaint || "No complaint recorded";
       var sev = (c.severity || "").toLowerCase();
       var badgeCls = sev === "urgent" ? "badge-urgent" : sev === "emergency" ? "badge-emergency" : sev === "routine" ? "badge-routine" : "badge-pending";
       var badgeTxt = sev ? sev.toUpperCase() : "PENDING";
+      var completed = c.appointment_completed_at ? " <span style=\"font-size:10px;color:#276749;\">&#10003; Seen</span>" : "";
 
       item.innerHTML =
-        "<div class=\"case-item-time\">" + esc(time) + "</div>" +
+        "<div class=\"case-item-time\">" + esc(date) + " &middot; " + esc(time) + completed + "</div>" +
         "<div class=\"case-item-name\">" + esc(name) + "</div>" +
         "<div class=\"case-item-complaint\">" + esc(complaint) + "</div>" +
         "<span class=\"badge " + badgeCls + "\">" + badgeTxt + "</span>";
@@ -848,6 +979,23 @@ html, body {
     var time = new Date(c.created_at).toLocaleTimeString("en-CA", { hour: "2-digit", minute: "2-digit", hour12: true });
     var meta = [dob, city, "Submitted " + time].filter(Boolean).join("  |  ");
     document.getElementById("note-patient-meta").textContent = meta;
+
+    // Update complete button state
+    var completeBtn = document.getElementById("complete-btn");
+    if (c.appointment_completed_at) {
+      completeBtn.textContent = "Visit Complete \u2713";
+      completeBtn.disabled = true;
+      completeBtn.style.opacity = "0.5";
+      completeBtn.style.cursor = "not-allowed";
+    } else {
+      completeBtn.textContent = "Mark Visit Complete";
+      completeBtn.disabled = false;
+      completeBtn.style.opacity = "1";
+      completeBtn.style.cursor = "pointer";
+      completeBtn.onclick = function() {
+        markAppointmentComplete(c.id, c.patient_name, c.patient_phone, c.patient_email);
+      };
+    }
 
     var scroll = document.getElementById("note-scroll");
     scroll.innerHTML = "";
