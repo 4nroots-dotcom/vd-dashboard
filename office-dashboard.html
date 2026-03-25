@@ -544,10 +544,54 @@ html, body {
 }
 
 /* ---- RESPONSIVE ---- */
-@media (max-width: 640px) {
-  .case-list-panel { width: 100%; border-right: none; border-bottom: 1px solid var(--border); height: 200px; }
-  .body { flex-direction: column; }
-  .note-toolbar { flex-wrap: wrap; }
+@media (max-width: 768px) {
+  .app { height: auto; min-height: 100vh; overflow: auto; }
+  .body { flex-direction: column; overflow: visible; height: auto; }
+
+  .case-list-panel {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    height: auto;
+    max-height: 260px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .case-list-scroll { max-height: 200px; overflow-y: auto; }
+
+  .note-panel {
+    flex: none;
+    height: auto;
+    min-height: 60vh;
+    overflow: visible;
+    display: block;
+  }
+
+  .note-scroll {
+    overflow: visible;
+    height: auto;
+    padding: 12px;
+  }
+
+  .note-toolbar {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .note-actions { width: 100%; }
+  .action-btn { flex: 1; justify-content: center; }
+
+  .note-card { border-radius: 8px; }
+  .note-body { padding: 14px; }
+
+  .header-label, .header-divider:last-of-type, .header-vd { display: none; }
+}
+
+@media (max-width: 400px) {
+  .header-practice-name { font-size: 13px; }
+  .header-practice-location { display: none; }
 }
 ```
 
@@ -566,6 +610,7 @@ html, body {
       </svg>
       <div class="auth-title">Office Triage Queue</div>
       <div class="auth-sub">Jackson Square &middot; Hamilton, Ontario</div>
+      <div style="margin-top:8px; font-size:11px; font-weight:600; color:#00c8e8; letter-spacing:0.06em;">Powered by VirtualDentist.ai</div>
     </div>
 
 ```
@@ -607,7 +652,7 @@ html, body {
       <div class="header-divider"></div>
       <div class="header-label">Office Triage Queue</div>
       <div class="header-divider"></div>
-      <div class="header-vd">VirtualDentist.ai</div>
+      <div class="header-vd">Powered by VirtualDentist.ai</div>
     </div>
     <button class="signout-btn" id="signout-btn" type="button">Sign out</button>
   </div>
