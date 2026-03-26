@@ -576,43 +576,63 @@
 
     /* ---- RESPONSIVE ---- */
     @media (max-width: 768px) {
-      .app { height: auto; min-height: 100vh; overflow: auto; }
-      .body { flex-direction: column; overflow: visible; height: auto; }
+      .app { height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+      .body { flex: 1; overflow: hidden; position: relative; }
 
+      /* List panel — full screen by default on mobile */
       .case-list-panel {
+        position: absolute;
+        inset: 0;
         width: 100%;
         border-right: none;
-        border-bottom: 1px solid var(--border);
-        height: auto;
-        max-height: 260px;
-        overflow: hidden;
-        flex-shrink: 0;
+        border-bottom: none;
+        display: flex;
+        flex-direction: column;
+        z-index: 10;
+        transition: transform 0.25s ease;
       }
 
-      .case-list-scroll { max-height: 200px; overflow-y: auto; }
+      .case-list-scroll { flex: 1; overflow-y: auto; }
 
+      /* When a case is selected on mobile, slide list out and show note full screen */
+      .body.case-open .case-list-panel {
+        transform: translateX(-100%);
+        pointer-events: none;
+      }
+
+      /* Note panel — hidden behind list by default, full screen when case open */
       .note-panel {
-        flex: none;
-        height: auto;
-        min-height: 60vh;
-        overflow: visible;
-        display: block;
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        transform: translateX(100%);
+        transition: transform 0.25s ease;
+        overflow: hidden;
+        background: var(--bg);
+      }
+
+      .body.case-open .note-panel {
+        transform: translateX(0);
       }
 
       .note-scroll {
-        overflow: visible;
-        height: auto;
+        flex: 1;
+        overflow-y: auto;
         padding: 12px;
+        height: 0; /* forces flex child to scroll */
       }
 
       .note-toolbar {
         flex-wrap: wrap;
         gap: 8px;
         padding: 10px 12px;
+        flex-shrink: 0;
       }
 
       .note-actions { width: 100%; }
-      .action-btn { flex: 1; justify-content: center; }
+      .action-btn { flex: 1; justify-content: center; font-size: 12px; padding: 8px 10px; }
 
       .note-card { border-radius: 8px; }
       .note-body { padding: 14px; }
@@ -1001,6 +1021,9 @@
     scroll.innerHTML = "";
     scroll.appendChild(buildNote(c));
     scroll.scrollTop = 0;
+
+    // Mobile: switch to note view
+    document.querySelector(".body").classList.add("case-open");
   }
 
   // ---- NOTE BUILDER ----
@@ -1181,6 +1204,8 @@
     document.getElementById("note-toolbar").style.display = "none";
     document.getElementById("note-scroll").innerHTML =
       "<div class=\"note-placeholder\"><div class=\"placeholder-icon\">&#x1F4CB;</div><div>Select a patient from the list<br>to view their triage note.</div></div>";
+    // Mobile: return to list view
+    document.querySelector(".body").classList.remove("case-open");
   });
 
   document.getElementById("print-btn").addEventListener("click", function() {
