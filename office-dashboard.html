@@ -1134,6 +1134,8 @@
 
     if (so.trauma) lines.push("Dental trauma reported" + (so.trauma_mechanism ? "; mechanism: " + esc(so.trauma_mechanism) : "") + ".");
     if (so.tooth_structure_loss) lines.push("Tooth structure loss reported (broken tooth, lost filling, or lost crown).");
+    if (so.temp_restoration_loss) lines.push("Temporary restoration loss reported (temporary crown or filling dislodged).");
+    if (so.caries_involved) lines.push("Existing caries or decay reported at affected tooth.");
     if (so.pulp_exposure) lines.push("Pulp exposure reported.");
     if (so.percussion_sensitivity) lines.push("Pain worsens with biting or percussion.");
     if (so.cold_pain_lingers_over_10_seconds) lines.push("Cold sensitivity present; pain lingers after stimulus removed.");
