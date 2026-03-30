@@ -1,9 +1,0 @@
-{
-  "redirects": [
-    {
-      "source": "/",
-      "destination": "/intake.html",
-      "permanent": true
-    }
-  ]
-}
