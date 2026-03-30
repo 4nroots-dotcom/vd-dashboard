@@ -203,8 +203,8 @@
       <div class="auth-logo">
         <svg width="40" height="40" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs><linearGradient id="ag" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1a7fc4"/><stop offset="100%" stop-color="#00c8e8"/></linearGradient></defs>
-          <path d="M30 20 Q30 10 40 10 L80 10 Q90 10 90 20 L95 60 Q97 80 85 90 L70 108 Q65 115 60 115 Q55 115 50 108 L35 90 Q23 80 25 60 Z" stroke="url(#ag)" stroke-width="7" fill="none" stroke-linejoin="round"/>
-          <polyline points="28,58 42,58 50,40 60,76 70,50 78,58 92,58" stroke="url(#ag)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M38 14 C28 14 18 22 18 36 C18 50 22 62 24 72 C26 82 28 88 34 94 C38 98 42 100 46 98 C50 96 54 92 60 92 C66 92 70 96 74 98 C78 100 82 98 86 94 C92 88 94 82 96 72 C98 62 102 50 102 36 C102 22 92 14 82 14 C76 14 70 18 60 18 C50 18 44 14 38 14 Z" stroke="url(#ag)" stroke-width="7" fill="none" stroke-linejoin="round"/>
+          <polyline points="22,55 36,55 44,38 52,72 60,48 68,62 76,55 98,55" stroke="url(#ag)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         <div class="auth-logo-text">VirtualDentist.ai</div>
       </div>
@@ -224,8 +224,8 @@
         <div class="header-logo">
           <svg width="24" height="24" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1a7fc4"/><stop offset="100%" stop-color="#00c8e8"/></linearGradient></defs>
-            <path d="M30 20 Q30 10 40 10 L80 10 Q90 10 90 20 L95 60 Q97 80 85 90 L70 108 Q65 115 60 115 Q55 115 50 108 L35 90 Q23 80 25 60 Z" stroke="url(#hg)" stroke-width="8" fill="none" stroke-linejoin="round"/>
-            <polyline points="28,58 42,58 50,40 60,76 70,50 78,58 92,58" stroke="url(#hg)" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M38 14 C28 14 18 22 18 36 C18 50 22 62 24 72 C26 82 28 88 34 94 C38 98 42 100 46 98 C50 96 54 92 60 92 C66 92 70 96 74 98 C78 100 82 98 86 94 C92 88 94 82 96 72 C98 62 102 50 102 36 C102 22 92 14 82 14 C76 14 70 18 60 18 C50 18 44 14 38 14 Z" stroke="url(#hg)" stroke-width="8" fill="none" stroke-linejoin="round"/>
+            <polyline points="22,55 36,55 44,38 52,72 60,48 68,62 76,55 98,55" stroke="url(#hg)" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
           VirtualDentist.ai
         </div>
@@ -261,7 +261,7 @@
     var SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
     var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
     var REVIEWER_NAME_MAP = { "4nroots@gmail.com": "Dr. Balaji Swaminath", "hamitranu@gmail.com": "Dr. Hamit Ranu" };
-    var TRIAGE_TAG_LABELS = { facial_trauma_high_energy: "Facial trauma (high energy)", post_extraction_possible_dry_socket: "Post-extraction / dry socket", post_procedure_pain: "Post-procedure pain", pericoronitis_possible: "Pericoronitis", gross_carious_necrosis: "Gross carious necrosis", denture_related_infection: "Denture-related infection", suspected_odontogenic_infection: "Odontogenic infection", suspected_carious_pulpitis: "Carious pulpitis", multi_tooth_carious_presentation: "Multi-tooth caries", broken_denture: "Broken denture", ill_fitting_denture: "Ill-fitting denture", lost_temporary_restoration: "Lost temporary restoration", broken_tooth_trauma_low_energy: "Broken tooth (low energy)", suspected_irreversible_pulpitis: "Irreversible pulpitis", soft_tissue_lesion_unspecified: "Soft tissue lesion", tooth_structure_loss_no_pain: "Tooth structure loss (no pain)", acute_dental_pain_unspecified: "Acute dental pain (unspecified)", routine_dental_pain: "Routine dental pain" };
+    var TRIAGE_TAG_LABELS = { facial_trauma_high_energy: "Facial trauma (high energy)", post_extraction_possible_dry_socket: "Post-extraction / dry socket", pericoronitis_possible: "Pericoronitis", suspected_odontogenic_infection: "Odontogenic infection", broken_tooth_trauma_low_energy: "Broken tooth (low energy)", suspected_irreversible_pulpitis: "Irreversible pulpitis", soft_tissue_lesion_unspecified: "Soft tissue lesion", tooth_structure_loss_no_pain: "Tooth structure loss (no pain)", routine_dental_pain: "Routine dental pain", acute_dental_pain_unspecified: "Acute dental pain (unspecified)" };
 
     function resolveReviewerName(email) { if (!email) return ""; return REVIEWER_NAME_MAP[email] || email; }
     function getSO(c) { var so = c.structured_output; if (!so) return {}; if (typeof so === "string") { try { return JSON.parse(so); } catch (e) { return {}; } } return so; }
