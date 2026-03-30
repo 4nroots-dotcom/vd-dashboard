@@ -504,8 +504,8 @@
       <div class="auth-logo">
         <svg width="48" height="48" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs><linearGradient id="ag" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1a4fa0" /><stop offset="100%" stop-color="#00c8e8" /></linearGradient></defs>
-          <path d="M30 20 Q30 10 40 10 L80 10 Q90 10 90 20 L95 60 Q97 80 85 90 L70 108 Q65 115 60 115 Q55 115 50 108 L35 90 Q23 80 25 60 Z" stroke="url(#ag)" stroke-width="7" fill="none" stroke-linejoin="round" />
-          <polyline points="28,58 42,58 50,40 60,76 70,50 78,58 92,58" stroke="url(#ag)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M38 14 C28 14 18 22 18 36 C18 50 22 62 24 72 C26 82 28 88 34 94 C38 98 42 100 46 98 C50 96 54 92 60 92 C66 92 70 96 74 98 C78 100 82 98 86 94 C92 88 94 82 96 72 C98 62 102 50 102 36 C102 22 92 14 82 14 C76 14 70 18 60 18 C50 18 44 14 38 14 Z" stroke="url(#ag)" stroke-width="7" fill="none" stroke-linejoin="round" />
+          <polyline points="22,55 36,55 44,38 52,72 60,48 68,62 76,55 98,55" stroke="url(#ag)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
         <div class="auth-logo-text">VirtualDentist.ai</div>
       </div>
@@ -524,8 +524,8 @@
       <div class="header-logo">
         <svg width="26" height="26" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
           <defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1a4fa0" /><stop offset="100%" stop-color="#00c8e8" /></linearGradient></defs>
-          <path d="M30 20 Q30 10 40 10 L80 10 Q90 10 90 20 L95 60 Q97 80 85 90 L70 108 Q65 115 60 115 Q55 115 50 108 L35 90 Q23 80 25 60 Z" stroke="url(#hg)" stroke-width="8" fill="none" stroke-linejoin="round" />
-          <polyline points="28,58 42,58 50,40 60,76 70,50 78,58 92,58" stroke="url(#hg)" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M38 14 C28 14 18 22 18 36 C18 50 22 62 24 72 C26 82 28 88 34 94 C38 98 42 100 46 98 C50 96 54 92 60 92 C66 92 70 96 74 98 C78 100 82 98 86 94 C92 88 94 82 96 72 C98 62 102 50 102 36 C102 22 92 14 82 14 C76 14 70 18 60 18 C50 18 44 14 38 14 Z" stroke="url(#hg)" stroke-width="8" fill="none" stroke-linejoin="round" />
+          <polyline points="22,55 36,55 44,38 52,72 60,48 68,62 76,55 98,55" stroke="url(#hg)" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
         VirtualDentist.ai
       </div>
@@ -668,11 +668,7 @@
         { label: "Bad taste / drainage", val: so.bad_taste_or_drainage || c.bad_taste_or_drainage },
         { label: "Immunocompromised", val: so.immunocompromised || c.immunocompromised },
         { label: "Pericoronitis signs", val: so.pericoronitis_signs || c.pericoronitis_signs },
-        { label: "Recent extraction", val: so.recent_extraction || c.recent_extraction },
-        { label: "Recent dental procedure", val: so.recent_dental_procedure || c.recent_dental_procedure },
-        { label: "Denture presentation", val: so.denture_presentation || c.denture_presentation },
-        { label: "Caries involved", val: so.caries_involved || c.caries_involved },
-        { label: "Temp restoration loss", val: so.temp_restoration_loss || c.temp_restoration_loss }
+        { label: "Recent extraction", val: so.recent_extraction || c.recent_extraction }
       ];
 
       var intakeRedFlags = c.intake_red_flags || {};
