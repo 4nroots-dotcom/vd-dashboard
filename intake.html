@@ -56,7 +56,7 @@
 
     .shell { width: 100%; max-width: var(--maxw); margin: 0 auto; }
 
-    .brand { display: flex; justify-content: center; margin: 12px 0 22px; }
+    .brand { display: flex; justify-content: center; margin: 8px 0 16px; }
 
     .brand-dual {
       display: flex;
@@ -77,27 +77,27 @@
     }
 
     .brand-practice-logo {
-      height: 42px;
+      height: 28px;
       width: auto;
       display: block;
     }
 
     .brand-practice-name {
-      font-size: 20px;
-      font-weight: 800;
+      font-size: 15px;
+      font-weight: 700;
       letter-spacing: -0.01em;
       color: var(--white);
       line-height: 1;
     }
 
     .brand-practice-location {
-      font-size: 12px;
+      font-size: 10px;
       font-weight: 600;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: var(--text-secondary);
+      color: var(--text-muted);
       line-height: 1;
-      margin-top: 3px;
+      margin-top: 2px;
     }
 
     .brand-powered {
@@ -108,11 +108,12 @@
     }
 
     .brand-powered-label {
-      font-size: 11px;
-      font-weight: 600;
+      font-size: 9px;
+      font-weight: 500;
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--text-muted);
+      opacity: 0.7;
     }
 
     .brand-lockup {
@@ -122,8 +123,8 @@
       text-decoration: none;
     }
 
-    .brand-mark { width: 20px; height: 20px; display: block; flex-shrink: 0; }
-    .brand-wordmark { font-size: 13px; font-weight: 700; letter-spacing: 0.01em; color: #79c8f3; line-height: 1; }
+    .brand-mark { width: 16px; height: 16px; display: block; flex-shrink: 0; }
+    .brand-wordmark { font-size: 12px; font-weight: 600; letter-spacing: 0.01em; color: #79c8f3; line-height: 1; }
 
     .brand-divider {
       width: 1px;
@@ -149,10 +150,10 @@
         radial-gradient(circle at bottom left, rgba(26, 127, 196, 0.10), transparent 34%);
       pointer-events: none;
     }
-    .hero-inner { position: relative; z-index: 1; display: grid; gap: 22px; }
-    .hero-copy-block { display: grid; gap: 20px; }
+    .hero-inner { position: relative; z-index: 1; display: grid; gap: 18px; }
+    .hero-copy-block { display: grid; gap: 14px; }
     .hero-kicker { font-size: 11px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: #9adcf9; }
-    .hero-title { font-size: clamp(34px, 8vw, 56px); line-height: 1.02; letter-spacing: -0.03em; font-weight: 400; font-family: "DM Serif Display", Georgia, serif; color: var(--white); max-width: 8.5em; }
+    .hero-title { font-size: clamp(40px, 7.5vw, 58px); line-height: 1.04; letter-spacing: -0.025em; font-weight: 400; font-style: normal; font-family: "DM Serif Display", Georgia, serif; color: var(--white); max-width: 9em; }
     .hero-sub { font-size: 18px; line-height: 1.56; color: var(--text-secondary); max-width: 34ch; margin-top: 2px; }
     .hero-cost { font-size: 18px; line-height: 1.5; font-weight: 750; color: #edf6ff; margin-top: 4px; }
     .hero-cta-block { display: grid; gap: 18px; margin-top: 10px; }
@@ -169,8 +170,8 @@
     .hero-primary-btn:active { transform: scale(0.986); opacity: 0.95; }
     .hero-primary-btn:disabled { opacity: 0.62; cursor: not-allowed; }
 
-    .trust-row { display: grid; gap: 14px; padding-top: 14px; margin-top: 6px; border-top: 1px solid var(--border-soft); }
-    .trust-item { display: flex; align-items: center; gap: 12px; color: #d8e7fa; font-size: 17px; line-height: 1.5; font-weight: 500; }
+    .trust-row { display: grid; gap: 10px; padding-top: 12px; margin-top: 4px; border-top: 1px solid var(--border-soft); }
+    .trust-item { display: flex; align-items: center; gap: 10px; color: #c8daf4; font-size: 14px; line-height: 1.45; font-weight: 400; }
     .trust-dot { width: 7px; height: 7px; border-radius: 999px; background: var(--cyan-soft); box-shadow: 0 0 0 4px rgba(115, 215, 243, 0.12); flex-shrink: 0; margin-left: 2px; }
 
     .hero-image-block { display: grid; gap: 16px; }
@@ -188,7 +189,7 @@
     .form-card { margin-top: 18px; padding: 24px 18px 20px; display: none; }
     .form-card.show { display: block; }
     .form-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
-    .form-title { font-size: 27px; font-weight: 750; line-height: 1.1; margin-bottom: 6px; }
+    .form-title { font-size: 27px; font-weight: 400; font-family: "DM Serif Display", Georgia, serif; line-height: 1.1; margin-bottom: 6px; }
     .form-sub { color: var(--text-secondary); font-size: 15px; max-width: 640px; }
     .step-pill { flex-shrink: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cyan); background: rgba(0, 200, 232, 0.08); border: 1px solid rgba(0, 200, 232, 0.2); border-radius: 999px; padding: 8px 12px; }
 
@@ -291,7 +292,7 @@
       .hero-image-shell { margin: 0; border-radius: 26px; }
       .hero-image { aspect-ratio: 4 / 5; object-position: center 24%; }
       .trust-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-      .trust-item { align-items: flex-start; font-size: 16px; }
+      .trust-item { align-items: flex-start; font-size: 13px; }
       .hero-secondary { grid-area: secondary; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); align-items: start; gap: 22px; }
       .legal-note { grid-area: legal; }
       .brand-dual { gap: 20px; }
@@ -307,9 +308,9 @@
     }
 
     @media (max-width: 420px) {
-      .brand-practice-name { font-size: 18px; }
-      .brand-mark { width: 18px; height: 18px; }
-      .hero-title { font-size: clamp(30px, 8vw, 42px); }
+      .brand-practice-name { font-size: 15px; }
+      .brand-mark { width: 15px; height: 15px; }
+      .hero-title { font-size: clamp(36px, 8vw, 48px); }
       .incoming-number-value { font-size: 26px; }
       .expect-call-title { font-size: 19px; }
     }
