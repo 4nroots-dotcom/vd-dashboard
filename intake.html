@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -54,7 +53,6 @@
 
     .shell { width: 100%; max-width: var(--maxw); margin: 0 auto; }
 
-    /* ── DUAL-BRAND HEADER ── */
     .brand { display: flex; justify-content: center; margin: 8px 0 18px; }
 
     .brand-dual {
@@ -66,7 +64,6 @@
       filter: drop-shadow(0 8px 24px rgba(0,0,0,0.18));
     }
 
-    /* Practice identity — primary */
     .brand-practice {
       display: flex;
       align-items: center;
@@ -79,7 +76,6 @@
       display: block;
     }
 
-    /* Fallback text shown when logo image is not yet available */
     .brand-practice-name {
       font-size: 20px;
       font-weight: 800;
@@ -98,7 +94,6 @@
       margin-top: 3px;
     }
 
-    /* Powered-by line — secondary */
     .brand-powered {
       display: flex;
       align-items: center;
@@ -124,7 +119,6 @@
     .brand-mark { width: 20px; height: 20px; display: block; flex-shrink: 0; }
     .brand-wordmark { font-size: 13px; font-weight: 700; letter-spacing: 0.01em; color: #79c8f3; line-height: 1; }
 
-    /* Divider between practice and powered-by */
     .brand-divider {
       width: 40px;
       height: 1px;
@@ -139,7 +133,6 @@
       backdrop-filter: blur(10px);
     }
 
-    /* HERO */
     .hero { position: relative; overflow: hidden; padding: 24px 20px 24px; }
     .hero::before {
       content: "";
@@ -186,7 +179,6 @@
     .flow-copy { color: #dbe7fa; font-size: 16px; line-height: 1.65; max-width: 52ch; }
     .legal-note { text-align: center; font-size: 12px; line-height: 1.56; color: var(--text-muted); max-width: 760px; margin: 0 auto; }
 
-    /* FORM */
     .form-card { margin-top: 18px; padding: 24px 18px 20px; display: none; }
     .form-card.show { display: block; }
     .form-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
@@ -243,7 +235,6 @@
 
     .error-box { display: none; margin-top: 14px; background: rgba(232, 69, 69, 0.12); border: 1px solid rgba(232, 69, 69, 0.28); border-radius: var(--radius-sm); padding: 12px 14px; color: #ffb3b3; font-size: 13px; white-space: pre-wrap; }
 
-    /* HANDOFF */
     .handoff-card { display: none; margin-top: 18px; padding: 20px 20px 24px; text-align: center; }
     .handoff-card.show { display: block; }
     .handoff-top-logo { display: flex; justify-content: center; margin-bottom: 14px; }
@@ -322,11 +313,8 @@
 <body>
   <div class="shell">
 
-    <!-- ── DUAL BRAND HEADER ── -->
     <div class="brand">
       <div class="brand-dual">
-
-        <!-- Primary: Martindale Dental -->
         <div class="brand-practice">
           <div>
             <svg xmlns="http://www.w3.org/2000/svg" style="height:52px;width:auto;display:block;" viewBox="70 36 454 300" shape-rendering="geometricPrecision" aria-label="Martindale Dental logo">
@@ -339,7 +327,6 @@
 
         <div class="brand-divider"></div>
 
-        <!-- Secondary: Powered by VirtualDentist.ai -->
         <div class="brand-powered">
           <span class="brand-powered-label">Triage powered by</span>
           <a href="https://virtualdentist.ai" class="brand-lockup" aria-label="VirtualDentist.ai" target="_blank" rel="noopener">
@@ -549,7 +536,7 @@
 
       <div class="action-bar">
         <button class="btn-secondary" id="back-to-welcome-btn" type="button">Back</button>
-        <button class="btn-primary" id="intake-submit-btn" type="button">Continue</button>
+        <button class="btn-primary" id="intake-submit-btn" type="button">Talk to Sam</button>
       </div>
     </section>
 
@@ -776,7 +763,7 @@
         showIntakeError(msg);
       } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = "Continue";
+        submitBtn.textContent = "Talk to Sam";
       }
     }
 
@@ -836,13 +823,12 @@
       return null;
     }
 
-function getIntakeSource() {
-  var params = new URLSearchParams(window.location.search);
-  return params.get("src") === "office" ? "in_office" : "web_form";
-}
+    function getIntakeSource() {
+      var params = new URLSearchParams(window.location.search);
+      return params.get("src") === "office" ? "in_office" : "web_form";
+    }
 
-function buildIntakePayload(data) {
-
+    function buildIntakePayload(data) {
       return {
         patient_name: data.patientName,
         patient_dob: data.patientDob,
@@ -946,7 +932,6 @@ function buildIntakePayload(data) {
         var raw = sessionStorage.getItem(STATE_KEY);
         if (!raw) return;
         var s = JSON.parse(raw);
-
         setVal("patient-name", s.patientName);
         setVal("patient-dob", s.patientDob);
         setVal("patient-phone", s.patientPhone);
@@ -954,7 +939,6 @@ function buildIntakePayload(data) {
         setVal("chief-complaint", s.chiefComplaint);
         setVal("onset-bucket", s.onsetBucket);
         setVal("coverage-status", s.coverageStatus);
-
         setCheck("rf-breathing-swallowing", s.rfBreathing);
         setCheck("rf-uncontrolled-bleeding", s.rfBleeding);
         setCheck("rf-facial-swelling", s.rfSwelling);
@@ -963,7 +947,6 @@ function buildIntakePayload(data) {
         setCheck("rf-avulsion", s.rfAvulsion);
         setCheck("rf-none", s.rfNone);
         setVal("avulsion-time", s.avulsionTime);
-
         setCheck("mh-allergy-antibiotics", s.mhAllergyAntibiotics);
         setCheck("mh-allergy-pain", s.mhAllergyPain);
         setCheck("mh-blood-thinners", s.mhBloodThinners);
@@ -974,7 +957,6 @@ function buildIntakePayload(data) {
         setVal("mh-other-detail", s.mhOtherDetail);
         setCheck("mh-none", s.mhNone);
         setCheck("intake-acknowledge", s.acknowledged);
-
         toggleOtherMedicalDetail();
         toggleAvulsionTime();
       } catch (e) { /* corrupt state */ }
