@@ -706,7 +706,7 @@
     <!-- CASE LIST -->
     <div class="case-list-panel">
       <div class="case-list-header">
-      <div class="case-list-label">In-Office Cases</div>
+      <div class="case-list-label">Triage Cases</div>
       <div class="case-list-date" id="list-date"></div>
       <div class="case-list-meta" id="list-count">Loading...</div>
       <div style="display:flex;gap:6px;margin-top:8px;">
@@ -717,6 +717,12 @@
         <button class="sort-btn active" id="sort-newest" type="button">Newest</button>
         <button class="sort-btn" id="sort-oldest" type="button">Oldest</button>
         <button class="refresh-btn" id="refresh-btn" type="button" style="margin-left:auto;">Refresh</button>
+      </div>
+      <div style="display:flex;gap:5px;margin-top:8px;align-items:center;flex-wrap:wrap;">
+        <span style="font-size:11px;color:var(--text-muted);">Source:</span>
+        <button class="sort-btn active" id="filter-all" type="button">All</button>
+        <button class="sort-btn" id="filter-office" type="button" style="border-left:3px solid #71BB55;">In-Office</button>
+        <button class="sort-btn" id="filter-web" type="button" style="border-left:3px solid #00c8e8;">Web</button>
       </div>
     </div>
       <div class="case-list-scroll" id="case-list-scroll">
@@ -763,6 +769,7 @@
   var selectedCaseId = null;
   var currentSortAsc = false; // newest first by default
   var searchQuery = "";
+  var sourceFilter = "all"; // all, office, web
 
   // ---- AUTH ----
   document.getElementById("login-btn").addEventListener("click", handleLogin);
@@ -840,6 +847,34 @@
     loadCases();
   });
 
+  document.getElementById("filter-all").addEventListener("click", function() {
+    sourceFilter = "all";
+    ["filter-all","filter-office","filter-web"].forEach(function(id) {
+      document.getElementById(id).classList.remove("active");
+    });
+    document.getElementById("filter-all").classList.add("active");
+    document.getElementById("list-count").textContent = "";
+    applySearchFilter();
+  });
+
+  document.getElementById("filter-office").addEventListener("click", function() {
+    sourceFilter = "office";
+    ["filter-all","filter-office","filter-web"].forEach(function(id) {
+      document.getElementById(id).classList.remove("active");
+    });
+    document.getElementById("filter-office").classList.add("active");
+    applySearchFilter();
+  });
+
+  document.getElementById("filter-web").addEventListener("click", function() {
+    sourceFilter = "web";
+    ["filter-all","filter-office","filter-web"].forEach(function(id) {
+      document.getElementById(id).classList.remove("active");
+    });
+    document.getElementById("filter-web").classList.add("active");
+    applySearchFilter();
+  });
+
   // ---- APPOINTMENT COMPLETE ----
   async function markAppointmentComplete(caseId, patientName, patientPhone, patientEmail) {
     var confirmed = window.confirm(
@@ -912,7 +947,6 @@
     var result = await sb
       .from("triage_cases")
       .select("id, patient_name, patient_phone, patient_dob, patient_city, patient_email, chief_complaint, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at")
-      .eq("intake_source", "in_office")
       .order("created_at", { ascending: currentSortAsc });
 
     if (result.error) {
@@ -927,9 +961,17 @@
 
   function applySearchFilter() {
     var q = searchQuery.toLowerCase().trim();
-    var filtered = q
-      ? currentCases.filter(function(c) { return (c.patient_name || "").toLowerCase().includes(q); })
-      : currentCases;
+    var filtered = currentCases;
+    // Source filter
+    if (sourceFilter === "office") {
+      filtered = filtered.filter(function(c) { return c.intake_source === "in_office"; });
+    } else if (sourceFilter === "web") {
+      filtered = filtered.filter(function(c) { return c.intake_source !== "in_office"; });
+    }
+    // Search filter
+    if (q) {
+      filtered = filtered.filter(function(c) { return (c.patient_name || "").toLowerCase().includes(q); });
+    }
     renderCaseList(filtered);
   }
 
@@ -938,7 +980,7 @@
     var n = cases.length;
     var total = currentCases.length;
     document.getElementById("list-count").textContent =
-      total === 0 ? "No in-office cases" :
+      total === 0 ? "No cases" :
       n === total ? total + (total === 1 ? " case" : " cases") + " total" :
       n + " of " + total + " cases";
 
@@ -970,11 +1012,16 @@
       var badgeTxt = sev ? sev.toUpperCase() : "PENDING";
       var completed = c.appointment_completed_at ? " <span style=\"font-size:10px;color:#276749;\">&#10003; Seen</span>" : "";
 
+      var isOffice = c.intake_source === "in_office";
+      var sourcePip = isOffice
+        ? "<span style=\"display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:1px 6px;border-radius:999px;background:#f0fff4;color:#276749;border:1px solid #68d391;margin-left:4px;\">In-Office</span>"
+        : "<span style=\"display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:1px 6px;border-radius:999px;background:#ebf8ff;color:#2b6cb0;border:1px solid #90cdf4;margin-left:4px;\">Web</span>";
+
       item.innerHTML =
         "<div class=\"case-item-time\">" + esc(date) + " &middot; " + esc(time) + completed + "</div>" +
         "<div class=\"case-item-name\">" + esc(name) + "</div>" +
         "<div class=\"case-item-complaint\">" + esc(complaint) + "</div>" +
-        "<span class=\"badge " + badgeCls + "\">" + badgeTxt + "</span>";
+        "<span class=\"badge " + badgeCls + "\">" + badgeTxt + "</span>" + sourcePip;
 
       item.addEventListener("click", function() { selectCase(c.id); });
       el.appendChild(item);
