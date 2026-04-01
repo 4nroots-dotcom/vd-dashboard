@@ -301,7 +301,7 @@
 
         // Satisfaction query -- always all-time regardless of period filter
         var satResult = await sb.from("triage_cases")
-          .select("satisfaction_score, return_likelihood, survey_feedback, created_at")
+          .select("satisfaction_score, sam_satisfaction_score, timely_response, return_likelihood, survey_feedback, created_at")
           .not("satisfaction_score", "is", null)
           .order("created_at", { ascending: false });
 
@@ -377,6 +377,13 @@
       var satN = satData.length;
       var avgSat = satN > 0 ? (satData.reduce(function(s, r) { return s + (r.satisfaction_score || 0); }, 0) / satN).toFixed(1) : null;
       var avgReturn = satN > 0 ? (satData.reduce(function(s, r) { return s + (r.return_likelihood || 0); }, 0) / satN).toFixed(1) : null;
+      var samData = satData.filter(function(r) { return r.sam_satisfaction_score != null; });
+      var avgSam = samData.length > 0 ? (samData.reduce(function(s, r) { return s + (r.sam_satisfaction_score || 0); }, 0) / samData.length).toFixed(1) : null;
+      var timelyData = satData.filter(function(r) { return r.timely_response; });
+      var timelyYes = timelyData.filter(function(r) { return r.timely_response === "yes"; }).length;
+      var timelySomewhat = timelyData.filter(function(r) { return r.timely_response === "somewhat"; }).length;
+      var timelyNo = timelyData.filter(function(r) { return r.timely_response === "no"; }).length;
+      var timelyPctYes = timelyData.length > 0 ? Math.round((timelyYes / timelyData.length) * 100) : null;
       var recentFeedback = satData.filter(function(r) { return r.survey_feedback; }).slice(0, 5);
 
       var html = "";
@@ -478,9 +485,18 @@
         html += '<div class="no-data">No survey responses yet. Surveys are sent when a visit is marked complete in the office dashboard.</div>';
       } else {
         html += '<div class="sat-score-grid">' +
-          '<div class="sat-score-card"><div class="sat-score-value">' + avgSat + '<span class="sat-score-denom">/5</span></div><div class="sat-score-label">Avg Satisfaction</div></div>' +
-          '<div class="sat-score-card"><div class="sat-score-value">' + avgReturn + '<span class="sat-score-denom">/5</span></div><div class="sat-score-label">Avg Return Likelihood</div></div>' +
+          '<div class="sat-score-card"><div class="sat-score-value">' + (avgSat || '—') + (avgSat ? '<span class="sat-score-denom">/5</span>' : '') + '</div><div class="sat-score-label">Avg Satisfaction</div></div>' +
+          '<div class="sat-score-card"><div class="sat-score-value">' + (avgSam || '—') + (avgSam ? '<span class="sat-score-denom">/5</span>' : '') + '</div><div class="sat-score-label">Avg Sam Rating</div></div>' +
+          '<div class="sat-score-card"><div class="sat-score-value">' + (avgReturn || '—') + (avgReturn ? '<span class="sat-score-denom">/5</span>' : '') + '</div><div class="sat-score-label">Avg Return Likelihood</div></div>' +
+          '<div class="sat-score-card"><div class="sat-score-value">' + (timelyPctYes !== null ? timelyPctYes + '<span class="sat-score-denom">%</span>' : '—') + '</div><div class="sat-score-label">Timely Response (Yes)</div></div>' +
           '</div>';
+        if (timelyData.length > 0) {
+          html += '<div class="panel-divider"></div><div class="panel-sub-label">Timely Response Breakdown</div><div class="mini-list">' +
+            '<div class="mini-row"><span class="mini-row-label">Yes — team responded in time</span><span class="mini-row-val ok">' + timelyYes + ' (' + Math.round((timelyYes / timelyData.length) * 100) + '%)</span></div>' +
+            '<div class="mini-row"><span class="mini-row-label">Somewhat</span><span class="mini-row-val warn">' + timelySomewhat + ' (' + Math.round((timelySomewhat / timelyData.length) * 100) + '%)</span></div>' +
+            '<div class="mini-row"><span class="mini-row-label">No — response felt too slow</span><span class="mini-row-val danger">' + timelyNo + ' (' + Math.round((timelyNo / timelyData.length) * 100) + '%)</span></div>' +
+            '</div>';
+        }
 
         if (recentFeedback.length > 0) {
           html += '<div class="panel-divider"></div><div class="panel-sub-label">Recent Feedback</div>';
