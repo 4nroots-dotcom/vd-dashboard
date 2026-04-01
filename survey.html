@@ -31,10 +31,7 @@
       padding: 24px 16px 48px;
     }
 
-    .shell {
-      max-width: 560px;
-      margin: 0 auto;
-    }
+    .shell { max-width: 560px; margin: 0 auto; }
 
     /* ---- HEADER ---- */
     .header {
@@ -44,95 +41,55 @@
       margin-bottom: 28px;
       text-align: center;
     }
-
     .header-logo { margin-bottom: 12px; }
-
-    .header-title {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--navy);
-      margin-bottom: 4px;
-    }
-
-    .header-sub {
-      font-size: 14px;
-      color: var(--text-muted);
-    }
-
-    .header-vd {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--cyan);
-      letter-spacing: 0.06em;
-      margin-top: 6px;
-    }
+    .header-title { font-size: 22px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+    .header-sub { font-size: 14px; color: var(--text-muted); }
+    .header-vd { font-size: 11px; font-weight: 600; color: var(--cyan); letter-spacing: 0.06em; margin-top: 6px; }
 
     /* ---- CARD ---- */
-    .card {
-      background: var(--surface);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 28px 24px;
-    }
-
-    .card-title {
-      font-size: 17px;
-      font-weight: 700;
-      color: var(--navy);
-      margin-bottom: 6px;
-    }
-
-    .card-sub {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-bottom: 24px;
-      line-height: 1.6;
-    }
+    .card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px 24px; }
+    .card-title { font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+    .card-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
 
     /* ---- QUESTION ---- */
     .question { margin-bottom: 28px; }
-    .question:last-of-type { margin-bottom: 0; }
-
-    .question-label {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 12px;
-      display: block;
-    }
+    .question-label { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; display: block; }
 
     /* ---- STAR RATING ---- */
-    .star-row {
-      display: flex;
-      gap: 8px;
-    }
-
+    .star-row { display: flex; gap: 8px; }
     .star-btn {
       background: none;
       border: 2px solid var(--border);
       border-radius: 8px;
-      width: 52px;
-      height: 52px;
+      width: 52px; height: 52px;
       font-size: 22px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       transition: border-color 0.15s, background 0.15s, transform 0.1s;
       color: var(--text-muted);
       flex-shrink: 0;
     }
-
     .star-btn:hover { border-color: var(--cyan); transform: scale(1.06); }
     .star-btn.selected { border-color: var(--navy); background: var(--navy); color: #fff; }
+    .star-labels { display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; color: var(--text-muted); }
 
-    .star-labels {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 6px;
-      font-size: 11px;
+    /* ---- YES/SOMEWHAT/NO ---- */
+    .ysn-row { display: flex; gap: 10px; }
+    .ysn-btn {
+      flex: 1;
+      background: none;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
       color: var(--text-muted);
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+      font-family: inherit;
     }
+    .ysn-btn:hover { border-color: var(--cyan); color: var(--text-primary); }
+    .ysn-btn.selected { border-color: var(--navy); background: var(--navy); color: #fff; }
 
     /* ---- TEXTAREA ---- */
     .feedback-textarea {
@@ -148,16 +105,11 @@
       outline: none;
       transition: border-color 0.2s;
     }
-
     .feedback-textarea:focus { border-color: var(--cyan); }
     .feedback-textarea::placeholder { color: var(--text-muted); }
 
     /* ---- DIVIDER ---- */
-    .divider {
-      height: 1px;
-      background: var(--border);
-      margin: 24px 0;
-    }
+    .divider { height: 1px; background: var(--border); margin: 24px 0; }
 
     /* ---- SUBMIT ---- */
     .submit-btn {
@@ -173,17 +125,9 @@
       margin-top: 24px;
       transition: opacity 0.2s;
     }
-
     .submit-btn:hover { opacity: 0.88; }
     .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .submit-note {
-      font-size: 12px;
-      color: var(--text-muted);
-      text-align: center;
-      margin-top: 12px;
-      line-height: 1.5;
-    }
+    .submit-note { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 12px; line-height: 1.5; }
 
     /* ---- STATES ---- */
     .state { display: none; }
@@ -191,32 +135,16 @@
 
     /* ---- THANK YOU ---- */
     .thankyou-icon {
-      width: 60px;
-      height: 60px;
+      width: 60px; height: 60px;
       border-radius: 50%;
       background: #EBF7E3;
       border: 2px solid var(--green);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       font-size: 28px;
       margin: 0 auto 16px;
     }
-
-    .thankyou-title {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--navy);
-      text-align: center;
-      margin-bottom: 8px;
-    }
-
-    .thankyou-body {
-      font-size: 14px;
-      color: var(--text-secondary);
-      text-align: center;
-      line-height: 1.65;
-    }
+    .thankyou-title { font-size: 22px; font-weight: 700; color: var(--navy); text-align: center; margin-bottom: 8px; }
+    .thankyou-body { font-size: 14px; color: var(--text-secondary); text-align: center; line-height: 1.65; }
 
     .error-box {
       background: #FFF5F5;
@@ -232,6 +160,7 @@
     @media (max-width: 400px) {
       .star-btn { width: 44px; height: 44px; font-size: 18px; }
       .card { padding: 20px 16px; }
+      .ysn-btn { padding: 10px 6px; font-size: 13px; }
     }
   </style>
 </head>
@@ -284,7 +213,7 @@
 
       <!-- Q1: Overall satisfaction -->
       <div class="question">
-        <label class="question-label">Overall, how satisfied were you with your visit?</label>
+        <label class="question-label">Overall, how satisfied were you with your visit today?</label>
         <div class="star-row" id="stars-satisfaction">
           <button class="star-btn" data-val="1" type="button">1</button>
           <button class="star-btn" data-val="2" type="button">2</button>
@@ -292,15 +221,39 @@
           <button class="star-btn" data-val="4" type="button">4</button>
           <button class="star-btn" data-val="5" type="button">5</button>
         </div>
-        <div class="star-labels">
-          <span>Not satisfied</span>
-          <span>Very satisfied</span>
+        <div class="star-labels"><span>Not satisfied</span><span>Very satisfied</span></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Q2: Sam satisfaction -->
+      <div class="question">
+        <label class="question-label">Before your appointment, you spoke with Sam, our AI triage assistant. How would you rate that experience?</label>
+        <div class="star-row" id="stars-sam">
+          <button class="star-btn" data-val="1" type="button">1</button>
+          <button class="star-btn" data-val="2" type="button">2</button>
+          <button class="star-btn" data-val="3" type="button">3</button>
+          <button class="star-btn" data-val="4" type="button">4</button>
+          <button class="star-btn" data-val="5" type="button">5</button>
+        </div>
+        <div class="star-labels"><span>Poor</span><span>Excellent</span></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Q3: Timely response -->
+      <div class="question">
+        <label class="question-label">After speaking with Sam, did you feel confident that the dental team responded in a timely fashion to address your dental concerns?</label>
+        <div class="ysn-row" id="ysn-timely">
+          <button class="ysn-btn" data-val="yes" type="button">Yes</button>
+          <button class="ysn-btn" data-val="somewhat" type="button">Somewhat</button>
+          <button class="ysn-btn" data-val="no" type="button">No</button>
         </div>
       </div>
 
       <div class="divider"></div>
 
-      <!-- Q2: Return likelihood -->
+      <!-- Q4: Return likelihood -->
       <div class="question">
         <label class="question-label">How likely are you to return to Martindale Dental for future care?</label>
         <div class="star-row" id="stars-return">
@@ -310,17 +263,14 @@
           <button class="star-btn" data-val="4" type="button">4</button>
           <button class="star-btn" data-val="5" type="button">5</button>
         </div>
-        <div class="star-labels">
-          <span>Unlikely</span>
-          <span>Very likely</span>
-        </div>
+        <div class="star-labels"><span>Unlikely</span><span>Very likely</span></div>
       </div>
 
       <div class="divider"></div>
 
-      <!-- Q3: Open feedback -->
+      <!-- Q5: Open feedback -->
       <div class="question">
-        <label class="question-label">Is there anything we could have done better, or anything you'd like us to know about your experience? <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
+        <label class="question-label">Any other comments about your experience? <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
         <textarea class="feedback-textarea" id="feedback-text" placeholder="Your feedback here..."></textarea>
       </div>
 
@@ -351,6 +301,8 @@
   var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   var satisfactionScore = null;
+  var samSatisfactionScore = null;
+  var timelyResponse = null;
   var returnLikelihood = null;
   var surveyToken = null;
   var caseId = null;
@@ -362,7 +314,6 @@
     document.getElementById(id).classList.add("active");
   }
 
-  // Get token from URL
   var params = new URLSearchParams(window.location.search);
   surveyToken = params.get("token");
 
@@ -409,7 +360,23 @@
     });
   }
 
+  // Yes/Somewhat/No setup
+  function setupYSN(groupId, onSelect) {
+    var btns = document.querySelectorAll("#" + groupId + " .ysn-btn");
+    btns.forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        var val = btn.getAttribute("data-val");
+        onSelect(val);
+        btns.forEach(function(b) {
+          b.classList.toggle("selected", b.getAttribute("data-val") === val);
+        });
+      });
+    });
+  }
+
   setupStars("stars-satisfaction", function(v) { satisfactionScore = v; });
+  setupStars("stars-sam", function(v) { samSatisfactionScore = v; });
+  setupYSN("ysn-timely", function(v) { timelyResponse = v; });
   setupStars("stars-return", function(v) { returnLikelihood = v; });
 
   // Submit
@@ -422,7 +389,16 @@
       errEl.style.display = "block";
       return;
     }
-
+    if (!samSatisfactionScore) {
+      errEl.textContent = "Please rate your experience with Sam before submitting.";
+      errEl.style.display = "block";
+      return;
+    }
+    if (!timelyResponse) {
+      errEl.textContent = "Please answer the question about timely response before submitting.";
+      errEl.style.display = "block";
+      return;
+    }
     if (!returnLikelihood) {
       errEl.textContent = "Please rate your likelihood to return before submitting.";
       errEl.style.display = "block";
@@ -436,6 +412,8 @@
     var feedback = document.getElementById("feedback-text").value.trim() || null;
     var response = {
       satisfaction_score: satisfactionScore,
+      sam_satisfaction_score: samSatisfactionScore,
+      timely_response: timelyResponse,
       return_likelihood: returnLikelihood,
       feedback: feedback,
       submitted_at: new Date().toISOString()
@@ -445,6 +423,8 @@
       .from("triage_cases")
       .update({
         satisfaction_score: satisfactionScore,
+        sam_satisfaction_score: samSatisfactionScore,
+        timely_response: timelyResponse,
         return_likelihood: returnLikelihood,
         survey_feedback: feedback,
         survey_response: response
