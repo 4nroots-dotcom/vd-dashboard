@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>VirtualDentist.ai - Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
   <style>
     html, body {
@@ -50,7 +53,7 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background:
         radial-gradient(circle at top center, rgba(51, 108, 190, 0.16), transparent 28%),
         radial-gradient(circle at bottom left, rgba(0, 200, 232, 0.06), transparent 24%),
@@ -95,11 +98,11 @@
     .auth-logo-text {
       font-size: 18px;
       font-weight: 700;
-      background: linear-gradient(135deg, #1a7fc4, #00c8e8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--white);
+      letter-spacing: -0.01em;
     }
+
+    .auth-logo-text span { color: var(--cyan); }
 
     .auth-title {
       font-size: 13px;
@@ -205,13 +208,13 @@
       align-items: center;
       gap: 10px;
       font-size: 15px;
-      font-weight: 650;
-      background: linear-gradient(135deg, #1a7fc4, #00c8e8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.01em;
       white-space: nowrap;
     }
+
+    .header-logo span { color: var(--cyan); }
 
     .header-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
     .header-user { font-size: 12px; color: var(--text-secondary); display: none; }
@@ -396,7 +399,6 @@
     .toggle-track::after { content: ""; position: absolute; left: 3px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; background: white; border-radius: 50%; transition: transform 0.2s; }
     .toggle input:checked + .toggle-track::after { transform: translateY(-50%) translateX(20px); }
 
-    .revenue-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); gap: 12px; }
     .revenue-input-wrap { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
     .revenue-prefix { font-size: 13px; color: var(--text-muted); font-weight: 600; }
 
@@ -507,7 +509,7 @@
           <path d="M38 14 C28 14 18 22 18 36 C18 50 22 62 24 72 C26 82 28 88 34 94 C38 98 42 100 46 98 C50 96 54 92 60 92 C66 92 70 96 74 98 C78 100 82 98 86 94 C92 88 94 82 96 72 C98 62 102 50 102 36 C102 22 92 14 82 14 C76 14 70 18 60 18 C50 18 44 14 38 14 Z" stroke="url(#ag)" stroke-width="7" fill="none" stroke-linejoin="round" />
           <polyline points="22,55 36,55 44,38 52,72 60,48 68,62 76,55 98,55" stroke="url(#ag)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
-        <div class="auth-logo-text">VirtualDentist.ai</div>
+        <div class="auth-logo-text">Virtual<span>Dentist.ai</span></div>
       </div>
       <div class="auth-title">Dentist Dashboard &middot; Secure Access</div>
       <label class="field-label" for="auth-email">Email</label>
@@ -527,7 +529,7 @@
           <path d="M38 14 C28 14 18 22 18 36 C18 50 22 62 24 72 C26 82 28 88 34 94 C38 98 42 100 46 98 C50 96 54 92 60 92 C66 92 70 96 74 98 C78 100 82 98 86 94 C92 88 94 82 96 72 C98 62 102 50 102 36 C102 22 92 14 82 14 C76 14 70 18 60 18 C50 18 44 14 38 14 Z" stroke="url(#hg)" stroke-width="8" fill="none" stroke-linejoin="round" />
           <polyline points="22,55 36,55 44,38 52,72 60,48 68,62 76,55 98,55" stroke="url(#hg)" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
-        VirtualDentist.ai
+        Virtual<span>Dentist.ai</span>
       </div>
       <div class="header-right">
         <span class="header-user" id="header-user-email"></span>
@@ -691,9 +693,6 @@
       var revenueDisplay = (c.revenue_generated !== null && c.revenue_generated !== undefined) ? ("$" + Number(c.revenue_generated).toFixed(2)) : "-";
       var followUpDisplay = c.subsequent_appointment_booked === true ? "Yes" : c.subsequent_appointment_booked === false ? "No" : "-";
 
-      /* Revenue input current value */
-      var revenueInputVal = (c.revenue_generated !== null && c.revenue_generated !== undefined) ? String(c.revenue_generated) : "";
-
       var actionRowHtml;
       if (isReviewed) {
         actionRowHtml = '<div class="review-lock-message">\u2713 This case has been finalized as reviewed</div><button class="btn-back-desktop" id="desktop-back-btn" type="button">Back to main screen</button><a class="btn-action btn-export-record" id="export-case-btn" target="_blank" rel="noopener noreferrer">Export Clinical Record</a>';
@@ -720,8 +719,6 @@
         '<div class="review-block"><div class="review-block-title">Decision</div><div class="decision-grid"><div class="semantic-note"><strong>Semantics:</strong> Mark reviewed only when this case has a finalized operational outcome. "Patient contacted" should reflect real outreach, not intended outreach.</div><div><label class="form-label" for="field-disposition">Final Disposition</label><select class="form-select" id="field-disposition"' + (isReviewed ? ' disabled style="opacity:0.6"' : '') + '><option value="">- Select -</option><option value="booked"' + (c.final_disposition === "booked" ? " selected" : "") + '>Booked appointment</option><option value="referred_er"' + (c.final_disposition === "referred_er" ? " selected" : "") + '>Referred to ER</option><option value="rx_only"' + (c.final_disposition === "rx_only" ? " selected" : "") + '>Prescription only</option><option value="declined"' + (c.final_disposition === "declined" ? " selected" : "") + '>Patient declined care</option><option value="no_response"' + (c.final_disposition === "no_response" ? " selected" : "") + '>No response from patient</option></select><div class="form-helper">This is the dentist\'s final operational outcome for the case.</div></div>' +
 
         '<div class="decision-toggles"><div class="toggle-row"><span class="toggle-label">Prescription issued</span><label class="toggle"><input type="checkbox" id="field-rx"' + (c.prescription_issued ? " checked" : "") + (isReviewed ? " disabled" : "") + '><div class="toggle-track"></div></label></div><div class="toggle-row"><span class="toggle-label">Patient contacted</span><label class="toggle"><input type="checkbox" id="field-contacted"' + (c.contacted_patient_at ? " checked" : "") + (isReviewed ? " disabled" : "") + '><div class="toggle-track"></div></label></div><div class="toggle-row"><span class="toggle-label">Follow-up appointment booked</span><label class="toggle"><input type="checkbox" id="field-followup"' + (c.subsequent_appointment_booked ? " checked" : "") + (isReviewed ? " disabled" : "") + '><div class="toggle-track"></div></label></div></div>' +
-
-        '<div class="revenue-row"><span class="toggle-label">Revenue generated</span><div class="revenue-input-wrap"><span class="revenue-prefix">$</span><input class="form-input-inline" type="number" id="field-revenue" placeholder="0.00" step="0.01" min="0" style="width:120px"' + (isReviewed ? ' readonly style="width:120px;opacity:0.6"' : '') + ' value="' + escAttr(revenueInputVal) + '" /></div></div>' +
 
         '<div class="soft-warning" id="decision-soft-warning"></div><div class="decision-note">' + (isReviewed ? "This case is locked as reviewed. You can still export the clinical record below." : "A final disposition is required before marking reviewed. Save Draft if you are not ready to finalize.") + '</div></div></div></div>' +
 
@@ -778,7 +775,6 @@
       var rxEl = document.getElementById("field-rx");
       var contactedEl = document.getElementById("field-contacted");
       var followupEl = document.getElementById("field-followup");
-      var revenueEl = document.getElementById("field-revenue");
       var statusEl = document.getElementById("save-status");
 
       if (!notesEl || !dispositionEl || !rxEl || !contactedEl || !statusEl) return;
@@ -788,9 +784,6 @@
       var rxIssued = rxEl.checked;
       var contacted = contactedEl.checked;
       var followupBooked = followupEl ? followupEl.checked : false;
-      var revenueRaw = revenueEl ? revenueEl.value.trim() : "";
-      var revenueVal = revenueRaw ? parseFloat(revenueRaw) : null;
-      if (revenueVal !== null && (isNaN(revenueVal) || revenueVal < 0)) revenueVal = null;
 
       if (markReviewed && !disposition) { statusEl.textContent = "Please select a final disposition before marking reviewed."; statusEl.className = "save-status error"; dispositionEl.style.borderColor = "rgba(232,69,69,0.5)"; setTimeout(function() { statusEl.textContent = ""; statusEl.className = "save-status"; dispositionEl.style.borderColor = ""; }, 3000); return; }
 
@@ -802,7 +795,6 @@
         final_disposition: disposition || null,
         prescription_issued: rxIssued,
         action_taken: disposition || null,
-        revenue_generated: revenueVal,
         subsequent_appointment_booked: followupBooked
       };
 
