@@ -846,6 +846,12 @@
     document.getElementById("app").classList.remove("visible");
     selectedCaseId = null;
     currentCases = [];
+    document.getElementById("login-email").value = "";
+    document.getElementById("login-password").value = "";
+    document.getElementById("auth-error").style.display = "none";
+    var btn = document.getElementById("login-btn");
+    btn.disabled = false;
+    btn.textContent = "Sign in";
   }
 
   function showApp() {
