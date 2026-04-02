@@ -48,9 +48,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
+      position: fixed;
+      inset: 0;
+      overflow-y: auto;
       padding: 20px;
       background: var(--bg);
+      z-index: 9999;
     }
 
     .auth-card {
@@ -409,6 +412,25 @@
     .btn-complete { background: #276749; color: #fff; border: none; }
     .action-btn:hover { opacity: 0.82; }
 
+    .revenue-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      background: rgba(0,200,232,0.04);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .revenue-bar-label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+    .revenue-bar input { background: rgba(255,255,255,0.07); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 13px; padding: 5px 10px; outline: none; width: 110px; transition: border-color 0.2s; }
+    .revenue-bar input:focus { border-color: rgba(0,200,232,0.35); }
+    .revenue-bar input::placeholder { color: var(--text-muted); }
+    .revenue-save-btn { background: rgba(0,200,232,0.1); border: 1px solid rgba(0,200,232,0.25); color: var(--cyan); border-radius: 6px; font-size: 12px; font-weight: 700; padding: 5px 12px; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+    .revenue-save-btn:hover { background: rgba(0,200,232,0.18); }
+    .revenue-save-status { font-size: 11px; color: var(--text-muted); transition: color 0.3s; }
+    .revenue-save-status.ok { color: #00c87a; }
+    .revenue-save-status.err { color: #e84545; }
+
     .note-scroll {
       flex: 1;
       overflow-y: auto;
@@ -658,7 +680,10 @@
       </svg>
       <div class="auth-title">Office Triage Queue</div>
       <div class="auth-sub">Jackson Square &middot; Hamilton, Ontario</div>
-      <div style="margin-top:8px; font-size:11px; font-weight:600; color:#00c8e8; letter-spacing:0.06em;">Powered by VirtualDentist.ai</div>
+      <div style="margin-top:10px; display:flex; align-items:center; justify-content:center; gap:7px; opacity:0.7;">
+        <svg width="16" height="16" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="apg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a2a7a"/><stop offset="100%" stop-color="#00c8e8"/></linearGradient></defs><path d="M38 14 C28 14 18 22 18 36 C18 50 22 62 24 72 C26 82 28 88 34 94 C38 98 42 100 46 98 C50 96 54 92 60 92 C66 92 70 96 74 98 C78 100 82 98 86 94 C92 88 94 82 96 72 C98 62 102 50 102 36 C102 22 92 14 82 14 C76 14 70 18 60 18 C50 18 44 14 38 14 Z" stroke="url(#apg)" stroke-width="6" fill="none" stroke-linejoin="round"/><polyline points="22,55 36,55 44,38 52,72 60,48 68,62 76,55 98,55" stroke="url(#apg)" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span style="font-size:11px; font-weight:700; color:#00c8e8; letter-spacing:-0.01em;">VirtualDentist.ai</span>
+      </div>
     </div>
 
     <div class="auth-field">
@@ -695,7 +720,10 @@
       <div class="header-divider"></div>
       <div class="header-label">Office Triage Queue</div>
       <div class="header-divider"></div>
-      <div class="header-vd">Powered by VirtualDentist.ai</div>
+      <div class="header-vd" style="display:flex;align-items:center;gap:6px;">
+        <svg width="16" height="16" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="hvg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a2a7a"/><stop offset="100%" stop-color="#00c8e8"/></linearGradient></defs><path d="M38 14 C28 14 18 22 18 36 C18 50 22 62 24 72 C26 82 28 88 34 94 C38 98 42 100 46 98 C50 96 54 92 60 92 C66 92 70 96 74 98 C78 100 82 98 86 94 C92 88 94 82 96 72 C98 62 102 50 102 36 C102 22 92 14 82 14 C76 14 70 18 60 18 C50 18 44 14 38 14 Z" stroke="url(#hvg)" stroke-width="6" fill="none" stroke-linejoin="round"/><polyline points="22,55 36,55 44,38 52,72 60,48 68,62 76,55 98,55" stroke="url(#hvg)" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span style="font-weight:700;color:#f5f9ff;letter-spacing:-0.01em;">Virtual<span style="color:#00c8e8;">Dentist.ai</span></span>
+      </div>
     </div>
     <button class="signout-btn" id="signout-btn" type="button">Sign out</button>
   </div>
@@ -710,7 +738,7 @@
       <div class="case-list-date" id="list-date"></div>
       <div class="case-list-meta" id="list-count">Loading...</div>
       <div style="display:flex;gap:6px;margin-top:8px;">
-        <input class="search-input" id="search-input" type="search" placeholder="Search patient name..." />
+        <input class="search-input" id="search-input" type="search" placeholder="Search name or phone..." />
       </div>
       <div style="display:flex;gap:6px;margin-top:6px;align-items:center;">
         <span style="font-size:11px;color:var(--text-muted);">Sort:</span>
@@ -747,6 +775,14 @@
           <button class="action-btn btn-pdf" id="save-pdf-btn" type="button">Save as PDF</button>
           <button class="action-btn btn-print" id="print-btn" type="button">Print Note</button>
         </div>
+      </div>
+
+      <div class="revenue-bar" id="revenue-bar" style="display:none;">
+        <span class="revenue-bar-label">Revenue</span>
+        <span style="font-size:13px;color:var(--text-muted);font-weight:600;">$</span>
+        <input type="number" id="revenue-input" placeholder="0.00" step="0.01" min="0" />
+        <button class="revenue-save-btn" id="revenue-save-btn" type="button">Save</button>
+        <span class="revenue-save-status" id="revenue-save-status"></span>
       </div>
 
       <div class="note-scroll" id="note-scroll">
@@ -948,6 +984,30 @@
     });
   }
 
+  async function saveRevenue(caseId, rawVal) {
+    var statusEl = document.getElementById("revenue-save-status");
+    var val = rawVal ? parseFloat(rawVal) : null;
+    if (val !== null && (isNaN(val) || val < 0)) {
+      statusEl.textContent = "Invalid amount";
+      statusEl.className = "revenue-save-status err";
+      setTimeout(function() { statusEl.textContent = ""; statusEl.className = "revenue-save-status"; }, 2500);
+      return;
+    }
+    statusEl.textContent = "Saving...";
+    statusEl.className = "revenue-save-status";
+    var result = await sb.from("triage_cases").update({ revenue_generated: val }).eq("id", caseId);
+    if (result.error) {
+      statusEl.textContent = "Error saving";
+      statusEl.className = "revenue-save-status err";
+    } else {
+      var c = currentCases.find(function(x) { return x.id === caseId; });
+      if (c) c.revenue_generated = val;
+      statusEl.textContent = "\u2713 Saved";
+      statusEl.className = "revenue-save-status ok";
+      setTimeout(function() { statusEl.textContent = ""; statusEl.className = "revenue-save-status"; }, 2500);
+    }
+  }
+
   document.getElementById("refresh-btn").addEventListener("click", loadCases);
 
   async function loadCases() {
@@ -956,7 +1016,7 @@
 
     var result = await sb
       .from("triage_cases")
-      .select("id, patient_name, patient_phone, patient_dob, patient_city, patient_email, chief_complaint, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at")
+      .select("id, patient_name, patient_phone, patient_dob, patient_city, patient_email, chief_complaint, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at, revenue_generated")
       .order("created_at", { ascending: currentSortAsc });
 
     if (result.error) {
@@ -982,7 +1042,11 @@
     }
     // Search filter
     if (q) {
-      filtered = filtered.filter(function(c) { return (c.patient_name || "").toLowerCase().includes(q); });
+      filtered = filtered.filter(function(c) {
+        return (c.patient_name || "").toLowerCase().includes(q) ||
+               (c.patient_phone || "").replace(/\D/g, "").includes(q.replace(/\D/g, "")) ||
+               (c.patient_phone || "").toLowerCase().includes(q);
+      });
     }
     renderCaseList(filtered);
   }
@@ -1085,6 +1149,17 @@
     scroll.innerHTML = "";
     scroll.appendChild(buildNote(c));
     scroll.scrollTop = 0;
+
+    // Revenue bar
+    var revenueBar = document.getElementById("revenue-bar");
+    var revenueInput = document.getElementById("revenue-input");
+    var revSaveBtn = document.getElementById("revenue-save-btn");
+    var revStatus = document.getElementById("revenue-save-status");
+    revenueBar.style.display = "flex";
+    revenueInput.value = (c.revenue_generated !== null && c.revenue_generated !== undefined) ? String(c.revenue_generated) : "";
+    revStatus.textContent = "";
+    revStatus.className = "revenue-save-status";
+    revSaveBtn.onclick = function() { saveRevenue(c.id, revenueInput.value.trim()); };
 
     // Mobile: switch to note view
     document.querySelector(".body").classList.add("case-open");
@@ -1268,6 +1343,7 @@
     selectedCaseId = null;
     document.querySelectorAll(".case-item").forEach(function(el) { el.classList.remove("active"); });
     document.getElementById("note-toolbar").style.display = "none";
+    document.getElementById("revenue-bar").style.display = "none";
     document.getElementById("note-scroll").innerHTML =
       "<div class=\"note-placeholder\"><div class=\"placeholder-icon\">&#x1F4CB;</div><div>Select a patient from the list<br>to view their triage note.</div></div>";
     // Mobile: return to list view
