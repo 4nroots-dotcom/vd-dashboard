@@ -723,6 +723,7 @@
         <button class="sort-btn active" id="filter-all" type="button">All</button>
         <button class="sort-btn" id="filter-office" type="button" style="border-left:3px solid #71BB55;">In-Office</button>
         <button class="sort-btn" id="filter-web" type="button" style="border-left:3px solid #00c8e8;">Web</button>
+        <button class="sort-btn" id="filter-nondental" type="button" style="border-left:3px solid #D69E2E;">Non-Dental</button>
       </div>
     </div>
       <div class="case-list-scroll" id="case-list-scroll">
@@ -769,7 +770,7 @@
   var selectedCaseId = null;
   var currentSortAsc = false; // newest first by default
   var searchQuery = "";
-  var sourceFilter = "all"; // all, office, web
+  var sourceFilter = "all"; // all, office, web, nondental
 
   // ---- AUTH ----
   document.getElementById("login-btn").addEventListener("click", handleLogin);
@@ -849,7 +850,7 @@
 
   document.getElementById("filter-all").addEventListener("click", function() {
     sourceFilter = "all";
-    ["filter-all","filter-office","filter-web"].forEach(function(id) {
+    ["filter-all","filter-office","filter-web","filter-nondental"].forEach(function(id) {
       document.getElementById(id).classList.remove("active");
     });
     document.getElementById("filter-all").classList.add("active");
@@ -859,7 +860,7 @@
 
   document.getElementById("filter-office").addEventListener("click", function() {
     sourceFilter = "office";
-    ["filter-all","filter-office","filter-web"].forEach(function(id) {
+    ["filter-all","filter-office","filter-web","filter-nondental"].forEach(function(id) {
       document.getElementById(id).classList.remove("active");
     });
     document.getElementById("filter-office").classList.add("active");
@@ -868,10 +869,19 @@
 
   document.getElementById("filter-web").addEventListener("click", function() {
     sourceFilter = "web";
-    ["filter-all","filter-office","filter-web"].forEach(function(id) {
+    ["filter-all","filter-office","filter-web","filter-nondental"].forEach(function(id) {
       document.getElementById(id).classList.remove("active");
     });
     document.getElementById("filter-web").classList.add("active");
+    applySearchFilter();
+  });
+
+  document.getElementById("filter-nondental").addEventListener("click", function() {
+    sourceFilter = "nondental";
+    ["filter-all","filter-office","filter-web","filter-nondental"].forEach(function(id) {
+      document.getElementById(id).classList.remove("active");
+    });
+    document.getElementById("filter-nondental").classList.add("active");
     applySearchFilter();
   });
 
@@ -967,6 +977,8 @@
       filtered = filtered.filter(function(c) { return c.intake_source === "in_office"; });
     } else if (sourceFilter === "web") {
       filtered = filtered.filter(function(c) { return c.intake_source !== "in_office"; });
+    } else if (sourceFilter === "nondental") {
+      filtered = filtered.filter(function(c) { var so = c.structured_output || {}; return so.triage_tag === "non_dental_inquiry" || c.triage_tag === "non_dental_inquiry"; });
     }
     // Search filter
     if (q) {
@@ -1012,6 +1024,11 @@
       var badgeTxt = sev ? sev.toUpperCase() : "PENDING";
       var completed = c.appointment_completed_at ? " <span style=\"font-size:10px;color:#276749;\">&#10003; Seen</span>" : "";
 
+      var so = c.structured_output || {};
+      var isNonDental = so.triage_tag === "non_dental_inquiry" || c.triage_tag === "non_dental_inquiry";
+      var nonDentalPip = isNonDental
+        ? "<span style=\"display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:1px 6px;border-radius:999px;background:#fffff0;color:#744210;border:1px solid #D69E2E;margin-left:4px;\">Non-Dental</span>"
+        : "";
       var isOffice = c.intake_source === "in_office";
       var sourcePip = isOffice
         ? "<span style=\"display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:1px 6px;border-radius:999px;background:#f0fff4;color:#276749;border:1px solid #68d391;margin-left:4px;\">In-Office</span>"
@@ -1021,7 +1038,7 @@
         "<div class=\"case-item-time\">" + esc(date) + " &middot; " + esc(time) + completed + "</div>" +
         "<div class=\"case-item-name\">" + esc(name) + "</div>" +
         "<div class=\"case-item-complaint\">" + esc(complaint) + "</div>" +
-        "<span class=\"badge " + badgeCls + "\">" + badgeTxt + "</span>" + sourcePip;
+        "<span class=\"badge " + badgeCls + "\">" + badgeTxt + "</span>" + sourcePip + nonDentalPip;
 
       item.addEventListener("click", function() { selectCase(c.id); });
       el.appendChild(item);
