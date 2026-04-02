@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>VirtualDentist.ai - Operational Metrics</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     html, body {
       background: #071323;
@@ -42,7 +45,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: radial-gradient(circle at top center, rgba(51, 108, 190, 0.16), transparent 28%), radial-gradient(circle at bottom left, rgba(0, 200, 232, 0.06), transparent 24%), linear-gradient(180deg, var(--navy-0) 0%, var(--navy-1) 100%);
       color: var(--text-primary); font-size: 14px; line-height: 1.5; min-height: 100vh; overscroll-behavior: none;
     }
@@ -52,7 +55,8 @@
     #auth-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; background: radial-gradient(ellipse at 50% 0%, #0f2a50 0%, #071323 72%); }
     .auth-card { width: 100%; max-width: 390px; background: linear-gradient(180deg, rgba(18, 39, 81, 0.95) 0%, rgba(11, 27, 58, 0.95) 100%); border: 1px solid var(--border); border-radius: 18px; padding: 38px 30px; box-shadow: 0 32px 80px rgba(0,0,0,0.52); backdrop-filter: blur(10px); }
     .auth-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
-    .auth-logo-text { font-size: 18px; font-weight: 700; background: linear-gradient(135deg, #1a7fc4, #00c8e8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .auth-logo-text { font-size: 18px; font-weight: 700; color: #f5f9ff; letter-spacing: -0.01em; }
+    .auth-logo-text span { color: #00c8e8; }
     .auth-subtitle { font-size: 11px; color: var(--text-muted); margin-bottom: 28px; letter-spacing: 0.1em; text-transform: uppercase; }
     .field-label { display: block; font-size: 11px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
     .field-input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 14px; padding: 12px 14px; outline: none; transition: border-color 0.2s, background 0.2s; margin-bottom: 16px; }
@@ -66,7 +70,8 @@
     #app { display: none; flex-direction: column; min-height: 100vh; }
     .header { background: rgba(15, 32, 68, 0.94); border-bottom: 1px solid var(--border); padding: 0 18px; min-height: 58px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 120; backdrop-filter: blur(10px); }
     .header-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
-    .header-logo { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 650; background: linear-gradient(135deg, #1a7fc4, #00c8e8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; white-space: nowrap; }
+    .header-logo { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 700; color: #f5f9ff; letter-spacing: -0.01em; white-space: nowrap; }
+    .header-logo span { color: #00c8e8; }
     .page-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #08111e; background: linear-gradient(135deg, #4c8fd2, #69cbe7); border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
     .header-right { display: flex; align-items: center; gap: 10px; }
     .header-user { font-size: 12px; color: var(--text-secondary); display: none; }
@@ -206,7 +211,7 @@
           <path d="M38 14 C28 14 18 22 18 36 C18 50 22 62 24 72 C26 82 28 88 34 94 C38 98 42 100 46 98 C50 96 54 92 60 92 C66 92 70 96 74 98 C78 100 82 98 86 94 C92 88 94 82 96 72 C98 62 102 50 102 36 C102 22 92 14 82 14 C76 14 70 18 60 18 C50 18 44 14 38 14 Z" stroke="url(#ag)" stroke-width="7" fill="none" stroke-linejoin="round"/>
           <polyline points="22,55 36,55 44,38 52,72 60,48 68,62 76,55 98,55" stroke="url(#ag)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <div class="auth-logo-text">VirtualDentist.ai</div>
+        <div class="auth-logo-text">Virtual<span>Dentist.ai</span></div>
       </div>
       <div class="auth-subtitle">Operational Metrics</div>
       <label class="field-label" for="auth-email">Email</label>
@@ -227,7 +232,7 @@
             <path d="M38 14 C28 14 18 22 18 36 C18 50 22 62 24 72 C26 82 28 88 34 94 C38 98 42 100 46 98 C50 96 54 92 60 92 C66 92 70 96 74 98 C78 100 82 98 86 94 C92 88 94 82 96 72 C98 62 102 50 102 36 C102 22 92 14 82 14 C76 14 70 18 60 18 C50 18 44 14 38 14 Z" stroke="url(#hg)" stroke-width="8" fill="none" stroke-linejoin="round"/>
             <polyline points="22,55 36,55 44,38 52,72 60,48 68,62 76,55 98,55" stroke="url(#hg)" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-          VirtualDentist.ai
+          Virtual<span>Dentist.ai</span>
         </div>
         <span class="page-badge">Metrics</span>
       </div>
