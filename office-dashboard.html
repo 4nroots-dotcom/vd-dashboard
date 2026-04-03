@@ -1216,7 +1216,12 @@
 
     var scroll = document.getElementById("note-scroll");
     scroll.innerHTML = "";
-    scroll.appendChild(buildNote(c));
+    var smsRows = [];
+    try {
+      var smsResult = await sb.from("sms_log").select("direction, sent_at, sender_name, message_body, status").eq("case_id", c.id).order("sent_at", { ascending: true }).limit(100);
+      if (smsResult.data) smsRows = smsResult.data;
+    } catch(e) { /* non-blocking */ }
+    scroll.appendChild(buildNote(c, smsRows));
     scroll.scrollTop = 0;
 
     // Revenue bar
@@ -1250,7 +1255,8 @@
   }
 
   // ---- NOTE BUILDER ----
-  function buildNote(c) {
+  function buildNote(c, smsRows) {
+    smsRows = smsRows || [];
     var so = c.structured_output || null;
 
     var wrap = document.createElement("div");
@@ -1330,21 +1336,32 @@
 
     card.appendChild(body);
 
-    // SMS continuation section (if present)
-    if (c.sms_transcript) {
+    // SMS conversation thread
+    if (c.sms_transcript || smsRows.length > 0) {
       var smsDiv = document.createElement("div");
       smsDiv.className = "note-section";
-      var smsInner = "<div class=\"note-section-label\" style=\"color:#c08020;\">&#9888; SMS Continuation</div>";
+      var smsInner = "<div class=\"note-section-label\" style=\"color:#c08020;\">&#9888; SMS Conversation</div>";
       if (c.sms_structured_output) {
         var sx = c.sms_structured_output;
         smsInner += "<div class=\"sms-extraction-box\"><div class=\"sms-extraction-label\">AI Extraction from SMS</div>";
         if (sx.chief_complaint) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Chief complaint</span><span class=\"sms-extraction-val\">" + esc(String(sx.chief_complaint)) + "</span></div>";
         if (sx.clinical_summary) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Clinical summary</span><span class=\"sms-extraction-val\">" + esc(String(sx.clinical_summary)) + "</span></div>";
         if (sx.pain_score != null) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Pain score</span><span class=\"sms-extraction-val\">" + esc(String(sx.pain_score)) + "/10</span></div>";
-        if (sx.triage_suggestion) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Suggested severity</span><span class=\"sms-extraction-val\">" + esc(String(sx.triage_suggestion)) + "</span></div>";
         smsInner += "</div>";
       }
-      smsInner += "<div class=\"note-section-body\" style=\"white-space:pre-wrap;font-size:12px;color:#5a7090;\">" + esc(c.sms_transcript) + "</div>";
+      if (smsRows.length > 0) {
+        smsRows.forEach(function(msg) {
+          var isOut = msg.direction === "outbound";
+          var label = isOut ? (msg.sender_name || "Martindale Dental") : "Patient";
+          var time = msg.sent_at ? new Date(msg.sent_at).toLocaleString("en-CA", { month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" }) : "";
+          smsInner += "<div style=\"padding:6px 0;border-bottom:1px solid #e8eff7;\">" +
+            "<div style=\"font-size:11px;color:#8a9cb8;display:flex;justify-content:space-between;margin-bottom:2px\"><span>" + esc(label) + "</span><span>" + esc(time) + "</span></div>" +
+            "<div style=\"font-size:13px;color:" + (isOut ? "#007a8e" : "#1a2b40") + "\">" + esc(msg.message_body) + "</div>" +
+            "</div>";
+        });
+      } else if (c.sms_transcript) {
+        smsInner += "<div class=\"note-section-body\" style=\"white-space:pre-wrap;font-size:12px;color:#5a7090;\">" + esc(c.sms_transcript) + "</div>";
+      }
       smsDiv.innerHTML = smsInner;
       wrap.appendChild(card);
       wrap.appendChild(smsDiv);
@@ -1560,8 +1577,9 @@
           sender_email: ""
         })
       });
-      var data = await resp.json();
-      if (data.ok) {
+      var data = {};
+      try { data = await resp.json(); } catch(e) { data = {}; }
+      if (resp.ok && data.ok) {
         statusEl.textContent = "\u2713 Message sent";
         statusEl.className = "sms-send-status ok";
         setTimeout(closeSMSModal, 1400);
