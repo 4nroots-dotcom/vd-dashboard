@@ -1031,7 +1031,7 @@
       statusEl.textContent = "";
       statusEl.className = "sms-send-status";
       updateSMSCharCounter();
-      if (sendBtn) sendBtn.disabled = true;
+      if (sendBtn) { sendBtn.disabled = true; sendBtn.textContent = "Send message"; }
       overlay.classList.add("open");
       textarea.focus();
     }
