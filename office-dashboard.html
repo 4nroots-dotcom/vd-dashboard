@@ -431,6 +431,39 @@
     .revenue-save-status.ok { color: #00c87a; }
     .revenue-save-status.err { color: #e84545; }
 
+    /* ── SMS ──────────────────────────────────────────────────────── */
+    .sms-banner { display: flex; gap: 10px; background: rgba(240,165,0,0.09); border: 1px solid rgba(240,165,0,0.28); border-radius: 8px; padding: 10px 14px; margin: 8px 20px 0; font-size: 13px; color: #c08020; line-height: 1.5; flex-shrink: 0; }
+    .sms-banner strong { color: #c08020; }
+    .sms-section { margin: 12px 0 0; }
+    .sms-extraction-box { background: rgba(0,150,180,0.06); border: 1px solid rgba(0,150,180,0.18); border-radius: 8px; padding: 10px 14px; margin-bottom: 10px; font-size: 12px; }
+    .sms-extraction-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #5a8090; margin-bottom: 6px; }
+    .sms-extraction-row { display: flex; gap: 8px; padding: 3px 0; }
+    .sms-extraction-key { color: #7a9090; min-width: 110px; flex-shrink: 0; }
+    .sms-extraction-val { color: var(--text-primary, #1a2b40); font-size: 12px; }
+    .sms-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 900; display: none; align-items: center; justify-content: center; padding: 20px; }
+    .sms-modal-overlay.open { display: flex; }
+    .sms-modal { background: #fff; border-radius: 14px; padding: 22px; width: 100%; max-width: 460px; box-shadow: 0 24px 60px rgba(0,0,0,0.22); display: flex; flex-direction: column; gap: 14px; }
+    .sms-modal-header { display: flex; align-items: flex-start; justify-content: space-between; }
+    .sms-modal-title { font-size: 15px; font-weight: 700; color: #0f2044; }
+    .sms-modal-recipient { font-size: 12px; color: #5a7090; margin-top: 2px; }
+    .sms-modal-close { background: none; border: none; color: #aaa; font-size: 22px; cursor: pointer; padding: 0; line-height: 1; }
+    .sms-template-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8a9cb8; }
+    .sms-template-btn { background: #f4f7fb; border: 1px solid #d0dae8; border-radius: 7px; color: #3a5070; font-size: 12px; padding: 8px 12px; text-align: left; cursor: pointer; width: 100%; line-height: 1.45; transition: border-color 0.15s, background 0.15s; }
+    .sms-template-btn:hover { border-color: #00a8c4; background: #e6f8fc; }
+    .sms-templates { display: flex; flex-direction: column; gap: 6px; }
+    .sms-textarea { width: 100%; background: #f8fafd; border: 1px solid #d0dae8; border-radius: 8px; color: #1a2b40; font-size: 13px; padding: 10px 12px; resize: vertical; min-height: 80px; outline: none; font-family: inherit; transition: border-color 0.2s; }
+    .sms-textarea:focus { border-color: #00a8c4; }
+    .sms-char-row { display: flex; justify-content: space-between; font-size: 11px; color: #8a9cb8; }
+    .sms-char-counter.warn { color: #c08020; }
+    .sms-char-counter.over { color: #c0392b; }
+    .sms-send-btn { width: 100%; background: #0f2044; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; padding: 12px; cursor: pointer; transition: opacity 0.2s; }
+    .sms-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .sms-send-status { font-size: 12px; text-align: center; min-height: 16px; }
+    .sms-send-status.ok { color: #00c87a; }
+    .sms-send-status.err { color: #e84545; }
+    .btn-msg-patient { background: rgba(0,200,232,0.08); border: 1px solid rgba(0,200,232,0.22); color: #007a8e; border-radius: 6px; font-size: 12px; font-weight: 600; padding: 7px 12px; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+    .btn-msg-patient:hover { background: rgba(0,200,232,0.16); }
+
     .note-scroll {
       flex: 1;
       overflow-y: auto;
@@ -772,6 +805,7 @@
         </div>
         <div class="note-actions">
           <button class="action-btn btn-complete" id="complete-btn" type="button">Mark Visit Complete</button>
+          <button class="btn-msg-patient" id="msg-patient-btn" type="button">&#128172; Message Patient</button>
           <button class="action-btn btn-pdf" id="save-pdf-btn" type="button">Save as PDF</button>
           <button class="action-btn btn-print" id="print-btn" type="button">Print Note</button>
         </div>
@@ -793,6 +827,35 @@
       </div>
 
     </div>
+  </div>
+</div>
+
+<!-- SMS MODAL -->
+<div class="sms-modal-overlay" id="sms-modal-overlay">
+  <div class="sms-modal" role="dialog" aria-modal="true">
+    <div class="sms-modal-header">
+      <div>
+        <div class="sms-modal-title">&#128172; Message Patient</div>
+        <div class="sms-modal-recipient" id="sms-modal-recipient"></div>
+      </div>
+      <button class="sms-modal-close" id="sms-modal-close" type="button" aria-label="Close">&times;</button>
+    </div>
+    <div class="sms-templates">
+      <div class="sms-template-label">Quick templates</div>
+      <button class="sms-template-btn" data-template="reassurance" type="button">After-hours reassurance — case reviewed, follow-up coming</button>
+      <button class="sms-template-btn" data-template="appointment" type="button">Book an appointment at your earliest convenience</button>
+      <button class="sms-template-btn" data-template="prescription" type="button">Prescription has been sent to your pharmacy</button>
+      <button class="sms-template-btn" data-template="emergency" type="button">Please go to the emergency room right away</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;">
+      <textarea class="sms-textarea" id="sms-textarea" placeholder="Type a message or select a template above..." maxlength="1600"></textarea>
+      <div class="sms-char-row">
+        <span>Sending from 1-833-959-3932</span>
+        <span class="sms-char-counter" id="sms-char-counter">0 / 160</span>
+      </div>
+    </div>
+    <button class="sms-send-btn" id="sms-send-btn" type="button" disabled>Send message</button>
+    <div class="sms-send-status" id="sms-send-status"></div>
   </div>
 </div>
 
@@ -1022,7 +1085,7 @@
 
     var result = await sb
       .from("triage_cases")
-      .select("id, patient_name, patient_phone, patient_dob, patient_city, patient_email, chief_complaint, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at, revenue_generated")
+      .select("id, patient_name, patient_phone, patient_dob, patient_city, patient_email, chief_complaint, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at, revenue_generated, sms_transcript, sms_structured_output, has_sms_continuation, sms_received_at")
       .order("created_at", { ascending: currentSortAsc });
 
     if (result.error) {
@@ -1167,6 +1230,21 @@
     revStatus.className = "revenue-save-status";
     revSaveBtn.onclick = function() { saveRevenue(c.id, revenueInput.value.trim()); };
 
+    // SMS banner
+    var existingBanner = document.getElementById("sms-case-banner");
+    if (existingBanner) existingBanner.remove();
+    if (c.has_sms_continuation) {
+      var smsBanner = document.createElement("div");
+      smsBanner.id = "sms-case-banner";
+      smsBanner.className = "sms-banner";
+      smsBanner.innerHTML = "<strong>&#9888; SMS continuation \u2014 review required.</strong> This patient continued via text after the call. See the SMS section in the note below.";
+      revenueBar.parentNode.insertBefore(smsBanner, revenueBar.nextSibling);
+    }
+
+    // Message Patient button
+    var msgBtn = document.getElementById("msg-patient-btn");
+    if (msgBtn) { msgBtn.onclick = function() { openSMSModal(c); }; }
+
     // Mobile: switch to note view
     document.querySelector(".body").classList.add("case-open");
   }
@@ -1251,6 +1329,28 @@
     ));
 
     card.appendChild(body);
+
+    // SMS continuation section (if present)
+    if (c.sms_transcript) {
+      var smsDiv = document.createElement("div");
+      smsDiv.className = "note-section";
+      var smsInner = "<div class=\"note-section-label\" style=\"color:#c08020;\">&#9888; SMS Continuation</div>";
+      if (c.sms_structured_output) {
+        var sx = c.sms_structured_output;
+        smsInner += "<div class=\"sms-extraction-box\"><div class=\"sms-extraction-label\">AI Extraction from SMS</div>";
+        if (sx.chief_complaint) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Chief complaint</span><span class=\"sms-extraction-val\">" + esc(String(sx.chief_complaint)) + "</span></div>";
+        if (sx.clinical_summary) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Clinical summary</span><span class=\"sms-extraction-val\">" + esc(String(sx.clinical_summary)) + "</span></div>";
+        if (sx.pain_score != null) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Pain score</span><span class=\"sms-extraction-val\">" + esc(String(sx.pain_score)) + "/10</span></div>";
+        if (sx.triage_suggestion) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Suggested severity</span><span class=\"sms-extraction-val\">" + esc(String(sx.triage_suggestion)) + "</span></div>";
+        smsInner += "</div>";
+      }
+      smsInner += "<div class=\"note-section-body\" style=\"white-space:pre-wrap;font-size:12px;color:#5a7090;\">" + esc(c.sms_transcript) + "</div>";
+      smsDiv.innerHTML = smsInner;
+      wrap.appendChild(card);
+      wrap.appendChild(smsDiv);
+      return wrap;
+    }
+
     wrap.appendChild(card);
     return wrap;
   }
@@ -1350,6 +1450,8 @@
     document.querySelectorAll(".case-item").forEach(function(el) { el.classList.remove("active"); });
     document.getElementById("note-toolbar").style.display = "none";
     document.getElementById("revenue-bar").style.display = "none";
+    var b = document.getElementById("sms-case-banner");
+    if (b) b.remove();
     document.getElementById("note-scroll").innerHTML =
       "<div class=\"note-placeholder\"><div class=\"placeholder-icon\">&#x1F4CB;</div><div>Select a patient from the list<br>to view their triage note.</div></div>";
     // Mobile: return to list view
@@ -1391,6 +1493,125 @@
       return "DOB: " + d.toLocaleDateString("en-CA", { year: "numeric", month: "short", day: "numeric" });
     } catch(e) { return "DOB: " + dob; }
   }
+
+  // ── SMS MODAL ──────────────────────────────────────────────────
+  var SMS_TEMPLATES = {
+    reassurance: "Hi [name], this is Martindale Dental. We've reviewed your triage and a dentist will follow up with you. If your condition worsens, please go to your nearest emergency room or call 911.",
+    appointment:  "Hi [name], this is Martindale Dental. Based on your triage, we recommend booking an appointment as soon as possible. Please call us at (905) 393-8501.",
+    prescription: "Hi [name], this is Martindale Dental. A prescription has been sent to your pharmacy. Please also follow up with us for a full examination.",
+    emergency:    "Hi [name], this is Martindale Dental. Based on your symptoms, please go to your nearest emergency room right away. Don't wait on this."
+  };
+
+  var smsModalCase = null;
+
+  function openSMSModal(c) {
+    smsModalCase = c;
+    var overlay   = document.getElementById("sms-modal-overlay");
+    var recipient = document.getElementById("sms-modal-recipient");
+    var textarea  = document.getElementById("sms-textarea");
+    var statusEl  = document.getElementById("sms-send-status");
+    var sendBtn   = document.getElementById("sms-send-btn");
+    recipient.textContent = (c.patient_name || "Patient") + " \u00B7 " + formatPhone(c.patient_phone);
+    textarea.value = "";
+    statusEl.textContent = "";
+    statusEl.className = "sms-send-status";
+    if (sendBtn) sendBtn.disabled = true;
+    updateSMSCharCounter();
+    overlay.classList.add("open");
+    textarea.focus();
+  }
+
+  function closeSMSModal() {
+    document.getElementById("sms-modal-overlay").classList.remove("open");
+    smsModalCase = null;
+  }
+
+  function updateSMSCharCounter() {
+    var ta      = document.getElementById("sms-textarea");
+    var counter = document.getElementById("sms-char-counter");
+    var sendBtn = document.getElementById("sms-send-btn");
+    if (!ta || !counter) return;
+    var len  = ta.value.length;
+    var segs = Math.ceil(len / 160) || 1;
+    counter.textContent = segs > 1 ? (len + " / " + (segs * 160) + " \u00B7 " + segs + " segments") : (len + " / 160");
+    counter.className = "sms-char-counter" + (len > 1600 ? " over" : len > 155 ? " warn" : "");
+    if (sendBtn) sendBtn.disabled = (len === 0 || len > 1600);
+  }
+
+  async function sendSMSFromDashboard() {
+    if (!smsModalCase) return;
+    var ta       = document.getElementById("sms-textarea");
+    var statusEl = document.getElementById("sms-send-status");
+    var sendBtn  = document.getElementById("sms-send-btn");
+    var msg = ta ? ta.value.trim() : "";
+    if (!msg) return;
+    sendBtn.disabled = true;
+    sendBtn.textContent = "Sending\u2026";
+    statusEl.textContent = "";
+    try {
+      var resp = await fetch(SUPABASE_URL + "/functions/v1/send-sms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-vd-secret": INTAKE_SECRET },
+        body: JSON.stringify({
+          case_id:      smsModalCase.id,
+          to_phone:     smsModalCase.patient_phone,
+          message_body: msg,
+          sender_name:  "Office Staff",
+          sender_email: ""
+        })
+      });
+      var data = await resp.json();
+      if (data.ok) {
+        statusEl.textContent = "\u2713 Message sent";
+        statusEl.className = "sms-send-status ok";
+        setTimeout(closeSMSModal, 1400);
+      } else {
+        statusEl.textContent = data.error || "Send failed \u2014 check Twilio status";
+        statusEl.className = "sms-send-status err";
+        sendBtn.disabled = false;
+        sendBtn.textContent = "Send message";
+      }
+    } catch(e) {
+      statusEl.textContent = "Unexpected error \u2014 check connection";
+      statusEl.className = "sms-send-status err";
+      sendBtn.disabled = false;
+      sendBtn.textContent = "Send message";
+    }
+  }
+
+  (function() {
+    var overlay = document.getElementById("sms-modal-overlay");
+    var closeBtn = document.getElementById("sms-modal-close");
+    var ta       = document.getElementById("sms-textarea");
+    var sendBtn  = document.getElementById("sms-send-btn");
+    if (closeBtn) closeBtn.addEventListener("click", closeSMSModal);
+    if (overlay)  overlay.addEventListener("click", function(e) { if (e.target === overlay) closeSMSModal(); });
+    if (ta) ta.addEventListener("input", function() {
+      updateSMSCharCounter();
+      var sb = document.getElementById("sms-send-btn");
+      if (sb) sb.disabled = (ta.value.trim().length === 0 || ta.value.length > 1600);
+    });
+    if (sendBtn) sendBtn.addEventListener("click", sendSMSFromDashboard);
+    document.querySelectorAll(".sms-template-btn").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        var key  = btn.getAttribute("data-template");
+        var tmpl = SMS_TEMPLATES[key] || "";
+        if (smsModalCase && tmpl) {
+          var first = (smsModalCase.patient_name || "").split(" ")[0] || "there";
+          tmpl = tmpl.replace(/\[name\]/g, first);
+        }
+        var taEl = document.getElementById("sms-textarea");
+        if (taEl) { taEl.value = tmpl; updateSMSCharCounter(); taEl.focus(); }
+      });
+    });
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape") {
+        var ovl = document.getElementById("sms-modal-overlay");
+        if (ovl && ovl.classList.contains("open")) closeSMSModal();
+      }
+    });
+  }());
+  // ── END SMS MODAL ──────────────────────────────────────────────
 </script>
 
 </body>
