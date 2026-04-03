@@ -708,9 +708,10 @@
 
     function renderCaseCard(c) { var so = c.structured_output || {}; var name = c.patient_name || "Unknown Patient"; var phone = c.patient_phone ? formatPhone(c.patient_phone) : "-"; var phoneRaw = c.patient_phone || ""; var complaint = so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-"; var painValue = so.pain_score != null ? so.pain_score : c.pain_score; var pain = (painValue !== null && painValue !== undefined && painValue !== "") ? ("Pain " + painValue + "/10") : ""; var time = formatTime(c.created_at); var reviewStatus = c.review_status || "new"; var reviewed = reviewStatus === "reviewed"; var draft = reviewStatus === "draft"; var isActive = c.id === selectedCaseId; var severity = c.severity || "unknown"; var phoneEl = phoneRaw ? '<a class="tel-link" href="tel:' + escAttr(phoneRaw) + '">' + escHtml(phone) + '</a>' : '<span>' + escHtml(phone) + '</span>'; return '<div class="case-card ' + escAttr(severity) + (reviewed ? " reviewed" : "") + (draft ? " draft" : "") + (isActive ? " active" : "") + '" id="card-' + escAttr(c.id) + '" data-case-id="' + escAttr(c.id) + '"><div class="case-row1"><span class="severity-badge badge-' + escAttr(severity) + '">' + escHtml(severity) + '</span><span class="case-name">' + escHtml(name) + (reviewed ? ' <span class="status-badge reviewed">Reviewed</span>' : "") + (draft ? ' <span class="status-badge draft">Draft</span>' : "") + '</span><span class="case-time">' + escHtml(time) + '</span></div><div class="case-row2">' + escHtml(complaint) + '</div><div class="case-row3"><span class="case-meta-item">' + phoneEl + '</span>' + (pain ? '<span class="case-meta-item">' + escHtml(pain) + '</span>' : "") + (reviewed ? '<span class="reviewed-dot" title="Reviewed"></span>' : "") + (draft ? '<span class="draft-dot" title="Draft"></span>' : "") + '</div></div>'; }
 
-    async function openCase(id) { selectedCaseId = id; document.querySelectorAll(".case-card").forEach(function(el) { el.classList.remove("active"); }); var cardEl = document.getElementById("card-" + CSS.escape(id)); if (cardEl) cardEl.classList.add("active"); document.getElementById("detail-panel").innerHTML = '<div class="loading-state"><span class="loading-dots">Loading</span></div>'; if (isMobile) { document.getElementById("detail-column").style.display = "flex"; } syncModes(); updateControlsDisabledState(); var c = allCases.find(function(x) { return x.id === id; }); if (!c) { var result = await sb.from("triage_cases").select("*").eq("id", id).single(); if (result.error) { console.error("Open case error:", result.error); showToast("Failed to load case"); return; } c = result.data; } if (!c) return; currentCase = c; var auditRows = []; try { var auditResult = await sb.from("audit_log").select("user_name, action, created_at").eq("case_id", id).order("created_at", { ascending: false }).limit(50); if (auditResult.data) auditRows = auditResult.data; } catch (e) { console.error("Audit log fetch error:", e); } renderDetail(c, auditRows); logCaseView(c.id); }
+    async function openCase(id) { selectedCaseId = id; document.querySelectorAll(".case-card").forEach(function(el) { el.classList.remove("active"); }); var cardEl = document.getElementById("card-" + CSS.escape(id)); if (cardEl) cardEl.classList.add("active"); document.getElementById("detail-panel").innerHTML = '<div class="loading-state"><span class="loading-dots">Loading</span></div>'; if (isMobile) { document.getElementById("detail-column").style.display = "flex"; } syncModes(); updateControlsDisabledState(); var c = allCases.find(function(x) { return x.id === id; }); if (!c) { var result = await sb.from("triage_cases").select("*").eq("id", id).single(); if (result.error) { console.error("Open case error:", result.error); showToast("Failed to load case"); return; } c = result.data; } if (!c) return; currentCase = c; var auditRows = []; try { var auditResult = await sb.from("audit_log").select("user_name, action, created_at").eq("case_id", id).order("created_at", { ascending: false }).limit(50); if (auditResult.data) auditRows = auditResult.data; } catch (e) { console.error("Audit log fetch error:", e); } var smsRows = []; try { var smsResult = await sb.from("sms_log").select("direction, sent_at, sender_name, message_body, status").eq("case_id", id).order("sent_at", { ascending: true }).limit(100); if (smsResult.data) smsRows = smsResult.data; } catch (e) { console.error("SMS log fetch error:", e); } renderDetail(c, auditRows, smsRows); logCaseView(c.id); }
 
-    function renderDetail(c, auditRows) {
+    function renderDetail(c, auditRows, smsRows) {
+      smsRows = smsRows || [];
       auditRows = auditRows || [];
       var panel = document.getElementById("detail-panel");
       var so = c.structured_output || {};
@@ -764,11 +765,14 @@
       var transcriptHtml = "";
       if (c.transcript) { transcriptHtml = '<div class="detail-section"><div class="section-header"><span class="section-title">Call Transcript</span><button class="collapsible-toggle" id="toggle-transcript" type="button">Show \u25BC</button></div><div class="collapsible-body" id="transcript-body"><div class="transcript-text" style="padding-top:16px">' + escHtml(c.transcript) + '</div></div></div>'; }
 
-      // SMS continuation section
+      // SMS thread section — shows both Sam triage continuation AND dentist/patient message thread
       var smsBannerHtml = "";
       var smsSectionHtml = "";
-      if (c.has_sms_continuation) {
-        smsBannerHtml = '<div class="sms-banner"><span class="sms-banner-icon">\u26A0\uFE0F</span><span><strong>SMS continuation — review required.</strong> This patient provided additional information via text after the call ended. Review the SMS section below before finalising this case.</span></div>';
+      if (c.has_sms_continuation || smsRows.length > 0) {
+        if (c.has_sms_continuation) {
+          smsBannerHtml = '<div class="sms-banner"><span class="sms-banner-icon">\u26A0\uFE0F</span><span><strong>SMS continuation — review required.</strong> This patient provided additional information via text after the call ended. Review the SMS section below before finalising this case.</span></div>';
+        }
+        // Build extraction summary if available
         var smsExtractionHtml = "";
         if (c.sms_structured_output) {
           var sx = c.sms_structured_output;
@@ -780,7 +784,28 @@
             (sx.extraction_note ? '<div class="sms-extraction-row"><span class="sms-extraction-key">Note</span><span class="sms-extraction-val">' + escHtml(String(sx.extraction_note)) + '</span></div>' : '') +
             '</div>';
         }
-        smsSectionHtml = '<div class="detail-section"><div class="section-header"><span class="section-title">SMS Continuation</span><span style="font-size:11px;color:var(--text-muted)">' + escHtml(formatDatetime(c.sms_received_at)) + '</span></div><div class="section-body">' + smsExtractionHtml + '<div style="margin-top:10px"><div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Raw SMS transcript</div><div class="transcript-text">' + escHtml(c.sms_transcript || "") + '</div></div></div></div>';
+        // Build message thread from sms_log
+        var threadHtml = "";
+        if (smsRows.length > 0) {
+          threadHtml = '<div style="display:flex;flex-direction:column;gap:0">';
+          smsRows.forEach(function(msg) {
+            var isOut = msg.direction === "outbound";
+            var label = isOut ? (msg.sender_name || "Martindale Dental") : "Patient";
+            var time  = formatDatetime(msg.sent_at);
+            threadHtml += '<div class="sms-message ' + (isOut ? "outbound" : "inbound") + '">' +
+              '<div class="sms-message-meta"><span>' + escHtml(label) + '</span><span>' + escHtml(time) + '</span></div>' +
+              '<div class="sms-message-body">' + escHtml(msg.message_body) + '</div>' +
+              '</div>';
+          });
+          threadHtml += '</div>';
+        }
+        var refreshBtn = '<button onclick="refreshSMSThread(\'' + escAttr(c.id) + '\')" style="background:none;border:1px solid var(--border);border-radius:6px;color:var(--text-muted);font-size:11px;padding:4px 10px;cursor:pointer;float:right;margin-top:-2px;">&#8635; Refresh</button>';
+        smsSectionHtml = '<div class="detail-section" id="sms-thread-section">' +
+          '<div class="section-header"><span class="section-title">SMS Conversation</span>' + refreshBtn + '</div>' +
+          '<div class="section-body">' +
+          smsExtractionHtml +
+          (threadHtml || '<div style="font-size:13px;color:var(--text-muted);padding:8px 0">No messages yet.</div>') +
+          '</div></div>';
       }
 
       /* Revenue display for reviewed cases */
@@ -949,6 +974,36 @@
     function escHtml(value) { if (value === null || value === undefined) return ""; return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
     function escAttr(value) { return escHtml(value); }
 
+    async function refreshSMSThread(caseId) {
+      var section = document.getElementById("sms-thread-section");
+      if (!section) return;
+      var result = await sb.from("sms_log").select("direction, sent_at, sender_name, message_body, status").eq("case_id", caseId).order("sent_at", { ascending: true }).limit(100);
+      if (result.error || !result.data) return;
+      var smsRows = result.data;
+      var threadHtml = "";
+      if (smsRows.length > 0) {
+        threadHtml = '<div style="display:flex;flex-direction:column;gap:0">';
+        smsRows.forEach(function(msg) {
+          var isOut = msg.direction === "outbound";
+          var label = isOut ? (msg.sender_name || "Martindale Dental") : "Patient";
+          threadHtml += '<div class="sms-message ' + (isOut ? "outbound" : "inbound") + '">' +
+            '<div class="sms-message-meta"><span>' + escHtml(label) + '</span><span>' + escHtml(formatDatetime(msg.sent_at)) + '</span></div>' +
+            '<div class="sms-message-body">' + escHtml(msg.message_body) + '</div>' +
+            '</div>';
+        });
+        threadHtml += '</div>';
+      } else {
+        threadHtml = '<div style="font-size:13px;color:var(--text-muted);padding:8px 0">No messages yet.</div>';
+      }
+      var body = section.querySelector(".section-body");
+      if (body) {
+        // Preserve extraction box if present, replace thread only
+        var extractionBox = body.querySelector(".sms-extraction-box");
+        body.innerHTML = (extractionBox ? extractionBox.outerHTML : "") + threadHtml;
+      }
+      showToast("SMS thread refreshed");
+    }
+
     // ── SMS MODAL ──────────────────────────────────────────────────
     var SMS_TEMPLATES = {
       reassurance: "Hi [name], this is Martindale Dental. We've reviewed your triage and a dentist will follow up with you. If your condition worsens, please go to your nearest emergency room or call 911.",
@@ -1017,8 +1072,9 @@
             sender_email: currentUser ? (currentUser.email || "") : ""
           })
         });
-        var data = await resp.json();
-        if (data.ok) {
+        var data = {};
+        try { data = await resp.json(); } catch(e) { data = {}; }
+        if (resp.ok && data.ok) {
           statusEl.textContent = "\u2713 Message sent";
           statusEl.className = "sms-send-status ok";
           setTimeout(closeSMSModal, 1400);
