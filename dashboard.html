@@ -403,6 +403,50 @@
     .revenue-input-wrap { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
     .revenue-prefix { font-size: 13px; color: var(--text-muted); font-weight: 600; }
 
+    /* ── SMS STYLES ─────────────────────────────────────────────── */
+    .sms-banner { display: flex; align-items: flex-start; gap: 10px; background: rgba(240,165,0,0.10); border: 1px solid rgba(240,165,0,0.28); border-radius: 8px; padding: 10px 14px; margin: 0 0 10px; font-size: 13px; color: #f0c050; line-height: 1.5; }
+    .sms-banner-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .sms-section { }
+    .sms-message { padding: 10px 0; border-bottom: 1px solid var(--border-soft); display: flex; flex-direction: column; gap: 3px; }
+    .sms-message:last-child { border-bottom: none; }
+    .sms-message-meta { font-size: 11px; color: var(--text-muted); font-family: ui-monospace, monospace; display: flex; justify-content: space-between; }
+    .sms-message-body { font-size: 13px; color: var(--text-primary); line-height: 1.55; white-space: pre-wrap; word-break: break-word; }
+    .sms-message.outbound .sms-message-body { color: var(--cyan-soft); }
+    .sms-extraction-box { background: rgba(0,200,232,0.06); border: 1px solid rgba(0,200,232,0.15); border-radius: 8px; padding: 12px 14px; margin-top: 10px; font-size: 13px; }
+    .sms-extraction-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cyan-dim); margin-bottom: 8px; }
+    .sms-extraction-row { display: flex; gap: 8px; padding: 4px 0; }
+    .sms-extraction-key { color: var(--text-muted); font-size: 12px; min-width: 110px; flex-shrink: 0; }
+    .sms-extraction-val { color: var(--text-primary); font-size: 12px; }
+
+    /* ── SMS MODAL ──────────────────────────────────────────────── */
+    .sms-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.72); z-index: 900; display: none; align-items: center; justify-content: center; padding: 20px; }
+    .sms-modal-overlay.open { display: flex; }
+    .sms-modal { background: var(--navy-2); border: 1px solid var(--border); border-radius: 16px; padding: 24px; width: 100%; max-width: 480px; box-shadow: 0 32px 80px rgba(0,0,0,0.6); display: flex; flex-direction: column; gap: 14px; }
+    .sms-modal-header { display: flex; align-items: center; justify-content: space-between; }
+    .sms-modal-title { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+    .sms-modal-recipient { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .sms-modal-close { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 0; line-height: 1; }
+    .sms-modal-close:hover { color: var(--text-primary); }
+    .sms-templates { display: flex; flex-direction: column; gap: 6px; }
+    .sms-template-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+    .sms-template-btn { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 7px; color: var(--text-secondary); font-size: 12px; padding: 8px 12px; text-align: left; cursor: pointer; transition: border-color 0.15s, color 0.15s; line-height: 1.45; }
+    .sms-template-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+    .sms-textarea-wrap { display: flex; flex-direction: column; gap: 6px; }
+    .sms-textarea { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 13px; padding: 10px 12px; resize: vertical; min-height: 90px; outline: none; font-family: inherit; transition: border-color 0.2s; }
+    .sms-textarea:focus { border-color: var(--border-active); }
+    .sms-textarea::placeholder { color: var(--text-muted); }
+    .sms-char-row { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted); }
+    .sms-char-counter { font-family: ui-monospace, monospace; }
+    .sms-char-counter.warn { color: #f0a500; }
+    .sms-char-counter.over { color: var(--urgent); }
+    .sms-send-btn { width: 100%; background: linear-gradient(135deg, #1a7fc4, #0097b2); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; padding: 13px; cursor: pointer; transition: opacity 0.2s; }
+    .sms-send-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .sms-send-status { font-size: 12px; text-align: center; min-height: 16px; }
+    .sms-send-status.ok { color: #00c87a; }
+    .sms-send-status.err { color: var(--urgent); }
+    .btn-message-patient { background: rgba(0,200,232,0.08); border: 1px solid rgba(0,200,232,0.22); color: var(--cyan); border-radius: 8px; font-size: 13px; font-weight: 600; padding: 10px 14px; cursor: pointer; transition: background 0.15s, border-color 0.15s; white-space: nowrap; }
+    .btn-message-patient:hover { background: rgba(0,200,232,0.14); border-color: rgba(0,200,232,0.38); }
+
     .action-band { display: grid; gap: 10px; padding: 0 16px 16px; }
     .action-row { display: flex; flex-direction: column; gap: 10px; }
 
@@ -573,11 +617,41 @@
     <a class="metrics-link" href="metrics.html">View Operational Metrics &rarr;</a>
   </div>
 
+  <!-- SMS MODAL -->
+  <div class="sms-modal-overlay" id="sms-modal-overlay">
+    <div class="sms-modal" role="dialog" aria-modal="true" aria-labelledby="sms-modal-title">
+      <div class="sms-modal-header">
+        <div>
+          <div class="sms-modal-title" id="sms-modal-title">&#128172; Message Patient</div>
+          <div class="sms-modal-recipient" id="sms-modal-recipient"></div>
+        </div>
+        <button class="sms-modal-close" id="sms-modal-close" type="button" aria-label="Close">&times;</button>
+      </div>
+      <div class="sms-templates">
+        <div class="sms-template-label">Quick templates</div>
+        <button class="sms-template-btn" data-template="reassurance" type="button">After-hours reassurance — case reviewed, follow-up coming</button>
+        <button class="sms-template-btn" data-template="appointment" type="button">Book an appointment at your earliest convenience</button>
+        <button class="sms-template-btn" data-template="prescription" type="button">Prescription has been sent to your pharmacy</button>
+        <button class="sms-template-btn" data-template="emergency" type="button">Please go to the emergency room right away</button>
+      </div>
+      <div class="sms-textarea-wrap">
+        <textarea class="sms-textarea" id="sms-textarea" placeholder="Type a message or select a template above..." maxlength="1600"></textarea>
+        <div class="sms-char-row">
+          <span style="color:var(--text-muted);font-size:11px;">Sending from 1-833-959-3932</span>
+          <span class="sms-char-counter" id="sms-char-counter">0 / 160</span>
+        </div>
+      </div>
+      <button class="sms-send-btn" id="sms-send-btn" type="button" disabled>Send message</button>
+      <div class="sms-send-status" id="sms-send-status"></div>
+    </div>
+  </div>
+
   <div id="toast"></div>
 
   <script>
     var SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
     var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+    var INTAKE_SECRET = "af0ca85c19cd7dbd62ba2d03bf7e0cda6dc04f84048d3b8f";
     var REVIEWER_NAME_MAP = { "4nroots@gmail.com": "Dr. Balaji Swaminath", "hamitranu@gmail.com": "Dr. Hamit Ranu" };
 
     if (!window.supabase || !window.supabase.createClient) { var errEl = document.getElementById("auth-error"); if (errEl) { errEl.style.display = "block"; errEl.textContent = "Supabase library failed to load. Check network / CDN blocking."; } throw new Error("Supabase library missing"); }
@@ -690,20 +764,41 @@
       var transcriptHtml = "";
       if (c.transcript) { transcriptHtml = '<div class="detail-section"><div class="section-header"><span class="section-title">Call Transcript</span><button class="collapsible-toggle" id="toggle-transcript" type="button">Show \u25BC</button></div><div class="collapsible-body" id="transcript-body"><div class="transcript-text" style="padding-top:16px">' + escHtml(c.transcript) + '</div></div></div>'; }
 
+      // SMS continuation section
+      var smsBannerHtml = "";
+      var smsSectionHtml = "";
+      if (c.has_sms_continuation) {
+        smsBannerHtml = '<div class="sms-banner"><span class="sms-banner-icon">\u26A0\uFE0F</span><span><strong>SMS continuation — review required.</strong> This patient provided additional information via text after the call ended. Review the SMS section below before finalising this case.</span></div>';
+        var smsExtractionHtml = "";
+        if (c.sms_structured_output) {
+          var sx = c.sms_structured_output;
+          smsExtractionHtml = '<div class="sms-extraction-box"><div class="sms-extraction-label">AI Extraction from SMS</div>' +
+            (sx.chief_complaint ? '<div class="sms-extraction-row"><span class="sms-extraction-key">Chief complaint</span><span class="sms-extraction-val">' + escHtml(String(sx.chief_complaint)) + '</span></div>' : '') +
+            (sx.clinical_summary ? '<div class="sms-extraction-row"><span class="sms-extraction-key">Clinical summary</span><span class="sms-extraction-val">' + escHtml(String(sx.clinical_summary)) + '</span></div>' : '') +
+            (sx.pain_score != null ? '<div class="sms-extraction-row"><span class="sms-extraction-key">Pain score</span><span class="sms-extraction-val">' + escHtml(String(sx.pain_score)) + '/10</span></div>' : '') +
+            (sx.triage_suggestion ? '<div class="sms-extraction-row"><span class="sms-extraction-key">Suggested severity</span><span class="sms-extraction-val">' + escHtml(String(sx.triage_suggestion)) + '</span></div>' : '') +
+            (sx.extraction_note ? '<div class="sms-extraction-row"><span class="sms-extraction-key">Note</span><span class="sms-extraction-val">' + escHtml(String(sx.extraction_note)) + '</span></div>' : '') +
+            '</div>';
+        }
+        smsSectionHtml = '<div class="detail-section"><div class="section-header"><span class="section-title">SMS Continuation</span><span style="font-size:11px;color:var(--text-muted)">' + escHtml(formatDatetime(c.sms_received_at)) + '</span></div><div class="section-body">' + smsExtractionHtml + '<div style="margin-top:10px"><div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Raw SMS transcript</div><div class="transcript-text">' + escHtml(c.sms_transcript || "") + '</div></div></div></div>';
+      }
+
       /* Revenue display for reviewed cases */
       var revenueDisplay = (c.revenue_generated !== null && c.revenue_generated !== undefined) ? ("$" + Number(c.revenue_generated).toFixed(2)) : "-";
       var followUpDisplay = c.subsequent_appointment_booked === true ? "Yes" : c.subsequent_appointment_booked === false ? "No" : "-";
 
       var actionRowHtml;
       if (isReviewed) {
-        actionRowHtml = '<div class="review-lock-message">\u2713 This case has been finalized as reviewed</div><button class="btn-back-desktop" id="desktop-back-btn" type="button">Back to main screen</button><a class="btn-action btn-export-record" id="export-case-btn" target="_blank" rel="noopener noreferrer">Export Clinical Record</a>';
+        actionRowHtml = '<div class="review-lock-message">\u2713 This case has been finalized as reviewed</div><button class="btn-back-desktop" id="desktop-back-btn" type="button">Back to main screen</button><button class="btn-message-patient" id="msg-patient-btn" type="button">&#128172; Message Patient</button><a class="btn-action btn-export-record" id="export-case-btn" target="_blank" rel="noopener noreferrer">Export Clinical Record</a>';
       } else {
-        actionRowHtml = '<button class="btn-mark-reviewed" id="mark-reviewed-btn" type="button">\u2713 Mark Reviewed</button><button class="btn-action" id="save-draft-btn" type="button">Save Draft</button><button class="btn-back-desktop" id="desktop-back-btn" type="button">Back to main screen</button><a class="btn-action btn-export-record" id="export-case-btn" target="_blank" rel="noopener noreferrer">Export Clinical Record</a>';
+        actionRowHtml = '<button class="btn-mark-reviewed" id="mark-reviewed-btn" type="button">\u2713 Mark Reviewed</button><button class="btn-action" id="save-draft-btn" type="button">Save Draft</button><button class="btn-back-desktop" id="desktop-back-btn" type="button">Back to main screen</button><button class="btn-message-patient" id="msg-patient-btn" type="button">&#128172; Message Patient</button><a class="btn-action btn-export-record" id="export-case-btn" target="_blank" rel="noopener noreferrer">Export Clinical Record</a>';
       }
 
       panel.innerHTML =
         '<div class="detail-shell"><div class="detail-header"><button class="back-btn" id="back-btn" type="button" aria-label="Back to case list">\u2190</button><div class="detail-header-info"><div class="detail-patient-name">' + escHtml(name) + nameNote + '</div><div class="detail-patient-meta">' + phoneDisplay + ' \u00B7 ' + escHtml(formatDatetime(c.created_at)) + (isReviewed ? (' \u00B7 Reviewed by ' + escHtml(reviewerName)) : "") + '</div></div><span class="severity-badge badge-' + escAttr(severity) + '">' + escHtml(severity) + '</span></div>' +
         '<div class="detail-scroll"><div class="detail-body">' +
+
+        smsBannerHtml +
 
         '<div class="detail-section"><div class="severity-row"><div class="severity-icon ' + escAttr(severity) + '">' + escHtml(sevIcon) + '</div><div><div class="severity-detail-label">Triage Classification</div><div class="severity-detail-value" style="color:' + sevColor + '">' + escHtml(String(severity).toUpperCase()) + '</div><div class="severity-reason">' + escHtml(c.severity_reason || "-") + '</div></div></div><div class="stats-grid"><div class="stat-cell"><div class="stat-label">Pain Score</div><div class="stat-value">' + formatPain(so.pain_score, c.pain_score) + '</div></div><div class="stat-cell"><div class="stat-label">Duration</div><div class="stat-value">' + formatDuration(c.duration_seconds) + '</div></div><div class="stat-cell"><div class="stat-label">Location</div><div class="stat-value" style="font-size:13px">' + escHtml([so.jaw, so.side].filter(Boolean).join(" / ") || "-") + '</div></div><div class="stat-cell"><div class="stat-label">Extraction</div><div class="stat-value" style="font-size:12px">' + escHtml(c.extraction_source || "-") + '</div></div></div></div>' +
 
@@ -731,11 +826,16 @@
 
         transcriptHtml +
 
+        smsSectionHtml +
+
         '<div class="detail-section"><div class="section-header"><span class="section-title">Call Details</span><button class="collapsible-toggle" id="toggle-call-meta" type="button">Show \u25BC</button></div><div class="collapsible-body" id="call-meta-body"><div class="stats-grid"><div class="stat-cell" style="grid-column:1/-1"><div class="stat-label">Call ID</div><div class="stat-value" style="font-size:11px;word-break:break-all">' + escHtml(c.vapi_call_id || "-") + '</div></div><div class="stat-cell"><div class="stat-label">Triage Tag</div><div class="stat-value" style="font-size:12px">' + escHtml(formatTag(c.triage_tag)) + '</div></div><div class="stat-cell"><div class="stat-label">Created</div><div class="stat-value" style="font-size:11px">' + escHtml(formatDatetime(c.created_at)) + '</div></div></div></div></div>' +
 
         (auditRows.length > 0 ? '<div class="detail-section"><div class="section-header"><span class="section-title">Access Log</span><button class="collapsible-toggle" id="toggle-audit" type="button">Show \u25BC</button></div><div class="collapsible-body" id="audit-body"><div style="padding:16px;display:grid;gap:6px">' + auditRows.map(function(row) { return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px"><span style="color:var(--text-secondary)">' + escHtml(row.user_name || row.user_email || "-") + '</span><span style="color:var(--text-muted);font-family:ui-monospace,monospace;font-size:11px">' + escHtml(formatDatetime(row.created_at)) + '</span></div>'; }).join("") + '</div></div></div>' : '') +
 
         '</div></div></div>';
+
+      var msgPatientBtn = document.getElementById("msg-patient-btn");
+      if (msgPatientBtn) { msgPatientBtn.addEventListener("click", function() { openSMSModal(c); }); }
 
       var backBtn = document.getElementById("back-btn");
       if (backBtn) backBtn.addEventListener("click", goBack);
@@ -848,6 +948,132 @@
     function showToast(msg) { var t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show"); setTimeout(function() { t.classList.remove("show"); }, 2800); }
     function escHtml(value) { if (value === null || value === undefined) return ""; return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
     function escAttr(value) { return escHtml(value); }
+
+    // ── SMS MODAL ──────────────────────────────────────────────────
+    var SMS_TEMPLATES = {
+      reassurance: "Hi [name], this is Martindale Dental. We've reviewed your triage and a dentist will follow up with you. If your condition worsens, please go to your nearest emergency room or call 911.",
+      appointment: "Hi [name], this is Martindale Dental. Based on your triage, we recommend booking an appointment as soon as possible. Please call us at (905) 393-8501.",
+      prescription: "Hi [name], this is Martindale Dental. A prescription has been sent to your pharmacy. Please also follow up with us for a full examination.",
+      emergency: "Hi [name], this is Martindale Dental. Based on your symptoms, please go to your nearest emergency room right away. Don't wait on this."
+    };
+
+    var smsModalCase = null;
+
+    function openSMSModal(c) {
+      smsModalCase = c;
+      var overlay = document.getElementById("sms-modal-overlay");
+      var recipientEl = document.getElementById("sms-modal-recipient");
+      var textarea = document.getElementById("sms-textarea");
+      var statusEl = document.getElementById("sms-send-status");
+      var sendBtn = document.getElementById("sms-send-btn");
+      recipientEl.textContent = (c.patient_name || "Patient") + " \u00B7 " + formatPhone(c.patient_phone);
+      textarea.value = "";
+      statusEl.textContent = "";
+      statusEl.className = "sms-send-status";
+      updateSMSCharCounter();
+      if (sendBtn) sendBtn.disabled = true;
+      overlay.classList.add("open");
+      textarea.focus();
+    }
+
+    function closeSMSModal() {
+      document.getElementById("sms-modal-overlay").classList.remove("open");
+      smsModalCase = null;
+    }
+
+    function updateSMSCharCounter() {
+      var textarea = document.getElementById("sms-textarea");
+      var counter = document.getElementById("sms-char-counter");
+      var sendBtn = document.getElementById("sms-send-btn");
+      if (!textarea || !counter) return;
+      var len = textarea.value.length;
+      var segs = Math.ceil(len / 160) || 1;
+      var display = segs > 1 ? (len + " / " + (segs * 160) + " \u00B7 " + segs + " segments") : (len + " / 160");
+      counter.textContent = display;
+      counter.className = "sms-char-counter" + (len > 1600 ? " over" : len > 155 ? " warn" : "");
+      if (sendBtn) sendBtn.disabled = (len === 0 || len > 1600);
+    }
+
+    async function sendSMSFromDashboard() {
+      if (!smsModalCase) return;
+      var textarea = document.getElementById("sms-textarea");
+      var statusEl = document.getElementById("sms-send-status");
+      var sendBtn = document.getElementById("sms-send-btn");
+      var msg = textarea ? textarea.value.trim() : "";
+      if (!msg) return;
+      sendBtn.disabled = true;
+      sendBtn.textContent = "Sending\u2026";
+      statusEl.textContent = "";
+      statusEl.className = "sms-send-status";
+      try {
+        var resp = await fetch(SUPABASE_URL + "/functions/v1/send-sms", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-vd-secret": INTAKE_SECRET },
+          body: JSON.stringify({
+            case_id: smsModalCase.id,
+            to_phone: smsModalCase.patient_phone,
+            message_body: msg,
+            sender_name: resolveReviewerName(currentUser ? currentUser.email : ""),
+            sender_email: currentUser ? (currentUser.email || "") : ""
+          })
+        });
+        var data = await resp.json();
+        if (data.ok) {
+          statusEl.textContent = "\u2713 Message sent";
+          statusEl.className = "sms-send-status ok";
+          setTimeout(closeSMSModal, 1400);
+          showToast("SMS sent to patient");
+        } else {
+          statusEl.textContent = data.error || "Send failed — check Twilio status";
+          statusEl.className = "sms-send-status err";
+          sendBtn.disabled = false;
+          sendBtn.textContent = "Send message";
+        }
+      } catch (e) {
+        statusEl.textContent = "Unexpected error — check connection";
+        statusEl.className = "sms-send-status err";
+        sendBtn.disabled = false;
+        sendBtn.textContent = "Send message";
+      }
+    }
+
+    // Wire up SMS modal events (runs once on page load)
+    (function() {
+      var overlay = document.getElementById("sms-modal-overlay");
+      var closeBtn = document.getElementById("sms-modal-close");
+      var textarea = document.getElementById("sms-textarea");
+      var sendBtn = document.getElementById("sms-send-btn");
+
+      if (closeBtn) closeBtn.addEventListener("click", closeSMSModal);
+      if (overlay) overlay.addEventListener("click", function(e) { if (e.target === overlay) closeSMSModal(); });
+      if (textarea) textarea.addEventListener("input", function() {
+        updateSMSCharCounter();
+        var sendBtnEl = document.getElementById("sms-send-btn");
+        if (sendBtnEl) sendBtnEl.disabled = (textarea.value.trim().length === 0 || textarea.value.length > 1600);
+      });
+      if (sendBtn) sendBtn.addEventListener("click", sendSMSFromDashboard);
+
+      document.querySelectorAll(".sms-template-btn").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+          var key = btn.getAttribute("data-template");
+          var template = SMS_TEMPLATES[key] || "";
+          if (smsModalCase && template) {
+            var name = (smsModalCase.patient_name || "").split(" ")[0] || "there";
+            template = template.replace(/\[name\]/g, name);
+          }
+          var ta = document.getElementById("sms-textarea");
+          if (ta) { ta.value = template; updateSMSCharCounter(); ta.focus(); }
+        });
+      });
+
+      document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape") {
+          var ovl = document.getElementById("sms-modal-overlay");
+          if (ovl && ovl.classList.contains("open")) closeSMSModal();
+        }
+      });
+    }());
+    // ── END SMS MODAL ──────────────────────────────────────────────
 
     init();
   </script>
