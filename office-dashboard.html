@@ -867,6 +867,7 @@
   var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   var currentCases = [];
   var selectedCaseId = null;
+  var smsRefreshInterval = null;
   var currentSortAsc = false; // newest first by default
   var searchQuery = "";
   var sourceFilter = "all"; // all, office, web, nonemergent
@@ -1222,6 +1223,8 @@
       if (smsResult.data) smsRows = smsResult.data;
     } catch(e) { /* non-blocking */ }
     scroll.appendChild(buildNote(c, smsRows));
+    if (smsRefreshInterval) clearInterval(smsRefreshInterval);
+    smsRefreshInterval = setInterval(function() { if (selectedCaseId) refreshSMSThread(selectedCaseId); }, 30000);
     scroll.scrollTop = 0;
 
     // Revenue bar
@@ -1349,6 +1352,7 @@
         if (sx.pain_score != null) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Pain score</span><span class=\"sms-extraction-val\">" + esc(String(sx.pain_score)) + "/10</span></div>";
         smsInner += "</div>";
       }
+      smsInner += "<div data-sms-thread=\"1\">";
       if (smsRows.length > 0) {
         smsRows.forEach(function(msg) {
           var isOut = msg.direction === "outbound";
@@ -1360,8 +1364,9 @@
             "</div>";
         });
       } else if (c.sms_transcript) {
-        smsInner += "<div class=\"note-section-body\" style=\"white-space:pre-wrap;font-size:12px;color:#5a7090;\">" + esc(c.sms_transcript) + "</div>";
+        smsInner += "<div style=\"white-space:pre-wrap;font-size:12px;color:#5a7090;\">" + esc(c.sms_transcript) + "</div>";
       }
+      smsInner += "</div>";
       smsDiv.innerHTML = smsInner;
       wrap.appendChild(card);
       wrap.appendChild(smsDiv);
@@ -1464,6 +1469,7 @@
   // ---- PRINT / PDF ----
   document.getElementById("back-btn").addEventListener("click", function() {
     selectedCaseId = null;
+    if (smsRefreshInterval) { clearInterval(smsRefreshInterval); smsRefreshInterval = null; }
     document.querySelectorAll(".case-item").forEach(function(el) { el.classList.remove("active"); });
     document.getElementById("note-toolbar").style.display = "none";
     document.getElementById("revenue-bar").style.display = "none";
@@ -1509,6 +1515,35 @@
       var d = new Date(dob + "T00:00:00");
       return "DOB: " + d.toLocaleDateString("en-CA", { year: "numeric", month: "short", day: "numeric" });
     } catch(e) { return "DOB: " + dob; }
+  }
+
+  async function refreshSMSThread(caseId) {
+    if (!caseId) return;
+    var result = await sb.from("sms_log").select("direction, sent_at, sender_name, message_body, status").eq("case_id", caseId).order("sent_at", { ascending: true }).limit(100);
+    if (result.error || !result.data || result.data.length === 0) return;
+    var smsRows = result.data;
+    // Find the SMS section div in the note scroll and update it
+    var scroll = document.getElementById("note-scroll");
+    if (!scroll) return;
+    var smsDiv = scroll.querySelector("[data-sms-thread]");
+    if (!smsDiv) {
+      // Section doesn't exist yet — rebuild note with SMS rows
+      var c = currentCases.find(function(x) { return x.id === caseId; });
+      if (c) { scroll.innerHTML = ""; scroll.appendChild(buildNote(c, smsRows)); }
+      return;
+    }
+    // Update existing thread
+    var threadHtml = "";
+    smsRows.forEach(function(msg) {
+      var isOut = msg.direction === "outbound";
+      var label = isOut ? (msg.sender_name || "Martindale Dental") : "Patient";
+      var time = msg.sent_at ? new Date(msg.sent_at).toLocaleString("en-CA", { month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" }) : "";
+      threadHtml += "<div style=\"padding:6px 0;border-bottom:1px solid #e8eff7;\">" +
+        "<div style=\"font-size:11px;color:#8a9cb8;display:flex;justify-content:space-between;margin-bottom:2px\"><span>" + esc(label) + "</span><span>" + esc(time) + "</span></div>" +
+        "<div style=\"font-size:13px;color:" + (isOut ? "#007a8e" : "#1a2b40") + "\">" + esc(msg.message_body) + "</div>" +
+        "</div>";
+    });
+    smsDiv.innerHTML = threadHtml;
   }
 
   // ── SMS MODAL ──────────────────────────────────────────────────
