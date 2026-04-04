@@ -575,25 +575,28 @@
 
     /* ---- PRINT ---- */
     @media print {
-      .auth-screen, .header, .case-list-panel, .note-toolbar, .note-placeholder { display: none !important; }
+      .auth-screen, .header, .case-list-panel, .note-toolbar, .note-placeholder,
+      .revenue-bar, #sms-case-banner, .sms-modal-overlay { display: none !important; }
 
-      html, body {
-        height: auto;
-        overflow: visible;
-        background: #fff;
-        font-size: 12px;
+      html, body, .app, .body, .note-panel, .note-scroll {
+        display: block !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        position: static !important;
+        width: 100% !important;
+        background: #fff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        flex: none !important;
       }
-
-      .app { display: block !important; height: auto; overflow: visible; }
-      .body { display: block; overflow: visible; }
-      .note-panel { display: block; overflow: visible; background: #fff; }
-      .note-scroll { overflow: visible; padding: 0; }
 
       .note-card {
         box-shadow: none;
         border: none;
         border-radius: 0;
         max-width: 100%;
+        padding: 0;
       }
 
       .note-print-header {
@@ -623,7 +626,7 @@
         text-align: right;
       }
 
-      .note-disclaimer { background: #fff !important; border: 1px solid #E2E8F0 !important; border-bottom-width: 1px !important; }
+      .note-disclaimer { background: #fff !important; border: 1px solid #E2E8F0 !important; }
       .note-section-label { color: #071323 !important; }
 
       @page { margin: 0.75in; size: letter; }
