@@ -492,12 +492,16 @@
         <div class="section-title">Relevant medical information</div>
         <div class="helper" style="margin-bottom:10px;">Select any that apply.</div>
         <div class="check-group">
-          <label class="choice"><input type="checkbox" id="mh-allergy-antibiotics" /><span>Allergy to antibiotics</span></label>
+          <label class="choice"><input type="checkbox" id="mh-allergy-penicillin" /><span>Allergy to penicillin or amoxicillin</span></label>
+          <label class="choice"><input type="checkbox" id="mh-allergy-antibiotics" /><span>Allergy to other antibiotics</span></label>
           <label class="choice"><input type="checkbox" id="mh-allergy-pain" /><span>Allergy to pain medication</span></label>
+          <label class="choice"><input type="checkbox" id="mh-allergy-latex" /><span>Allergy to latex</span></label>
           <label class="choice"><input type="checkbox" id="mh-blood-thinners" /><span>Blood thinners</span></label>
+          <label class="choice"><input type="checkbox" id="mh-bisphosphonate" /><span>Bisphosphonate medication (e.g. Fosamax, Actonel, Zometa)</span></label>
           <label class="choice"><input type="checkbox" id="mh-diabetes" /><span>Diabetes</span></label>
           <label class="choice"><input type="checkbox" id="mh-pregnancy" /><span>Pregnancy</span></label>
           <label class="choice"><input type="checkbox" id="mh-immunocompromised" /><span>Immunocompromised</span></label>
+          <label class="choice"><input type="checkbox" id="mh-dental-anxiety" /><span>History of fainting or anxiety during dental procedures</span></label>
           <label class="choice"><input type="checkbox" id="mh-other" /><span>Other important medical condition</span></label>
           <label class="choice"><input type="checkbox" id="mh-none" /><span>None of the above</span></label>
         </div>
@@ -529,13 +533,13 @@
       <div class="pre-submit-note">
         After you submit, Sam will call the phone number you provided to continue your triage assessment. The call will come from
         <span class="plain-phone"><span>1-833</span>-<span>959</span>-<span>3932</span></span>.
-        After the call, you may receive a single SMS with Martindale Dental's contact information and next steps.
+        After the call, Martindale Dental may contact you by SMS to follow up on your case. Message frequency varies. Reply STOP at any time to opt out.
       </div>
 
       <label class="ack">
         <input type="checkbox" id="intake-acknowledge" />
         <span>
-          By continuing, you understand that you will next speak with Sam, an AI dental triage assistant provided by VirtualDentist.ai on behalf of Martindale Dental, that you may receive an SMS follow-up with Martindale Dental's contact information, and that this service does not replace emergency or in-person dental care.
+          By continuing, you consent to being contacted by Martindale Dental via phone and SMS in connection with your dental concern. You understand that Sam is an AI dental triage assistant provided by VirtualDentist.ai on behalf of Martindale Dental, that your information will be reviewed by a licensed Ontario dentist, and that this service does not replace emergency or in-person dental care. Reply STOP to any SMS to opt out.
         </span>
       </label>
 
@@ -632,7 +636,10 @@
       ];
       var medicalNone = document.getElementById("mh-none");
       var medicalIds = [
-        "mh-allergy-antibiotics", "mh-allergy-pain", "mh-blood-thinners",
+        "mh-allergy-penicillin", "mh-allergy-antibiotics", "mh-allergy-pain",
+        "mh-allergy-latex", "mh-blood-thinners", "mh-bisphosphonate",
+        "mh-diabetes", "mh-pregnancy", "mh-immunocompromised",
+        "mh-dental-anxiety", "mh-other",
         "mh-diabetes", "mh-pregnancy", "mh-immunocompromised", "mh-other"
       ];
       var mhOther = document.getElementById("mh-other");
@@ -771,8 +778,16 @@
           none_of_the_above: isChecked("rf-none")
         },
         intakeMedicalFlags: {
-          allergy_antibiotics: isChecked("mh-allergy-antibiotics"),
+          allergy_penicillin: isChecked("mh-allergy-penicillin"),
+          allergy_other_antibiotics: isChecked("mh-allergy-antibiotics"),
           allergy_pain_medication: isChecked("mh-allergy-pain"),
+          allergy_latex: isChecked("mh-allergy-latex"),
+          blood_thinners: isChecked("mh-blood-thinners"),
+          bisphosphonate_use: isChecked("mh-bisphosphonate"),
+          diabetes: isChecked("mh-diabetes"),
+          pregnancy: isChecked("mh-pregnancy"),
+          immunocompromised: isChecked("mh-immunocompromised"),
+          dental_anxiety_syncope_risk: isChecked("mh-dental-anxiety"),
           blood_thinners: isChecked("mh-blood-thinners"),
           diabetes: isChecked("mh-diabetes"),
           pregnancy: isChecked("mh-pregnancy"),
@@ -892,12 +907,16 @@
           rfAvulsion: isChecked("rf-avulsion"),
           rfNone: isChecked("rf-none"),
           avulsionTime: getValue("avulsion-time"),
+          mhAllergyPenicillin: isChecked("mh-allergy-penicillin"),
           mhAllergyAntibiotics: isChecked("mh-allergy-antibiotics"),
           mhAllergyPain: isChecked("mh-allergy-pain"),
+          mhAllergyLatex: isChecked("mh-allergy-latex"),
           mhBloodThinners: isChecked("mh-blood-thinners"),
+          mhBisphosphonate: isChecked("mh-bisphosphonate"),
           mhDiabetes: isChecked("mh-diabetes"),
           mhPregnancy: isChecked("mh-pregnancy"),
           mhImmunocompromised: isChecked("mh-immunocompromised"),
+          mhDentalAnxiety: isChecked("mh-dental-anxiety"),
           mhOther: isChecked("mh-other"),
           mhOtherDetail: getValue("mh-other-detail"),
           mhNone: isChecked("mh-none"),
@@ -927,12 +946,16 @@
         setCheck("rf-avulsion", s.rfAvulsion);
         setCheck("rf-none", s.rfNone);
         setVal("avulsion-time", s.avulsionTime);
+        setCheck("mh-allergy-penicillin", s.mhAllergyPenicillin);
         setCheck("mh-allergy-antibiotics", s.mhAllergyAntibiotics);
         setCheck("mh-allergy-pain", s.mhAllergyPain);
+        setCheck("mh-allergy-latex", s.mhAllergyLatex);
         setCheck("mh-blood-thinners", s.mhBloodThinners);
+        setCheck("mh-bisphosphonate", s.mhBisphosphonate);
         setCheck("mh-diabetes", s.mhDiabetes);
         setCheck("mh-pregnancy", s.mhPregnancy);
         setCheck("mh-immunocompromised", s.mhImmunocompromised);
+        setCheck("mh-dental-anxiety", s.mhDentalAnxiety);
         setCheck("mh-other", s.mhOther);
         setVal("mh-other-detail", s.mhOtherDetail);
         setCheck("mh-none", s.mhNone);
