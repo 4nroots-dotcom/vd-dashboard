@@ -406,6 +406,11 @@
     /* ── SMS STYLES ─────────────────────────────────────────────── */
     .sms-banner { display: flex; align-items: flex-start; gap: 10px; background: rgba(240,165,0,0.10); border: 1px solid rgba(240,165,0,0.28); border-radius: 8px; padding: 10px 14px; margin: 0 0 10px; font-size: 13px; color: #f0c050; line-height: 1.5; }
     .sms-banner-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .allergy-alert { display: flex; align-items: flex-start; gap: 10px; background: rgba(220,38,38,0.12); border: 1px solid rgba(220,38,38,0.40); border-radius: 8px; padding: 12px 16px; margin: 0 0 10px; font-size: 13px; line-height: 1.5; }
+    .allergy-alert-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; color: #f87171; }
+    .allergy-alert-body { flex: 1; }
+    .allergy-alert-label { font-weight: 700; color: #f87171; text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em; margin-bottom: 2px; }
+    .allergy-alert-flags { color: #fca5a5; font-weight: 600; }
     .sms-section { }
     .sms-message { padding: 10px 0; border-bottom: 1px solid var(--border-soft); display: flex; flex-direction: column; gap: 3px; }
     .sms-message:last-child { border-bottom: none; }
@@ -601,6 +606,9 @@
         <button class="filter-chip" id="chip-routine" type="button">Routine</button>
         <div class="filter-right"><button class="refresh-btn" id="refresh-btn" type="button" title="Refresh">&#8635;</button></div>
       </div>
+      <div style="padding:6px 12px 2px;">
+        <input type="search" id="queue-search" placeholder="Search by name or phone..." style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:7px 10px;color:#e8edf5;font-size:13px;outline:none;" />
+      </div>
       <div class="sort-bar" id="sort-bar">
         <span class="sort-label">Sort:</span>
         <button class="sort-chip" id="sort-severity" type="button">Urgency</button>
@@ -657,7 +665,7 @@
     if (!window.supabase || !window.supabase.createClient) { var errEl = document.getElementById("auth-error"); if (errEl) { errEl.style.display = "block"; errEl.textContent = "Supabase library failed to load. Check network / CDN blocking."; } throw new Error("Supabase library missing"); }
 
     var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    var currentTab = "queue"; var currentFilter = "all"; var currentSort = "newest"; var allCases = []; var currentCase = null; var currentUser = null; var selectedCaseId = null; var refreshInterval = null; var isMobile = window.innerWidth < 768; var queueCount = 0; var DENTIST_PHONE = null;
+    var currentTab = "queue"; var currentFilter = "all"; var currentSort = "newest"; var allCases = []; var currentCase = null; var currentUser = null; var selectedCaseId = null; var refreshInterval = null; var isMobile = window.innerWidth < 768; var queueCount = 0; var DENTIST_PHONE = null; var searchQuery = "";
 
     document.getElementById("auth-btn").addEventListener("click", handleLogin);
     document.getElementById("signout-btn").addEventListener("click", handleSignOut);
@@ -673,6 +681,7 @@
     document.getElementById("chip-urgent").addEventListener("click", function() { setFilter("urgent"); });
     document.getElementById("chip-emergency").addEventListener("click", function() { setFilter("emergency"); });
     document.getElementById("chip-routine").addEventListener("click", function() { setFilter("routine"); });
+    document.getElementById("queue-search").addEventListener("input", function() { searchQuery = this.value.trim(); renderQueue(); });
     document.getElementById("sort-severity").addEventListener("click", function() { if (currentTab === "queue") { setSort("severity"); return; } if (!isUrgencySortRedundant()) setSort("severity"); });
     document.getElementById("sort-newest").addEventListener("click", function() { setSort("newest"); });
     document.getElementById("sort-oldest").addEventListener("click", function() { setSort("oldest"); });
@@ -708,7 +717,7 @@
     function controlsShouldBeDisabled() { return !!selectedCaseId; }
     function updateControlsDisabledState() { var tabsShell = document.getElementById("tabs-shell"); var queueControls = document.getElementById("queue-controls"); var queueHint = document.getElementById("queue-hint"); var disabled = !!selectedCaseId; tabsShell.classList.toggle("controls-disabled", disabled); queueControls.classList.toggle("controls-disabled", disabled); queueHint.classList.toggle("show", disabled && !isMobile); }
 
-    function renderQueue() { var panel = document.getElementById("queue-panel"); var cases = allCases.slice(); if (currentTab === "queue") { cases = cases.filter(function(c) { return c.review_status !== "reviewed"; }); } if (currentFilter !== "all") { cases = cases.filter(function(c) { return (c.severity || "unknown") === currentFilter; }); } var sevOrder = { urgent: 1, emergency: 2, routine: 3, unknown: 4 }; if (currentSort === "severity" && !isUrgencySortRedundant()) { cases.sort(function(a, b) { var aOrder = sevOrder[a.severity || "unknown"] || 9; var bOrder = sevOrder[b.severity || "unknown"] || 9; return aOrder - bOrder || new Date(b.created_at) - new Date(a.created_at); }); } else if (currentSort === "newest") { cases.sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); }); } else if (currentSort === "oldest") { cases.sort(function(a, b) { return new Date(a.created_at) - new Date(b.created_at); }); } if (!cases.length) { var emptyState = getEmptyStateCopy(); panel.innerHTML = '<div class="empty-state"><div class="empty-icon">\u2713</div><div class="empty-title">' + emptyState.emptyTitle + '</div><div class="empty-sub">' + emptyState.emptySub + '</div></div>'; return; } panel.innerHTML = '<div class="case-list">' + cases.map(renderCaseCard).join("") + '</div>'; panel.querySelectorAll(".case-card").forEach(function(el) { el.addEventListener("click", function() { openCase(el.dataset.caseId); }); }); }
+    function renderQueue() { var panel = document.getElementById("queue-panel"); var cases = allCases.slice(); if (currentTab === "queue") { cases = cases.filter(function(c) { return c.review_status !== "reviewed"; }); } if (currentFilter !== "all") { cases = cases.filter(function(c) { return (c.severity || "unknown") === currentFilter; }); } if (searchQuery) { var q = searchQuery.toLowerCase(); cases = cases.filter(function(c) { return (c.patient_name || "").toLowerCase().includes(q) || (c.patient_phone || "").replace(/\D/g,"").includes(q.replace(/\D/g,"")); }); } var sevOrder = { urgent: 1, emergency: 2, routine: 3, unknown: 4 }; if (currentSort === "severity" && !isUrgencySortRedundant()) { cases.sort(function(a, b) { var aOrder = sevOrder[a.severity || "unknown"] || 9; var bOrder = sevOrder[b.severity || "unknown"] || 9; return aOrder - bOrder || new Date(b.created_at) - new Date(a.created_at); }); } else if (currentSort === "newest") { cases.sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); }); } else if (currentSort === "oldest") { cases.sort(function(a, b) { return new Date(a.created_at) - new Date(b.created_at); }); } if (!cases.length) { var emptyState = getEmptyStateCopy(); panel.innerHTML = '<div class="empty-state"><div class="empty-icon">\u2713</div><div class="empty-title">' + emptyState.emptyTitle + '</div><div class="empty-sub">' + emptyState.emptySub + '</div></div>'; return; } panel.innerHTML = '<div class="case-list">' + cases.map(renderCaseCard).join("") + '</div>'; panel.querySelectorAll(".case-card").forEach(function(el) { el.addEventListener("click", function() { openCase(el.dataset.caseId); }); }); }
     function getEmptyStateCopy() { if (currentTab === "queue") return { emptyTitle: "No active cases", emptySub: "No new or draft cases are currently waiting in the queue." }; if (currentTab === "new") return { emptyTitle: "No new cases", emptySub: "No untouched cases match this filter." }; if (currentTab === "drafts") return { emptyTitle: "No drafts", emptySub: "No cases are currently in draft status." }; if (currentTab === "reviewed") return { emptyTitle: "No reviewed cases", emptySub: "No reviewed cases match this filter." }; return { emptyTitle: "All clear", emptySub: "No cases match this filter." }; }
 
     function renderCaseCard(c) { var so = c.structured_output || {}; var name = c.patient_name || "Unknown Patient"; var phone = c.patient_phone ? formatPhone(c.patient_phone) : "-"; var phoneRaw = c.patient_phone || ""; var complaint = so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-"; var painValue = so.pain_score != null ? so.pain_score : c.pain_score; var pain = (painValue !== null && painValue !== undefined && painValue !== "") ? ("Pain " + painValue + "/10") : ""; var time = formatTime(c.created_at); var reviewStatus = c.review_status || "new"; var reviewed = reviewStatus === "reviewed"; var draft = reviewStatus === "draft"; var isActive = c.id === selectedCaseId; var severity = c.severity || "unknown"; var phoneEl = phoneRaw ? '<a class="tel-link" href="tel:' + escAttr(phoneRaw) + '">' + escHtml(phone) + '</a>' : '<span>' + escHtml(phone) + '</span>'; return '<div class="case-card ' + escAttr(severity) + (reviewed ? " reviewed" : "") + (draft ? " draft" : "") + (isActive ? " active" : "") + '" id="card-' + escAttr(c.id) + '" data-case-id="' + escAttr(c.id) + '"><div class="case-row1"><span class="severity-badge badge-' + escAttr(severity) + '">' + escHtml(severity) + '</span><span class="case-name">' + escHtml(name) + (reviewed ? ' <span class="status-badge reviewed">Reviewed</span>' : "") + (draft ? ' <span class="status-badge draft">Draft</span>' : "") + '</span><span class="case-time">' + escHtml(time) + '</span></div><div class="case-row2">' + escHtml(complaint) + '</div><div class="case-row3"><span class="case-meta-item">' + phoneEl + '</span>' + (pain ? '<span class="case-meta-item">' + escHtml(pain) + '</span>' : "") + (reviewed ? '<span class="reviewed-dot" title="Reviewed"></span>' : "") + (draft ? '<span class="draft-dot" title="Draft"></span>' : "") + '</div></div>'; }
@@ -772,7 +781,20 @@
       var contradictionsHtml = "";
       if (hasContradictions) { contradictionsHtml = '<div class="detail-section discrepancy-section"><div class="section-header"><span class="section-title discrepancy-title">\u26A0 Intake vs. Call Discrepancies</span></div><div class="discrepancy-list">' + contradictions.map(function(item) { return '<div class="discrepancy-item"><div class="discrepancy-field">' + escHtml(formatContradictionField(item.field)) + '</div><div class="discrepancy-line"><strong>Intake:</strong> ' + escHtml(item.intake_value || "-") + '</div><div class="discrepancy-line"><strong>Call:</strong> ' + escHtml(item.call_value || "-") + '</div>' + (item.clinical_note ? '<div class="discrepancy-note"><strong>Verify:</strong> ' + escHtml(item.clinical_note) + '</div>' : "") + '</div>'; }).join("") + '</div></div>'; }
 
-      var transcriptHtml = "";
+      // Allergy alert
+      var allergyFlags = getAllergyFlags(intakeMedicalFlags);
+      var allergyAlertHtml = "";
+      if (allergyFlags.length > 0) {
+        allergyAlertHtml = '<div class="allergy-alert"><div class="allergy-alert-icon">&#9888;</div><div class="allergy-alert-body"><div class="allergy-alert-label">Allergy flags</div><div class="allergy-alert-flags">' + escHtml(allergyFlags.join(" &nbsp;&middot;&nbsp; ")) + '</div></div></div>';
+      }
+
+      // SMS banner
+      if (c.has_sms_continuation) {
+        var isSmsPrimary = c.intake_source === "sms";
+        smsBannerHtml = isSmsPrimary
+          ? '<div class="sms-banner"><span class="sms-banner-icon">&#128172;</span><span><strong>SMS intake submission.</strong> This case was triaged entirely via SMS. Please verify the AI-generated clinical note for completeness and errors before taking action.</span></div>'
+          : '<div class="sms-banner"><span class="sms-banner-icon">&#9888;&#65039;</span><span><strong>SMS continuation &mdash; review required.</strong> This patient provided additional information via text after the call ended. Review the SMS section below before finalising this case.</span></div>';
+      }
       if (c.transcript) { transcriptHtml = '<div class="detail-section"><div class="section-header"><span class="section-title">Call Transcript</span><button class="collapsible-toggle" id="toggle-transcript" type="button">Show \u25BC</button></div><div class="collapsible-body" id="transcript-body"><div class="transcript-text" style="padding-top:16px">' + escHtml(c.transcript) + '</div></div></div>'; }
 
       // SMS thread section — shows both Sam triage continuation AND dentist/patient message thread
@@ -834,6 +856,8 @@
         '<div class="detail-scroll"><div class="detail-body">' +
 
         smsBannerHtml +
+
+        allergyAlertHtml +
 
         '<div class="detail-section"><div class="severity-row"><div class="severity-icon ' + escAttr(severity) + '">' + escHtml(sevIcon) + '</div><div><div class="severity-detail-label">Triage Classification</div><div class="severity-detail-value" style="color:' + sevColor + '">' + escHtml(String(severity).toUpperCase()) + '</div><div class="severity-reason">' + escHtml(c.severity_reason || "-") + '</div></div></div><div class="stats-grid"><div class="stat-cell"><div class="stat-label">Pain Score</div><div class="stat-value">' + formatPain(so.pain_score, c.pain_score) + '</div></div><div class="stat-cell"><div class="stat-label">Duration</div><div class="stat-value">' + formatDuration(c.duration_seconds) + '</div></div><div class="stat-cell"><div class="stat-label">Location</div><div class="stat-value" style="font-size:13px">' + escHtml([so.jaw, so.side].filter(Boolean).join(" / ") || "-") + '</div></div><div class="stat-cell"><div class="stat-label">Extraction</div><div class="stat-value" style="font-size:12px">' + escHtml(c.extraction_source || "-") + '</div></div></div></div>' +
 
@@ -978,7 +1002,13 @@
 
     function humanizeRedFlags(obj) { if (!obj) return "None reported"; if (typeof obj === "string") return obj || "None reported"; if (Array.isArray(obj)) return obj.length ? obj.join(", ") : "None reported"; if (typeof obj !== "object") return "None reported"; if (obj.none_of_the_above === true) return "None reported"; var labels = { trouble_breathing_or_swallowing: "Trouble breathing or swallowing", uncontrolled_bleeding: "Uncontrolled bleeding", facial_swelling: "Facial swelling", fever_or_feeling_unwell: "Fever or feeling unwell", injury_to_teeth_jaw_face: "Injury to teeth, jaw, or face" }; var items = Object.entries(obj).filter(function(entry) { return entry[0] !== "none_of_the_above" && entry[1] === true; }).map(function(entry) { return labels[entry[0]] || formatTag(entry[0]); }); return items.length ? items.join(", ") : "None reported"; }
 
-    function humanizeMedicalFlags(obj) { if (!obj) return "No relevant medical history reported"; if (typeof obj === "string") return obj || "No relevant medical history reported"; if (Array.isArray(obj)) return obj.length ? obj.join(", ") : "No relevant medical history reported"; if (typeof obj !== "object") return "No relevant medical history reported"; if (obj.none_of_the_above === true) return "No relevant medical history reported"; var labels = { allergy_antibiotics: "Allergy to antibiotics", allergy_pain_medication: "Allergy to pain medication", blood_thinners: "Blood thinners", diabetes: "Diabetes", pregnancy: "Pregnancy", immunocompromised: "Immunocompromised", other_important_medical_condition: "Other important medical condition" }; var items = []; Object.entries(obj).forEach(function(entry) { var key = entry[0]; var value = entry[1]; if (key === "none_of_the_above" || key === "other_medical_detail") return; if (value !== true) return; if (key === "other_important_medical_condition") { if (obj.other_medical_detail) { items.push("Other important medical condition: " + obj.other_medical_detail); } else { items.push("Other important medical condition"); } return; } items.push(labels[key] || formatTag(key)); }); return items.length ? items.join(", ") : "No relevant medical history reported"; }
+    function getAllergyFlags(obj) {
+      if (!obj || typeof obj !== "object") return [];
+      var allergyKeys = { allergy_penicillin: "Penicillin / Amoxicillin", allergy_other_antibiotics: "Other antibiotics", allergy_antibiotics: "Antibiotics", allergy_pain_medication: "Pain medication", allergy_latex: "Latex" };
+      return Object.entries(allergyKeys).filter(function(e) { return obj[e[0]] === true; }).map(function(e) { return e[1]; });
+    }
+
+    function humanizeMedicalFlags(obj) { if (!obj) return "No relevant medical history reported"; if (typeof obj === "string") return obj || "No relevant medical history reported"; if (Array.isArray(obj)) return obj.length ? obj.join(", ") : "No relevant medical history reported"; if (typeof obj !== "object") return "No relevant medical history reported"; if (obj.none_of_the_above === true) return "No relevant medical history reported"; var labels = { allergy_penicillin: "Allergy to penicillin / amoxicillin", allergy_other_antibiotics: "Allergy to other antibiotics", allergy_antibiotics: "Allergy to antibiotics", allergy_pain_medication: "Allergy to pain medication", allergy_latex: "Allergy to latex", blood_thinners: "Blood thinners", bisphosphonate_use: "Bisphosphonate medication", diabetes: "Diabetes", pregnancy: "Pregnancy", immunocompromised: "Immunocompromised", dental_anxiety_syncope_risk: "History of fainting / dental anxiety", other_important_medical_condition: "Other important medical condition" }; var items = []; Object.entries(obj).forEach(function(entry) { var key = entry[0]; var value = entry[1]; if (key === "none_of_the_above" || key === "other_medical_detail") return; if (value !== true) return; if (key === "other_important_medical_condition") { if (obj.other_medical_detail) { items.push("Other important medical condition: " + obj.other_medical_detail); } else { items.push("Other important medical condition"); } return; } items.push(labels[key] || formatTag(key)); }); return items.length ? items.join(", ") : "No relevant medical history reported"; }
 
     function showToast(msg) { var t = document.getElementById("toast"); t.textContent = msg; t.classList.add("show"); setTimeout(function() { t.classList.remove("show"); }, 2800); }
     function escHtml(value) { if (value === null || value === undefined) return ""; return String(value).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
