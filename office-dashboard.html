@@ -873,11 +873,11 @@
   var smsRefreshInterval = null;
   var OFFICE_PHONE = null;
 
-  // Look up office phone for session routing on load
-  sb.auth.getSession().then(function(res) {
-    if (res.data?.session) {
-      sb.from("office_phones").select("phone").limit(1).then(function(r) {
-        if (r.data && r.data.length > 0) OFFICE_PHONE = r.data[0].phone;
+  // Look up office phone by logged-in user email for session routing
+  sb.auth.onAuthStateChange(function(event, session) {
+    if (session?.user?.email) {
+      sb.from("office_phones").select("phone").eq("email", session.user.email).maybeSingle().then(function(r) {
+        if (r.data?.phone) OFFICE_PHONE = r.data.phone;
       });
     }
   });
