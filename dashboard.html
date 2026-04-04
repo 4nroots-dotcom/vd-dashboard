@@ -788,18 +788,18 @@
         allergyAlertHtml = '<div class="allergy-alert"><div class="allergy-alert-icon">&#9888;</div><div class="allergy-alert-body"><div class="allergy-alert-label">Allergy flags</div><div class="allergy-alert-flags">' + escHtml(allergyFlags.join(" &nbsp;&middot;&nbsp; ")) + '</div></div></div>';
       }
 
+      var transcriptHtml = "";
+      if (c.transcript) { transcriptHtml = '<div class="detail-section"><div class="section-header"><span class="section-title">Call Transcript</span><button class="collapsible-toggle" id="toggle-transcript" type="button">Show \u25BC</button></div><div class="collapsible-body" id="transcript-body"><div class="transcript-text" style="padding-top:16px">' + escHtml(c.transcript) + '</div></div></div>'; }
+
       // SMS banner
+      var smsBannerHtml = "";
+      var smsSectionHtml = "";
       if (c.has_sms_continuation) {
         var isSmsPrimary = c.intake_source === "sms";
         smsBannerHtml = isSmsPrimary
           ? '<div class="sms-banner"><span class="sms-banner-icon">&#128172;</span><span><strong>SMS intake submission.</strong> This case was triaged entirely via SMS. Please verify the AI-generated clinical note for completeness and errors before taking action.</span></div>'
           : '<div class="sms-banner"><span class="sms-banner-icon">&#9888;&#65039;</span><span><strong>SMS continuation &mdash; review required.</strong> This patient provided additional information via text after the call ended. Review the SMS section below before finalising this case.</span></div>';
       }
-      if (c.transcript) { transcriptHtml = '<div class="detail-section"><div class="section-header"><span class="section-title">Call Transcript</span><button class="collapsible-toggle" id="toggle-transcript" type="button">Show \u25BC</button></div><div class="collapsible-body" id="transcript-body"><div class="transcript-text" style="padding-top:16px">' + escHtml(c.transcript) + '</div></div></div>'; }
-
-      // SMS thread section — shows both Sam triage continuation AND dentist/patient message thread
-      var smsBannerHtml = "";
-      var smsSectionHtml = "";
       if (c.has_sms_continuation || smsRows.length > 0) {
         if (c.has_sms_continuation) {
           smsBannerHtml = '<div class="sms-banner"><span class="sms-banner-icon">\u26A0\uFE0F</span><span><strong>SMS continuation — review required.</strong> This patient provided additional information via text after the call ended. Review the SMS section below before finalising this case.</span></div>';
