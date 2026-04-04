@@ -1264,8 +1264,8 @@
       smsBanner.className = "sms-banner";
       var isSmsPrimary = c.intake_source === "sms";
       smsBanner.innerHTML = isSmsPrimary
-        ? "<strong>&#128172; SMS intake submission.</strong> This case was triaged entirely via SMS. Please verify the AI-generated clinical note for completeness and errors before taking action."
-        : "<strong>&#9888; SMS continuation &mdash; review required.</strong> This patient continued via text after the call. See the SMS section in the note below.";
+        ? "<strong>&#128172; SMS intake submission.</strong> This case was triaged entirely via text &mdash; no voice call was made. The AI-generated clinical note should be reviewed carefully for completeness and errors before taking action."
+        : "<strong>&#9888; SMS continuation.</strong> This patient provided additional information via text after the call ended. Review the SMS thread below and verify the clinical note is complete before finalising this case.";
       revenueBar.parentNode.insertBefore(smsBanner, revenueBar.nextSibling);
     }
 
