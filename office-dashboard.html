@@ -1179,7 +1179,7 @@
     });
   }
 
-  function selectCase(id) {
+  async function selectCase(id) {
     selectedCaseId = id;
     var c = currentCases.find(function(x) { return x.id === id; });
     if (!c) return;
