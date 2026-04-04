@@ -952,10 +952,13 @@
 
   // ---- CASES ----
   // ---- SEARCH & SORT ----
-  document.getElementById("search-input").addEventListener("input", function() {
-    searchQuery = this.value;
-    applySearchFilter();
-  });
+  var searchEl = document.getElementById("search-input");
+  if (searchEl) {
+    searchEl.addEventListener("input", function() {
+      searchQuery = this.value;
+      if (typeof applySearchFilter === "function") applySearchFilter();
+    });
+  }
 
   document.getElementById("sort-newest").addEventListener("click", function() {
     currentSortAsc = false;
