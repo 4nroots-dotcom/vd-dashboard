@@ -702,7 +702,7 @@
       }
       // Look up this dentist's phone by their login email for session routing
       sb.from("dentist_phones").select("phone").eq("email", user.email).maybeSingle().then(function(res) {
-        if (res.data?.phone) DENTIST_PHONE = res.data.phone;
+        if (res.data && res.data.phone) DENTIST_PHONE = res.data.phone;
       });
     }
 
