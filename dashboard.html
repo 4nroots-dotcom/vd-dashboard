@@ -686,11 +686,9 @@
     async function init() { try { var result = await sb.auth.getSession(); var data = result.data; var error = result.error; if (error) { console.error("Session error:", error); return; } if (data && data.session && data.session.user) { showApp(data.session.user); } else if (isMobile) { document.getElementById("detail-column").style.display = "none"; } } catch (err) { console.error("Init error:", err); } }
 
     function showApp(user) { currentUser = user; document.getElementById("auth-screen").style.display = "none"; document.getElementById("app").style.display = "flex"; document.getElementById("header-user-email").textContent = resolveReviewerName(user.email || ""); if (refreshInterval) clearInterval(refreshInterval); refreshInterval = setInterval(loadCases, 90000); if (isMobile) { document.getElementById("detail-column").style.display = "none"; document.getElementById("queue-column").style.display = "flex"; } syncModes(); loadCases();
-      // Look up this dentist's phone for session routing
-      sb.from("dentist_phones").select("phone").limit(10).then(function(res) {
-        // Match by checking all dentist phones — use first available as fallback
-        // For multi-dentist: each dentist should have their own login; phone is looked up from dentist_phones
-        if (res.data && res.data.length > 0) DENTIST_PHONE = res.data[0].phone;
+      // Look up this dentist's phone by their login email for session routing
+      sb.from("dentist_phones").select("phone").eq("email", user.email).maybeSingle().then(function(res) {
+        if (res.data?.phone) DENTIST_PHONE = res.data.phone;
       });
     }
 
