@@ -845,10 +845,10 @@
     </div>
     <div class="sms-templates">
       <div class="sms-template-label">Quick templates</div>
-      <button class="sms-template-btn" data-template="reassurance" type="button">After-hours reassurance — case reviewed, follow-up coming</button>
-      <button class="sms-template-btn" data-template="appointment" type="button">Book an appointment at your earliest convenience</button>
-      <button class="sms-template-btn" data-template="prescription" type="button">Prescription has been sent to your pharmacy</button>
-      <button class="sms-template-btn" data-template="emergency" type="button">Please go to the emergency room right away</button>
+      <button class="sms-template-btn" data-template="received" type="button">Case received — dentist reviewing</button>
+      <button class="sms-template-btn" data-template="appointment" type="button">We'd like to get you in as soon as possible</button>
+      <button class="sms-template-btn" data-template="morning" type="button">We'll call you first thing at 9am</button>
+      <button class="sms-template-btn" data-template="callback" type="button">Please call us back — or reply here</button>
     </div>
     <div style="display:flex;flex-direction:column;gap:6px;">
       <textarea class="sms-textarea" id="sms-textarea" placeholder="Type a message or select a template above..." maxlength="1600"></textarea>
@@ -871,6 +871,16 @@
   var currentCases = [];
   var selectedCaseId = null;
   var smsRefreshInterval = null;
+  var OFFICE_PHONE = null;
+
+  // Look up office phone for session routing on load
+  sb.auth.getSession().then(function(res) {
+    if (res.data?.session) {
+      sb.from("office_phones").select("phone").limit(1).then(function(r) {
+        if (r.data && r.data.length > 0) OFFICE_PHONE = r.data[0].phone;
+      });
+    }
+  });
   var currentSortAsc = false; // newest first by default
   var searchQuery = "";
   var sourceFilter = "all"; // all, office, web, nonemergent
@@ -1553,10 +1563,10 @@
 
   // ── SMS MODAL ──────────────────────────────────────────────────
   var SMS_TEMPLATES = {
-    reassurance: "Hi [name], this is Martindale Dental. We've reviewed your triage and a dentist will follow up with you. If your condition worsens, please go to your nearest emergency room or call 911.",
-    appointment:  "Hi [name], this is Martindale Dental. Based on your triage, we recommend booking an appointment as soon as possible. Please call us at (905) 393-8501.",
-    prescription: "Hi [name], this is Martindale Dental. A prescription has been sent to your pharmacy. Please also follow up with us for a full examination.",
-    emergency:    "Hi [name], this is Martindale Dental. Based on your symptoms, please go to your nearest emergency room right away. Don't wait on this."
+    received:    "Hi [name], this is Martindale Dental. We've received your triage and a dentist is reviewing your case. We'll be in touch shortly.",
+    appointment: "Hi [name], this is Martindale Dental. We'd like to get you in as soon as possible. Please call us at (905) 393-8501 or reply here and we'll arrange a time.",
+    morning:     "Hi [name], this is Martindale Dental. Our office opens at 9am. We'll call you first thing to get you booked in.",
+    callback:    "Hi [name], this is Martindale Dental. We tried to reach you regarding your dental concern. Please call us at (905) 393-8501 when you're able, or reply to this message and a staff member will get back to you shortly."
   };
 
   var smsModalCase = null;
@@ -1621,7 +1631,9 @@
           to_phone:     smsModalCase.patient_phone,
           message_body: msg,
           sender_name:  "Office Staff",
-          sender_email: ""
+          sender_email: "",
+          sender_type:  "office",
+          sender_phone: OFFICE_PHONE
         })
       });
       var data = {};
