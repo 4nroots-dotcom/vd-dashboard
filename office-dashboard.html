@@ -778,7 +778,7 @@
       <div class="case-list-date" id="list-date"></div>
       <div class="case-list-meta" id="list-count">Loading...</div>
       <div style="display:flex;gap:6px;margin-top:8px;">
-        <input class="search-input" id="search-input" type="search" placeholder="Search name or phone..." />
+        <input class="search-input" id="search-input" type="search" placeholder="Search name or phone..." oninput="searchQuery=this.value;applySearchFilter();" onkeyup="searchQuery=this.value;applySearchFilter();" />
       </div>
       <div style="display:flex;gap:6px;margin-top:6px;align-items:center;">
         <span style="font-size:11px;color:var(--text-muted);">Sort:</span>
