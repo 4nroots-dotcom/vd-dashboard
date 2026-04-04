@@ -797,8 +797,8 @@
       if (c.has_sms_continuation) {
         var isSmsPrimary = c.intake_source === "sms" || c.extraction_source === "sms-openai";
         smsBannerHtml = isSmsPrimary
-          ? '<div class="sms-banner"><span class="sms-banner-icon">&#128172;</span><span><strong>SMS intake submission.</strong> This case was triaged entirely via SMS. Please verify the AI-generated clinical note for completeness and errors before taking action.</span></div>'
-          : '<div class="sms-banner"><span class="sms-banner-icon">&#9888;&#65039;</span><span><strong>SMS continuation &mdash; review required.</strong> This patient provided additional information via text after the call ended. Review the SMS section below before finalising this case.</span></div>';
+          ? '<div class="sms-banner"><span class="sms-banner-icon">&#128172;</span><span><strong>SMS intake submission.</strong> This case was triaged entirely via text &mdash; no voice call was made. The AI-generated clinical note should be reviewed carefully for completeness and errors before taking action.</span></div>'
+          : '<div class="sms-banner"><span class="sms-banner-icon">&#9888;&#65039;</span><span><strong>SMS continuation.</strong> This patient provided additional information via text after the call ended. Review the SMS thread below and verify the clinical note is complete before finalising this case.</span></div>';
       }
       if (c.has_sms_continuation || smsRows.length > 0) {
         if (c.has_sms_continuation) {
