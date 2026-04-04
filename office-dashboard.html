@@ -879,9 +879,9 @@
 
   // Look up office phone by logged-in user email for session routing
   sb.auth.onAuthStateChange(function(event, session) {
-    if (session?.user?.email) {
+    if (session && session.user && session.user.email) {
       sb.from("office_phones").select("phone").eq("email", session.user.email).maybeSingle().then(function(r) {
-        if (r.data?.phone) OFFICE_PHONE = r.data.phone;
+        if (r.data && r.data.phone) OFFICE_PHONE = r.data.phone;
       });
     }
   });
