@@ -1482,10 +1482,12 @@
   });
 
   document.getElementById("print-btn").addEventListener("click", function() {
+    if (!selectedCaseId) { alert("Please open a patient case before printing."); return; }
     window.print();
   });
 
   document.getElementById("save-pdf-btn").addEventListener("click", function() {
+    if (!selectedCaseId) { alert("Please open a patient case before saving as PDF."); return; }
     var orig = document.title;
     var c = currentCases.find(function(x) { return x.id === selectedCaseId; });
     if (c) {
@@ -1555,6 +1557,13 @@
   };
 
   var smsModalCase = null;
+
+  function formatPhone(p) {
+    if (!p) return "";
+    var d = String(p).replace(/\D/g, "").slice(-10);
+    if (d.length === 10) return "(" + d.slice(0,3) + ") " + d.slice(3,6) + "-" + d.slice(6);
+    return p;
+  }
 
   function openSMSModal(c) {
     smsModalCase = c;
