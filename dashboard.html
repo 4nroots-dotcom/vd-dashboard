@@ -657,7 +657,7 @@
     if (!window.supabase || !window.supabase.createClient) { var errEl = document.getElementById("auth-error"); if (errEl) { errEl.style.display = "block"; errEl.textContent = "Supabase library failed to load. Check network / CDN blocking."; } throw new Error("Supabase library missing"); }
 
     var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    var currentTab = "queue"; var currentFilter = "all"; var currentSort = "newest"; var allCases = []; var currentCase = null; var currentUser = null; var selectedCaseId = null; var refreshInterval = null; var isMobile = window.innerWidth < 768; var queueCount = 0;
+    var currentTab = "queue"; var currentFilter = "all"; var currentSort = "newest"; var allCases = []; var currentCase = null; var currentUser = null; var selectedCaseId = null; var refreshInterval = null; var isMobile = window.innerWidth < 768; var queueCount = 0; var DENTIST_PHONE = null;
 
     document.getElementById("auth-btn").addEventListener("click", handleLogin);
     document.getElementById("signout-btn").addEventListener("click", handleSignOut);
@@ -685,7 +685,14 @@
     async function handleSignOut() { try { await sb.auth.signOut(); } catch (err) { console.error("Sign-out error:", err); } window.location.reload(); }
     async function init() { try { var result = await sb.auth.getSession(); var data = result.data; var error = result.error; if (error) { console.error("Session error:", error); return; } if (data && data.session && data.session.user) { showApp(data.session.user); } else if (isMobile) { document.getElementById("detail-column").style.display = "none"; } } catch (err) { console.error("Init error:", err); } }
 
-    function showApp(user) { currentUser = user; document.getElementById("auth-screen").style.display = "none"; document.getElementById("app").style.display = "flex"; document.getElementById("header-user-email").textContent = resolveReviewerName(user.email || ""); if (refreshInterval) clearInterval(refreshInterval); refreshInterval = setInterval(loadCases, 90000); if (isMobile) { document.getElementById("detail-column").style.display = "none"; document.getElementById("queue-column").style.display = "flex"; } syncModes(); loadCases(); }
+    function showApp(user) { currentUser = user; document.getElementById("auth-screen").style.display = "none"; document.getElementById("app").style.display = "flex"; document.getElementById("header-user-email").textContent = resolveReviewerName(user.email || ""); if (refreshInterval) clearInterval(refreshInterval); refreshInterval = setInterval(loadCases, 90000); if (isMobile) { document.getElementById("detail-column").style.display = "none"; document.getElementById("queue-column").style.display = "flex"; } syncModes(); loadCases();
+      // Look up this dentist's phone for session routing
+      sb.from("dentist_phones").select("phone").limit(10).then(function(res) {
+        // Match by checking all dentist phones — use first available as fallback
+        // For multi-dentist: each dentist should have their own login; phone is looked up from dentist_phones
+        if (res.data && res.data.length > 0) DENTIST_PHONE = res.data[0].phone;
+      });
+    }
 
     async function loadCases() { var btn = document.getElementById("refresh-btn"); btn.classList.add("spinning"); try { await Promise.all([loadCurrentTabCases(), loadQueueCount()]); renderQueue(); updateQueueBadge(); updateSortChipState(); updateSortBarVisibility(); updateControlsDisabledState(); syncModes(); } catch (err) { console.error("Load exception:", err); showToast("Unexpected load error"); } finally { btn.classList.remove("spinning"); } }
 
@@ -1074,7 +1081,9 @@
             to_phone: smsModalCase.patient_phone,
             message_body: msg,
             sender_name: resolveReviewerName(currentUser ? currentUser.email : ""),
-            sender_email: currentUser ? (currentUser.email || "") : ""
+            sender_email: currentUser ? (currentUser.email || "") : "",
+            sender_type: "dentist",
+            sender_phone: DENTIST_PHONE
           })
         });
         var data = {};
