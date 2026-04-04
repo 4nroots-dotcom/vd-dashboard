@@ -801,9 +801,6 @@
           : '<div class="sms-banner"><span class="sms-banner-icon">&#9888;&#65039;</span><span><strong>SMS continuation.</strong> This patient provided additional information via text after the call ended. Review the SMS thread below and verify the clinical note is complete before finalising this case.</span></div>';
       }
       if (c.has_sms_continuation || smsRows.length > 0) {
-        if (c.has_sms_continuation) {
-          smsBannerHtml = '<div class="sms-banner"><span class="sms-banner-icon">\u26A0\uFE0F</span><span><strong>SMS continuation — review required.</strong> This patient provided additional information via text after the call ended. Review the SMS section below before finalising this case.</span></div>';
-        }
         // Build extraction summary if available
         var smsExtractionHtml = "";
         if (c.sms_structured_output) {
