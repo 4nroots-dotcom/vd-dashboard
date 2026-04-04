@@ -681,7 +681,6 @@
     document.getElementById("chip-urgent").addEventListener("click", function() { setFilter("urgent"); });
     document.getElementById("chip-emergency").addEventListener("click", function() { setFilter("emergency"); });
     document.getElementById("chip-routine").addEventListener("click", function() { setFilter("routine"); });
-    document.getElementById("queue-search").addEventListener("input", function() { searchQuery = this.value.trim(); renderQueue(); });
     document.getElementById("sort-severity").addEventListener("click", function() { if (currentTab === "queue") { setSort("severity"); return; } if (!isUrgencySortRedundant()) setSort("severity"); });
     document.getElementById("sort-newest").addEventListener("click", function() { setSort("newest"); });
     document.getElementById("sort-oldest").addEventListener("click", function() { setSort("oldest"); });
@@ -695,6 +694,7 @@
     async function init() { try { var result = await sb.auth.getSession(); var data = result.data; var error = result.error; if (error) { console.error("Session error:", error); return; } if (data && data.session && data.session.user) { showApp(data.session.user); } else if (isMobile) { document.getElementById("detail-column").style.display = "none"; } } catch (err) { console.error("Init error:", err); } }
 
     function showApp(user) { currentUser = user; document.getElementById("auth-screen").style.display = "none"; document.getElementById("app").style.display = "flex"; document.getElementById("header-user-email").textContent = resolveReviewerName(user.email || ""); if (refreshInterval) clearInterval(refreshInterval); refreshInterval = setInterval(loadCases, 90000); if (isMobile) { document.getElementById("detail-column").style.display = "none"; document.getElementById("queue-column").style.display = "flex"; } syncModes(); loadCases();
+      var searchEl = document.getElementById("queue-search"); if (searchEl) { searchEl.value = ""; searchEl.addEventListener("input", function() { searchQuery = this.value.trim(); renderQueue(); }); }
       // Look up this dentist's phone by their login email for session routing
       sb.from("dentist_phones").select("phone").eq("email", user.email).maybeSingle().then(function(res) {
         if (res.data?.phone) DENTIST_PHONE = res.data.phone;
