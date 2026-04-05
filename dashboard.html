@@ -800,7 +800,7 @@
       var allergyFlags = getAllergyFlags(intakeMedicalFlags);
       var allergyAlertHtml = "";
       if (allergyFlags.length > 0) {
-        allergyAlertHtml = '<div class="allergy-alert"><div class="allergy-alert-icon">&#9888;</div><div class="allergy-alert-body"><div class="allergy-alert-label">Allergy flags</div><div class="allergy-alert-flags">' + escHtml(allergyFlags.join(" &nbsp;&middot;&nbsp; ")) + '</div></div></div>';
+        allergyAlertHtml = '<div class="allergy-alert"><div class="allergy-alert-icon">&#9888;</div><div class="allergy-alert-body"><div class="allergy-alert-label">Allergy flags</div><div class="allergy-alert-flags">' + allergyFlags.map(escHtml).join(" &nbsp;&middot;&nbsp; ") + '</div></div></div>';
       }
 
       var transcriptHtml = "";
