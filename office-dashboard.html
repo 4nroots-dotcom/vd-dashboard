@@ -778,7 +778,7 @@
       <div class="case-list-date" id="list-date"></div>
       <div class="case-list-meta" id="list-count">Loading...</div>
       <div style="display:flex;gap:6px;margin-top:8px;">
-        <input class="search-input" id="search-input" type="text" placeholder="Search name or phone..." oninput="(function(q){q=q.toLowerCase().trim();var f=currentCases.filter(function(c){return !q||(c.patient_name||'').toLowerCase().includes(q)||(c.patient_phone||'').replace(/\D/g,'').includes(q.replace(/\D/g,''));});renderCaseList(f);})(this.value);" />
+        <input class="search-input" id="search-input" type="text" placeholder="Search name or phone..." oninput="(function(q){q=q.toLowerCase().trim();if(!q){renderCaseList(currentCases);return;}var isNum=/\d/.test(q);var f=currentCases.filter(function(c){return (c.patient_name||'').toLowerCase().includes(q)||(isNum&&(c.patient_phone||'').replace(/\D/g,'').includes(q.replace(/\D/g,'')));});renderCaseList(f);})(this.value);" />
       </div>
       <div style="display:flex;gap:6px;margin-top:6px;align-items:center;">
         <span style="font-size:11px;color:var(--text-muted);">Sort:</span>
