@@ -607,7 +607,7 @@
         <div class="filter-right"><button class="refresh-btn" id="refresh-btn" type="button" title="Refresh">&#8635;</button></div>
       </div>
       <div style="padding:6px 12px 2px;">
-        <input type="text" id="queue-search" placeholder="Search by name or phone..." style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:7px 10px;color:#e8edf5;font-size:13px;outline:none;" oninput="(function(q){q=q.toLowerCase().trim();var panel=document.getElementById('queue-panel');if(!q){renderQueue();return;}var isNum=/\d/.test(q);var f=allCases.filter(function(c){return (c.patient_name||'').toLowerCase().includes(q)||(isNum&&(c.patient_phone||'').replace(/\D/g,'').includes(q.replace(/\D/g,'')));});if(!f.length){panel.innerHTML='<div class=\'empty-state\'><div class=\'empty-icon\'>&#x2713;</div><div class=\'empty-title\'>No results</div></div>';return;}panel.innerHTML='<div class=\'case-list\'>'+f.map(renderCaseCard).join('')+'</div>';panel.querySelectorAll('.case-card').forEach(function(el){el.addEventListener('click',function(){openCase(el.dataset.caseId);});});})(this.value);" />
+        <input type="text" id="queue-search" placeholder="Search by name or phone..." style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:7px 10px;color:#e8edf5;font-size:13px;outline:none;" oninput="doSearch(this.value);" />
       </div>
       <div class="sort-bar" id="sort-bar">
         <span class="sort-label">Sort:</span>
@@ -717,6 +717,20 @@
     function updateSortChipState() { var severityChip = document.getElementById("sort-severity"); if (!severityChip) return; var redundant = isUrgencySortRedundant(); severityChip.classList.toggle("disabled", redundant); if (redundant && currentSort === "severity") { currentSort = "newest"; ["severity","newest","oldest"].forEach(function(k) { var el = document.getElementById("sort-" + k); if (el) el.classList.toggle("active", k === "newest"); }); } }
     function controlsShouldBeDisabled() { return !!selectedCaseId; }
     function updateControlsDisabledState() { var tabsShell = document.getElementById("tabs-shell"); var queueControls = document.getElementById("queue-controls"); var queueHint = document.getElementById("queue-hint"); var disabled = !!selectedCaseId; tabsShell.classList.toggle("controls-disabled", disabled); queueControls.classList.toggle("controls-disabled", disabled); queueHint.classList.toggle("show", disabled && !isMobile); }
+
+    function doSearch(val) {
+      var q = (val || "").toLowerCase().trim();
+      var panel = document.getElementById("queue-panel");
+      if (!q) { renderQueue(); return; }
+      var isNum = /\d/.test(q);
+      var f = allCases.filter(function(c) {
+        return (c.patient_name || "").toLowerCase().indexOf(q) !== -1 ||
+               (isNum && (c.patient_phone || "").replace(/[^0-9]/g, "").indexOf(q.replace(/[^0-9]/g, "")) !== -1);
+      });
+      if (!f.length) { panel.innerHTML = '<div class="empty-state"><div class="empty-icon">&#x2713;</div><div class="empty-title">No results</div></div>'; return; }
+      panel.innerHTML = '<div class="case-list">' + f.map(renderCaseCard).join("") + "</div>";
+      panel.querySelectorAll(".case-card").forEach(function(el) { el.addEventListener("click", function() { openCase(el.dataset.caseId); }); });
+    }
 
     function renderQueue() { var panel = document.getElementById("queue-panel"); var cases = allCases.slice(); if (currentTab === "queue") { cases = cases.filter(function(c) { return c.review_status !== "reviewed"; }); } if (currentFilter !== "all") { cases = cases.filter(function(c) { return (c.severity || "unknown") === currentFilter; }); } if (searchQuery) { var q = searchQuery.toLowerCase(); cases = cases.filter(function(c) { return (c.patient_name || "").toLowerCase().includes(q) || (c.patient_phone || "").replace(/\D/g,"").includes(q.replace(/\D/g,"")); }); } var sevOrder = { urgent: 1, emergency: 2, routine: 3, unknown: 4 }; if (currentSort === "severity" && !isUrgencySortRedundant()) { cases.sort(function(a, b) { var aOrder = sevOrder[a.severity || "unknown"] || 9; var bOrder = sevOrder[b.severity || "unknown"] || 9; return aOrder - bOrder || new Date(b.created_at) - new Date(a.created_at); }); } else if (currentSort === "newest") { cases.sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); }); } else if (currentSort === "oldest") { cases.sort(function(a, b) { return new Date(a.created_at) - new Date(b.created_at); }); } if (!cases.length) { var emptyState = getEmptyStateCopy(); panel.innerHTML = '<div class="empty-state"><div class="empty-icon">\u2713</div><div class="empty-title">' + emptyState.emptyTitle + '</div><div class="empty-sub">' + emptyState.emptySub + '</div></div>'; return; } panel.innerHTML = '<div class="case-list">' + cases.map(renderCaseCard).join("") + '</div>'; panel.querySelectorAll(".case-card").forEach(function(el) { el.addEventListener("click", function() { openCase(el.dataset.caseId); }); }); }
     function getEmptyStateCopy() { if (currentTab === "queue") return { emptyTitle: "No active cases", emptySub: "No new or draft cases are currently waiting in the queue." }; if (currentTab === "new") return { emptyTitle: "No new cases", emptySub: "No untouched cases match this filter." }; if (currentTab === "drafts") return { emptyTitle: "No drafts", emptySub: "No cases are currently in draft status." }; if (currentTab === "reviewed") return { emptyTitle: "No reviewed cases", emptySub: "No reviewed cases match this filter." }; return { emptyTitle: "All clear", emptySub: "No cases match this filter." }; }
