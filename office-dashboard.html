@@ -1,0 +1,1744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Martindale Dental - Office Triage Queue</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --navy: #071323;
+      --cyan: #00c8e8;
+      --green: #71BB55;
+      --bg: #F0F4F8;
+      --surface: #FFFFFF;
+      --border: #E2E8F0;
+      --text-primary: #1A202C;
+      --text-secondary: #4A5568;
+      --text-muted: #718096;
+      --emergency: #C53030;
+      --emergency-bg: #FFF5F5;
+      --emergency-border: #FC8181;
+      --urgent: #C05621;
+      --urgent-bg: #FFFAF0;
+      --urgent-border: #F6AD55;
+      --routine: #276749;
+      --routine-bg: #F0FFF4;
+      --routine-border: #68D391;
+      --pending-bg: #F7FAFC;
+      --pending-border: #CBD5E0;
+      --radius: 10px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.10), 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ---- AUTH ---- */
+    .auth-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      inset: 0;
+      overflow-y: auto;
+      padding: 20px;
+      background: var(--bg);
+      z-index: 9999;
+    }
+
+    .auth-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      padding: 36px 32px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .auth-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 4px;
+      margin-top: 10px;
+    }
+
+    .auth-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .auth-field { margin-bottom: 16px; }
+
+    .auth-field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .auth-input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .auth-input:focus { border-color: var(--cyan); }
+
+    .auth-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.2s;
+    }
+
+    .auth-btn:hover { opacity: 0.88; }
+    .auth-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .auth-error {
+      margin-top: 12px;
+      padding: 10px 12px;
+      background: var(--emergency-bg);
+      border: 1px solid var(--emergency-border);
+      border-radius: 8px;
+      color: var(--emergency);
+      font-size: 13px;
+      display: none;
+    }
+
+    /* ---- APP ---- */
+    .app {
+      display: none;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .app.visible { display: flex; }
+
+    /* ---- HEADER ---- */
+    .header {
+      background: var(--navy);
+      padding: 0 20px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .header-left { display: flex; align-items: center; gap: 14px; }
+
+    .header-practice { display: flex; align-items: center; gap: 10px; }
+
+    .header-practice-text {}
+
+    .header-practice-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.1;
+    }
+
+    .header-practice-location {
+      font-size: 11px;
+      color: #7f96b8;
+    }
+
+    .header-divider {
+      width: 1px;
+      height: 22px;
+      background: rgba(255,255,255,0.12);
+    }
+
+    .header-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #7f96b8;
+    }
+
+    .header-vd {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--cyan);
+      opacity: 0.75;
+    }
+
+    .signout-btn {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 6px;
+      color: #7f96b8;
+      font-size: 12px;
+      padding: 5px 10px;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .signout-btn:hover { border-color: rgba(255,255,255,0.32); color: #fff; }
+
+    /* ---- BODY ---- */
+    .body {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ---- CASE LIST ---- */
+    .case-list-panel {
+      width: 296px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .case-list-header {
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .case-list-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+
+    .case-list-date {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .case-list-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .refresh-btn {
+      margin-top: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--cyan);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .refresh-btn:hover { opacity: 0.7; }
+
+    .search-input {
+      flex: 1;
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus { border-color: var(--cyan); }
+
+    .sort-btn {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .sort-btn.active {
+      background: var(--navy);
+      color: #fff;
+      border-color: var(--navy);
+    }
+
+    .case-list-scroll {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .case-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+
+    .case-item:hover { background: #F7FAFC; }
+    .case-item.active { background: #EBF8FF; border-left: 3px solid var(--cyan); padding-left: 13px; }
+
+    .case-item-time {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-bottom: 3px;
+    }
+
+    .case-item-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 3px;
+    }
+
+    .case-item-complaint {
+      font-size: 12px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 6px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 2px 7px;
+      border-radius: 999px;
+    }
+
+    .badge-emergency { background: var(--emergency-bg); color: var(--emergency); border: 1px solid var(--emergency-border); }
+    .badge-urgent { background: var(--urgent-bg); color: var(--urgent); border: 1px solid var(--urgent-border); }
+    .badge-routine { background: var(--routine-bg); color: var(--routine); border: 1px solid var(--routine-border); }
+    .badge-pending { background: var(--pending-bg); color: var(--text-muted); border: 1px solid var(--pending-border); }
+
+    .case-empty {
+      padding: 32px 16px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    /* ---- NOTE PANEL ---- */
+    .note-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: var(--bg);
+    }
+
+    .note-toolbar {
+      padding: 10px 20px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .note-patient-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .note-patient-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .note-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 8px 14px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.18s;
+      border: none;
+    }
+
+    .btn-print { background: var(--navy); color: #fff; }
+    .btn-pdf { background: var(--bg); color: var(--text-secondary); border: 1px solid var(--border); }
+    .btn-back { background: var(--bg); color: var(--text-secondary); border: 1px solid var(--border); font-size: 13px; }
+    .btn-complete { background: #276749; color: #fff; border: none; }
+    .action-btn:hover { opacity: 0.82; }
+
+    .revenue-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      background: rgba(0,200,232,0.04);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .revenue-bar-label { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+    .revenue-bar input { background: rgba(255,255,255,0.07); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 13px; padding: 5px 10px; outline: none; width: 110px; transition: border-color 0.2s; }
+    .revenue-bar input:focus { border-color: rgba(0,200,232,0.35); }
+    .revenue-bar input::placeholder { color: var(--text-muted); }
+    .revenue-save-btn { background: rgba(0,200,232,0.1); border: 1px solid rgba(0,200,232,0.25); color: var(--cyan); border-radius: 6px; font-size: 12px; font-weight: 700; padding: 5px 12px; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+    .revenue-save-btn:hover { background: rgba(0,200,232,0.18); }
+    .revenue-save-status { font-size: 11px; color: var(--text-muted); transition: color 0.3s; }
+    .revenue-save-status.ok { color: #00c87a; }
+    .revenue-save-status.err { color: #e84545; }
+
+    /* ── SMS ──────────────────────────────────────────────────────── */
+    .sms-banner { display: flex; gap: 10px; background: rgba(240,165,0,0.09); border: 1px solid rgba(240,165,0,0.28); border-radius: 8px; padding: 10px 14px; margin: 8px 20px 0; font-size: 13px; color: #c08020; line-height: 1.5; flex-shrink: 0; }
+    .sms-banner strong { color: #c08020; }
+    .allergy-alert { display: flex; align-items: flex-start; gap: 10px; background: #fff5f5; border: 1.5px solid #fc8181; border-radius: 8px; padding: 12px 16px; margin: 8px 20px 0; font-size: 13px; line-height: 1.5; flex-shrink: 0; }
+    .allergy-alert-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; color: #c53030; }
+    .allergy-alert-label { font-weight: 700; color: #c53030; text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em; margin-bottom: 2px; }
+    .allergy-alert-flags { color: #c53030; font-weight: 600; }
+    .sms-section { margin: 12px 0 0; }
+    .sms-extraction-box { background: rgba(0,150,180,0.06); border: 1px solid rgba(0,150,180,0.18); border-radius: 8px; padding: 10px 14px; margin-bottom: 10px; font-size: 12px; }
+    .sms-extraction-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #5a8090; margin-bottom: 6px; }
+    .sms-extraction-row { display: flex; gap: 8px; padding: 3px 0; }
+    .sms-extraction-key { color: #7a9090; min-width: 110px; flex-shrink: 0; }
+    .sms-extraction-val { color: var(--text-primary, #1a2b40); font-size: 12px; }
+    .sms-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 900; display: none; align-items: center; justify-content: center; padding: 20px; }
+    .sms-modal-overlay.open { display: flex; }
+    .sms-modal { background: #fff; border-radius: 14px; padding: 22px; width: 100%; max-width: 460px; box-shadow: 0 24px 60px rgba(0,0,0,0.22); display: flex; flex-direction: column; gap: 14px; }
+    .sms-modal-header { display: flex; align-items: flex-start; justify-content: space-between; }
+    .sms-modal-title { font-size: 15px; font-weight: 700; color: #0f2044; }
+    .sms-modal-recipient { font-size: 12px; color: #5a7090; margin-top: 2px; }
+    .sms-modal-close { background: none; border: none; color: #aaa; font-size: 22px; cursor: pointer; padding: 0; line-height: 1; }
+    .sms-template-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8a9cb8; }
+    .sms-template-btn { background: #f4f7fb; border: 1px solid #d0dae8; border-radius: 7px; color: #3a5070; font-size: 12px; padding: 8px 12px; text-align: left; cursor: pointer; width: 100%; line-height: 1.45; transition: border-color 0.15s, background 0.15s; }
+    .sms-template-btn:hover { border-color: #00a8c4; background: #e6f8fc; }
+    .sms-templates { display: flex; flex-direction: column; gap: 6px; }
+    .sms-textarea { width: 100%; background: #f8fafd; border: 1px solid #d0dae8; border-radius: 8px; color: #1a2b40; font-size: 13px; padding: 10px 12px; resize: vertical; min-height: 80px; outline: none; font-family: inherit; transition: border-color 0.2s; }
+    .sms-textarea:focus { border-color: #00a8c4; }
+    .sms-char-row { display: flex; justify-content: space-between; font-size: 11px; color: #8a9cb8; }
+    .sms-char-counter.warn { color: #c08020; }
+    .sms-char-counter.over { color: #c0392b; }
+    .sms-send-btn { width: 100%; background: #0f2044; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; padding: 12px; cursor: pointer; transition: opacity 0.2s; }
+    .sms-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .sms-send-status { font-size: 12px; text-align: center; min-height: 16px; }
+    .sms-send-status.ok { color: #00c87a; }
+    .sms-send-status.err { color: #e84545; }
+    .btn-msg-patient { background: rgba(0,200,232,0.08); border: 1px solid rgba(0,200,232,0.22); color: #007a8e; border-radius: 6px; font-size: 12px; font-weight: 600; padding: 7px 12px; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+    .btn-msg-patient:hover { background: rgba(0,200,232,0.16); }
+
+    .note-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .note-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.7;
+      font-size: 14px;
+      gap: 10px;
+    }
+
+    .placeholder-icon { font-size: 32px; opacity: 0.35; }
+
+    /* ---- NOTE CARD ---- */
+    .note-card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      max-width: 740px;
+      margin: 0 auto;
+    }
+
+    .note-print-header { display: none; }
+
+    .note-disclaimer {
+      background: #FFFBEA;
+      border-bottom: 2px solid #ECC94B;
+      padding: 10px 20px;
+      font-size: 12px;
+      color: #744210;
+      line-height: 1.55;
+    }
+
+    .note-disclaimer-title {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: #975A16;
+      margin-bottom: 3px;
+    }
+
+    .note-body { padding: 20px; }
+
+    .note-section { margin-bottom: 18px; }
+    .note-section:last-child { margin-bottom: 0; }
+
+    .note-section-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #00a3c4;
+      padding-bottom: 5px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 8px;
+    }
+
+    .note-section-body {
+      font-size: 13px;
+      color: var(--text-primary);
+      line-height: 1.68;
+    }
+
+    .note-quote {
+      font-style: italic;
+      color: var(--text-secondary);
+      border-left: 3px solid var(--border);
+      padding-left: 12px;
+      margin-bottom: 2px;
+    }
+
+    .flag-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+      font-size: 13px;
+    }
+
+    .flag-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .flag-dot-ok { background: #CBD5E0; }
+    .flag-dot-alert { background: var(--emergency); }
+    .flag-text-ok { color: var(--text-muted); }
+    .flag-text-alert { color: var(--emergency); font-weight: 700; }
+
+    .note-pending {
+      padding: 36px 20px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    /* ---- PRINT ---- */
+    @media print {
+      .auth-screen, .header, .case-list-panel, .note-toolbar, .note-placeholder,
+      .revenue-bar, #sms-case-banner, .sms-modal-overlay { display: none !important; }
+
+      html, body, .app, .body, .note-panel, .note-scroll {
+        display: block !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        position: static !important;
+        width: 100% !important;
+        background: #fff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        flex: none !important;
+      }
+
+      .note-card {
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
+        max-width: 100%;
+        padding: 0;
+      }
+
+      .note-print-header {
+        display: flex !important;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding-bottom: 10px;
+        margin-bottom: 14px;
+        border-bottom: 2px solid #071323;
+      }
+
+      .print-practice-name {
+        font-size: 16px;
+        font-weight: 700;
+        color: #071323;
+      }
+
+      .print-practice-sub {
+        font-size: 11px;
+        color: #718096;
+        margin-top: 2px;
+      }
+
+      .print-vd {
+        font-size: 11px;
+        color: #718096;
+        text-align: right;
+      }
+
+      .note-disclaimer { background: #fff !important; border: 1px solid #E2E8F0 !important; }
+      .note-section-label { color: #071323 !important; }
+
+      @page { margin: 0.75in; size: letter; }
+    }
+
+    /* ---- RESPONSIVE ---- */
+    @media (max-width: 768px) {
+      .app { height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+      .body { flex: 1; overflow: hidden; position: relative; }
+
+      /* List panel — full screen by default on mobile */
+      .case-list-panel {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        border-right: none;
+        border-bottom: none;
+        display: flex;
+        flex-direction: column;
+        z-index: 10;
+        transition: transform 0.25s ease;
+      }
+
+      .case-list-scroll { flex: 1; overflow-y: auto; }
+
+      /* When a case is selected on mobile, slide list out and show note full screen */
+      .body.case-open .case-list-panel {
+        transform: translateX(-100%);
+        pointer-events: none;
+      }
+
+      /* Note panel — hidden behind list by default, full screen when case open */
+      .note-panel {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        transform: translateX(100%);
+        transition: transform 0.25s ease;
+        overflow: hidden;
+        background: var(--bg);
+      }
+
+      .body.case-open .note-panel {
+        transform: translateX(0);
+      }
+
+      .note-scroll {
+        flex: 1;
+        overflow-y: auto;
+        padding: 12px;
+        height: 0; /* forces flex child to scroll */
+      }
+
+      .note-toolbar {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 10px 12px;
+        flex-shrink: 0;
+      }
+
+      .note-actions { width: 100%; }
+      .action-btn { flex: 1; justify-content: center; font-size: 12px; padding: 8px 10px; }
+
+      .note-card { border-radius: 8px; }
+      .note-body { padding: 14px; }
+
+      .header-label, .header-divider:last-of-type, .header-vd { display: none; }
+    }
+
+    @media (max-width: 400px) {
+      .header-practice-name { font-size: 13px; }
+      .header-practice-location { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== AUTH SCREEN ===== -->
+<div class="auth-screen" id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-header">
+      <svg xmlns="http://www.w3.org/2000/svg" style="height:48px;width:auto;display:block;margin:0 auto;" viewBox="70 36 454 300" shape-rendering="geometricPrecision" aria-label="Martindale Dental">
+        <path d="M 292 41 L 184 138 L 180 136 L 75 42 L 75 258 L 291 258 L 292 257 Z M 487 304 L 485 306 L 486 307 L 492 304 L 499 305 L 502 308 L 502 313 L 501 314 L 491 314 L 485 317 L 484 319 L 485 327 L 489 329 L 496 329 L 501 325 L 504 329 L 504 309 L 503 306 L 499 303 Z M 501 315 L 502 316 L 502 322 L 497 327 L 492 328 L 489 327 L 486 324 L 486 320 L 490 316 Z M 433 303 L 433 328 L 435 329 L 435 315 L 437 309 L 441 305 L 447 304 L 452 308 L 453 311 L 453 329 L 455 329 L 455 310 L 454 307 L 450 303 L 442 303 L 436 308 L 435 303 Z M 408 303 L 403 306 L 400 312 L 401 323 L 408 329 L 417 329 L 421 327 L 423 324 L 422 323 L 419 326 L 414 328 L 408 327 L 403 322 L 402 317 L 403 316 L 424 316 L 423 308 L 417 303 Z M 402 312 L 406 306 L 411 304 L 414 304 L 418 306 L 422 311 L 421 314 L 403 314 Z M 326 303 L 322 305 L 318 310 L 317 314 L 318 321 L 320 325 L 326 329 L 335 329 L 341 324 L 339 323 L 336 326 L 329 328 L 324 326 L 321 323 L 319 317 L 320 316 L 342 316 L 341 309 L 338 305 L 334 303 Z M 319 313 L 321 309 L 325 305 L 328 304 L 334 305 L 340 312 L 339 314 L 320 314 Z M 277 304 L 275 306 L 276 307 L 283 304 L 289 305 L 292 308 L 293 312 L 291 314 L 282 314 L 277 316 L 274 319 L 274 325 L 279 329 L 286 329 L 292 325 L 293 329 L 295 329 L 294 326 L 294 308 L 293 306 L 289 303 Z M 291 315 L 293 317 L 293 319 L 289 326 L 282 328 L 279 327 L 276 324 L 276 320 L 279 317 L 284 315 Z M 207 303 L 208 308 L 208 329 L 210 328 L 210 311 L 215 305 L 218 304 L 223 305 L 227 310 L 227 329 L 229 329 L 229 310 L 227 305 L 224 303 L 216 303 L 210 307 L 209 303 Z M 196 303 L 196 329 L 198 329 L 198 303 Z M 165 303 L 160 303 L 156 307 L 154 306 L 154 303 L 152 303 L 152 328 L 154 329 L 155 310 L 160 305 L 164 305 Z M 124 305 L 124 307 L 131 304 L 137 305 L 140 308 L 141 313 L 140 314 L 130 314 L 125 316 L 122 320 L 123 326 L 127 329 L 135 329 L 140 325 L 141 329 L 143 329 L 142 307 L 137 303 L 128 303 Z M 140 315 L 141 320 L 140 323 L 137 326 L 130 328 L 125 325 L 124 320 L 127 317 L 132 315 Z M 76 303 L 76 329 L 78 329 L 78 313 L 79 310 L 82 306 L 87 304 L 91 305 L 94 309 L 94 328 L 96 329 L 96 312 L 97 309 L 101 305 L 104 304 L 109 305 L 112 309 L 113 329 L 115 328 L 115 313 L 114 308 L 111 304 L 101 303 L 96 308 L 91 303 L 84 303 L 79 308 L 78 303 Z M 467 297 L 468 298 L 467 302 L 462 303 L 462 305 L 466 305 L 468 308 L 467 309 L 468 310 L 468 319 L 467 320 L 468 321 L 467 323 L 468 327 L 471 329 L 477 329 L 477 327 L 474 328 L 469 323 L 469 307 L 471 305 L 477 305 L 477 303 L 470 303 L 469 302 L 469 296 Z M 177 296 L 177 302 L 176 303 L 171 303 L 171 305 L 176 305 L 177 306 L 177 325 L 180 329 L 187 329 L 187 327 L 183 328 L 179 324 L 179 306 L 180 305 L 187 305 L 187 303 L 180 303 L 179 302 L 179 296 Z M 198 290 L 195 292 L 196 294 L 199 293 Z M 515 286 L 515 328 L 517 329 L 517 286 Z M 391 286 L 389 286 L 389 306 L 388 307 L 382 303 L 373 303 L 369 305 L 365 311 L 365 321 L 368 326 L 371 328 L 382 329 L 386 327 L 388 324 L 389 328 L 391 329 Z M 380 304 L 384 306 L 388 310 L 390 315 L 388 322 L 384 326 L 379 328 L 373 327 L 367 320 L 368 310 L 373 305 Z M 306 286 L 306 329 L 308 328 L 308 287 Z M 265 286 L 263 286 L 263 307 L 262 308 L 260 305 L 256 303 L 247 303 L 243 305 L 239 310 L 238 314 L 239 322 L 243 327 L 247 329 L 256 329 L 262 324 L 263 329 L 265 329 Z M 250 304 L 258 306 L 263 312 L 262 322 L 258 326 L 252 328 L 247 327 L 244 325 L 240 318 L 240 314 L 242 309 L 245 306 Z" fill="rgb(65,70,76)" fill-rule="evenodd"/>
+        <path d="M 336 41 L 359 43 L 386 50 L 402 57 L 421 70 L 436 87 L 445 105 L 448 114 L 451 130 L 452 157 L 451 158 L 451 168 L 450 169 L 449 179 L 444 195 L 435 212 L 418 230 L 403 240 L 378 250 L 350 256 L 331 257 L 516 257 L 516 41 Z M 75 41 L 77 43 L 74 41 L 74 257 L 74 42 Z" fill="rgb(113,187,85)" fill-rule="evenodd"/>
+      </svg>
+      <div class="auth-title">Office Triage Queue</div>
+      <div class="auth-sub">Jackson Square &middot; Hamilton, Ontario</div>
+      <div style="margin-top:10px; display:flex; align-items:center; justify-content:center; gap:7px; opacity:0.7;">
+        <svg width="16" height="16" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="apg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a2a7a"/><stop offset="100%" stop-color="#00c8e8"/></linearGradient></defs><path d="M38 14 C28 14 18 22 18 36 C18 50 22 62 24 72 C26 82 28 88 34 94 C38 98 42 100 46 98 C50 96 54 92 60 92 C66 92 70 96 74 98 C78 100 82 98 86 94 C92 88 94 82 96 72 C98 62 102 50 102 36 C102 22 92 14 82 14 C76 14 70 18 60 18 C50 18 44 14 38 14 Z" stroke="url(#apg)" stroke-width="6" fill="none" stroke-linejoin="round"/><polyline points="22,55 36,55 44,38 52,72 60,48 68,62 76,55 98,55" stroke="url(#apg)" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span style="font-size:11px; font-weight:700; color:#00c8e8; letter-spacing:-0.01em;">VirtualDentist.ai</span>
+      </div>
+    </div>
+
+    <div class="auth-field">
+      <label for="login-email">Email</label>
+      <input class="auth-input" id="login-email" type="email" autocomplete="off" placeholder="office@martindaledental.com" />
+    </div>
+
+    <div class="auth-field">
+      <label for="login-password">Password</label>
+      <input class="auth-input" id="login-password" type="password" autocomplete="new-password" />
+    </div>
+
+    <button class="auth-btn" id="login-btn" type="button">Sign in</button>
+    <div class="auth-error" id="auth-error"></div>
+  </div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div class="app" id="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <div class="header-practice">
+        <svg xmlns="http://www.w3.org/2000/svg" style="height:26px;width:auto;" viewBox="70 36 454 300" shape-rendering="geometricPrecision" aria-hidden="true">
+          <path d="M 292 41 L 184 138 L 180 136 L 75 42 L 75 258 L 291 258 L 292 257 Z M 487 304 L 485 306 L 486 307 L 492 304 L 499 305 L 502 308 L 502 313 L 501 314 L 491 314 L 485 317 L 484 319 L 485 327 L 489 329 L 496 329 L 501 325 L 504 329 L 504 309 L 503 306 L 499 303 Z M 501 315 L 502 316 L 502 322 L 497 327 L 492 328 L 489 327 L 486 324 L 486 320 L 490 316 Z M 433 303 L 433 328 L 435 329 L 435 315 L 437 309 L 441 305 L 447 304 L 452 308 L 453 311 L 453 329 L 455 329 L 455 310 L 454 307 L 450 303 L 442 303 L 436 308 L 435 303 Z M 408 303 L 403 306 L 400 312 L 401 323 L 408 329 L 417 329 L 421 327 L 423 324 L 422 323 L 419 326 L 414 328 L 408 327 L 403 322 L 402 317 L 403 316 L 424 316 L 423 308 L 417 303 Z M 402 312 L 406 306 L 411 304 L 414 304 L 418 306 L 422 311 L 421 314 L 403 314 Z M 326 303 L 322 305 L 318 310 L 317 314 L 318 321 L 320 325 L 326 329 L 335 329 L 341 324 L 339 323 L 336 326 L 329 328 L 324 326 L 321 323 L 319 317 L 320 316 L 342 316 L 341 309 L 338 305 L 334 303 Z M 319 313 L 321 309 L 325 305 L 328 304 L 334 305 L 340 312 L 339 314 L 320 314 Z M 277 304 L 275 306 L 276 307 L 283 304 L 289 305 L 292 308 L 293 312 L 291 314 L 282 314 L 277 316 L 274 319 L 274 325 L 279 329 L 286 329 L 292 325 L 293 329 L 295 329 L 294 326 L 294 308 L 293 306 L 289 303 Z M 291 315 L 293 317 L 293 319 L 289 326 L 282 328 L 279 327 L 276 324 L 276 320 L 279 317 L 284 315 Z M 207 303 L 208 308 L 208 329 L 210 328 L 210 311 L 215 305 L 218 304 L 223 305 L 227 310 L 227 329 L 229 329 L 229 310 L 227 305 L 224 303 L 216 303 L 210 307 L 209 303 Z M 196 303 L 196 329 L 198 329 L 198 303 Z M 165 303 L 160 303 L 156 307 L 154 306 L 154 303 L 152 303 L 152 328 L 154 329 L 155 310 L 160 305 L 164 305 Z M 124 305 L 124 307 L 131 304 L 137 305 L 140 308 L 141 313 L 140 314 L 130 314 L 125 316 L 122 320 L 123 326 L 127 329 L 135 329 L 140 325 L 141 329 L 143 329 L 142 307 L 137 303 L 128 303 Z M 140 315 L 141 320 L 140 323 L 137 326 L 130 328 L 125 325 L 124 320 L 127 317 L 132 315 Z M 76 303 L 76 329 L 78 329 L 78 313 L 79 310 L 82 306 L 87 304 L 91 305 L 94 309 L 94 328 L 96 329 L 96 312 L 97 309 L 101 305 L 104 304 L 109 305 L 112 309 L 113 329 L 115 328 L 115 313 L 114 308 L 111 304 L 101 303 L 96 308 L 91 303 L 84 303 L 79 308 L 78 303 Z M 467 297 L 468 298 L 467 302 L 462 303 L 462 305 L 466 305 L 468 308 L 467 309 L 468 310 L 468 319 L 467 320 L 468 321 L 467 323 L 468 327 L 471 329 L 477 329 L 477 327 L 474 328 L 469 323 L 469 307 L 471 305 L 477 305 L 477 303 L 470 303 L 469 302 L 469 296 Z M 177 296 L 177 302 L 176 303 L 171 303 L 171 305 L 176 305 L 177 306 L 177 325 L 180 329 L 187 329 L 187 327 L 183 328 L 179 324 L 179 306 L 180 305 L 187 305 L 187 303 L 180 303 L 179 302 L 179 296 Z M 198 290 L 195 292 L 196 294 L 199 293 Z M 515 286 L 515 328 L 517 329 L 517 286 Z M 391 286 L 389 286 L 389 306 L 388 307 L 382 303 L 373 303 L 369 305 L 365 311 L 365 321 L 368 326 L 371 328 L 382 329 L 386 327 L 388 324 L 389 328 L 391 329 Z M 380 304 L 384 306 L 388 310 L 390 315 L 388 322 L 384 326 L 379 328 L 373 327 L 367 320 L 368 310 L 373 305 Z M 306 286 L 306 329 L 308 328 L 308 287 Z M 265 286 L 263 286 L 263 307 L 262 308 L 260 305 L 256 303 L 247 303 L 243 305 L 239 310 L 238 314 L 239 322 L 243 327 L 247 329 L 256 329 L 262 324 L 263 329 L 265 329 Z M 250 304 L 258 306 L 263 312 L 262 322 L 258 326 L 252 328 L 247 327 L 244 325 L 240 318 L 240 314 L 242 309 L 245 306 Z" fill="rgb(255,255,255)" fill-rule="evenodd"/>
+          <path d="M 336 41 L 359 43 L 386 50 L 402 57 L 421 70 L 436 87 L 445 105 L 448 114 L 451 130 L 452 157 L 451 158 L 451 168 L 450 169 L 449 179 L 444 195 L 435 212 L 418 230 L 403 240 L 378 250 L 350 256 L 331 257 L 516 257 L 516 41 Z M 75 41 L 77 43 L 74 41 L 74 257 L 74 42 Z" fill="rgb(113,187,85)" fill-rule="evenodd"/>
+        </svg>
+        <div class="header-practice-text">
+          <div class="header-practice-name">Martindale Dental</div>
+          <div class="header-practice-location">Jackson Square</div>
+        </div>
+      </div>
+      <div class="header-divider"></div>
+      <div class="header-label">Office Triage Queue</div>
+      <div class="header-divider"></div>
+      <div class="header-vd" style="display:flex;align-items:center;gap:6px;">
+        <svg width="16" height="16" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="hvg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a2a7a"/><stop offset="100%" stop-color="#00c8e8"/></linearGradient></defs><path d="M38 14 C28 14 18 22 18 36 C18 50 22 62 24 72 C26 82 28 88 34 94 C38 98 42 100 46 98 C50 96 54 92 60 92 C66 92 70 96 74 98 C78 100 82 98 86 94 C92 88 94 82 96 72 C98 62 102 50 102 36 C102 22 92 14 82 14 C76 14 70 18 60 18 C50 18 44 14 38 14 Z" stroke="url(#hvg)" stroke-width="6" fill="none" stroke-linejoin="round"/><polyline points="22,55 36,55 44,38 52,72 60,48 68,62 76,55 98,55" stroke="url(#hvg)" stroke-width="5.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span style="font-weight:700;color:#f5f9ff;letter-spacing:-0.01em;">Virtual<span style="color:#00c8e8;">Dentist.ai</span></span>
+      </div>
+    </div>
+    <button class="signout-btn" id="signout-btn" type="button">Sign out</button>
+  </div>
+
+  <!-- BODY -->
+  <div class="body">
+
+    <!-- CASE LIST -->
+    <div class="case-list-panel">
+      <div class="case-list-header">
+      <div class="case-list-label">Triage Cases</div>
+      <div class="case-list-date" id="list-date"></div>
+      <div class="case-list-meta" id="list-count">Loading...</div>
+      <div style="display:flex;gap:6px;margin-top:8px;">
+        <input class="search-input" id="search-input" type="search" placeholder="Search name or phone..." oninput="(function(q){q=q.toLowerCase().trim();var f=currentCases.filter(function(c){return !q||(c.patient_name||'').toLowerCase().includes(q)||(c.patient_phone||'').replace(/\D/g,'').includes(q.replace(/\D/g,''));});renderCaseList(f);})(this.value);" />
+      </div>
+      <div style="display:flex;gap:6px;margin-top:6px;align-items:center;">
+        <span style="font-size:11px;color:var(--text-muted);">Sort:</span>
+        <button class="sort-btn active" id="sort-newest" type="button">Newest</button>
+        <button class="sort-btn" id="sort-oldest" type="button">Oldest</button>
+        <button class="refresh-btn" id="refresh-btn" type="button" style="margin-left:auto;">Refresh</button>
+      </div>
+      <div style="display:flex;gap:5px;margin-top:8px;align-items:center;flex-wrap:wrap;">
+        <span style="font-size:11px;color:var(--text-muted);">Source:</span>
+        <button class="sort-btn active" id="filter-all" type="button">All</button>
+        <button class="sort-btn" id="filter-office" type="button" style="border-left:3px solid #71BB55;">In-Office</button>
+        <button class="sort-btn" id="filter-web" type="button" style="border-left:3px solid #00c8e8;">Web</button>
+        <button class="sort-btn" id="filter-nonemergent" type="button" style="border-left:3px solid #D69E2E;">Non-Emergent</button>
+      </div>
+    </div>
+      <div class="case-list-scroll" id="case-list-scroll">
+        <div class="case-empty">Loading...</div>
+      </div>
+    </div>
+
+    <!-- NOTE PANEL -->
+    <div class="note-panel">
+
+      <div class="note-toolbar" id="note-toolbar">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button class="action-btn btn-back" id="back-btn" type="button">&#8592; Back</button>
+          <div>
+            <div class="note-patient-name" id="note-patient-name"></div>
+            <div class="note-patient-meta" id="note-patient-meta"></div>
+          </div>
+        </div>
+        <div class="note-actions">
+          <button class="action-btn btn-complete" id="complete-btn" type="button">Mark Visit Complete</button>
+          <button class="btn-msg-patient" id="msg-patient-btn" type="button">&#128172; Message Patient</button>
+          <button class="action-btn btn-pdf" id="save-pdf-btn" type="button">Save as PDF</button>
+          <button class="action-btn btn-print" id="print-btn" type="button">Print Note</button>
+        </div>
+      </div>
+
+      <div class="revenue-bar" id="revenue-bar" style="display:none;">
+        <span class="revenue-bar-label">Revenue</span>
+        <span style="font-size:13px;color:var(--text-muted);font-weight:600;">$</span>
+        <input type="number" id="revenue-input" placeholder="0.00" step="0.01" min="0" />
+        <button class="revenue-save-btn" id="revenue-save-btn" type="button">Save</button>
+        <span class="revenue-save-status" id="revenue-save-status"></span>
+      </div>
+
+      <div class="note-scroll" id="note-scroll">
+        <div class="note-placeholder">
+          <div class="placeholder-icon">&#x1F4CB;</div>
+          <div>Select a patient from the list<br>to view their triage note.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- SMS MODAL -->
+<div class="sms-modal-overlay" id="sms-modal-overlay">
+  <div class="sms-modal" role="dialog" aria-modal="true">
+    <div class="sms-modal-header">
+      <div>
+        <div class="sms-modal-title">&#128172; Message Patient</div>
+        <div class="sms-modal-recipient" id="sms-modal-recipient"></div>
+      </div>
+      <button class="sms-modal-close" id="sms-modal-close" type="button" aria-label="Close">&times;</button>
+    </div>
+    <div class="sms-templates">
+      <div class="sms-template-label">Quick templates</div>
+      <button class="sms-template-btn" data-template="received" type="button">Case received — dentist reviewing</button>
+      <button class="sms-template-btn" data-template="appointment" type="button">We'd like to get you in as soon as possible</button>
+      <button class="sms-template-btn" data-template="morning" type="button">We'll call you first thing at 9am</button>
+      <button class="sms-template-btn" data-template="callback" type="button">Please call us back — or reply here</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;">
+      <textarea class="sms-textarea" id="sms-textarea" placeholder="Type a message or select a template above..." maxlength="1600"></textarea>
+      <div class="sms-char-row">
+        <span>Sending from 1-833-959-3932</span>
+        <span class="sms-char-counter" id="sms-char-counter">0 / 160</span>
+      </div>
+    </div>
+    <button class="sms-send-btn" id="sms-send-btn" type="button" disabled>Send message</button>
+    <div class="sms-send-status" id="sms-send-status"></div>
+  </div>
+</div>
+
+<script>
+  var SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
+  var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+  var INTAKE_SECRET = "af0ca85c19cd7dbd62ba2d03bf7e0cda6dc04f84048d3b8f";
+
+  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  var currentCases = [];
+  var selectedCaseId = null;
+  var smsRefreshInterval = null;
+  var OFFICE_PHONE = null;
+
+  // Look up office phone by logged-in user email for session routing
+  sb.auth.onAuthStateChange(function(event, session) {
+    if (session && session.user && session.user.email) {
+      sb.from("office_phones").select("phone").eq("email", session.user.email).maybeSingle().then(function(r) {
+        if (r.data && r.data.phone) OFFICE_PHONE = r.data.phone;
+      });
+    }
+  });
+  var currentSortAsc = false; // newest first by default
+  var searchQuery = "";
+  var sourceFilter = "all"; // all, office, web, nonemergent
+
+  // ---- AUTH ----
+  document.getElementById("login-btn").addEventListener("click", handleLogin);
+  document.getElementById("login-password").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") handleLogin();
+  });
+  document.getElementById("signout-btn").addEventListener("click", function() {
+    sb.auth.signOut().then(function() { showAuth(); });
+  });
+
+  async function handleLogin() {
+    var btn = document.getElementById("login-btn");
+    var errEl = document.getElementById("auth-error");
+    var email = document.getElementById("login-email").value.trim();
+    var password = document.getElementById("login-password").value;
+
+    errEl.style.display = "none";
+    btn.disabled = true;
+    btn.textContent = "Signing in...";
+
+    var result = await sb.auth.signInWithPassword({ email: email, password: password });
+
+    if (result.error) {
+      errEl.textContent = "Incorrect email or password. Please try again.";
+      errEl.style.display = "block";
+      btn.disabled = false;
+      btn.textContent = "Sign in";
+      return;
+    }
+
+    showApp();
+    loadCases();
+  }
+
+  function showAuth() {
+    document.getElementById("auth-screen").style.display = "flex";
+    document.getElementById("app").classList.remove("visible");
+    selectedCaseId = null;
+    currentCases = [];
+    document.getElementById("login-email").value = "";
+    document.getElementById("login-password").value = "";
+    document.getElementById("auth-error").style.display = "none";
+    var btn = document.getElementById("login-btn");
+    btn.disabled = false;
+    btn.textContent = "Sign in";
+  }
+
+  function showApp() {
+    document.getElementById("auth-screen").style.display = "none";
+    document.getElementById("app").classList.add("visible");
+    var now = new Date();
+    document.getElementById("list-date").textContent = now.toLocaleDateString("en-CA", { weekday: "long", month: "long", day: "numeric" });
+  }
+
+  // Check existing session on load
+  sb.auth.getSession().then(function(res) {
+    if (res.data && res.data.session) {
+      showApp();
+      loadCases();
+    }
+  });
+
+  // ---- CASES ----
+  // ---- SEARCH & SORT ----
+  var searchEl = document.getElementById("search-input");
+  if (searchEl) { searchEl.value = ""; }
+
+  document.getElementById("sort-newest").addEventListener("click", function() {
+    currentSortAsc = false;
+    document.getElementById("sort-newest").classList.add("active");
+    document.getElementById("sort-oldest").classList.remove("active");
+    loadCases();
+  });
+
+  document.getElementById("sort-oldest").addEventListener("click", function() {
+    currentSortAsc = true;
+    document.getElementById("sort-oldest").classList.add("active");
+    document.getElementById("sort-newest").classList.remove("active");
+    loadCases();
+  });
+
+  document.getElementById("filter-all").addEventListener("click", function() {
+    sourceFilter = "all";
+    ["filter-all","filter-office","filter-web","filter-nonemergent"].forEach(function(id) {
+      document.getElementById(id).classList.remove("active");
+    });
+    document.getElementById("filter-all").classList.add("active");
+    document.getElementById("list-count").textContent = "";
+    applySearchFilter();
+  });
+
+  document.getElementById("filter-office").addEventListener("click", function() {
+    sourceFilter = "office";
+    ["filter-all","filter-office","filter-web","filter-nonemergent"].forEach(function(id) {
+      document.getElementById(id).classList.remove("active");
+    });
+    document.getElementById("filter-office").classList.add("active");
+    applySearchFilter();
+  });
+
+  document.getElementById("filter-web").addEventListener("click", function() {
+    sourceFilter = "web";
+    ["filter-all","filter-office","filter-web","filter-nonemergent"].forEach(function(id) {
+      document.getElementById(id).classList.remove("active");
+    });
+    document.getElementById("filter-web").classList.add("active");
+    applySearchFilter();
+  });
+
+  document.getElementById("filter-nonemergent").addEventListener("click", function() {
+    sourceFilter = "nonemergent";
+    ["filter-all","filter-office","filter-web","filter-nonemergent"].forEach(function(id) {
+      document.getElementById(id).classList.remove("active");
+    });
+    document.getElementById("filter-nonemergent").classList.add("active");
+    applySearchFilter();
+  });
+
+  // ---- APPOINTMENT COMPLETE ----
+  async function markAppointmentComplete(caseId, patientName, patientPhone, patientEmail) {
+    var confirmed = window.confirm(
+      "Mark this visit as complete for " + patientName + "?\n\n" +
+      "This will immediately send a satisfaction survey to the patient via SMS" +
+      (patientEmail ? " and email" : "") + "."
+    );
+    if (!confirmed) return;
+
+    var completedAt = new Date().toISOString();
+    var surveyToken = generateUUID();
+
+    var updateResult = await sb
+      .from("triage_cases")
+      .update({
+        appointment_completed_at: completedAt,
+        survey_token: surveyToken
+      })
+      .eq("id", caseId);
+
+    if (updateResult.error) {
+      alert("Error marking visit complete. Please try again.");
+      return;
+    }
+
+    // Fire survey trigger edge function
+    try {
+      await fetch(SUPABASE_URL + "/functions/v1/survey-trigger", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-vd-secret": INTAKE_SECRET
+        },
+        body: JSON.stringify({
+          case_id: caseId,
+          patient_name: patientName,
+          patient_phone: patientPhone,
+          patient_email: patientEmail || null,
+          survey_token: surveyToken
+        })
+      });
+    } catch(e) {
+      console.error("Survey trigger error", e);
+    }
+
+    // Update local case list and refresh note view
+    var c = currentCases.find(function(x) { return x.id === caseId; });
+    if (c) {
+      c.appointment_completed_at = completedAt;
+      c.survey_token = surveyToken;
+    }
+    applySearchFilter();
+    selectCase(caseId);
+  }
+
+  function generateUUID() {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0;
+      var v = c === "x" ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
+  async function saveRevenue(caseId, rawVal) {
+    var statusEl = document.getElementById("revenue-save-status");
+    var val = rawVal ? parseFloat(rawVal) : null;
+    if (val !== null && (isNaN(val) || val < 0)) {
+      statusEl.textContent = "Invalid amount";
+      statusEl.className = "revenue-save-status err";
+      setTimeout(function() { statusEl.textContent = ""; statusEl.className = "revenue-save-status"; }, 2500);
+      return;
+    }
+    statusEl.textContent = "Saving...";
+    statusEl.className = "revenue-save-status";
+    var result = await sb.from("triage_cases").update({ revenue_generated: val }).eq("id", caseId);
+    if (result.error) {
+      statusEl.textContent = "Error saving";
+      statusEl.className = "revenue-save-status err";
+    } else {
+      var c = currentCases.find(function(x) { return x.id === caseId; });
+      if (c) c.revenue_generated = val;
+      statusEl.textContent = "\u2713 Saved";
+      statusEl.className = "revenue-save-status ok";
+      setTimeout(function() { statusEl.textContent = ""; statusEl.className = "revenue-save-status"; }, 2500);
+    }
+  }
+
+  document.getElementById("refresh-btn").addEventListener("click", loadCases);
+
+  async function loadCases() {
+    document.getElementById("list-count").textContent = "Loading...";
+    document.getElementById("case-list-scroll").innerHTML = "<div class=\"case-empty\">Loading...</div>";
+
+    var result = await sb
+      .from("triage_cases")
+      .select("id, patient_name, patient_phone, patient_dob, patient_city, patient_email, chief_complaint, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at, revenue_generated, sms_transcript, sms_structured_output, has_sms_continuation, sms_received_at, intake_medical_flags")
+      .order("created_at", { ascending: currentSortAsc });
+
+    if (result.error) {
+      document.getElementById("case-list-scroll").innerHTML = "<div class=\"case-empty\">Unable to load cases.<br>Please refresh.</div>";
+      document.getElementById("list-count").textContent = "";
+      return;
+    }
+
+    currentCases = result.data || [];
+    applySearchFilter();
+  }
+
+  function applySearchFilter() {
+    var q = searchQuery.toLowerCase().trim();
+    var filtered = currentCases;
+    // Source filter
+    if (sourceFilter === "office") {
+      filtered = filtered.filter(function(c) { return c.intake_source === "in_office"; });
+    } else if (sourceFilter === "web") {
+      filtered = filtered.filter(function(c) { return c.intake_source !== "in_office"; });
+    } else if (sourceFilter === "nonemergent") {
+      filtered = filtered.filter(function(c) { var so = c.structured_output || {}; return so.triage_tag === "non_emergent_inquiry" || c.triage_tag === "non_emergent_inquiry"; });
+    }
+    // Search filter
+    if (q) {
+      filtered = filtered.filter(function(c) {
+        return (c.patient_name || "").toLowerCase().includes(q) ||
+               (c.patient_phone || "").replace(/\D/g, "").includes(q.replace(/\D/g, "")) ||
+               (c.patient_phone || "").toLowerCase().includes(q);
+      });
+    }
+    renderCaseList(filtered);
+  }
+
+  function renderCaseList(cases) {
+    if (!cases) cases = currentCases;
+    var n = cases.length;
+    var total = currentCases.length;
+    document.getElementById("list-count").textContent =
+      total === 0 ? "No cases" :
+      n === total ? total + (total === 1 ? " case" : " cases") + " total" :
+      n + " of " + total + " cases";
+
+    var el = document.getElementById("case-list-scroll");
+
+    if (total === 0) {
+      el.innerHTML = "<div class=\"case-empty\">No in-office cases on record.</div>";
+      return;
+    }
+
+    if (n === 0) {
+      el.innerHTML = "<div class=\"case-empty\">No cases match your search.</div>";
+      return;
+    }
+
+    el.innerHTML = "";
+    cases.forEach(function(c) {
+      var item = document.createElement("div");
+      item.className = "case-item" + (c.id === selectedCaseId ? " active" : "");
+      item.setAttribute("data-id", c.id);
+
+      var dt = new Date(c.created_at);
+      var time = dt.toLocaleTimeString("en-CA", { hour: "2-digit", minute: "2-digit", hour12: true });
+      var date = dt.toLocaleDateString("en-CA", { month: "short", day: "numeric" });
+      var name = maskName(c.patient_name);
+      var complaint = c.chief_complaint || "No complaint recorded";
+      var sev = (c.severity || "").toLowerCase();
+      var badgeCls = sev === "urgent" ? "badge-urgent" : sev === "emergency" ? "badge-emergency" : sev === "routine" ? "badge-routine" : "badge-pending";
+      var badgeTxt = sev ? sev.toUpperCase() : "PENDING";
+      var completed = c.appointment_completed_at ? " <span style=\"font-size:10px;color:#276749;\">&#10003; Seen</span>" : "";
+
+      var so = c.structured_output || {};
+      var isNonDental = so.triage_tag === "non_emergent_inquiry" || c.triage_tag === "non_emergent_inquiry";
+      var nonDentalPip = isNonDental
+        ? "<span style=\"display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:1px 6px;border-radius:999px;background:#fffff0;color:#744210;border:1px solid #D69E2E;margin-left:4px;\">Non-Emergent</span>"
+        : "";
+      var isOffice = c.intake_source === "in_office";
+      var sourcePip = isOffice
+        ? "<span style=\"display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:1px 6px;border-radius:999px;background:#f0fff4;color:#276749;border:1px solid #68d391;margin-left:4px;\">In-Office</span>"
+        : "<span style=\"display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:1px 6px;border-radius:999px;background:#ebf8ff;color:#2b6cb0;border:1px solid #90cdf4;margin-left:4px;\">Web</span>";
+
+      item.innerHTML =
+        "<div class=\"case-item-time\">" + esc(date) + " &middot; " + esc(time) + completed + "</div>" +
+        "<div class=\"case-item-name\">" + esc(name) + "</div>" +
+        "<div class=\"case-item-complaint\">" + esc(complaint) + "</div>" +
+        "<span class=\"badge " + badgeCls + "\">" + badgeTxt + "</span>" + sourcePip + nonDentalPip;
+
+      item.addEventListener("click", function() { selectCase(c.id); });
+      el.appendChild(item);
+    });
+  }
+
+  async function selectCase(id) {
+    selectedCaseId = id;
+    var c = currentCases.find(function(x) { return x.id === id; });
+    if (!c) return;
+
+    document.querySelectorAll(".case-item").forEach(function(el) {
+      el.classList.toggle("active", el.getAttribute("data-id") === id);
+    });
+
+    var toolbar = document.getElementById("note-toolbar");
+    toolbar.style.display = "flex";
+    document.getElementById("note-patient-name").textContent = c.patient_name || "Unknown";
+
+    var dob = c.patient_dob ? formatDOB(c.patient_dob) : "";
+    var city = c.patient_city ? c.patient_city : "";
+    var time = new Date(c.created_at).toLocaleTimeString("en-CA", { hour: "2-digit", minute: "2-digit", hour12: true });
+    var meta = [dob, city, "Submitted " + time].filter(Boolean).join("  |  ");
+    document.getElementById("note-patient-meta").textContent = meta;
+
+    // Update complete button state
+    var completeBtn = document.getElementById("complete-btn");
+    if (c.appointment_completed_at) {
+      completeBtn.textContent = "Visit Complete \u2713";
+      completeBtn.disabled = true;
+      completeBtn.style.opacity = "0.5";
+      completeBtn.style.cursor = "not-allowed";
+    } else {
+      completeBtn.textContent = "Mark Visit Complete";
+      completeBtn.disabled = false;
+      completeBtn.style.opacity = "1";
+      completeBtn.style.cursor = "pointer";
+      completeBtn.onclick = function() {
+        markAppointmentComplete(c.id, c.patient_name, c.patient_phone, c.patient_email);
+      };
+    }
+
+    var scroll = document.getElementById("note-scroll");
+    scroll.innerHTML = "";
+    var smsRows = [];
+    try {
+      var smsResult = await sb.from("sms_log").select("direction, sent_at, sender_name, message_body, status").eq("case_id", c.id).order("sent_at", { ascending: true }).limit(100);
+      if (smsResult.data) smsRows = smsResult.data;
+    } catch(e) { /* non-blocking */ }
+    scroll.appendChild(buildNote(c, smsRows));
+    if (smsRefreshInterval) clearInterval(smsRefreshInterval);
+    smsRefreshInterval = setInterval(function() { if (selectedCaseId) refreshSMSThread(selectedCaseId); }, 30000);
+    scroll.scrollTop = 0;
+
+    // Revenue bar
+    var revenueBar = document.getElementById("revenue-bar");
+    var revenueInput = document.getElementById("revenue-input");
+    var revSaveBtn = document.getElementById("revenue-save-btn");
+    var revStatus = document.getElementById("revenue-save-status");
+    revenueBar.style.display = "flex";
+    revenueInput.value = (c.revenue_generated !== null && c.revenue_generated !== undefined) ? String(c.revenue_generated) : "";
+    revStatus.textContent = "";
+    revStatus.className = "revenue-save-status";
+    revSaveBtn.onclick = function() { saveRevenue(c.id, revenueInput.value.trim()); };
+
+    // SMS banner
+    var existingBanner = document.getElementById("sms-case-banner");
+    if (existingBanner) existingBanner.remove();
+    if (c.has_sms_continuation) {
+      var smsBanner = document.createElement("div");
+      smsBanner.id = "sms-case-banner";
+      smsBanner.className = "sms-banner";
+      var isSmsPrimary = c.intake_source === "sms";
+      smsBanner.innerHTML = isSmsPrimary
+        ? "<strong>&#128172; SMS intake submission.</strong> This case was triaged entirely via text &mdash; no voice call was made. The AI-generated clinical note should be reviewed carefully for completeness and errors before taking action."
+        : "<strong>&#9888; SMS continuation.</strong> This patient provided additional information via text after the call ended. Review the SMS thread below and verify the clinical note is complete before finalising this case.";
+      revenueBar.parentNode.insertBefore(smsBanner, revenueBar.nextSibling);
+    }
+
+    // Allergy alert — always show above the note if allergy flags present
+    var allergyFlags = getAllergyFlags(c.intake_medical_flags || {});
+    var existingAllergyAlert = document.getElementById("allergy-alert-banner");
+    if (existingAllergyAlert) existingAllergyAlert.remove();
+    if (allergyFlags.length > 0) {
+      var allergyBanner = document.createElement("div");
+      allergyBanner.id = "allergy-alert-banner";
+      allergyBanner.className = "allergy-alert";
+      allergyBanner.innerHTML = '<div class="allergy-alert-icon">&#9888;</div><div><div class="allergy-alert-label">Allergy flags</div><div class="allergy-alert-flags">' + allergyFlags.join(" &nbsp;&middot;&nbsp; ") + '</div></div>';
+      var insertTarget = document.getElementById("sms-case-banner") || revenueBar;
+      insertTarget.parentNode.insertBefore(allergyBanner, insertTarget.nextSibling);
+    }
+
+    // Message Patient button
+    var msgBtn = document.getElementById("msg-patient-btn");
+    if (msgBtn) { msgBtn.onclick = function() { openSMSModal(c); }; }
+
+    // Mobile: switch to note view
+    document.querySelector(".body").classList.add("case-open");
+  }
+
+  // ---- MEDICAL FLAG HELPERS ----
+  function getAllergyFlags(obj) {
+    if (!obj || typeof obj !== "object") return [];
+    var allergyKeys = { allergy_penicillin: "Penicillin / Amoxicillin", allergy_other_antibiotics: "Other antibiotics", allergy_antibiotics: "Antibiotics", allergy_pain_medication: "Pain medication", allergy_latex: "Latex" };
+    return Object.entries(allergyKeys).filter(function(e) { return obj[e[0]] === true; }).map(function(e) { return e[1]; });
+  }
+
+  function humanizeMedicalFlags(obj) {
+    if (!obj) return "No relevant medical history reported";
+    if (typeof obj === "string") return obj || "No relevant medical history reported";
+    if (Array.isArray(obj)) return obj.length ? obj.join(", ") : "No relevant medical history reported";
+    if (typeof obj !== "object") return "No relevant medical history reported";
+    if (obj.none_of_the_above === true) return "No relevant medical history reported";
+    var labels = { allergy_penicillin: "Allergy to penicillin / amoxicillin", allergy_other_antibiotics: "Allergy to other antibiotics", allergy_antibiotics: "Allergy to antibiotics", allergy_pain_medication: "Allergy to pain medication", allergy_latex: "Allergy to latex", blood_thinners: "Blood thinners", bisphosphonate_use: "Bisphosphonate medication", diabetes: "Diabetes", pregnancy: "Pregnancy", immunocompromised: "Immunocompromised", dental_anxiety_syncope_risk: "History of fainting / dental anxiety", other_important_medical_condition: "Other important medical condition" };
+    var items = [];
+    Object.entries(obj).forEach(function(entry) {
+      var key = entry[0]; var value = entry[1];
+      if (key === "none_of_the_above" || key === "other_medical_detail") return;
+      if (value !== true) return;
+      if (key === "other_important_medical_condition") { items.push(obj.other_medical_detail ? "Other: " + obj.other_medical_detail : "Other important medical condition"); return; }
+      items.push(labels[key] || key);
+    });
+    return items.length ? items.join(", ") : "No relevant medical history reported";
+  }
+
+  // ---- NOTE BUILDER ----
+  function buildNote(c, smsRows) {
+    smsRows = smsRows || [];
+    var so = c.structured_output || null;
+
+    var wrap = document.createElement("div");
+    wrap.style.cssText = "max-width:740px;margin:0 auto;padding:4px 0 28px;";
+
+    var card = document.createElement("div");
+    card.className = "note-card";
+    card.id = "printable-note";
+
+    // Print header (hidden on screen)
+    var ph = document.createElement("div");
+    ph.className = "note-print-header";
+    ph.innerHTML =
+      "<div>" +
+        "<div class=\"print-practice-name\">Martindale Dental</div>" +
+        "<div class=\"print-practice-sub\">Jackson Square &middot; Hamilton, Ontario &middot; " + new Date(c.created_at).toLocaleDateString("en-CA", { year: "numeric", month: "long", day: "numeric" }) + "</div>" +
+        "<div class=\"print-practice-sub\" style=\"margin-top:2px;\">Patient: " + esc(c.patient_name || "Unknown") + (c.patient_dob ? "  |  " + formatDOB(c.patient_dob) : "") + "</div>" +
+      "</div>" +
+      "<div class=\"print-vd\">AI-Generated Triage Summary<br>Powered by VirtualDentist.ai</div>";
+    card.appendChild(ph);
+
+    if (!so) {
+      var pending = document.createElement("div");
+      pending.className = "note-pending";
+      pending.innerHTML = "Triage call pending or in progress.<br>Please refresh in a moment.";
+      card.appendChild(pending);
+      wrap.appendChild(card);
+      return wrap;
+    }
+
+    // Disclaimer
+    var disc = document.createElement("div");
+    disc.className = "note-disclaimer";
+    disc.innerHTML =
+      "<div class=\"note-disclaimer-title\">AI-Generated Triage Summary -- Not a Clinical Record</div>" +
+      "This document was produced by VirtualDentist.ai, an AI dental triage assistant. It is a structured intake summary for reference only. " +
+      "The attending dentist is responsible for independent clinical assessment, diagnosis, and chart documentation. " +
+      "This document does not replace an in-person examination.";
+    card.appendChild(disc);
+
+    var body = document.createElement("div");
+    body.className = "note-body";
+
+    // Chief Complaint
+    var cc = so.chief_complaint_quote || so.chief_complaint || c.chief_complaint || "Not recorded";
+    body.appendChild(section("Chief Complaint",
+      "<div class=\"note-section-body\"><div class=\"note-quote\">" + esc(cc) + "</div></div>"
+    ));
+
+    // HPI
+    body.appendChild(section("History of Present Illness",
+      "<div class=\"note-section-body\">" + buildHPI(so) + "</div>"
+    ));
+
+    // Red Flags
+    body.appendChild(section("Red Flag Assessment", buildRedFlags(so)));
+
+    // Clinical Impression
+    var imp = buildImpression(so);
+    if (imp) {
+      body.appendChild(section("Clinical Impression",
+        "<div class=\"note-section-body\">" + esc(imp) + "</div>"
+      ));
+    }
+
+    // Clinical Summary
+    if (so.clinical_summary) {
+      body.appendChild(section("Clinical Summary",
+        "<div class=\"note-section-body\">" + esc(so.clinical_summary) + "</div>"
+      ));
+    }
+
+    // Medical History
+    var medFlags = humanizeMedicalFlags(c.intake_medical_flags || {});
+    body.appendChild(section("Relevant Medical History",
+      "<div class=\"note-section-body\">" + esc(medFlags) + "</div>"
+    ));
+
+    // Next Steps
+    body.appendChild(section("Recommended Next Steps",
+      "<div class=\"note-section-body\">" + buildNextSteps(so) + "</div>"
+    ));
+
+    card.appendChild(body);
+
+    // SMS conversation thread
+    if (c.sms_transcript || smsRows.length > 0) {
+      var smsDiv = document.createElement("div");
+      smsDiv.className = "note-section";
+      var smsInner = "<div class=\"note-section-label\" style=\"color:#c08020;\">&#9888; SMS Conversation</div>";
+      if (c.sms_structured_output) {
+        var sx = c.sms_structured_output;
+        smsInner += "<div class=\"sms-extraction-box\"><div class=\"sms-extraction-label\">AI Extraction from SMS</div>";
+        if (sx.chief_complaint) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Chief complaint</span><span class=\"sms-extraction-val\">" + esc(String(sx.chief_complaint)) + "</span></div>";
+        if (sx.clinical_summary) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Clinical summary</span><span class=\"sms-extraction-val\">" + esc(String(sx.clinical_summary)) + "</span></div>";
+        if (sx.pain_score != null) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Pain score</span><span class=\"sms-extraction-val\">" + esc(String(sx.pain_score)) + "/10</span></div>";
+        smsInner += "</div>";
+      }
+      smsInner += "<div data-sms-thread=\"1\">";
+      if (smsRows.length > 0) {
+        smsRows.forEach(function(msg) {
+          var isOut = msg.direction === "outbound";
+          var label = isOut ? (msg.sender_name || "Martindale Dental") : "Patient";
+          var time = msg.sent_at ? new Date(msg.sent_at).toLocaleString("en-CA", { month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" }) : "";
+          smsInner += "<div style=\"padding:6px 0;border-bottom:1px solid #e8eff7;\">" +
+            "<div style=\"font-size:11px;color:#8a9cb8;display:flex;justify-content:space-between;margin-bottom:2px\"><span>" + esc(label) + "</span><span>" + esc(time) + "</span></div>" +
+            "<div style=\"font-size:13px;color:" + (isOut ? "#007a8e" : "#1a2b40") + "\">" + esc(msg.message_body) + "</div>" +
+            "</div>";
+        });
+      } else if (c.sms_transcript) {
+        smsInner += "<div style=\"white-space:pre-wrap;font-size:12px;color:#5a7090;\">" + esc(c.sms_transcript) + "</div>";
+      }
+      smsInner += "</div>";
+      smsDiv.innerHTML = smsInner;
+      wrap.appendChild(card);
+      wrap.appendChild(smsDiv);
+      return wrap;
+    }
+
+    wrap.appendChild(card);
+    return wrap;
+  }
+
+  function section(title, contentHtml) {
+    var s = document.createElement("div");
+    s.className = "note-section";
+    s.innerHTML = "<div class=\"note-section-label\">" + esc(title) + "</div>" + contentHtml;
+    return s;
+  }
+
+  function buildHPI(so) {
+    var lines = [];
+
+    var jaw = so.jaw || null;
+    var side = so.side || null;
+    var loc = jaw && side ? jaw + " " + side : jaw || side || "not localized";
+    lines.push("Onset: " + esc(so.onset || "not recorded") + ". Location: " + esc(loc) + ".");
+
+    if (so.pain_score !== null && so.pain_score !== undefined) {
+      var pl = "Pain score: " + so.pain_score + "/10";
+      if (so.pain_quality) pl += ", " + so.pain_quality;
+      if (so.pain_pattern) pl += " (" + so.pain_pattern + ")";
+      lines.push(esc(pl) + ".");
+    }
+
+    if (so.trauma) lines.push("Dental trauma reported" + (so.trauma_mechanism ? "; mechanism: " + esc(so.trauma_mechanism) : "") + ".");
+    if (so.tooth_structure_loss) lines.push("Tooth structure loss reported (broken tooth, lost filling, or lost crown).");
+    if (so.temp_restoration_loss) lines.push("Temporary restoration loss reported (temporary crown or filling dislodged).");
+    if (so.caries_involved) lines.push("Existing caries or decay reported at affected tooth.");
+    if (so.pulp_exposure) lines.push("Pulp exposure reported.");
+    if (so.percussion_sensitivity) lines.push("Pain worsens with biting or percussion.");
+    if (so.cold_pain_lingers_over_10_seconds) lines.push("Cold sensitivity present; pain lingers after stimulus removed.");
+    if (so.heat_sensitivity) lines.push("Heat sensitivity present.");
+    if (so.nocturnal_pain) lines.push("Nocturnal pain reported.");
+    if (so.bad_taste_or_drainage) lines.push("Bad taste or drainage noted.");
+    if (so.swelling_present) lines.push("Facial swelling present" + (so.swelling_worsening ? "; worsening" : "") + ".");
+    if (so.fever) lines.push("Fever or chills reported.");
+    if (so.recent_extraction) lines.push("Recent extraction reported.");
+    if (so.immunocompromised) lines.push("Patient reports immunocompromising condition.");
+    if (so.soft_tissue_concern) lines.push("Soft tissue concern noted.");
+
+    var neg = [];
+    if (so.fever === false) neg.push("no fever");
+    if (so.swelling_present === false) neg.push("no swelling");
+    if (so.difficulty_breathing_or_swallowing === false) neg.push("no difficulty breathing or swallowing");
+    if (neg.length > 0) lines.push("Key negatives: " + neg.join(", ") + ".");
+
+    return lines.join("<br>");
+  }
+
+  function buildRedFlags(so) {
+    function flagRow(label, val) {
+      var alert = val === true;
+      return "<div class=\"flag-row\">" +
+        "<span class=\"flag-dot " + (alert ? "flag-dot-alert" : "flag-dot-ok") + "\"></span>" +
+        "<span class=\"" + (alert ? "flag-text-alert" : "flag-text-ok") + "\">" + esc(label) + ": " + (alert ? "Reported" : "Denied") + "</span>" +
+        "</div>";
+    }
+    return "<div class=\"note-section-body\">" +
+      flagRow("Airway or swallowing difficulty", so.difficulty_breathing_or_swallowing) +
+      flagRow("Uncontrolled bleeding", so.uncontrolled_bleeding) +
+      flagRow("Severely unwell or rapidly spreading swelling", so.feels_very_unwell_or_rapidly_increasing_swelling) +
+      "</div>";
+  }
+
+  function buildImpression(so) {
+    var map = {
+      "suspected_irreversible_pulpitis": "Presentation consistent with suspected irreversible pulpitis. Same-day assessment recommended.",
+      "suspected_odontogenic_infection": "Presentation suggests possible odontogenic infection. Prompt assessment warranted.",
+      "facial_trauma_high_energy": "High-energy facial trauma. Immediate assessment warranted.",
+      "post_extraction_possible_dry_socket": "Post-extraction presentation; dry socket cannot be excluded.",
+      "pericoronitis_possible": "Presentation consistent with possible pericoronitis.",
+      "broken_tooth_trauma_low_energy": "Broken tooth from occlusal force. Assessment for pulp involvement recommended.",
+      "soft_tissue_lesion_unspecified": "Soft tissue concern noted. Clinical examination required.",
+      "tooth_structure_loss_no_pain": "Tooth structure loss without significant pain. Non-urgent assessment appropriate.",
+      "routine_dental_pain": "Mild or stable dental pain without red flag features.",
+      "acute_dental_pain_unspecified": "Acute dental pain. Clinical assessment required."
+    };
+    if (!so.triage_tag) return null;
+    return map[so.triage_tag] || so.triage_tag.replace(/_/g, " ");
+  }
+
+  function buildNextSteps(so) {
+    var sev = (so.recommended_disposition || "").toLowerCase();
+    var line1 = sev === "urgent"
+      ? "Urgent assessment required. Patient should be seen immediately or directed to emergency care if not seen promptly."
+      : sev === "emergency"
+      ? "Same-day or as-soon-as-possible assessment is recommended based on symptom severity and risk features."
+      : "Schedule dental assessment at the earliest available appointment.";
+    return esc(line1) + "<br><br>If symptoms worsen -- especially swelling, fever, uncontrolled bleeding, or any trouble breathing or swallowing -- patient should seek urgent medical care.";
+  }
+
+  // ---- PRINT / PDF ----
+  document.getElementById("back-btn").addEventListener("click", function() {
+    selectedCaseId = null;
+    if (smsRefreshInterval) { clearInterval(smsRefreshInterval); smsRefreshInterval = null; }
+    document.querySelectorAll(".case-item").forEach(function(el) { el.classList.remove("active"); });
+    document.getElementById("note-toolbar").style.display = "none";
+    document.getElementById("revenue-bar").style.display = "none";
+    var b = document.getElementById("sms-case-banner");
+    if (b) b.remove();
+    document.getElementById("note-scroll").innerHTML =
+      "<div class=\"note-placeholder\"><div class=\"placeholder-icon\">&#x1F4CB;</div><div>Select a patient from the list<br>to view their triage note.</div></div>";
+    // Mobile: return to list view
+    document.querySelector(".body").classList.remove("case-open");
+  });
+
+  document.getElementById("print-btn").addEventListener("click", function() {
+    if (!selectedCaseId) { alert("Please open a patient case before printing."); return; }
+    window.print();
+  });
+
+  document.getElementById("save-pdf-btn").addEventListener("click", function() {
+    if (!selectedCaseId) { alert("Please open a patient case before saving as PDF."); return; }
+    var orig = document.title;
+    var c = currentCases.find(function(x) { return x.id === selectedCaseId; });
+    if (c) {
+      var last = (c.patient_name || "patient").split(" ").pop();
+      var dt = new Date(c.created_at).toISOString().slice(0, 10);
+      document.title = "Triage-" + last + "-" + dt;
+    }
+    window.print();
+    document.title = orig;
+  });
+
+  // ---- HELPERS ----
+  function esc(s) {
+    if (!s && s !== 0) return "";
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+
+  function maskName(name) {
+    if (!name) return "Unknown";
+    var p = name.trim().split(" ");
+    if (p.length < 2) return name;
+    return p[0] + " " + p[p.length - 1].charAt(0) + ".";
+  }
+
+  function formatDOB(dob) {
+    try {
+      var d = new Date(dob + "T00:00:00");
+      return "DOB: " + d.toLocaleDateString("en-CA", { year: "numeric", month: "short", day: "numeric" });
+    } catch(e) { return "DOB: " + dob; }
+  }
+
+  async function refreshSMSThread(caseId) {
+    if (!caseId) return;
+    var result = await sb.from("sms_log").select("direction, sent_at, sender_name, message_body, status").eq("case_id", caseId).order("sent_at", { ascending: true }).limit(100);
+    if (result.error || !result.data || result.data.length === 0) return;
+    var smsRows = result.data;
+    // Find the SMS section div in the note scroll and update it
+    var scroll = document.getElementById("note-scroll");
+    if (!scroll) return;
+    var smsDiv = scroll.querySelector("[data-sms-thread]");
+    if (!smsDiv) {
+      // Section doesn't exist yet — rebuild note with SMS rows
+      var c = currentCases.find(function(x) { return x.id === caseId; });
+      if (c) { scroll.innerHTML = ""; scroll.appendChild(buildNote(c, smsRows)); }
+      return;
+    }
+    // Update existing thread
+    var threadHtml = "";
+    smsRows.forEach(function(msg) {
+      var isOut = msg.direction === "outbound";
+      var label = isOut ? (msg.sender_name || "Martindale Dental") : "Patient";
+      var time = msg.sent_at ? new Date(msg.sent_at).toLocaleString("en-CA", { month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" }) : "";
+      threadHtml += "<div style=\"padding:6px 0;border-bottom:1px solid #e8eff7;\">" +
+        "<div style=\"font-size:11px;color:#8a9cb8;display:flex;justify-content:space-between;margin-bottom:2px\"><span>" + esc(label) + "</span><span>" + esc(time) + "</span></div>" +
+        "<div style=\"font-size:13px;color:" + (isOut ? "#007a8e" : "#1a2b40") + "\">" + esc(msg.message_body) + "</div>" +
+        "</div>";
+    });
+    smsDiv.innerHTML = threadHtml;
+  }
+
+  // ── SMS MODAL ──────────────────────────────────────────────────
+  var SMS_TEMPLATES = {
+    received:    "Hi [name], this is Martindale Dental. We've received your triage and a dentist is reviewing your case. We'll be in touch shortly.",
+    appointment: "Hi [name], this is Martindale Dental. We'd like to get you in as soon as possible. Please call us at (905) 393-8501 or reply here and we'll arrange a time.",
+    morning:     "Hi [name], this is Martindale Dental. Our office opens at 9am. We'll call you first thing to get you booked in.",
+    callback:    "Hi [name], this is Martindale Dental. We tried to reach you regarding your dental concern. Please call us at (905) 393-8501 when you're able, or reply to this message and a staff member will get back to you shortly."
+  };
+
+  var smsModalCase = null;
+
+  function formatPhone(p) {
+    if (!p) return "";
+    var d = String(p).replace(/\D/g, "").slice(-10);
+    if (d.length === 10) return "(" + d.slice(0,3) + ") " + d.slice(3,6) + "-" + d.slice(6);
+    return p;
+  }
+
+  function openSMSModal(c) {
+    smsModalCase = c;
+    var overlay   = document.getElementById("sms-modal-overlay");
+    var recipient = document.getElementById("sms-modal-recipient");
+    var textarea  = document.getElementById("sms-textarea");
+    var statusEl  = document.getElementById("sms-send-status");
+    var sendBtn   = document.getElementById("sms-send-btn");
+    recipient.textContent = (c.patient_name || "Patient") + " \u00B7 " + formatPhone(c.patient_phone);
+    textarea.value = "";
+    statusEl.textContent = "";
+    statusEl.className = "sms-send-status";
+    if (sendBtn) { sendBtn.disabled = true; sendBtn.textContent = "Send message"; }
+    updateSMSCharCounter();
+    overlay.classList.add("open");
+    textarea.focus();
+  }
+
+  function closeSMSModal() {
+    document.getElementById("sms-modal-overlay").classList.remove("open");
+    smsModalCase = null;
+  }
+
+  function updateSMSCharCounter() {
+    var ta      = document.getElementById("sms-textarea");
+    var counter = document.getElementById("sms-char-counter");
+    var sendBtn = document.getElementById("sms-send-btn");
+    if (!ta || !counter) return;
+    var len  = ta.value.length;
+    var segs = Math.ceil(len / 160) || 1;
+    counter.textContent = segs > 1 ? (len + " / " + (segs * 160) + " \u00B7 " + segs + " segments") : (len + " / 160");
+    counter.className = "sms-char-counter" + (len > 1600 ? " over" : len > 155 ? " warn" : "");
+    if (sendBtn) sendBtn.disabled = (len === 0 || len > 1600);
+  }
+
+  async function sendSMSFromDashboard() {
+    if (!smsModalCase) return;
+    var ta       = document.getElementById("sms-textarea");
+    var statusEl = document.getElementById("sms-send-status");
+    var sendBtn  = document.getElementById("sms-send-btn");
+    var msg = ta ? ta.value.trim() : "";
+    if (!msg) return;
+    sendBtn.disabled = true;
+    sendBtn.textContent = "Sending\u2026";
+    statusEl.textContent = "";
+    try {
+      var resp = await fetch(SUPABASE_URL + "/functions/v1/send-sms", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-vd-secret": INTAKE_SECRET },
+        body: JSON.stringify({
+          case_id:      smsModalCase.id,
+          to_phone:     smsModalCase.patient_phone,
+          message_body: msg,
+          sender_name:  "Office Staff",
+          sender_email: "",
+          sender_type:  "office",
+          sender_phone: OFFICE_PHONE
+        })
+      });
+      var data = {};
+      try { data = await resp.json(); } catch(e) { data = {}; }
+      if (resp.ok && data.ok) {
+        statusEl.textContent = "\u2713 Message sent";
+        statusEl.className = "sms-send-status ok";
+        setTimeout(closeSMSModal, 1400);
+      } else {
+        statusEl.textContent = data.error || "Send failed \u2014 check Twilio status";
+        statusEl.className = "sms-send-status err";
+        sendBtn.disabled = false;
+        sendBtn.textContent = "Send message";
+      }
+    } catch(e) {
+      statusEl.textContent = "Unexpected error \u2014 check connection";
+      statusEl.className = "sms-send-status err";
+      sendBtn.disabled = false;
+      sendBtn.textContent = "Send message";
+    }
+  }
+
+  (function() {
+    var overlay = document.getElementById("sms-modal-overlay");
+    var closeBtn = document.getElementById("sms-modal-close");
+    var ta       = document.getElementById("sms-textarea");
+    var sendBtn  = document.getElementById("sms-send-btn");
+    if (closeBtn) closeBtn.addEventListener("click", closeSMSModal);
+    if (overlay)  overlay.addEventListener("click", function(e) { if (e.target === overlay) closeSMSModal(); });
+    if (ta) ta.addEventListener("input", function() {
+      updateSMSCharCounter();
+      var sb = document.getElementById("sms-send-btn");
+      if (sb) sb.disabled = (ta.value.trim().length === 0 || ta.value.length > 1600);
+    });
+    if (sendBtn) sendBtn.addEventListener("click", sendSMSFromDashboard);
+    document.querySelectorAll(".sms-template-btn").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        var key  = btn.getAttribute("data-template");
+        var tmpl = SMS_TEMPLATES[key] || "";
+        if (smsModalCase && tmpl) {
+          var first = (smsModalCase.patient_name || "").split(" ")[0] || "there";
+          tmpl = tmpl.replace(/\[name\]/g, first);
+        }
+        var taEl = document.getElementById("sms-textarea");
+        if (taEl) { taEl.value = tmpl; updateSMSCharCounter(); taEl.focus(); }
+      });
+    });
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape") {
+        var ovl = document.getElementById("sms-modal-overlay");
+        if (ovl && ovl.classList.contains("open")) closeSMSModal();
+      }
+    });
+  }());
+  // ── END SMS MODAL ──────────────────────────────────────────────
+</script>
+
+</body>
+</html>
