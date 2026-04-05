@@ -1402,8 +1402,10 @@
     ));
 
     // HPI
+    var age = calcAge(c.patient_dob);
+    var agePrefix = age ? age + "-year-old patient presents with dental concern. " : "";
     body.appendChild(section("History of Present Illness",
-      "<div class=\"note-section-body\">" + buildHPI(so) + "</div>"
+      "<div class=\"note-section-body\">" + (agePrefix ? "<p style='margin-bottom:6px;font-weight:600;color:#17305E;'>" + esc(agePrefix) + "</p>" : "") + buildHPI(so) + "</div>"
     ));
 
     // Red Flags
@@ -1609,6 +1611,8 @@
     if (p.length < 2) return name;
     return p[0] + " " + p[p.length - 1].charAt(0) + ".";
   }
+
+  function calcAge(dob) { if (!dob) return null; var b = new Date(dob); if (Number.isNaN(b.getTime())) return null; var today = new Date(); var age = today.getFullYear() - b.getFullYear(); var m = today.getMonth() - b.getMonth(); if (m < 0 || (m === 0 && today.getDate() < b.getDate())) age--; return age > 0 && age < 130 ? age : null; }
 
   function formatDOB(dob) {
     try {
