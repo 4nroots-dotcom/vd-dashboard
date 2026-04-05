@@ -607,7 +607,7 @@
         <div class="filter-right"><button class="refresh-btn" id="refresh-btn" type="button" title="Refresh">&#8635;</button></div>
       </div>
       <div style="padding:6px 12px 2px;">
-        <input type="search" id="queue-search" placeholder="Search by name or phone..." style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:7px 10px;color:#e8edf5;font-size:13px;outline:none;" oninput="searchQuery=this.value.trim();renderQueue();" onkeyup="searchQuery=this.value.trim();renderQueue();" />
+        <input type="search" id="queue-search" placeholder="Search by name or phone..." style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:7px 10px;color:#e8edf5;font-size:13px;outline:none;" oninput="(function(q){q=q.toLowerCase().trim();var f=allCases.filter(function(c){return !q||(c.patient_name||'').toLowerCase().includes(q)||(c.patient_phone||'').replace(/\D/g,'').includes(q.replace(/\D/g,''));});var panel=document.getElementById('queue-panel');if(!f.length){panel.innerHTML='<div class=\'empty-state\'><div class=\'empty-icon\'>&#x2713;</div><div class=\'empty-title\'>No results</div></div>';return;}panel.innerHTML='<div class=\'case-list\'>'+f.map(renderCaseCard).join('')+'</div>';panel.querySelectorAll('.case-card').forEach(function(el){el.addEventListener('click',function(){openCase(el.dataset.caseId);});});})(this.value);" />
       </div>
       <div class="sort-bar" id="sort-bar">
         <span class="sort-label">Sort:</span>
