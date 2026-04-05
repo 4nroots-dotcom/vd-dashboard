@@ -953,10 +953,7 @@
   // ---- CASES ----
   // ---- SEARCH & SORT ----
   var searchEl = document.getElementById("search-input");
-  if (searchEl) {
-    searchEl.oninput = function() { searchQuery = this.value; if (typeof applySearchFilter === "function") applySearchFilter(); };
-    searchEl.onkeyup = function() { searchQuery = this.value; if (typeof applySearchFilter === "function") applySearchFilter(); };
-  }
+  if (searchEl) { searchEl.value = ""; }
 
   document.getElementById("sort-newest").addEventListener("click", function() {
     currentSortAsc = false;
