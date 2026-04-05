@@ -695,11 +695,7 @@
 
     function showApp(user) { currentUser = user; document.getElementById("auth-screen").style.display = "none"; document.getElementById("app").style.display = "flex"; document.getElementById("header-user-email").textContent = resolveReviewerName(user.email || ""); if (refreshInterval) clearInterval(refreshInterval); refreshInterval = setInterval(loadCases, 90000); if (isMobile) { document.getElementById("detail-column").style.display = "none"; document.getElementById("queue-column").style.display = "flex"; } syncModes(); loadCases();
       var searchEl = document.getElementById("queue-search");
-      if (searchEl) {
-        searchEl.value = "";
-        searchEl.oninput = function() { searchQuery = this.value.trim(); renderQueue(); };
-        searchEl.onkeyup = function() { searchQuery = this.value.trim(); renderQueue(); };
-      }
+      if (searchEl) { searchEl.value = ""; }
       // Look up this dentist's phone by their login email for session routing
       sb.from("dentist_phones").select("phone").eq("email", user.email).maybeSingle().then(function(res) {
         if (res.data && res.data.phone) DENTIST_PHONE = res.data.phone;
