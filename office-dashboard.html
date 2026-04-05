@@ -1293,7 +1293,7 @@
       var allergyBanner = document.createElement("div");
       allergyBanner.id = "allergy-alert-banner";
       allergyBanner.className = "allergy-alert";
-      allergyBanner.innerHTML = '<div class="allergy-alert-icon">&#9888;</div><div><div class="allergy-alert-label">Allergy flags</div><div class="allergy-alert-flags">' + allergyFlags.join(" &nbsp;&middot;&nbsp; ") + '</div></div>';
+      allergyBanner.innerHTML = '<div class="allergy-alert-icon">&#9888;</div><div><div class="allergy-alert-label">Allergy flags</div><div class="allergy-alert-flags">' + allergyFlags.map(function(f){return f.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}).join(" &nbsp;&middot;&nbsp; ") + '</div></div>';
       var insertTarget = document.getElementById("sms-case-banner") || revenueBar;
       insertTarget.parentNode.insertBefore(allergyBanner, insertTarget.nextSibling);
     }
