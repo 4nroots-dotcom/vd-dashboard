@@ -1401,32 +1401,36 @@
       "<div class=\"note-section-body\"><div class=\"note-quote\">" + esc(cc) + "</div></div>"
     ));
 
-    // HPI
+    // Clinical Note — render rapid-processor output directly (same as dentist dashboard)
+    // This ensures hot tooth note, warm_relieves_pain flag, age, and all deterministic
+    // additions appear in the printed office note.
     var age = calcAge(c.patient_dob);
-    var agePrefix = age ? age + "-year-old patient presents with dental concern. " : "";
-    body.appendChild(section("History of Present Illness",
-      "<div class=\"note-section-body\">" + (agePrefix ? "<p style='margin-bottom:6px;font-weight:600;color:#17305E;'>" + esc(agePrefix) + "</p>" : "") + buildHPI(so) + "</div>"
-    ));
-
-    // Red Flags
-    body.appendChild(section("Red Flag Assessment", buildRedFlags(so)));
-
-    // Clinical Impression
-    var imp = buildImpression(so);
-    if (imp) {
-      body.appendChild(section("Clinical Impression",
-        "<div class=\"note-section-body\">" + esc(imp) + "</div>"
+    var noteText = c.clinical_note || "";
+    if (age && noteText) noteText = age + "-year-old patient.\n\n" + noteText;
+    if (noteText) {
+      body.appendChild(section("AI Clinical Note",
+        "<div class=\"note-section-body\"><div style=\"white-space:pre-wrap;font-family:monospace;font-size:11px;line-height:1.7;color:#1a2b40;\">" + esc(noteText) + "</div></div>"
       ));
+    } else {
+      // Fallback to structured sections if no clinical note available (e.g. SMS-only cases)
+      body.appendChild(section("History of Present Illness",
+        "<div class=\"note-section-body\">" + buildHPI(so) + "</div>"
+      ));
+      body.appendChild(section("Red Flag Assessment", buildRedFlags(so)));
+      var imp = buildImpression(so);
+      if (imp) {
+        body.appendChild(section("Clinical Impression",
+          "<div class=\"note-section-body\">" + esc(imp) + "</div>"
+        ));
+      }
+      if (so.clinical_summary) {
+        body.appendChild(section("Clinical Summary",
+          "<div class=\"note-section-body\">" + esc(so.clinical_summary) + "</div>"
+        ));
+      }
     }
 
-    // Clinical Summary
-    if (so.clinical_summary) {
-      body.appendChild(section("Clinical Summary",
-        "<div class=\"note-section-body\">" + esc(so.clinical_summary) + "</div>"
-      ));
-    }
-
-    // Medical History
+    // Medical History — always shown
     var medFlags = humanizeMedicalFlags(c.intake_medical_flags || {});
     body.appendChild(section("Relevant Medical History",
       "<div class=\"note-section-body\">" + esc(medFlags) + "</div>"
