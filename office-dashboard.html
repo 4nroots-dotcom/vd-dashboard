@@ -1409,7 +1409,7 @@
     if (age && noteText) noteText = age + "-year-old patient.\n\n" + noteText;
     if (noteText) {
       body.appendChild(section("AI Clinical Note",
-        "<div class=\"note-section-body\"><div style=\"white-space:pre-wrap;font-family:monospace;font-size:11px;line-height:1.7;color:#1a2b40;\">" + esc(noteText) + "</div></div>"
+        "<div class=\"note-section-body\"><div style=\"white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.7;color:#1a2b40;\">" + esc(noteText) + "</div></div>"
       ));
     } else {
       // Fallback to structured sections if no clinical note available (e.g. SMS-only cases)
