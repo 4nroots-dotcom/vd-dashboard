@@ -1356,10 +1356,26 @@
     card.appendChild(ph);
 
     if (!so) {
-      var pending = document.createElement("div");
-      pending.className = "note-pending";
-      pending.innerHTML = "Triage call pending or in progress.<br>Please refresh in a moment.";
-      card.appendChild(pending);
+      var pendingPhone = c.patient_phone
+        ? c.patient_phone.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3") : "—";
+      var pendingDob = c.patient_dob ? formatDOB(c.patient_dob) : "—";
+      var pendingCard = document.createElement("div");
+      pendingCard.innerHTML =
+        '<div class="contact-card" style="margin:16px;">' +
+          '<div class="contact-card-label">Intake Information — Triage Pending</div>' +
+          '<div style="font-size:12px;color:#C05621;margin-bottom:12px;padding:8px 10px;background:#FFFAF0;border-radius:6px;border:1px solid #F6AD55;">' +
+            '&#9888; Sam has not yet completed this call. The information below was submitted via the intake form.' +
+          '</div>' +
+          '<div class="contact-grid">' +
+            '<div class="contact-row"><div class="contact-field-label">Name</div><div class="contact-field-value">' + esc(c.patient_name || "—") + '</div></div>' +
+            '<div class="contact-row"><div class="contact-field-label">Phone</div><div class="contact-field-value">' + esc(pendingPhone) + '</div></div>' +
+            '<div class="contact-row"><div class="contact-field-label">Date of Birth</div><div class="contact-field-value">' + esc(pendingDob) + '</div></div>' +
+            '<div class="contact-row"><div class="contact-field-label">City</div><div class="contact-field-value">' + esc(c.patient_city || "—") + '</div></div>' +
+            '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Chief Complaint</div><div class="contact-field-value">' + esc(c.chief_complaint || "—") + '</div></div>' +
+            '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Medical History</div><div class="contact-field-value">' + esc(humanizeMedicalFlags(c.intake_medical_flags || {})) + '</div></div>' +
+          '</div>' +
+        '</div>';
+      card.appendChild(pendingCard);
       wrap.appendChild(card);
       return wrap;
     }
@@ -1409,7 +1425,7 @@
     if (age && noteText) noteText = age + "-year-old patient.\n\n" + noteText;
     if (noteText) {
       body.appendChild(section("AI Clinical Note",
-        "<div class=\"note-section-body\"><div style=\"white-space:pre-wrap;font-family:inherit;font-size:13px;line-height:1.7;color:#1a2b40;\">" + esc(noteText) + "</div></div>"
+        "<div class=\"note-section-body\"><div style=\"white-space:pre-wrap;font-family:monospace;font-size:11px;line-height:1.7;color:#1a2b40;\">" + esc(noteText) + "</div></div>"
       ));
     } else {
       // Fallback to structured sections if no clinical note available (e.g. SMS-only cases)
