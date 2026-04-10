@@ -1,0 +1,261 @@
+<!--
+  ============================================================
+  VirtualDentist.ai — Sam Integration Block
+  Drop this entire block into the Martindale Hamilton page.
+  Self-contained: all CSS is scoped with vd- prefix.
+  No conflicts with existing page styles.
+
+  Placement suggestions:
+  - Replace the current emergency banner at the top
+  - Or place between the hero and the services section
+  - Or replace the bottom contact form
+  ============================================================
+-->
+
+<style>
+  .vd-block *, .vd-block *::before, .vd-block *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  .vd-block { font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.6; }
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700;800&display=swap');
+
+  /* Sam hero */
+  .vd-sam-hero { background: #1a1a1a; padding: 44px 24px; }
+  .vd-sam-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: center; }
+  .vd-sam-kicker { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #71BB55; margin-bottom: 8px; }
+  .vd-sam-title { font-family: "DM Serif Display", Georgia, serif; font-size: clamp(24px, 4vw, 32px); color: #fff; line-height: 1.15; margin-bottom: 10px; }
+  .vd-sam-accent { font-style: italic; color: #71BB55; }
+  .vd-sam-sub { font-size: 14px; color: #bbb; line-height: 1.7; margin-bottom: 18px; }
+  .vd-sam-btn { display: inline-block; padding: 13px 30px; border-radius: 999px; background: #71BB55; color: #fff; font-size: 15px; font-weight: 700; text-decoration: none; transition: all 0.2s; border: none; cursor: pointer; }
+  .vd-sam-btn:hover { background: #4a8c34; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(113,187,85,0.3); color: #fff; }
+  .vd-sam-btn-sub { font-size: 11px; color: #777; margin-top: 7px; }
+
+  /* Language selector */
+  .vd-lang-wrap { }
+  .vd-lang-title { font-size: 12px; font-weight: 700; color: #ccc; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .vd-lang-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .vd-lang { display: inline-block; font-family: "DM Serif Display", Georgia, serif; font-size: 14px; color: rgba(255,255,255,0.75); padding: 7px 14px; border: 1px solid rgba(255,255,255,0.12); border-radius: 999px; transition: all 0.2s; text-decoration: none; cursor: pointer; background: transparent; }
+  .vd-lang:hover { border-color: #71BB55; color: #fff; background: rgba(113,187,85,0.1); }
+  .vd-lang.vd-lang-active { border-color: #71BB55; color: #fff; background: rgba(113,187,85,0.15); }
+  .vd-lang-note { font-size: 11px; color: #666; margin-top: 12px; line-height: 1.5; }
+
+  /* How it works */
+  .vd-how { padding: 40px 24px; background: #f9fafb; }
+  .vd-how-inner { max-width: 1100px; margin: 0 auto; }
+  .vd-how-title { font-family: "DM Serif Display", Georgia, serif; font-size: 22px; color: #1a1a1a; text-align: center; margin-bottom: 28px; }
+  .vd-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+  .vd-step { text-align: center; padding: 20px 14px; border-radius: 12px; border: 1px solid #e5e7eb; background: #fff; }
+  .vd-step-num { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #e8f5e9; color: #2e7d32; font-weight: 800; font-size: 14px; margin-bottom: 10px; }
+  .vd-step-title { font-size: 13px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+  .vd-step-body { font-size: 11px; color: #555; line-height: 1.5; }
+  .vd-how-cta { text-align: center; }
+
+  /* Conditions */
+  .vd-cond { padding: 32px 24px; background: #fff; }
+  .vd-cond-inner { max-width: 1100px; margin: 0 auto; text-align: center; }
+  .vd-cond-title { font-family: "DM Serif Display", Georgia, serif; font-size: 20px; color: #1a1a1a; margin-bottom: 6px; }
+  .vd-cond-sub { font-size: 12px; color: #777; margin-bottom: 16px; }
+  .vd-cond-grid { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 16px; }
+  .vd-cond-pill { padding: 6px 14px; border-radius: 999px; background: #f9fafb; border: 1px solid #e5e7eb; font-size: 11px; font-weight: 500; color: #333; font-family: "DM Sans", sans-serif; }
+  .vd-911 { max-width: 660px; margin: 0 auto; padding: 10px 14px; background: #fff3e0; border: 1px solid #ffcc80; border-radius: 10px; font-size: 11px; color: #e65100; line-height: 1.5; }
+  .vd-powered { text-align: center; margin-top: 16px; font-size: 10px; color: #999; font-family: "DM Sans", sans-serif; }
+  .vd-powered a { color: #71BB55; text-decoration: none; }
+
+  @media (max-width: 768px) {
+    .vd-sam-inner { grid-template-columns: 1fr; gap: 24px; }
+    .vd-steps { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="vd-block" id="vd-block">
+
+  <!-- SAM HERO -->
+  <div class="vd-sam-hero">
+    <div class="vd-sam-inner">
+      <div>
+        <div class="vd-sam-kicker" id="vd-kicker">Available 24/7 &middot; Free to use</div>
+        <div class="vd-sam-title" id="vd-title">Have a dental concern? <span class="vd-sam-accent" id="vd-accent">Talk to Sam.</span></div>
+        <div class="vd-sam-sub" id="vd-sub">Sam is our AI dental assistant. Whether it's a toothache, a broken tooth, or a question about your dental care &mdash; describe your concern and our dental team will follow up with you directly.</div>
+        <a href="https://virtualdentist.ai/intake.html?src=jackson_block" class="vd-sam-btn" id="vd-btn">Talk to Sam</a>
+        <div class="vd-sam-btn-sub" id="vd-btn-sub">Responds in minutes &middot; No account needed</div>
+      </div>
+      <div class="vd-lang-wrap">
+        <div class="vd-lang-title" id="vd-lang-title">Sam speaks your language</div>
+        <div class="vd-lang-grid" id="vd-lang-grid">
+          <button class="vd-lang vd-lang-active" data-lang="en">English</button>
+          <button class="vd-lang" data-lang="ar">&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;</button>
+          <button class="vd-lang" data-lang="hi">&#2361;&#2367;&#2344;&#2381;&#2342;&#2368;</button>
+          <button class="vd-lang" data-lang="pa">&#2602;&#2672;&#2588;&#2622;&#2604;&#2624;</button>
+          <button class="vd-lang" data-lang="fr">Fran&ccedil;ais</button>
+          <button class="vd-lang" data-lang="fa">&#1601;&#1575;&#1585;&#1587;&#1740;</button>
+          <button class="vd-lang" data-lang="so">Soomaali</button>
+          <button class="vd-lang" data-lang="es">Espa&ntilde;ol</button>
+          <button class="vd-lang" data-lang="zh">&#20013;&#25991;</button>
+        </div>
+        <div class="vd-lang-note" id="vd-lang-note">English speakers talk to Sam by phone. All other languages are assessed via text message in your language.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="vd-how">
+    <div class="vd-how-inner">
+      <div class="vd-how-title" id="vd-how-title">Here's how it works.</div>
+      <div class="vd-steps">
+        <div class="vd-step">
+          <div class="vd-step-num">1</div>
+          <div class="vd-step-title" id="vd-s1-title">Fill out a short form</div>
+          <div class="vd-step-body" id="vd-s1-body">Describe your concern in your own words. Takes about 2 minutes. No account needed.</div>
+        </div>
+        <div class="vd-step">
+          <div class="vd-step-num">2</div>
+          <div class="vd-step-title" id="vd-s2-title">Sam follows up</div>
+          <div class="vd-step-body" id="vd-s2-body">Sam calls or texts you with guided questions to understand your situation.</div>
+        </div>
+        <div class="vd-step">
+          <div class="vd-step-num">3</div>
+          <div class="vd-step-title" id="vd-s3-title">Our team gets back to you</div>
+          <div class="vd-step-body" id="vd-s3-body">Our dental team reviews your information and follows up with guidance or an appointment.</div>
+        </div>
+      </div>
+      <div class="vd-how-cta">
+        <a href="https://virtualdentist.ai/intake.html?src=jackson_how" class="vd-sam-btn" id="vd-how-btn">Start your assessment</a>
+        <div class="vd-sam-btn-sub" id="vd-how-btn-sub">Free &middot; Takes about 2 minutes</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONDITIONS + 911 -->
+  <div class="vd-cond">
+    <div class="vd-cond-inner">
+      <div class="vd-cond-title" id="vd-cond-title">Need help now?</div>
+      <div class="vd-cond-sub" id="vd-cond-sub">Sam can help with a wide range of dental concerns.</div>
+      <div class="vd-cond-grid" id="vd-cond-grid"></div>
+      <div class="vd-911" id="vd-911">If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, seek emergency care immediately by calling 911.</div>
+      <div style="text-align:center;font-size:10px;color:#999;margin-top:14px;max-width:660px;margin-left:auto;margin-right:auto;line-height:1.5;" id="vd-disclaimer">This service provides dental triage guidance and does not replace emergency medical care or an in-person dental examination.</div>
+      <div class="vd-powered">Triage powered by <a href="https://virtualdentist.ai" target="_blank">VirtualDentist.ai</a></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  var INTAKE_URL = "https://virtualdentist.ai/intake.html";
+  var SRC = "jackson_block";
+
+  var VDT = {
+    en: { kicker:"Available 24/7 \u00b7 Free to use", title:"Have a dental concern?", accent:"Talk to Sam.", sub:"Sam is our AI dental assistant. Whether it's a toothache, a broken tooth, or a question about your dental care \u2014 describe your concern and our dental team will follow up with you directly.", btn:"Talk to Sam", btnSub:"Responds in minutes \u00b7 No account needed", langTitle:"Sam speaks your language", langNote:"English speakers talk to Sam by phone. All other languages are assessed via text message in your language.", howTitle:"Here's how it works.", s1t:"Fill out a short form", s1b:"Describe your concern in your own words. Takes about 2 minutes. No account needed.", s2t:"Sam follows up", s2b:"Sam calls or texts you with guided questions to understand your situation.", s3t:"Our team gets back to you", s3b:"Our dental team reviews your information and follows up with guidance or an appointment.", howBtn:"Start your assessment", condTitle:"Need help now?", condSub:"Sam can help with a wide range of dental concerns.", howBtnSub:"Free \u00b7 Takes about 2 minutes", pills:["Toothache","Broken tooth","Knocked-out tooth","Infection","Swelling","Lost filling or crown","Mouth injury","Post-procedure pain","Sensitivity","Appointment request","New patient inquiry","Cleaning or checkup","Insurance question","General concern"], warn:"If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, seek emergency care immediately by calling 911." },
+    ar: { kicker:"\u0645\u062a\u0627\u062d \u0639\u0644\u0649 \u0645\u062f\u0627\u0631 \u0627\u0644\u0633\u0627\u0639\u0629 \u00b7 \u0645\u062c\u0627\u0646\u064a", title:"\u0647\u0644 \u0644\u062f\u064a\u0643 \u0645\u0634\u0643\u0644\u0629 \u0641\u064a \u0627\u0644\u0623\u0633\u0646\u0627\u0646\u061f", accent:"\u0623\u0631\u0633\u0644 \u0631\u0633\u0627\u0644\u0629 \u0644\u0633\u0627\u0645.", sub:"\u0633\u0627\u0645 \u0647\u0648 \u0645\u0633\u0627\u0639\u062f \u0637\u0628 \u0627\u0644\u0623\u0633\u0646\u0627\u0646 \u0628\u0627\u0644\u0630\u0643\u0627\u0621 \u0627\u0644\u0627\u0635\u0637\u0646\u0627\u0639\u064a. \u0635\u0641 \u0645\u0634\u0643\u0644\u062a\u0643 \u0648\u0633\u064a\u062a\u0648\u0627\u0635\u0644 \u0641\u0631\u064a\u0642 \u0637\u0628 \u0627\u0644\u0623\u0633\u0646\u0627\u0646 \u0644\u062f\u064a\u0646\u0627 \u0645\u0639\u0643 \u0645\u0628\u0627\u0634\u0631\u0629.", btn:"\u0623\u0631\u0633\u0644 \u0631\u0633\u0627\u0644\u0629 \u0644\u0633\u0627\u0645", btnSub:"\u064a\u0631\u062f \u0641\u064a \u062f\u0642\u0627\u0626\u0642", langTitle:"\u0633\u0627\u0645 \u064a\u062a\u062d\u062f\u062b \u0628\u0644\u063a\u062a\u0643", langNote:"\u0627\u0644\u0645\u062a\u062d\u062f\u062b\u0648\u0646 \u0628\u0627\u0644\u0625\u0646\u062c\u0644\u064a\u0632\u064a\u0629 \u064a\u062a\u062d\u062f\u062b\u0648\u0646 \u0645\u0639 \u0633\u0627\u0645 \u0628\u0627\u0644\u0647\u0627\u062a\u0641. \u062c\u0645\u064a\u0639 \u0627\u0644\u0644\u063a\u0627\u062a \u0627\u0644\u0623\u062e\u0631\u0649 \u0639\u0628\u0631 \u0627\u0644\u0631\u0633\u0627\u0626\u0644 \u0627\u0644\u0646\u0635\u064a\u0629.", howTitle:"\u0643\u064a\u0641 \u064a\u0639\u0645\u0644.", s1t:"\u0627\u0645\u0644\u0623 \u0646\u0645\u0648\u0630\u062c\u0627 \u0642\u0635\u064a\u0631\u0627", s1b:"\u0635\u0641 \u0645\u0634\u0643\u0644\u062a\u0643. \u064a\u0633\u062a\u063a\u0631\u0642 \u062f\u0642\u064a\u0642\u062a\u064a\u0646 \u0641\u0642\u0637.", s2t:"\u0633\u0627\u0645 \u064a\u062a\u0648\u0627\u0635\u0644 \u0645\u0639\u0643", s2b:"\u0633\u0627\u0645 \u064a\u0631\u0633\u0644 \u0644\u0643 \u0631\u0633\u0627\u0644\u0629 \u0644\u0641\u0647\u0645 \u062d\u0627\u0644\u062a\u0643.", s3t:"\u0641\u0631\u064a\u0642\u0646\u0627 \u064a\u062a\u0648\u0627\u0635\u0644 \u0645\u0639\u0643", s3b:"\u0641\u0631\u064a\u0642 \u0637\u0628 \u0627\u0644\u0623\u0633\u0646\u0627\u0646 \u064a\u0631\u0627\u062c\u0639 \u0645\u0639\u0644\u0648\u0645\u0627\u062a\u0643 \u0648\u064a\u062a\u0648\u0627\u0635\u0644 \u0645\u0639\u0643.", howBtn:"\u0627\u0628\u062f\u0623 \u0627\u0644\u062a\u0642\u064a\u064a\u0645", condTitle:"\u062a\u062d\u062a\u0627\u062c \u0645\u0633\u0627\u0639\u062f\u0629 \u0627\u0644\u0622\u0646\u061f", condSub:"\u0633\u0627\u0645 \u064a\u0633\u0627\u0639\u062f \u0641\u064a \u0645\u062e\u062a\u0644\u0641 \u0645\u0634\u0627\u0643\u0644 \u0627\u0644\u0623\u0633\u0646\u0627\u0646.", howBtnSub:"\u0645\u062c\u0627\u0646\u064a \u00b7 \u062f\u0642\u064a\u0642\u062a\u0627\u0646", pills:["\u0623\u0644\u0645 \u0627\u0644\u0623\u0633\u0646\u0627\u0646","\u0633\u0646 \u0645\u0643\u0633\u0648\u0631","\u0633\u0646 \u0645\u062e\u0644\u0648\u0639","\u0639\u062f\u0648\u0649","\u062a\u0648\u0631\u0645","\u062d\u0634\u0648\u0629 \u0645\u0641\u0642\u0648\u062f\u0629","\u0625\u0635\u0627\u0628\u0629 \u0627\u0644\u0641\u0645","\u0623\u0644\u0645 \u0628\u0639\u062f \u0627\u0644\u0639\u0644\u0627\u062c","\u062d\u0633\u0627\u0633\u064a\u0629","\u0637\u0644\u0628 \u0645\u0648\u0639\u062f","\u0645\u0631\u064a\u0636 \u062c\u062f\u064a\u062f","\u062a\u0646\u0638\u064a\u0641","\u0633\u0624\u0627\u0644 \u062a\u0623\u0645\u064a\u0646","\u0627\u0633\u062a\u0641\u0633\u0627\u0631 \u0639\u0627\u0645"], warn:"\u0625\u0630\u0627 \u0643\u0646\u062a \u062a\u0639\u0627\u0646\u064a \u0645\u0646 \u0635\u0639\u0648\u0628\u0629 \u0641\u064a \u0627\u0644\u062a\u0646\u0641\u0633 \u0623\u0648 \u0646\u0632\u064a\u0641 \u0623\u0648 \u062a\u0648\u0631\u0645 \u0643\u0628\u064a\u0631 \u0623\u0648 \u0625\u0635\u0627\u0628\u0629 \u0641\u064a \u0627\u0644\u0648\u062c\u0647\u060c \u0627\u062a\u0635\u0644 \u0628\u0640 911 \u0641\u0648\u0631\u0627." },
+    hi: { kicker:"24/7 \u0909\u092a\u0932\u092c\u094d\u0927 \u00b7 \u0928\u093f\u0903\u0936\u0941\u0932\u094d\u0915", title:"\u0915\u094d\u092f\u093e \u0906\u092a\u0915\u094b \u0926\u093e\u0902\u0924\u094b\u0902 \u0915\u0940 \u0938\u092e\u0938\u094d\u092f\u093e \u0939\u0948?", accent:"\u0938\u0948\u092e \u0915\u094b \u092e\u0948\u0938\u0947\u091c \u0915\u0930\u0947\u0902\u0964", sub:"\u0938\u0948\u092e \u0939\u092e\u093e\u0930\u093e AI \u0921\u0947\u0902\u091f\u0932 \u0938\u0939\u093e\u092f\u0915 \u0939\u0948\u0964 \u0905\u092a\u0928\u0940 \u0938\u092e\u0938\u094d\u092f\u093e \u092c\u0924\u093e\u090f\u0902 \u0914\u0930 \u0939\u092e\u093e\u0930\u0940 \u0921\u0947\u0902\u091f\u0932 \u091f\u0940\u092e \u0938\u0940\u0927\u0947 \u0906\u092a\u0938\u0947 \u0938\u0902\u092a\u0930\u094d\u0915 \u0915\u0930\u0947\u0917\u0940\u0964", btn:"\u0938\u0948\u092e \u0915\u094b \u092e\u0948\u0938\u0947\u091c \u0915\u0930\u0947\u0902", btnSub:"\u092e\u093f\u0928\u091f\u094b\u0902 \u092e\u0947\u0902 \u091c\u0935\u093e\u092c", langTitle:"\u0938\u0948\u092e \u0906\u092a\u0915\u0940 \u092d\u093e\u0937\u093e \u092c\u094b\u0932\u0924\u093e \u0939\u0948", langNote:"\u0905\u0902\u0917\u094d\u0930\u0947\u091c\u0940 \u092c\u094b\u0932\u0928\u0947 \u0935\u093e\u0932\u0947 \u0938\u0948\u092e \u0938\u0947 \u092b\u094b\u0928 \u092a\u0930 \u092c\u093e\u0924 \u0915\u0930\u0924\u0947 \u0939\u0948\u0902\u0964 \u0905\u0928\u094d\u092f \u092d\u093e\u0937\u093e\u090f\u0902 \u091f\u0947\u0915\u094d\u0938\u094d\u091f \u092e\u0948\u0938\u0947\u091c \u0926\u094d\u0935\u093e\u0930\u093e\u0964", howTitle:"\u092f\u0939 \u0915\u0948\u0938\u0947 \u0915\u093e\u092e \u0915\u0930\u0924\u093e \u0939\u0948\u0964", s1t:"\u090f\u0915 \u091b\u094b\u091f\u093e \u092b\u0949\u0930\u094d\u092e \u092d\u0930\u0947\u0902", s1b:"\u0905\u092a\u0928\u0940 \u0938\u092e\u0938\u094d\u092f\u093e \u092c\u0924\u093e\u090f\u0902\u0964 \u0932\u0917\u092d\u0917 2 \u092e\u093f\u0928\u091f\u0964", s2t:"\u0938\u0948\u092e \u0938\u0902\u092a\u0930\u094d\u0915 \u0915\u0930\u0924\u093e \u0939\u0948", s2b:"\u0938\u0948\u092e \u0906\u092a\u0915\u094b \u092e\u0948\u0938\u0947\u091c \u0915\u0930\u0924\u093e \u0939\u0948\u0964", s3t:"\u0939\u092e\u093e\u0930\u0940 \u091f\u0940\u092e \u0938\u0902\u092a\u0930\u094d\u0915 \u0915\u0930\u0924\u0940 \u0939\u0948", s3b:"\u0939\u092e\u093e\u0930\u0940 \u0921\u0947\u0902\u091f\u0932 \u091f\u0940\u092e \u0906\u092a\u0938\u0947 \u0938\u0902\u092a\u0930\u094d\u0915 \u0915\u0930\u0924\u0940 \u0939\u0948\u0964", howBtn:"\u0906\u0915\u0932\u0928 \u0936\u0941\u0930\u0942 \u0915\u0930\u0947\u0902", condTitle:"\u0905\u092d\u0940 \u092e\u0926\u0926 \u091a\u093e\u0939\u093f\u090f?", condSub:"\u0938\u0948\u092e \u0935\u093f\u092d\u093f\u0928\u094d\u0928 \u0926\u093e\u0902\u0924\u094b\u0902 \u0915\u0940 \u0938\u092e\u0938\u094d\u092f\u093e\u0913\u0902 \u092e\u0947\u0902 \u092e\u0926\u0926 \u0915\u0930 \u0938\u0915\u0924\u093e \u0939\u0948\u0964" },
+    pa: { kicker:"24/7 \u0909\u092a\u0932\u092c\u094d\u0927 \u00b7 \u092e\u0941\u092b\u093c\u0924", title:"\u0a15\u0a40 \u0a24\u0a41\u0a39\u0a3e\u0a28\u0a42\u0a70 \u0a26\u0a70\u0a26\u0a3e\u0a02 \u0a26\u0a40 \u0a38\u0a2e\u0a71\u0a38\u0a3f\u0a06 \u0a39\u0a48?", accent:"\u0a38\u0a48\u0a2e \u0a28\u0a42\u0a70 \u0a2e\u0a48\u0a38\u0a47\u0a1c \u0a15\u0a30\u0a4b\u0964", sub:"\u0a38\u0a48\u0a2e \u0a38\u0a3e\u0a21\u0a3e AI \u0a21\u0a48\u0a02\u0a1f\u0a32 \u0a38\u0a39\u0a3e\u0a07\u0a15 \u0a39\u0a48\u0964 \u0a05\u0a2a\u0a23\u0a40 \u0a38\u0a2e\u0a71\u0a38\u0a3f\u0a06 \u0a26\u0a71\u0a38\u0a4b \u0a05\u0a24\u0a47 \u0a38\u0a3e\u0a21\u0a40 \u0a21\u0a48\u0a02\u0a1f\u0a32 \u0a1f\u0a40\u0a2e \u0a38\u0a3f\u0a71\u0a27\u0a47 \u0a24\u0a41\u0a39\u0a3e\u0a21\u0a47 \u0a28\u0a3e\u0a32 \u0a38\u0a70\u0a2a\u0a30\u0a15 \u0a15\u0a30\u0a47\u0a17\u0a40\u0964", btn:"\u0a38\u0a48\u0a2e \u0a28\u0a42\u0a70 \u0a2e\u0a48\u0a38\u0a47\u0a1c \u0a15\u0a30\u0a4b", btnSub:"\u0a2e\u0a3f\u0a70\u0a1f\u0a3e\u0a02 \u0a35\u0a3f\u0a71\u0a1a \u0a1c\u0a35\u0a3e\u0a2c", langTitle:"\u0a38\u0a48\u0a2e \u0a24\u0a41\u0a39\u0a3e\u0a21\u0a40 \u0a2d\u0a3e\u0a38\u0a3c\u0a3e \u0a2c\u0a4b\u0a32\u0a26\u0a3e \u0a39\u0a48", langNote:"\u0a05\u0a70\u0a17\u0a30\u0a47\u0a1c\u0a3c\u0a40 \u0a2c\u0a4b\u0a32\u0a23 \u0a35\u0a3e\u0a32\u0a47 \u0a38\u0a48\u0a2e \u0a28\u0a3e\u0a32 \u0a2b\u0a3c\u0a4b\u0a28 \u0a24\u0a47 \u0a17\u0a71\u0a32 \u0a15\u0a30\u0a26\u0a47 \u0a39\u0a28\u0964 \u0a39\u0a4b\u0a30 \u0a2d\u0a3e\u0a38\u0a3c\u0a3e\u0a35\u0a3e\u0a02 \u0a1f\u0a48\u0a15\u0a38\u0a1f \u0a2e\u0a48\u0a38\u0a47\u0a1c \u0a26\u0a41\u0a06\u0a30\u0a3e\u0964", howTitle:"\u0a07\u0a39 \u0a15\u0a3f\u0a35\u0a47\u0a02 \u0a15\u0a70\u0a2e \u0a15\u0a30\u0a26\u0a3e \u0a39\u0a48\u0964", s1t:"\u0a07\u0a71\u0a15 \u0a1b\u0a4b\u0a1f\u0a3e \u0a2b\u0a3e\u0a30\u0a2e \u0a2d\u0a30\u0a4b", s1b:"\u0a05\u0a2a\u0a23\u0a40 \u0a38\u0a2e\u0a71\u0a38\u0a3f\u0a06 \u0a26\u0a71\u0a38\u0a4b\u0964 \u0a32\u0a17\u0a2d\u0a17 2 \u0a2e\u0a3f\u0a70\u0a1f\u0964", s2t:"\u0a38\u0a48\u0a2e \u0a38\u0a70\u0a2a\u0a30\u0a15 \u0a15\u0a30\u0a26\u0a3e \u0a39\u0a48", s2b:"\u0a38\u0a48\u0a2e \u0a24\u0a41\u0a39\u0a3e\u0a28\u0a42\u0a70 \u0a2e\u0a48\u0a38\u0a47\u0a1c \u0a15\u0a30\u0a26\u0a3e \u0a39\u0a48\u0964", s3t:"\u0a38\u0a3e\u0a21\u0a40 \u0a1f\u0a40\u0a2e \u0a38\u0a70\u0a2a\u0a30\u0a15 \u0a15\u0a30\u0a26\u0a40 \u0a39\u0a48", s3b:"\u0a38\u0a3e\u0a21\u0a40 \u0a21\u0a48\u0a02\u0a1f\u0a32 \u0a1f\u0a40\u0a2e \u0a24\u0a41\u0a39\u0a3e\u0a21\u0a47 \u0a28\u0a3e\u0a32 \u0a38\u0a70\u0a2a\u0a30\u0a15 \u0a15\u0a30\u0a26\u0a40 \u0a39\u0a48\u0964", howBtn:"\u0a2e\u0a41\u0a32\u0a3e\u0a02\u0a15\u0a23 \u0a38\u0a3c\u0a41\u0a30\u0a42 \u0a15\u0a30\u0a4b", condTitle:"\u0a39\u0a41\u0a23 \u0a2e\u0a26\u0a26 \u0a1a\u0a3e\u0a39\u0a40\u0a26\u0a40 \u0a39\u0a48?", condSub:"\u0a38\u0a48\u0a2e \u0a35\u0a71\u0a16-\u0a35\u0a71\u0a16 \u0a26\u0a70\u0a26\u0a3e\u0a02 \u0a26\u0a40\u0a06\u0a02 \u0a38\u0a2e\u0a71\u0a38\u0a3f\u0a06\u0a35\u0a3e\u0a02 \u0a35\u0a3f\u0a71\u0a1a \u0a2e\u0a26\u0a26 \u0a15\u0a30 \u0a38\u0a15\u0a26\u0a3e \u0a39\u0a48\u0964" },
+    fr: { kicker:"Disponible 24/7 \u00b7 Gratuit", title:"Avez-vous un probl\u00e8me dentaire?", accent:"Envoyez un message \u00e0 Sam.", sub:"Sam est notre assistant dentaire IA. D\u00e9crivez votre probl\u00e8me et notre \u00e9quipe dentaire vous contactera directement.", btn:"Envoyer un message \u00e0 Sam", btnSub:"R\u00e9pond en quelques minutes", langTitle:"Sam parle votre langue", langNote:"Les anglophones parlent \u00e0 Sam par t\u00e9l\u00e9phone. Toutes les autres langues par message texte.", howTitle:"Comment \u00e7a marche.", s1t:"Remplissez un court formulaire", s1b:"D\u00e9crivez votre probl\u00e8me. Environ 2 minutes.", s2t:"Sam vous contacte", s2b:"Sam vous envoie un message avec des questions guid\u00e9es.", s3t:"Notre \u00e9quipe vous r\u00e9pond", s3b:"Notre \u00e9quipe dentaire examine vos informations et vous contacte.", howBtn:"Commencer l'\u00e9valuation", condTitle:"Besoin d'aide maintenant?", condSub:"Sam peut aider avec divers probl\u00e8mes dentaires." },
+    fa: { kicker:"24/7 \u062f\u0631 \u062f\u0633\u062a\u0631\u0633 \u00b7 \u0631\u0627\u06cc\u06af\u0627\u0646", title:"\u0622\u06cc\u0627 \u0645\u0634\u06a9\u0644 \u062f\u0646\u062f\u0627\u0646\u06cc \u062f\u0627\u0631\u06cc\u062f\u061f", accent:"\u067e\u06cc\u0627\u0645 \u0628\u0647 \u0633\u0627\u0645.", sub:"\u0633\u0627\u0645 \u062f\u0633\u062a\u06cc\u0627\u0631 \u062f\u0646\u062f\u0627\u0646\u067e\u0632\u0634\u06a9\u06cc AI \u0645\u0627\u0633\u062a. \u0645\u0634\u06a9\u0644 \u062e\u0648\u062f \u0631\u0627 \u062a\u0648\u0636\u06cc\u062d \u062f\u0647\u06cc\u062f \u0648 \u062a\u06cc\u0645 \u0645\u0627 \u0628\u0627 \u0634\u0645\u0627 \u062a\u0645\u0627\u0633 \u062e\u0648\u0627\u0647\u062f \u06af\u0631\u0641\u062a.", btn:"\u067e\u06cc\u0627\u0645 \u0628\u0647 \u0633\u0627\u0645", btnSub:"\u062f\u0631 \u0639\u0631\u0636 \u0686\u0646\u062f \u062f\u0642\u06cc\u0642\u0647 \u067e\u0627\u0633\u062e", langTitle:"\u0633\u0627\u0645 \u0628\u0647 \u0632\u0628\u0627\u0646 \u0634\u0645\u0627 \u0635\u062d\u0628\u062a \u0645\u06cc \u06a9\u0646\u062f", langNote:"\u0627\u0646\u06af\u0644\u06cc\u0633\u06cc \u0632\u0628\u0627\u0646\u0627\u0646 \u0628\u0627 \u062a\u0644\u0641\u0646. \u0633\u0627\u06cc\u0631 \u0632\u0628\u0627\u0646 \u0647\u0627 \u0627\u0632 \u0637\u0631\u06cc\u0642 \u067e\u06cc\u0627\u0645\u06a9.", howTitle:"\u0686\u06af\u0648\u0646\u0647 \u06a9\u0627\u0631 \u0645\u06cc \u06a9\u0646\u062f.", s1t:"\u06cc\u06a9 \u0641\u0631\u0645 \u06a9\u0648\u062a\u0627\u0647 \u067e\u0631 \u06a9\u0646\u06cc\u062f", s1b:"\u0645\u0634\u06a9\u0644 \u062e\u0648\u062f \u0631\u0627 \u062a\u0648\u0636\u06cc\u062d \u062f\u0647\u06cc\u062f. \u062d\u062f\u0648\u062f 2 \u062f\u0642\u06cc\u0642\u0647.", s2t:"\u0633\u0627\u0645 \u067e\u06cc\u06af\u06cc\u0631\u06cc \u0645\u06cc \u06a9\u0646\u062f", s2b:"\u0633\u0627\u0645 \u0628\u0647 \u0634\u0645\u0627 \u067e\u06cc\u0627\u0645 \u0645\u06cc \u062f\u0647\u062f.", s3t:"\u062a\u06cc\u0645 \u0645\u0627 \u067e\u0627\u0633\u062e \u0645\u06cc \u062f\u0647\u062f", s3b:"\u062a\u06cc\u0645 \u062f\u0646\u062f\u0627\u0646\u067e\u0632\u0634\u06a9\u06cc \u0628\u0627 \u0634\u0645\u0627 \u062a\u0645\u0627\u0633 \u0645\u06cc \u06af\u06cc\u0631\u062f.", howBtn:"\u0634\u0631\u0648\u0639 \u0627\u0631\u0632\u06cc\u0627\u0628\u06cc", condTitle:"\u0627\u0644\u0627\u0646 \u06a9\u0645\u06a9 \u0645\u06cc \u062e\u0648\u0627\u0647\u06cc\u062f\u061f", condSub:"\u0633\u0627\u0645 \u062f\u0631 \u0645\u0634\u06a9\u0644\u0627\u062a \u0645\u062e\u062a\u0644\u0641 \u062f\u0646\u062f\u0627\u0646\u06cc \u06a9\u0645\u06a9 \u0645\u06cc \u06a9\u0646\u062f." },
+    so: { kicker:"24/7 diyaar \u00b7 Bilaash", title:"Ma leedahay dhibaato ilko?", accent:"Fariin u dir Sam.", sub:"Sam waa kaaliyaha ilkaha AI. Sheeg dhibaatadaada, kooxdana waxay si toos ah kuula soo xiriiri doontaa.", btn:"Fariin u dir Sam", btnSub:"Daqiiqado gudahood", langTitle:"Sam wuu ku hadlaa luqaddaada", langNote:"Ingiriisiga waxay Sam kula hadlaan taleefanka. Luqadaha kale waa fariin qoraal ah.", howTitle:"Sida ay u shaqayso.", s1t:"Buuxi foom gaaban", s1b:"Sheeg dhibaatadaada. 2 daqiiqo.", s2t:"Sam wuu kula soo xiriiraa", s2b:"Sam wuxuu kugu soo diraa fariin.", s3t:"Kooxdayadu way kula soo xiriirtaa", s3b:"Kooxda ilkahu way kula soo xiriirtaa.", howBtn:"Bilow qiimaynta", condTitle:"Hadda caawimaad?", condSub:"Sam wuxuu ka caawiyaa dhibaatooyinka ilkaha." },
+    es: { kicker:"Disponible 24/7 \u00b7 Gratis", title:"\u00bfTiene un problema dental?", accent:"Env\u00ede un mensaje a Sam.", sub:"Sam es nuestro asistente dental con IA. Describa su problema y nuestro equipo dental se comunicar\u00e1 con usted directamente.", btn:"Enviar mensaje a Sam", btnSub:"Responde en minutos", langTitle:"Sam habla su idioma", langNote:"Los angloparlantes hablan con Sam por tel\u00e9fono. Otros idiomas por mensaje de texto.", howTitle:"C\u00f3mo funciona.", s1t:"Complete un breve formulario", s1b:"Describa su problema. Toma unos 2 minutos.", s2t:"Sam se comunica con usted", s2b:"Sam le env\u00eda un mensaje con preguntas guiadas.", s3t:"Nuestro equipo le responde", s3b:"Nuestro equipo dental revisa su informaci\u00f3n y se comunica con usted.", howBtn:"Iniciar evaluaci\u00f3n", condTitle:"\u00bfNecesita ayuda ahora?", condSub:"Sam puede ayudar con diversos problemas dentales." },
+    zh: { kicker:"24/7\u53ef\u7528 \u00b7 \u514d\u8d39", title:"\u60a8\u6709\u7259\u9f7f\u95ee\u9898\u5417\uff1f", accent:"\u7ed9Sam\u53d1\u6d88\u606f\u3002", sub:"Sam\u662f\u6211\u4eec\u7684AI\u7259\u79d1\u52a9\u624b\u3002\u63cf\u8ff0\u60a8\u7684\u95ee\u9898\uff0c\u6211\u4eec\u7684\u7259\u79d1\u56e2\u961f\u5c06\u76f4\u63a5\u4e0e\u60a8\u8054\u7cfb\u3002", btn:"\u7ed9Sam\u53d1\u6d88\u606f", btnSub:"\u51e0\u5206\u949f\u5185\u56de\u590d", langTitle:"Sam\u4f1a\u8bf4\u60a8\u7684\u8bed\u8a00", langNote:"\u82f1\u8bed\u7528\u6237\u901a\u8fc7\u7535\u8bdd\u4e0eSam\u4ea4\u6d41\u3002\u5176\u4ed6\u8bed\u8a00\u901a\u8fc7\u77ed\u4fe1\u3002", howTitle:"\u5982\u4f55\u8fd0\u4f5c\u3002", s1t:"\u586b\u5199\u7b80\u77ed\u8868\u683c", s1b:"\u63cf\u8ff0\u60a8\u7684\u95ee\u9898\u3002\u7ea62\u5206\u949f\u3002", s2t:"Sam\u8ddf\u8fdb", s2b:"Sam\u7ed9\u60a8\u53d1\u6d88\u606f\u3002", s3t:"\u6211\u4eec\u7684\u56e2\u961f\u56de\u590d\u60a8", s3b:"\u6211\u4eec\u7684\u7259\u79d1\u56e2\u961f\u4e0e\u60a8\u8054\u7cfb\u3002", howBtn:"\u5f00\u59cb\u8bc4\u4f30", condTitle:"\u73b0\u5728\u9700\u8981\u5e2e\u52a9\uff1f", condSub:"Sam\u53ef\u4ee5\u5e2e\u52a9\u5904\u7406\u5404\u79cd\u7259\u79d1\u95ee\u9898\u3002" }
+  };
+
+  var RTL = ["ar","fa"];
+  var curLang = "en";
+
+  function vdt(key) { return (VDT[curLang] && VDT[curLang][key]) || VDT.en[key] || key; }
+
+  function setEl(id, txt) { var el = document.getElementById(id); if (el) el.textContent = txt; }
+
+  function applyVDLang(lang) {
+    curLang = lang;
+    var block = document.getElementById("vd-block");
+    if (block) block.setAttribute("dir", RTL.indexOf(lang) >= 0 ? "rtl" : "ltr");
+
+    // Active state on pills
+    document.querySelectorAll(".vd-lang").forEach(function(el) {
+      el.classList.toggle("vd-lang-active", el.getAttribute("data-lang") === lang);
+    });
+
+    var sms = lang !== "en";
+    setEl("vd-kicker", vdt("kicker"));
+    document.getElementById("vd-title").innerHTML = vdt("title") + ' <span class="vd-sam-accent">' + vdt("accent") + '</span>';
+    setEl("vd-sub", vdt("sub"));
+    var btnEl = document.getElementById("vd-btn");
+    btnEl.textContent = sms ? vdt("btn") : vdt("btn");
+    btnEl.href = INTAKE_URL + "?src=" + SRC + (sms ? "&lang=" + lang : "");
+    setEl("vd-btn-sub", vdt("btnSub"));
+    setEl("vd-lang-title", vdt("langTitle"));
+    setEl("vd-lang-note", vdt("langNote"));
+    setEl("vd-how-title", vdt("howTitle"));
+    setEl("vd-s1-title", vdt("s1t")); setEl("vd-s1-body", vdt("s1b"));
+    setEl("vd-s2-title", vdt("s2t")); setEl("vd-s2-body", vdt("s2b"));
+    setEl("vd-s3-title", vdt("s3t")); setEl("vd-s3-body", vdt("s3b"));
+    var howBtn = document.getElementById("vd-how-btn");
+    howBtn.textContent = vdt("howBtn");
+    howBtn.href = INTAKE_URL + "?src=" + SRC + "_how" + (sms ? "&lang=" + lang : "");
+    setEl("vd-cond-title", vdt("condTitle"));
+    setEl("vd-cond-sub", vdt("condSub"));
+    setEl("vd-how-btn-sub", VD_BTNSUB[curLang] || VD_BTNSUB.en);
+    setEl("vd-911", VD_WARN[curLang] || VD_WARN.en);
+    setEl("vd-disclaimer", VD_DISCL[curLang] || VD_DISCL.en);
+    // Rebuild pills
+    var pillGrid = document.getElementById("vd-cond-grid");
+    var pills = VD_PILLS[curLang] || VD_PILLS.en;
+    if (pillGrid && Array.isArray(pills)) {
+      pillGrid.innerHTML = pills.map(function(p) { return '<span class="vd-cond-pill">' + p + '</span>'; }).join("");
+    }
+  }
+
+
+  // Translated pills, howBtnSub, and warn for all languages
+  var VD_PILLS = {
+    en: ["Toothache","Broken tooth","Knocked-out tooth","Infection","Swelling","Lost filling or crown","Mouth injury","Post-procedure pain","Sensitivity","Appointment request","New patient inquiry","Cleaning or checkup","Insurance question","General concern"],
+    ar: ["ألم الأسنان","سن مكسور","سن مخلوع","عدوى","تورم","حشوة مفقودة","إصابة الفم","ألم بعد العلاج","حساسية","طلب موعد","مريض جديد","تنظيف","سؤال تأمين","استفسار عام"],
+    hi: ["दांत दर्द","टूटा दांत","निकला दांत","संक्रमण","सूजन","फिलिंग या क्राउन","मुंह की चोट","उपचार के बाद दर्द","संवेदनशीलता","मुलाकात का अनुरोध","नए मरीज़","सफाई या जांच","बीमा प्रश्न","सामान्य पूछताछ"],
+    pa: ["ਦੰਦ ਦਰਦ","ਟੁੱਟਾ ਦੰਦ","ਨਿਕਲਿਆ ਦੰਦ","ਇਨਫੈਕਸ਼ਨ","ਸੋਜ","ਫਿਲਿੰਗ ਜਾਂ ਕਰਾਊਨ","ਮੂੰਹ ਦੀ ਸੱਟ","ਇਲਾਜ ਤੋਂ ਬਾਅਦ ਦਰਦ","ਸੰਵੇਦਨਸ਼ੀਲਤਾ","ਮੁਲਾਕਾਤ","ਨਵਾਂ ਮਰੀਜ਼","ਸਫਾਈ ਜਾਂ ਜਾਂਚ","ਬੀਮਾ ਸਵਾਲ","ਆਮ ਪੁੱਛਗਿੱਛ"],
+    fr: ["Mal de dent","Dent cass\u00e9e","Dent arrach\u00e9e","Infection","Gonflement","Obturation perdue","Blessure buccale","Douleur post-op","Sensibilit\u00e9","Rendez-vous","Nouveau patient","Nettoyage","Question assurance","Question g\u00e9n\u00e9rale"],
+    fa: ["دندان درد","دندان شکسته","دندان کنده","عفونت","تورم","پر کردگی افتاده","آسیب دهان","درد پس از درمان","حساسیت","وقت ملاقات","بیمار جدید","تمیزکاری","سوال بیمه","سوال عمومی"],
+    so: ["Ilko xanuun","Ilko jabay","Ilko soo baxay","Infekshan","Baraar","Buuxa lumay","Dhaawac afka","Xanuun ka dib","Xasaasiyadda","Ballan","Bukaan cusub","Nadiifin","Caymis","Su'aal guud"],
+    es: ["Dolor de muela","Diente roto","Diente desprendido","Infecci\u00f3n","Hinchaz\u00f3n","Relleno perdido","Lesi\u00f3n bucal","Dolor post-tratamiento","Sensibilidad","Cita","Paciente nuevo","Limpieza","Pregunta de seguro","Consulta general"],
+    zh: ["牙痛","牙齿断裂","牙齿脱落","感染","肿胀","填充物脱落","口腔损伤","术后疼痛","敏感","预约","新患者","洁牙","保险咨询","一般咨询"]
+  };
+  var VD_BTNSUB = {
+    en: "Free \u00b7 Takes about 2 minutes", ar: "\u0645\u062c\u0627\u0646\u064a \u00b7 \u062f\u0642\u064a\u0642\u062a\u0627\u0646", hi: "\u0928\u093f\u0903\u0936\u0941\u0932\u094d\u0915 \u00b7 \u0932\u0917\u092d\u0917 2 \u092e\u093f\u0928\u091f", pa: "\u0a2e\u0a41\u0a2b\u0a3c\u0a24 \u00b7 2 \u0a2e\u0a3f\u0a70\u0a1f", fr: "Gratuit \u00b7 Environ 2 minutes", fa: "\u0631\u0627\u06cc\u06af\u0627\u0646 \u00b7 \u06f2 \u062f\u0642\u06cc\u0642\u0647", so: "Bilaash \u00b7 2 daqiiqo", es: "Gratis \u00b7 Unos 2 minutos", zh: "\u514d\u8d39 \u00b7 \u7ea62\u5206\u949f"
+  };
+  var VD_WARN = {
+    en: "If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, seek emergency care immediately by calling 911.",
+    ar: "\u0625\u0630\u0627 \u0643\u0646\u062a \u062a\u0639\u0627\u0646\u064a \u0645\u0646 \u0635\u0639\u0648\u0628\u0629 \u0641\u064a \u0627\u0644\u062a\u0646\u0641\u0633 \u0623\u0648 \u0646\u0632\u064a\u0641 \u0623\u0648 \u062a\u0648\u0631\u0645 \u0643\u0628\u064a\u0631 \u0623\u0648 \u0625\u0635\u0627\u0628\u0629 \u0641\u064a \u0627\u0644\u0648\u062c\u0647\u060c \u0627\u062a\u0635\u0644 \u0628\u0640 911 \u0641\u0648\u0631\u0627.",
+    hi: "\u092f\u0926\u093f \u0906\u092a\u0915\u094b \u0938\u093e\u0902\u0938 \u0932\u0947\u0928\u0947 \u092e\u0947\u0902 \u0915\u0920\u093f\u0928\u093e\u0908, \u0905\u0928\u093f\u092f\u0902\u0924\u094d\u0930\u093f\u0924 \u0930\u0915\u094d\u0924\u0938\u094d\u0930\u093e\u0935, \u092c\u0921\u093c\u0940 \u0938\u0942\u091c\u0928, \u092f\u093e \u0917\u0902\u092d\u0940\u0930 \u091a\u0947\u0939\u0930\u0947 \u0915\u0940 \u091a\u094b\u091f \u0939\u0948, \u0924\u094b 911 \u092a\u0930 \u0915\u0949\u0932 \u0915\u0930\u0947\u0902\u0964",
+    pa: "\u0a1c\u0a47 \u0a24\u0a41\u0a39\u0a3e\u0a28\u0a42\u0a70 \u0a38\u0a3e\u0a39 \u0a32\u0a48\u0a23 \u0a35\u0a3f\u0a71\u0a1a \u0a2e\u0a41\u0a38\u0a3c\u0a15\u0a32, \u0a2c\u0a47\u0a15\u0a3e\u0a2c\u0a42 \u0a16\u0a42\u0a28, \u0a35\u0a71\u0a21\u0a40 \u0a38\u0a4b\u0a1c, \u0a1c\u0a3e\u0a02 \u0a17\u0a70\u0a2d\u0a40\u0a30 \u0a1a\u0a3f\u0a39\u0a30\u0a47 \u0a26\u0a40 \u0a38\u0a71\u0a1f \u0a39\u0a48, \u0a24\u0a3e\u0a02 911 \u0a24\u0a47 \u0a15\u0a3e\u0a32 \u0a15\u0a30\u0a4b\u0964",
+    fr: "Si vous avez des difficult\u00e9s respiratoires, un saignement incontr\u00f4l\u00e9, un gonflement important ou un traumatisme facial grave, appelez le 911.",
+    fa: "\u0627\u06af\u0631 \u0645\u0634\u06a9\u0644 \u062a\u0646\u0641\u0633\u060c \u062e\u0648\u0646\u0631\u06cc\u0632\u06cc\u060c \u062a\u0648\u0631\u0645 \u0634\u062f\u06cc\u062f \u06cc\u0627 \u0622\u0633\u06cc\u0628 \u0635\u0648\u0631\u062a \u062f\u0627\u0631\u06cc\u062f\u060c \u0641\u0648\u0631\u0627 911 \u0628\u06af\u06cc\u0631\u06cc\u062f.",
+    so: "Haddii aad dhibaato neefsasho, dhiig, baraar weyn, ama dhaawac weji ah, wac 911.",
+    es: "Si tiene dificultad para respirar, sangrado incontrolable, hinchaz\u00f3n grave o trauma facial, llame al 911.",
+    zh: "\u5982\u679c\u60a8\u547c\u5438\u56f0\u96be\u3001\u51fa\u8840\u4e0d\u6b62\u3001\u4e25\u91cd\u80bf\u80c0\u6216\u9762\u90e8\u53d7\u4f24\uff0c\u8bf7\u7acb\u5373\u62e8\u6253911\u3002"
+  };
+
+  var VD_DISCL = {
+    en: "This service provides dental triage guidance and does not replace emergency medical care or an in-person dental examination.",
+    ar: "\u062a\u0648\u0641\u0631 \u0647\u0630\u0647 \u0627\u0644\u062e\u062f\u0645\u0629 \u0625\u0631\u0634\u0627\u062f\u0627\u062a \u0641\u0631\u0632 \u0627\u0644\u0623\u0633\u0646\u0627\u0646 \u0648\u0644\u0627 \u062a\u062d\u0644 \u0645\u062d\u0644 \u0627\u0644\u0631\u0639\u0627\u064a\u0629 \u0627\u0644\u0637\u0628\u064a\u0629 \u0627\u0644\u0637\u0627\u0631\u0626\u0629 \u0623\u0648 \u0641\u062d\u0635 \u0627\u0644\u0623\u0633\u0646\u0627\u0646 \u0627\u0644\u0634\u062e\u0635\u064a.",
+    hi: "\u092f\u0939 \u0938\u0947\u0935\u093e \u0921\u0947\u0902\u091f\u0932 \u091f\u094d\u0930\u093e\u092f\u091c \u092e\u093e\u0930\u094d\u0917\u0926\u0930\u094d\u0936\u0928 \u092a\u094d\u0930\u0926\u093e\u0928 \u0915\u0930\u0924\u0940 \u0939\u0948 \u0914\u0930 \u0906\u092a\u093e\u0924\u0915\u093e\u0932\u0940\u0928 \u091a\u093f\u0915\u093f\u0924\u094d\u0938\u093e \u092f\u093e \u0935\u094d\u092f\u0915\u094d\u0924\u093f\u0917\u0924 \u091c\u093e\u0902\u091a \u0915\u093e \u0935\u093f\u0915\u0932\u094d\u092a \u0928\u0939\u0940\u0902 \u0939\u0948\u0964",
+    pa: "\u0a07\u0a39 \u0a38\u0a47\u0a35\u0a3e \u0a21\u0a48\u0a02\u0a1f\u0a32 \u0a1f\u0a4d\u0a30\u0a3e\u0a07\u0a1c \u0a2e\u0a3e\u0a30\u0a17\u0a26\u0a30\u0a36\u0a28 \u0a2a\u0a4d\u0a30\u0a26\u0a3e\u0a28 \u0a15\u0a30\u0a26\u0a40 \u0a39\u0a48 \u0a05\u0a24\u0a47 \u0a10\u0a2e\u0a30\u0a1c\u0a48\u0a02\u0a38\u0a40 \u0a26\u0a47\u0a16\u0a2d\u0a3e\u0a32 \u0a1c\u0a3e\u0a02 \u0a35\u0a3f\u0a05\u0a15\u0a24\u0a40\u0a17\u0a24 \u0a1c\u0a3e\u0a02\u0a1a \u0a26\u0a3e \u0a2c\u0a26\u0a32 \u0a28\u0a39\u0a40\u0a02 \u0a39\u0a48\u0964",
+    fr: "Ce service fournit des conseils de triage dentaire et ne remplace pas les soins m\u00e9dicaux d'urgence ou un examen dentaire en personne.",
+    fa: "\u0627\u06cc\u0646 \u062e\u062f\u0645\u062a \u0631\u0627\u0647\u0646\u0645\u0627\u06cc\u06cc \u062a\u0631\u06cc\u0627\u0698 \u062f\u0646\u062f\u0627\u0646\u067e\u0632\u0634\u06a9\u06cc \u0627\u0631\u0627\u0626\u0647 \u0645\u06cc \u062f\u0647\u062f \u0648 \u062c\u0627\u06cc\u06af\u0632\u06cc\u0646 \u0645\u0631\u0627\u0642\u0628\u062a \u0627\u0648\u0631\u0698\u0627\u0646\u0633\u06cc \u06cc\u0627 \u0645\u0639\u0627\u06cc\u0646\u0647 \u062d\u0636\u0648\u0631\u06cc \u0646\u06cc\u0633\u062a.",
+    so: "Adeeggan wuxuu bixiyaa talo ilko oo aan beddelin daryeelka deg degga ama baaritaanka ilkaha qofka.",
+    es: "Este servicio proporciona orientaci\u00f3n de triaje dental y no reemplaza la atenci\u00f3n m\u00e9dica de emergencia ni un examen dental en persona.",
+    zh: "\u6b64\u670d\u52a1\u63d0\u4f9b\u7259\u79d1\u5206\u8bca\u6307\u5bfc\uff0c\u4e0d\u80fd\u66ff\u4ee3\u7d27\u6025\u533b\u7597\u6216\u9762\u5bf9\u9762\u7259\u79d1\u68c0\u67e5\u3002"
+  };
+
+  // Initialize pills on page load
+  var initGrid = document.getElementById("vd-cond-grid");
+  if (initGrid) {
+    var initPills = VD_PILLS.en;
+    initGrid.innerHTML = initPills.map(function(p) { return '<span class="vd-cond-pill">' + p + '</span>'; }).join("");
+  }
+
+  // Language pill clicks
+  document.getElementById("vd-lang-grid").addEventListener("click", function(e) {
+    var btn = e.target.closest(".vd-lang");
+    if (!btn) return;
+    var lang = btn.getAttribute("data-lang");
+    if (lang) applyVDLang(lang);
+  });
+})();
+</script>
+
+<!-- END VirtualDentist.ai Sam Integration Block -->
