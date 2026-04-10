@@ -724,7 +724,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
         heroTitle: "Are you having a dental concern?", heroAccent: "We can help.",
         heroSub: "Tell us what is happening, and we'll help assess the situation and guide next steps.",
-        heroCost: "This service is available at no cost.", heroResponse: "Sam responds in minutes 00b7 Available 24/7",
+        heroCost: "This service is available at no cost.", heroResponse: "Sam responds in minutes · Available 24/7",
         heroBtn: "Start assessment",
         trustSecure: "Secure and private",
         trustSam: "Speak first with Sam, our AI dental triage assistant",
@@ -1205,7 +1205,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       if (warningPanel) warningPanel.textContent = t("warningPanel");
       if (flowTitle) flowTitle.textContent = sms ? t("flowTitleSms") : t("flowTitle");
       if (flowCopy) flowCopy.textContent = sms ? t("flowCopySms") : t("flowCopy");
-      if (legalNote) legalNote.textContent = t("legalNote");
+      // Legal note: not updated on language switch — address and privacy line are always in English
 
       // Trust row
       var trustItems = document.querySelectorAll(".trust-item span:not(.trust-dot)");
