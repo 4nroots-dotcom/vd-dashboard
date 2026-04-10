@@ -1435,7 +1435,7 @@
     // additions appear in the printed office note.
     var age = calcAge(c.patient_dob);
     var noteText = c.clinical_note || "";
-    if (age && noteText) noteText = age + "-year-old patient.\n\n" + noteText;
+    if (age && noteText && !/^\d{1,3}-year-old patient/.test(noteText)) noteText = age + "-year-old patient.\n\n" + noteText;
     if (noteText) {
       body.appendChild(section("AI Clinical Note",
         "<div class=\"note-section-body\"><div style=\"white-space:pre-wrap;font-family:monospace;font-size:11px;line-height:1.7;color:#1a2b40;\">" + esc(noteText) + "</div></div>"
