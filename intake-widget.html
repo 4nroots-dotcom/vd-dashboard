@@ -1,261 +1,868 @@
-<!--
-  ============================================================
-  VirtualDentist.ai — Sam Integration Block
-  Drop this entire block into the Martindale Hamilton page.
-  Self-contained: all CSS is scoped with vd- prefix.
-  No conflicts with existing page styles.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-K7XDHFB8');</script>
+<!-- End Google Tag Manager -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Martindale Dental — Talk to Sam</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <meta name="format-detection" content="telephone=no">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green: #2e7d32;
+      --green-dark: #1b5e20;
+      --green-light: #e8f5e9;
+      --green-border: #a5d6a7;
+      --green-accent: #43a047;
+      --text-dark: #1a1a1a;
+      --text-mid: #4a4a4a;
+      --text-light: #717171;
+      --bg: #ffffff;
+      --surface: #f5f5f5;
+      --border: #e0e0e0;
+      --border-active: #2e7d32;
+      --error: #c0392b;
+      --radius: 10px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { background: var(--bg); color: var(--text-dark); font-family: "DM Sans", -apple-system, sans-serif; line-height: 1.5; font-size: 14px; }
+    body { padding: 16px; }
 
-  Placement suggestions:
-  - Replace the current emergency banner at the top
-  - Or place between the hero and the services section
-  - Or replace the bottom contact form
-  ============================================================
--->
+    .widget { max-width: 640px; margin: 0 auto; }
 
-<style>
-  .vd-block *, .vd-block *::before, .vd-block *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  .vd-block { font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.6; }
-  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700;800&display=swap');
+    /* Header */
+    .widget-header { text-align: center; margin-bottom: 20px; }
+    .widget-title { font-family: "DM Serif Display", serif; font-size: 22px; color: var(--text-dark); line-height: 1.2; }
+    .widget-title-accent { font-family: "DM Serif Display", serif; font-style: italic; color: var(--green); }
+    .widget-sub { font-size: 13px; color: var(--text-mid); margin-top: 6px; line-height: 1.5; }
+    .widget-badge { display: inline-block; font-size: 11px; font-weight: 700; color: var(--green-accent); letter-spacing: 0.04em; margin-top: 6px; }
+    .widget-free { font-size: 12px; font-weight: 700; color: var(--green-accent); margin-top: 4px; }
 
-  /* Sam hero */
-  .vd-sam-hero { background: #1a1a1a; padding: 44px 24px; }
-  .vd-sam-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: center; }
-  .vd-sam-kicker { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #71BB55; margin-bottom: 8px; }
-  .vd-sam-title { font-family: "DM Serif Display", Georgia, serif; font-size: clamp(24px, 4vw, 32px); color: #fff; line-height: 1.15; margin-bottom: 10px; }
-  .vd-sam-accent { font-style: italic; color: #71BB55; }
-  .vd-sam-sub { font-size: 14px; color: #bbb; line-height: 1.7; margin-bottom: 18px; }
-  .vd-sam-btn { display: inline-block; padding: 13px 30px; border-radius: 999px; background: #71BB55; color: #fff; font-size: 15px; font-weight: 700; text-decoration: none; transition: all 0.2s; border: none; cursor: pointer; }
-  .vd-sam-btn:hover { background: #4a8c34; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(113,187,85,0.3); color: #fff; }
-  .vd-sam-btn-sub { font-size: 11px; color: #777; margin-top: 7px; }
+    /* Language bar */
+    .lang-bar { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 14px 0; }
+    .lang-btn { padding: 6px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text-mid); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "DM Sans", sans-serif; }
+    .lang-btn:hover { border-color: var(--green-accent); color: var(--green-accent); }
+    .lang-btn.active { background: var(--green-light); border-color: var(--green-accent); color: var(--green-accent); }
 
-  /* Language selector */
-  .vd-lang-wrap { }
-  .vd-lang-title { font-size: 12px; font-weight: 700; color: #ccc; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
-  .vd-lang-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-  .vd-lang { display: inline-block; font-family: "DM Serif Display", Georgia, serif; font-size: 14px; color: rgba(255,255,255,0.75); padding: 7px 14px; border: 1px solid rgba(255,255,255,0.12); border-radius: 999px; transition: all 0.2s; text-decoration: none; cursor: pointer; background: transparent; }
-  .vd-lang:hover { border-color: #71BB55; color: #fff; background: rgba(113,187,85,0.1); }
-  .vd-lang.vd-lang-active { border-color: #71BB55; color: #fff; background: rgba(113,187,85,0.15); }
-  .vd-lang-note { font-size: 11px; color: #666; margin-top: 12px; line-height: 1.5; }
+    /* Form */
+    .section { margin-top: 18px; }
+    .section-title { font-size: 13px; font-weight: 700; color: var(--text-dark); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 12px; font-weight: 600; color: var(--text-mid); margin-bottom: 3px; }
+    .input, .textarea, .select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px; color: var(--text-dark); background: var(--bg); transition: border-color 0.15s; font-family: "DM Sans", sans-serif; }
+    .input:focus, .textarea:focus, .select:focus { outline: none; border-color: var(--border-active); box-shadow: 0 0 0 2px rgba(0,131,143,0.1); }
+    .textarea { min-height: 70px; resize: vertical; }
+    .select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a5568' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+    .helper { font-size: 11px; color: var(--text-light); margin-top: 3px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .full { grid-column: 1 / -1; }
+    @media (max-width: 480px) { .grid-2 { grid-template-columns: 1fr; } }
 
-  /* How it works */
-  .vd-how { padding: 40px 24px; background: #f9fafb; }
-  .vd-how-inner { max-width: 1100px; margin: 0 auto; }
-  .vd-how-title { font-family: "DM Serif Display", Georgia, serif; font-size: 22px; color: #1a1a1a; text-align: center; margin-bottom: 28px; }
-  .vd-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
-  .vd-step { text-align: center; padding: 20px 14px; border-radius: 12px; border: 1px solid #e5e7eb; background: #fff; }
-  .vd-step-num { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #e8f5e9; color: #2e7d32; font-weight: 800; font-size: 14px; margin-bottom: 10px; }
-  .vd-step-title { font-size: 13px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
-  .vd-step-body { font-size: 11px; color: #555; line-height: 1.5; }
-  .vd-how-cta { text-align: center; }
+    /* Checkboxes */
+    .check-group { display: flex; flex-direction: column; gap: 6px; }
+    .choice { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-dark); cursor: pointer; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); transition: all 0.15s; }
+    .choice:hover { border-color: var(--green-border); background: var(--green-light); }
+    .choice input:checked + span { color: var(--green-accent); font-weight: 600; }
+    .conditional-field { display: none; margin-top: 8px; padding-left: 4px; }
 
-  /* Conditions */
-  .vd-cond { padding: 32px 24px; background: #fff; }
-  .vd-cond-inner { max-width: 1100px; margin: 0 auto; text-align: center; }
-  .vd-cond-title { font-family: "DM Serif Display", Georgia, serif; font-size: 20px; color: #1a1a1a; margin-bottom: 6px; }
-  .vd-cond-sub { font-size: 12px; color: #777; margin-bottom: 16px; }
-  .vd-cond-grid { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 16px; }
-  .vd-cond-pill { padding: 6px 14px; border-radius: 999px; background: #f9fafb; border: 1px solid #e5e7eb; font-size: 11px; font-weight: 500; color: #333; font-family: "DM Sans", sans-serif; }
-  .vd-911 { max-width: 660px; margin: 0 auto; padding: 10px 14px; background: #fff3e0; border: 1px solid #ffcc80; border-radius: 10px; font-size: 11px; color: #e65100; line-height: 1.5; }
-  .vd-powered { text-align: center; margin-top: 16px; font-size: 10px; color: #999; font-family: "DM Sans", sans-serif; }
-  .vd-powered a { color: #71BB55; text-decoration: none; }
+    /* Consent and submit */
+    .ack { display: flex; gap: 8px; align-items: flex-start; font-size: 11px; color: var(--text-light); line-height: 1.5; margin-top: 16px; cursor: pointer; }
+    .ack input { margin-top: 2px; flex-shrink: 0; }
+    .pre-submit-note { font-size: 11px; color: var(--text-light); margin-top: 14px; line-height: 1.5; padding: 10px; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); }
+    .plain-phone { font-weight: 700; color: var(--text-dark); white-space: nowrap; }
+    .error-box { display: none; margin-top: 10px; padding: 10px; border-radius: var(--radius); background: #fff5f5; border: 1px solid #feb2b2; color: var(--error); font-size: 12px; font-weight: 600; }
+    .error-box.show { display: block; }
+    .action-bar { display: flex; justify-content: flex-end; margin-top: 14px; }
+    .btn-primary { padding: 12px 28px; border-radius: 999px; border: none; background: var(--green); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.1s; }
+    .btn-primary:hover { background: var(--green-dark); transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-  @media (max-width: 768px) {
-    .vd-sam-inner { grid-template-columns: 1fr; gap: 24px; }
-    .vd-steps { grid-template-columns: 1fr; }
-  }
-</style>
+    /* Handoff */
+    .handoff { display: none; text-align: center; padding: 30px 16px; }
+    .handoff.show { display: block; }
+    .handoff-icon { font-size: 48px; margin-bottom: 12px; }
+    .handoff-title { font-family: "DM Serif Display", serif; font-size: 20px; color: var(--text-dark); margin-bottom: 10px; }
+    .handoff-copy { font-size: 13px; color: var(--text-mid); line-height: 1.6; margin-bottom: 16px; }
+    .handoff-number { display: inline-block; padding: 10px 20px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); font-size: 18px; font-weight: 700; color: var(--text-dark); letter-spacing: 0.02em; }
+    .handoff-sub { font-size: 11px; color: var(--text-light); margin-top: 8px; }
 
-<div class="vd-block" id="vd-block">
+    /* Warning */
+    .warning-note { font-size: 11px; color: var(--error); margin-top: 14px; padding: 8px 10px; background: #fff5f5; border-radius: var(--radius); border: 1px solid #feb2b2; line-height: 1.5; }
 
-  <!-- SAM HERO -->
-  <div class="vd-sam-hero">
-    <div class="vd-sam-inner">
-      <div>
-        <div class="vd-sam-kicker" id="vd-kicker">Available 24/7 &middot; Free to use</div>
-        <div class="vd-sam-title" id="vd-title">Have a dental concern? <span class="vd-sam-accent" id="vd-accent">Talk to Sam.</span></div>
-        <div class="vd-sam-sub" id="vd-sub">Sam is our AI dental assistant. Whether it's a toothache, a broken tooth, or a question about your dental care &mdash; describe your concern and our dental team will follow up with you directly.</div>
-        <a href="https://virtualdentist.ai/intake.html?src=jackson_block" class="vd-sam-btn" id="vd-btn">Talk to Sam</a>
-        <div class="vd-sam-btn-sub" id="vd-btn-sub">Responds in minutes &middot; No account needed</div>
+    /* Powered by */
+    .powered-by { text-align: center; margin-top: 18px; font-size: 10px; color: var(--text-light); }
+    .powered-by a { color: var(--green-accent); text-decoration: none; }
+
+    /* RTL */
+    [dir="rtl"] .field label, [dir="rtl"] .section-title, [dir="rtl"] .widget-sub,
+    [dir="rtl"] .widget-title, [dir="rtl"] .helper, [dir="rtl"] .ack span,
+    [dir="rtl"] .pre-submit-note, [dir="rtl"] .choice span,
+    [dir="rtl"] .handoff-copy, [dir="rtl"] .handoff-title { text-align: right; direction: rtl; }
+    [dir="rtl"] input, [dir="rtl"] textarea, [dir="rtl"] select { text-align: right; direction: rtl; }
+  </style>
+</head>
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K7XDHFB8"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div class="widget" id="widget-form">
+  <div class="widget-header">
+    <div class="widget-title" id="widget-title">Have a dental concern?<br><span class="widget-title-accent" id="widget-accent">Talk to Sam.</span></div>
+    <div class="widget-sub" id="widget-sub">Fill out this short form and Sam, our AI dental triage assistant, will follow up to assess your concern. Our dental team will follow up with you directly.</div>
+    <div class="widget-free" id="widget-free">This service is free.</div>
+    <div class="widget-badge" id="widget-badge">Sam responds in minutes &middot; Available 24/7</div>
+  </div>
+
+  <div class="lang-bar" id="lang-bar">
+    <button class="lang-btn active" data-lang="en" type="button">English</button>
+    <button class="lang-btn" data-lang="ar" type="button">العربية</button>
+    <button class="lang-btn" data-lang="hi" type="button">हिन्दी</button>
+    <button class="lang-btn" data-lang="pa" type="button">ਪੰਜਾਬੀ</button>
+    <button class="lang-btn" data-lang="fr" type="button">Français</button>
+    <button class="lang-btn" data-lang="fa" type="button">فارسی</button>
+    <button class="lang-btn" data-lang="so" type="button">Soomaali</button>
+    <button class="lang-btn" data-lang="es" type="button">Español</button>
+    <button class="lang-btn" data-lang="zh" type="button">中文</button>
+  </div>
+
+  <div class="section">
+    <div class="section-title" id="sec-about">About you</div>
+    <div class="grid-2">
+      <div class="field full">
+        <label for="patient-name" id="lbl-name">Full name</label>
+        <input class="input" id="patient-name" type="text" placeholder="First and last name" autocomplete="name" />
       </div>
-      <div class="vd-lang-wrap">
-        <div class="vd-lang-title" id="vd-lang-title">Sam speaks your language</div>
-        <div class="vd-lang-grid" id="vd-lang-grid">
-          <button class="vd-lang vd-lang-active" data-lang="en">English</button>
-          <button class="vd-lang" data-lang="ar">&#1575;&#1604;&#1593;&#1585;&#1576;&#1610;&#1577;</button>
-          <button class="vd-lang" data-lang="hi">&#2361;&#2367;&#2344;&#2381;&#2342;&#2368;</button>
-          <button class="vd-lang" data-lang="pa">&#2602;&#2672;&#2588;&#2622;&#2604;&#2624;</button>
-          <button class="vd-lang" data-lang="fr">Fran&ccedil;ais</button>
-          <button class="vd-lang" data-lang="fa">&#1601;&#1575;&#1585;&#1587;&#1740;</button>
-          <button class="vd-lang" data-lang="so">Soomaali</button>
-          <button class="vd-lang" data-lang="es">Espa&ntilde;ol</button>
-          <button class="vd-lang" data-lang="zh">&#20013;&#25991;</button>
-        </div>
-        <div class="vd-lang-note" id="vd-lang-note">English speakers talk to Sam by phone. All other languages are assessed via text message in your language.</div>
+      <div class="field">
+        <label for="patient-dob" id="lbl-dob">Date of birth</label>
+        <input class="input" id="patient-dob" type="date" max="" autocomplete="bday" />
+      </div>
+      <div class="field">
+        <label for="patient-phone" id="lbl-phone">Phone number</label>
+        <input class="input" id="patient-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="10-digit number" />
+        <div class="helper phone-helper" id="phone-helper">Sam will call this number shortly after you submit.</div>
+      </div>
+      <div class="field">
+        <label for="patient-city" id="lbl-city">City</label>
+        <input class="input" id="patient-city" type="text" placeholder="City" autocomplete="address-level2" />
+      </div>
+      <div class="field full">
+        <label for="patient-email" id="lbl-email">Email address <span style="font-weight:400;color:var(--text-light);" id="email-opt">(optional)</span></label>
+        <input class="input" id="patient-email" type="email" inputmode="email" autocomplete="email" placeholder="For follow-up communications only" />
+      </div>
+      <input type="hidden" id="patient-province" value="ON" />
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title" id="sec-concern">Today's concern</div>
+    <div class="field">
+      <label for="chief-complaint" id="lbl-complaint">What's been bothering you?</label>
+      <textarea class="textarea" id="chief-complaint" placeholder="e.g. My back tooth has been throbbing for two days and is sensitive to cold"></textarea>
+    </div>
+    <div class="field" style="margin-top:10px;">
+      <label for="onset-bucket" id="lbl-onset">When did this start?</label>
+      <select class="select" id="onset-bucket">
+        <option value="">Select one</option>
+        <option value="today">Today</option>
+        <option value="last_few_days">Within the last few days</option>
+        <option value="about_a_week">About a week ago</option>
+        <option value="more_than_a_week">More than a week ago</option>
+        <option value="not_sure">Not sure</option>
+      </select>
+    </div>
+    <div class="field" style="margin-top:10px;">
+      <label id="lbl-redflags">Are any of these happening right now?</label>
+      <div class="check-group">
+        <label class="choice"><input type="checkbox" id="rf-breathing-swallowing" /><span id="sp-rf-breathing">Trouble breathing or swallowing</span></label>
+        <label class="choice"><input type="checkbox" id="rf-uncontrolled-bleeding" /><span id="sp-rf-bleeding">Uncontrolled bleeding</span></label>
+        <label class="choice"><input type="checkbox" id="rf-facial-swelling" /><span id="sp-rf-swelling">Facial swelling</span></label>
+        <label class="choice"><input type="checkbox" id="rf-fever-unwell" /><span id="sp-rf-fever">Fever or feeling unwell</span></label>
+        <label class="choice"><input type="checkbox" id="rf-trauma" /><span id="sp-rf-trauma">Injury from an accident, fall, or impact</span></label>
+        <label class="choice"><input type="checkbox" id="rf-avulsion" /><span id="sp-rf-avulsion">Tooth completely knocked out</span></label>
+        <label class="choice"><input type="checkbox" id="rf-none" /><span id="sp-rf-none">None of the above</span></label>
+      </div>
+    </div>
+    <div class="conditional-field" id="avulsion-time-wrapper">
+      <div class="field">
+        <label for="avulsion-time" id="lbl-avulsion-time">How long ago did the tooth come out?</label>
+        <div class="helper" id="avulsion-helper">This helps the dentist assess the urgency.</div>
+        <select class="select" id="avulsion-time">
+          <option value="">Select one</option>
+          <option value="under_5">Just now (under 5 minutes)</option>
+          <option value="5_to_15">5 to 15 minutes ago</option>
+          <option value="15_to_30">15 to 30 minutes ago</option>
+          <option value="30_to_60">30 to 60 minutes ago</option>
+          <option value="over_60">More than 60 minutes ago</option>
+          <option value="not_sure">Not sure</option>
+        </select>
       </div>
     </div>
   </div>
 
-  <!-- HOW IT WORKS -->
-  <div class="vd-how">
-    <div class="vd-how-inner">
-      <div class="vd-how-title" id="vd-how-title">Here's how it works.</div>
-      <div class="vd-steps">
-        <div class="vd-step">
-          <div class="vd-step-num">1</div>
-          <div class="vd-step-title" id="vd-s1-title">Fill out a short form</div>
-          <div class="vd-step-body" id="vd-s1-body">Describe your concern in your own words. Takes about 2 minutes. No account needed.</div>
-        </div>
-        <div class="vd-step">
-          <div class="vd-step-num">2</div>
-          <div class="vd-step-title" id="vd-s2-title">Sam follows up</div>
-          <div class="vd-step-body" id="vd-s2-body">Sam calls or texts you with guided questions to understand your situation.</div>
-        </div>
-        <div class="vd-step">
-          <div class="vd-step-num">3</div>
-          <div class="vd-step-title" id="vd-s3-title">Our team gets back to you</div>
-          <div class="vd-step-body" id="vd-s3-body">Our dental team reviews your information and follows up with guidance or an appointment.</div>
-        </div>
-      </div>
-      <div class="vd-how-cta">
-        <a href="https://virtualdentist.ai/intake.html?src=jackson_how" class="vd-sam-btn" id="vd-how-btn">Start your assessment</a>
-        <div class="vd-sam-btn-sub" id="vd-how-btn-sub">Free &middot; Takes about 2 minutes</div>
+  <div class="section">
+    <div class="section-title" id="sec-medical">Relevant medical information</div>
+    <div class="helper" id="med-helper" style="margin-bottom:8px;">Select any that apply.</div>
+    <div class="check-group">
+      <label class="choice"><input type="checkbox" id="mh-allergy-antibiotics" /><span id="sp-mh-antibiotics">Allergy to antibiotics</span></label>
+      <label class="choice"><input type="checkbox" id="mh-allergy-pain" /><span id="sp-mh-pain">Allergy to pain medication</span></label>
+      <label class="choice"><input type="checkbox" id="mh-blood-thinners" /><span id="sp-mh-blood">Blood thinners</span></label>
+      <label class="choice"><input type="checkbox" id="mh-diabetes" /><span id="sp-mh-diabetes">Diabetes</span></label>
+      <label class="choice"><input type="checkbox" id="mh-pregnancy" /><span id="sp-mh-pregnancy">Pregnancy</span></label>
+      <label class="choice"><input type="checkbox" id="mh-immunocompromised" /><span id="sp-mh-immuno">Immunocompromised</span></label>
+      <label class="choice"><input type="checkbox" id="mh-other" /><span id="sp-mh-other">Other important medical condition</span></label>
+      <label class="choice"><input type="checkbox" id="mh-none" /><span id="sp-mh-none">None of the above</span></label>
+    </div>
+    <div class="conditional-field" id="mh-other-wrapper">
+      <div class="field">
+        <label for="mh-other-detail" id="lbl-mh-other-detail">Please tell us more</label>
+        <textarea class="textarea" id="mh-other-detail" placeholder="Anything important we should know"></textarea>
       </div>
     </div>
   </div>
 
-  <!-- CONDITIONS + 911 -->
-  <div class="vd-cond">
-    <div class="vd-cond-inner">
-      <div class="vd-cond-title" id="vd-cond-title">Need help now?</div>
-      <div class="vd-cond-sub" id="vd-cond-sub">Sam can help with a wide range of dental concerns.</div>
-      <div class="vd-cond-grid" id="vd-cond-grid"></div>
-      <div class="vd-911" id="vd-911">If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, seek emergency care immediately by calling 911.</div>
-      <div style="text-align:center;font-size:10px;color:#999;margin-top:14px;max-width:660px;margin-left:auto;margin-right:auto;line-height:1.5;" id="vd-disclaimer">This service provides dental triage guidance and does not replace emergency medical care or an in-person dental examination.</div>
-      <div class="vd-powered">Triage powered by <a href="https://virtualdentist.ai" target="_blank">VirtualDentist.ai</a></div>
+  <div class="section">
+    <div class="section-title" id="sec-coverage">Coverage information (optional)</div>
+    <div class="helper" id="cov-helper" style="margin-bottom:8px;">This helps with follow-up planning only.</div>
+    <div class="field">
+      <label for="coverage-status" id="lbl-coverage">Coverage information</label>
+      <select class="select" id="coverage-status">
+        <option value="">Select one</option>
+        <option value="private_insurance">Private dental insurance</option>
+        <option value="cdcp">CDCP</option>
+        <option value="odsp">ODSP</option>
+        <option value="ow">OW</option>
+        <option value="no_coverage">No dental coverage</option>
+        <option value="prefer_not_to_say">Prefer not to say</option>
+      </select>
     </div>
   </div>
 
+  <div class="pre-submit-note" id="pre-submit-note">
+    After you submit, Sam will call the phone number you provided to continue your assessment. The call will come from <span class="plain-phone">1-833-959-3932</span>.
+  </div>
+
+  <div class="warning-note" id="warning-note">
+    If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, seek emergency care immediately by calling 911.
+  </div>
+
+  <label class="ack">
+    <input type="checkbox" id="intake-acknowledge" />
+    <span id="consent-text">
+      By continuing, you understand that you will next speak with Sam, an AI dental triage assistant provided by VirtualDentist.ai on behalf of Martindale Dental, that you may receive an SMS follow-up, and that this service does not replace emergency or in-person dental care.
+    </span>
+  </label>
+
+  <div id="intake-error" class="error-box"></div>
+
+  <div class="action-bar">
+    <button class="btn-primary" id="intake-submit-btn" type="button">Talk to Sam</button>
+  </div>
+
+  <div class="powered-by">Triage powered by <a href="https://virtualdentist.ai" target="_blank">VirtualDentist.ai</a></div>
+</div>
+
+<div class="widget handoff" id="widget-handoff">
+  <div class="handoff-icon">&#x2713;</div>
+  <div class="handoff-title" id="handoff-title">Next step: answer Sam's call</div>
+  <div class="handoff-copy" id="handoff-copy">Sam will call you shortly to continue your assessment. Our dental team will follow up with you directly.</div>
+  <div class="handoff-number" id="handoff-number">1-833-959-3932</div>
+  <div class="handoff-sub" id="handoff-sub">Save this number so you recognize Sam's call.</div>
+  <div class="powered-by" style="margin-top:24px;">Triage powered by <a href="https://virtualdentist.ai" target="_blank">VirtualDentist.ai</a></div>
 </div>
 
 <script>
-(function() {
-  var INTAKE_URL = "https://virtualdentist.ai/intake.html";
-  var SRC = "jackson_block";
+  var SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
+  var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+  var INTAKE_TRIGGER_URL = SUPABASE_URL + "/functions/v1/intake-trigger";
+  var INTAKE_SECRET = "af0ca85c19cd7dbd62ba2d03bf7e0cda6dc04f84048d3b8f";
 
-  var VDT = {
-    en: { kicker:"Available 24/7 \u00b7 Free to use", title:"Have a dental concern?", accent:"Talk to Sam.", sub:"Sam is our AI dental assistant. Whether it's a toothache, a broken tooth, or a question about your dental care \u2014 describe your concern and our dental team will follow up with you directly.", btn:"Talk to Sam", btnSub:"Responds in minutes \u00b7 No account needed", langTitle:"Sam speaks your language", langNote:"English speakers talk to Sam by phone. All other languages are assessed via text message in your language.", howTitle:"Here's how it works.", s1t:"Fill out a short form", s1b:"Describe your concern in your own words. Takes about 2 minutes. No account needed.", s2t:"Sam follows up", s2b:"Sam calls or texts you with guided questions to understand your situation.", s3t:"Our team gets back to you", s3b:"Our dental team reviews your information and follows up with guidance or an appointment.", howBtn:"Start your assessment", condTitle:"Need help now?", condSub:"Sam can help with a wide range of dental concerns.", howBtnSub:"Free \u00b7 Takes about 2 minutes", pills:["Toothache","Broken tooth","Knocked-out tooth","Infection","Swelling","Lost filling or crown","Mouth injury","Post-procedure pain","Sensitivity","Appointment request","New patient inquiry","Cleaning or checkup","Insurance question","General concern"], warn:"If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, seek emergency care immediately by calling 911." },
-    ar: { kicker:"\u0645\u062a\u0627\u062d \u0639\u0644\u0649 \u0645\u062f\u0627\u0631 \u0627\u0644\u0633\u0627\u0639\u0629 \u00b7 \u0645\u062c\u0627\u0646\u064a", title:"\u0647\u0644 \u0644\u062f\u064a\u0643 \u0645\u0634\u0643\u0644\u0629 \u0641\u064a \u0627\u0644\u0623\u0633\u0646\u0627\u0646\u061f", accent:"\u0623\u0631\u0633\u0644 \u0631\u0633\u0627\u0644\u0629 \u0644\u0633\u0627\u0645.", sub:"\u0633\u0627\u0645 \u0647\u0648 \u0645\u0633\u0627\u0639\u062f \u0637\u0628 \u0627\u0644\u0623\u0633\u0646\u0627\u0646 \u0628\u0627\u0644\u0630\u0643\u0627\u0621 \u0627\u0644\u0627\u0635\u0637\u0646\u0627\u0639\u064a. \u0635\u0641 \u0645\u0634\u0643\u0644\u062a\u0643 \u0648\u0633\u064a\u062a\u0648\u0627\u0635\u0644 \u0641\u0631\u064a\u0642 \u0637\u0628 \u0627\u0644\u0623\u0633\u0646\u0627\u0646 \u0644\u062f\u064a\u0646\u0627 \u0645\u0639\u0643 \u0645\u0628\u0627\u0634\u0631\u0629.", btn:"\u0623\u0631\u0633\u0644 \u0631\u0633\u0627\u0644\u0629 \u0644\u0633\u0627\u0645", btnSub:"\u064a\u0631\u062f \u0641\u064a \u062f\u0642\u0627\u0626\u0642", langTitle:"\u0633\u0627\u0645 \u064a\u062a\u062d\u062f\u062b \u0628\u0644\u063a\u062a\u0643", langNote:"\u0627\u0644\u0645\u062a\u062d\u062f\u062b\u0648\u0646 \u0628\u0627\u0644\u0625\u0646\u062c\u0644\u064a\u0632\u064a\u0629 \u064a\u062a\u062d\u062f\u062b\u0648\u0646 \u0645\u0639 \u0633\u0627\u0645 \u0628\u0627\u0644\u0647\u0627\u062a\u0641. \u062c\u0645\u064a\u0639 \u0627\u0644\u0644\u063a\u0627\u062a \u0627\u0644\u0623\u062e\u0631\u0649 \u0639\u0628\u0631 \u0627\u0644\u0631\u0633\u0627\u0626\u0644 \u0627\u0644\u0646\u0635\u064a\u0629.", howTitle:"\u0643\u064a\u0641 \u064a\u0639\u0645\u0644.", s1t:"\u0627\u0645\u0644\u0623 \u0646\u0645\u0648\u0630\u062c\u0627 \u0642\u0635\u064a\u0631\u0627", s1b:"\u0635\u0641 \u0645\u0634\u0643\u0644\u062a\u0643. \u064a\u0633\u062a\u063a\u0631\u0642 \u062f\u0642\u064a\u0642\u062a\u064a\u0646 \u0641\u0642\u0637.", s2t:"\u0633\u0627\u0645 \u064a\u062a\u0648\u0627\u0635\u0644 \u0645\u0639\u0643", s2b:"\u0633\u0627\u0645 \u064a\u0631\u0633\u0644 \u0644\u0643 \u0631\u0633\u0627\u0644\u0629 \u0644\u0641\u0647\u0645 \u062d\u0627\u0644\u062a\u0643.", s3t:"\u0641\u0631\u064a\u0642\u0646\u0627 \u064a\u062a\u0648\u0627\u0635\u0644 \u0645\u0639\u0643", s3b:"\u0641\u0631\u064a\u0642 \u0637\u0628 \u0627\u0644\u0623\u0633\u0646\u0627\u0646 \u064a\u0631\u0627\u062c\u0639 \u0645\u0639\u0644\u0648\u0645\u0627\u062a\u0643 \u0648\u064a\u062a\u0648\u0627\u0635\u0644 \u0645\u0639\u0643.", howBtn:"\u0627\u0628\u062f\u0623 \u0627\u0644\u062a\u0642\u064a\u064a\u0645", condTitle:"\u062a\u062d\u062a\u0627\u062c \u0645\u0633\u0627\u0639\u062f\u0629 \u0627\u0644\u0622\u0646\u061f", condSub:"\u0633\u0627\u0645 \u064a\u0633\u0627\u0639\u062f \u0641\u064a \u0645\u062e\u062a\u0644\u0641 \u0645\u0634\u0627\u0643\u0644 \u0627\u0644\u0623\u0633\u0646\u0627\u0646.", howBtnSub:"\u0645\u062c\u0627\u0646\u064a \u00b7 \u062f\u0642\u064a\u0642\u062a\u0627\u0646", pills:["\u0623\u0644\u0645 \u0627\u0644\u0623\u0633\u0646\u0627\u0646","\u0633\u0646 \u0645\u0643\u0633\u0648\u0631","\u0633\u0646 \u0645\u062e\u0644\u0648\u0639","\u0639\u062f\u0648\u0649","\u062a\u0648\u0631\u0645","\u062d\u0634\u0648\u0629 \u0645\u0641\u0642\u0648\u062f\u0629","\u0625\u0635\u0627\u0628\u0629 \u0627\u0644\u0641\u0645","\u0623\u0644\u0645 \u0628\u0639\u062f \u0627\u0644\u0639\u0644\u0627\u062c","\u062d\u0633\u0627\u0633\u064a\u0629","\u0637\u0644\u0628 \u0645\u0648\u0639\u062f","\u0645\u0631\u064a\u0636 \u062c\u062f\u064a\u062f","\u062a\u0646\u0638\u064a\u0641","\u0633\u0624\u0627\u0644 \u062a\u0623\u0645\u064a\u0646","\u0627\u0633\u062a\u0641\u0633\u0627\u0631 \u0639\u0627\u0645"], warn:"\u0625\u0630\u0627 \u0643\u0646\u062a \u062a\u0639\u0627\u0646\u064a \u0645\u0646 \u0635\u0639\u0648\u0628\u0629 \u0641\u064a \u0627\u0644\u062a\u0646\u0641\u0633 \u0623\u0648 \u0646\u0632\u064a\u0641 \u0623\u0648 \u062a\u0648\u0631\u0645 \u0643\u0628\u064a\u0631 \u0623\u0648 \u0625\u0635\u0627\u0628\u0629 \u0641\u064a \u0627\u0644\u0648\u062c\u0647\u060c \u0627\u062a\u0635\u0644 \u0628\u0640 911 \u0641\u0648\u0631\u0627." },
-    hi: { kicker:"24/7 \u0909\u092a\u0932\u092c\u094d\u0927 \u00b7 \u0928\u093f\u0903\u0936\u0941\u0932\u094d\u0915", title:"\u0915\u094d\u092f\u093e \u0906\u092a\u0915\u094b \u0926\u093e\u0902\u0924\u094b\u0902 \u0915\u0940 \u0938\u092e\u0938\u094d\u092f\u093e \u0939\u0948?", accent:"\u0938\u0948\u092e \u0915\u094b \u092e\u0948\u0938\u0947\u091c \u0915\u0930\u0947\u0902\u0964", sub:"\u0938\u0948\u092e \u0939\u092e\u093e\u0930\u093e AI \u0921\u0947\u0902\u091f\u0932 \u0938\u0939\u093e\u092f\u0915 \u0939\u0948\u0964 \u0905\u092a\u0928\u0940 \u0938\u092e\u0938\u094d\u092f\u093e \u092c\u0924\u093e\u090f\u0902 \u0914\u0930 \u0939\u092e\u093e\u0930\u0940 \u0921\u0947\u0902\u091f\u0932 \u091f\u0940\u092e \u0938\u0940\u0927\u0947 \u0906\u092a\u0938\u0947 \u0938\u0902\u092a\u0930\u094d\u0915 \u0915\u0930\u0947\u0917\u0940\u0964", btn:"\u0938\u0948\u092e \u0915\u094b \u092e\u0948\u0938\u0947\u091c \u0915\u0930\u0947\u0902", btnSub:"\u092e\u093f\u0928\u091f\u094b\u0902 \u092e\u0947\u0902 \u091c\u0935\u093e\u092c", langTitle:"\u0938\u0948\u092e \u0906\u092a\u0915\u0940 \u092d\u093e\u0937\u093e \u092c\u094b\u0932\u0924\u093e \u0939\u0948", langNote:"\u0905\u0902\u0917\u094d\u0930\u0947\u091c\u0940 \u092c\u094b\u0932\u0928\u0947 \u0935\u093e\u0932\u0947 \u0938\u0948\u092e \u0938\u0947 \u092b\u094b\u0928 \u092a\u0930 \u092c\u093e\u0924 \u0915\u0930\u0924\u0947 \u0939\u0948\u0902\u0964 \u0905\u0928\u094d\u092f \u092d\u093e\u0937\u093e\u090f\u0902 \u091f\u0947\u0915\u094d\u0938\u094d\u091f \u092e\u0948\u0938\u0947\u091c \u0926\u094d\u0935\u093e\u0930\u093e\u0964", howTitle:"\u092f\u0939 \u0915\u0948\u0938\u0947 \u0915\u093e\u092e \u0915\u0930\u0924\u093e \u0939\u0948\u0964", s1t:"\u090f\u0915 \u091b\u094b\u091f\u093e \u092b\u0949\u0930\u094d\u092e \u092d\u0930\u0947\u0902", s1b:"\u0905\u092a\u0928\u0940 \u0938\u092e\u0938\u094d\u092f\u093e \u092c\u0924\u093e\u090f\u0902\u0964 \u0932\u0917\u092d\u0917 2 \u092e\u093f\u0928\u091f\u0964", s2t:"\u0938\u0948\u092e \u0938\u0902\u092a\u0930\u094d\u0915 \u0915\u0930\u0924\u093e \u0939\u0948", s2b:"\u0938\u0948\u092e \u0906\u092a\u0915\u094b \u092e\u0948\u0938\u0947\u091c \u0915\u0930\u0924\u093e \u0939\u0948\u0964", s3t:"\u0939\u092e\u093e\u0930\u0940 \u091f\u0940\u092e \u0938\u0902\u092a\u0930\u094d\u0915 \u0915\u0930\u0924\u0940 \u0939\u0948", s3b:"\u0939\u092e\u093e\u0930\u0940 \u0921\u0947\u0902\u091f\u0932 \u091f\u0940\u092e \u0906\u092a\u0938\u0947 \u0938\u0902\u092a\u0930\u094d\u0915 \u0915\u0930\u0924\u0940 \u0939\u0948\u0964", howBtn:"\u0906\u0915\u0932\u0928 \u0936\u0941\u0930\u0942 \u0915\u0930\u0947\u0902", condTitle:"\u0905\u092d\u0940 \u092e\u0926\u0926 \u091a\u093e\u0939\u093f\u090f?", condSub:"\u0938\u0948\u092e \u0935\u093f\u092d\u093f\u0928\u094d\u0928 \u0926\u093e\u0902\u0924\u094b\u0902 \u0915\u0940 \u0938\u092e\u0938\u094d\u092f\u093e\u0913\u0902 \u092e\u0947\u0902 \u092e\u0926\u0926 \u0915\u0930 \u0938\u0915\u0924\u093e \u0939\u0948\u0964" },
-    pa: { kicker:"24/7 \u0909\u092a\u0932\u092c\u094d\u0927 \u00b7 \u092e\u0941\u092b\u093c\u0924", title:"\u0a15\u0a40 \u0a24\u0a41\u0a39\u0a3e\u0a28\u0a42\u0a70 \u0a26\u0a70\u0a26\u0a3e\u0a02 \u0a26\u0a40 \u0a38\u0a2e\u0a71\u0a38\u0a3f\u0a06 \u0a39\u0a48?", accent:"\u0a38\u0a48\u0a2e \u0a28\u0a42\u0a70 \u0a2e\u0a48\u0a38\u0a47\u0a1c \u0a15\u0a30\u0a4b\u0964", sub:"\u0a38\u0a48\u0a2e \u0a38\u0a3e\u0a21\u0a3e AI \u0a21\u0a48\u0a02\u0a1f\u0a32 \u0a38\u0a39\u0a3e\u0a07\u0a15 \u0a39\u0a48\u0964 \u0a05\u0a2a\u0a23\u0a40 \u0a38\u0a2e\u0a71\u0a38\u0a3f\u0a06 \u0a26\u0a71\u0a38\u0a4b \u0a05\u0a24\u0a47 \u0a38\u0a3e\u0a21\u0a40 \u0a21\u0a48\u0a02\u0a1f\u0a32 \u0a1f\u0a40\u0a2e \u0a38\u0a3f\u0a71\u0a27\u0a47 \u0a24\u0a41\u0a39\u0a3e\u0a21\u0a47 \u0a28\u0a3e\u0a32 \u0a38\u0a70\u0a2a\u0a30\u0a15 \u0a15\u0a30\u0a47\u0a17\u0a40\u0964", btn:"\u0a38\u0a48\u0a2e \u0a28\u0a42\u0a70 \u0a2e\u0a48\u0a38\u0a47\u0a1c \u0a15\u0a30\u0a4b", btnSub:"\u0a2e\u0a3f\u0a70\u0a1f\u0a3e\u0a02 \u0a35\u0a3f\u0a71\u0a1a \u0a1c\u0a35\u0a3e\u0a2c", langTitle:"\u0a38\u0a48\u0a2e \u0a24\u0a41\u0a39\u0a3e\u0a21\u0a40 \u0a2d\u0a3e\u0a38\u0a3c\u0a3e \u0a2c\u0a4b\u0a32\u0a26\u0a3e \u0a39\u0a48", langNote:"\u0a05\u0a70\u0a17\u0a30\u0a47\u0a1c\u0a3c\u0a40 \u0a2c\u0a4b\u0a32\u0a23 \u0a35\u0a3e\u0a32\u0a47 \u0a38\u0a48\u0a2e \u0a28\u0a3e\u0a32 \u0a2b\u0a3c\u0a4b\u0a28 \u0a24\u0a47 \u0a17\u0a71\u0a32 \u0a15\u0a30\u0a26\u0a47 \u0a39\u0a28\u0964 \u0a39\u0a4b\u0a30 \u0a2d\u0a3e\u0a38\u0a3c\u0a3e\u0a35\u0a3e\u0a02 \u0a1f\u0a48\u0a15\u0a38\u0a1f \u0a2e\u0a48\u0a38\u0a47\u0a1c \u0a26\u0a41\u0a06\u0a30\u0a3e\u0964", howTitle:"\u0a07\u0a39 \u0a15\u0a3f\u0a35\u0a47\u0a02 \u0a15\u0a70\u0a2e \u0a15\u0a30\u0a26\u0a3e \u0a39\u0a48\u0964", s1t:"\u0a07\u0a71\u0a15 \u0a1b\u0a4b\u0a1f\u0a3e \u0a2b\u0a3e\u0a30\u0a2e \u0a2d\u0a30\u0a4b", s1b:"\u0a05\u0a2a\u0a23\u0a40 \u0a38\u0a2e\u0a71\u0a38\u0a3f\u0a06 \u0a26\u0a71\u0a38\u0a4b\u0964 \u0a32\u0a17\u0a2d\u0a17 2 \u0a2e\u0a3f\u0a70\u0a1f\u0964", s2t:"\u0a38\u0a48\u0a2e \u0a38\u0a70\u0a2a\u0a30\u0a15 \u0a15\u0a30\u0a26\u0a3e \u0a39\u0a48", s2b:"\u0a38\u0a48\u0a2e \u0a24\u0a41\u0a39\u0a3e\u0a28\u0a42\u0a70 \u0a2e\u0a48\u0a38\u0a47\u0a1c \u0a15\u0a30\u0a26\u0a3e \u0a39\u0a48\u0964", s3t:"\u0a38\u0a3e\u0a21\u0a40 \u0a1f\u0a40\u0a2e \u0a38\u0a70\u0a2a\u0a30\u0a15 \u0a15\u0a30\u0a26\u0a40 \u0a39\u0a48", s3b:"\u0a38\u0a3e\u0a21\u0a40 \u0a21\u0a48\u0a02\u0a1f\u0a32 \u0a1f\u0a40\u0a2e \u0a24\u0a41\u0a39\u0a3e\u0a21\u0a47 \u0a28\u0a3e\u0a32 \u0a38\u0a70\u0a2a\u0a30\u0a15 \u0a15\u0a30\u0a26\u0a40 \u0a39\u0a48\u0964", howBtn:"\u0a2e\u0a41\u0a32\u0a3e\u0a02\u0a15\u0a23 \u0a38\u0a3c\u0a41\u0a30\u0a42 \u0a15\u0a30\u0a4b", condTitle:"\u0a39\u0a41\u0a23 \u0a2e\u0a26\u0a26 \u0a1a\u0a3e\u0a39\u0a40\u0a26\u0a40 \u0a39\u0a48?", condSub:"\u0a38\u0a48\u0a2e \u0a35\u0a71\u0a16-\u0a35\u0a71\u0a16 \u0a26\u0a70\u0a26\u0a3e\u0a02 \u0a26\u0a40\u0a06\u0a02 \u0a38\u0a2e\u0a71\u0a38\u0a3f\u0a06\u0a35\u0a3e\u0a02 \u0a35\u0a3f\u0a71\u0a1a \u0a2e\u0a26\u0a26 \u0a15\u0a30 \u0a38\u0a15\u0a26\u0a3e \u0a39\u0a48\u0964" },
-    fr: { kicker:"Disponible 24/7 \u00b7 Gratuit", title:"Avez-vous un probl\u00e8me dentaire?", accent:"Envoyez un message \u00e0 Sam.", sub:"Sam est notre assistant dentaire IA. D\u00e9crivez votre probl\u00e8me et notre \u00e9quipe dentaire vous contactera directement.", btn:"Envoyer un message \u00e0 Sam", btnSub:"R\u00e9pond en quelques minutes", langTitle:"Sam parle votre langue", langNote:"Les anglophones parlent \u00e0 Sam par t\u00e9l\u00e9phone. Toutes les autres langues par message texte.", howTitle:"Comment \u00e7a marche.", s1t:"Remplissez un court formulaire", s1b:"D\u00e9crivez votre probl\u00e8me. Environ 2 minutes.", s2t:"Sam vous contacte", s2b:"Sam vous envoie un message avec des questions guid\u00e9es.", s3t:"Notre \u00e9quipe vous r\u00e9pond", s3b:"Notre \u00e9quipe dentaire examine vos informations et vous contacte.", howBtn:"Commencer l'\u00e9valuation", condTitle:"Besoin d'aide maintenant?", condSub:"Sam peut aider avec divers probl\u00e8mes dentaires." },
-    fa: { kicker:"24/7 \u062f\u0631 \u062f\u0633\u062a\u0631\u0633 \u00b7 \u0631\u0627\u06cc\u06af\u0627\u0646", title:"\u0622\u06cc\u0627 \u0645\u0634\u06a9\u0644 \u062f\u0646\u062f\u0627\u0646\u06cc \u062f\u0627\u0631\u06cc\u062f\u061f", accent:"\u067e\u06cc\u0627\u0645 \u0628\u0647 \u0633\u0627\u0645.", sub:"\u0633\u0627\u0645 \u062f\u0633\u062a\u06cc\u0627\u0631 \u062f\u0646\u062f\u0627\u0646\u067e\u0632\u0634\u06a9\u06cc AI \u0645\u0627\u0633\u062a. \u0645\u0634\u06a9\u0644 \u062e\u0648\u062f \u0631\u0627 \u062a\u0648\u0636\u06cc\u062d \u062f\u0647\u06cc\u062f \u0648 \u062a\u06cc\u0645 \u0645\u0627 \u0628\u0627 \u0634\u0645\u0627 \u062a\u0645\u0627\u0633 \u062e\u0648\u0627\u0647\u062f \u06af\u0631\u0641\u062a.", btn:"\u067e\u06cc\u0627\u0645 \u0628\u0647 \u0633\u0627\u0645", btnSub:"\u062f\u0631 \u0639\u0631\u0636 \u0686\u0646\u062f \u062f\u0642\u06cc\u0642\u0647 \u067e\u0627\u0633\u062e", langTitle:"\u0633\u0627\u0645 \u0628\u0647 \u0632\u0628\u0627\u0646 \u0634\u0645\u0627 \u0635\u062d\u0628\u062a \u0645\u06cc \u06a9\u0646\u062f", langNote:"\u0627\u0646\u06af\u0644\u06cc\u0633\u06cc \u0632\u0628\u0627\u0646\u0627\u0646 \u0628\u0627 \u062a\u0644\u0641\u0646. \u0633\u0627\u06cc\u0631 \u0632\u0628\u0627\u0646 \u0647\u0627 \u0627\u0632 \u0637\u0631\u06cc\u0642 \u067e\u06cc\u0627\u0645\u06a9.", howTitle:"\u0686\u06af\u0648\u0646\u0647 \u06a9\u0627\u0631 \u0645\u06cc \u06a9\u0646\u062f.", s1t:"\u06cc\u06a9 \u0641\u0631\u0645 \u06a9\u0648\u062a\u0627\u0647 \u067e\u0631 \u06a9\u0646\u06cc\u062f", s1b:"\u0645\u0634\u06a9\u0644 \u062e\u0648\u062f \u0631\u0627 \u062a\u0648\u0636\u06cc\u062d \u062f\u0647\u06cc\u062f. \u062d\u062f\u0648\u062f 2 \u062f\u0642\u06cc\u0642\u0647.", s2t:"\u0633\u0627\u0645 \u067e\u06cc\u06af\u06cc\u0631\u06cc \u0645\u06cc \u06a9\u0646\u062f", s2b:"\u0633\u0627\u0645 \u0628\u0647 \u0634\u0645\u0627 \u067e\u06cc\u0627\u0645 \u0645\u06cc \u062f\u0647\u062f.", s3t:"\u062a\u06cc\u0645 \u0645\u0627 \u067e\u0627\u0633\u062e \u0645\u06cc \u062f\u0647\u062f", s3b:"\u062a\u06cc\u0645 \u062f\u0646\u062f\u0627\u0646\u067e\u0632\u0634\u06a9\u06cc \u0628\u0627 \u0634\u0645\u0627 \u062a\u0645\u0627\u0633 \u0645\u06cc \u06af\u06cc\u0631\u062f.", howBtn:"\u0634\u0631\u0648\u0639 \u0627\u0631\u0632\u06cc\u0627\u0628\u06cc", condTitle:"\u0627\u0644\u0627\u0646 \u06a9\u0645\u06a9 \u0645\u06cc \u062e\u0648\u0627\u0647\u06cc\u062f\u061f", condSub:"\u0633\u0627\u0645 \u062f\u0631 \u0645\u0634\u06a9\u0644\u0627\u062a \u0645\u062e\u062a\u0644\u0641 \u062f\u0646\u062f\u0627\u0646\u06cc \u06a9\u0645\u06a9 \u0645\u06cc \u06a9\u0646\u062f." },
-    so: { kicker:"24/7 diyaar \u00b7 Bilaash", title:"Ma leedahay dhibaato ilko?", accent:"Fariin u dir Sam.", sub:"Sam waa kaaliyaha ilkaha AI. Sheeg dhibaatadaada, kooxdana waxay si toos ah kuula soo xiriiri doontaa.", btn:"Fariin u dir Sam", btnSub:"Daqiiqado gudahood", langTitle:"Sam wuu ku hadlaa luqaddaada", langNote:"Ingiriisiga waxay Sam kula hadlaan taleefanka. Luqadaha kale waa fariin qoraal ah.", howTitle:"Sida ay u shaqayso.", s1t:"Buuxi foom gaaban", s1b:"Sheeg dhibaatadaada. 2 daqiiqo.", s2t:"Sam wuu kula soo xiriiraa", s2b:"Sam wuxuu kugu soo diraa fariin.", s3t:"Kooxdayadu way kula soo xiriirtaa", s3b:"Kooxda ilkahu way kula soo xiriirtaa.", howBtn:"Bilow qiimaynta", condTitle:"Hadda caawimaad?", condSub:"Sam wuxuu ka caawiyaa dhibaatooyinka ilkaha." },
-    es: { kicker:"Disponible 24/7 \u00b7 Gratis", title:"\u00bfTiene un problema dental?", accent:"Env\u00ede un mensaje a Sam.", sub:"Sam es nuestro asistente dental con IA. Describa su problema y nuestro equipo dental se comunicar\u00e1 con usted directamente.", btn:"Enviar mensaje a Sam", btnSub:"Responde en minutos", langTitle:"Sam habla su idioma", langNote:"Los angloparlantes hablan con Sam por tel\u00e9fono. Otros idiomas por mensaje de texto.", howTitle:"C\u00f3mo funciona.", s1t:"Complete un breve formulario", s1b:"Describa su problema. Toma unos 2 minutos.", s2t:"Sam se comunica con usted", s2b:"Sam le env\u00eda un mensaje con preguntas guiadas.", s3t:"Nuestro equipo le responde", s3b:"Nuestro equipo dental revisa su informaci\u00f3n y se comunica con usted.", howBtn:"Iniciar evaluaci\u00f3n", condTitle:"\u00bfNecesita ayuda ahora?", condSub:"Sam puede ayudar con diversos problemas dentales." },
-    zh: { kicker:"24/7\u53ef\u7528 \u00b7 \u514d\u8d39", title:"\u60a8\u6709\u7259\u9f7f\u95ee\u9898\u5417\uff1f", accent:"\u7ed9Sam\u53d1\u6d88\u606f\u3002", sub:"Sam\u662f\u6211\u4eec\u7684AI\u7259\u79d1\u52a9\u624b\u3002\u63cf\u8ff0\u60a8\u7684\u95ee\u9898\uff0c\u6211\u4eec\u7684\u7259\u79d1\u56e2\u961f\u5c06\u76f4\u63a5\u4e0e\u60a8\u8054\u7cfb\u3002", btn:"\u7ed9Sam\u53d1\u6d88\u606f", btnSub:"\u51e0\u5206\u949f\u5185\u56de\u590d", langTitle:"Sam\u4f1a\u8bf4\u60a8\u7684\u8bed\u8a00", langNote:"\u82f1\u8bed\u7528\u6237\u901a\u8fc7\u7535\u8bdd\u4e0eSam\u4ea4\u6d41\u3002\u5176\u4ed6\u8bed\u8a00\u901a\u8fc7\u77ed\u4fe1\u3002", howTitle:"\u5982\u4f55\u8fd0\u4f5c\u3002", s1t:"\u586b\u5199\u7b80\u77ed\u8868\u683c", s1b:"\u63cf\u8ff0\u60a8\u7684\u95ee\u9898\u3002\u7ea62\u5206\u949f\u3002", s2t:"Sam\u8ddf\u8fdb", s2b:"Sam\u7ed9\u60a8\u53d1\u6d88\u606f\u3002", s3t:"\u6211\u4eec\u7684\u56e2\u961f\u56de\u590d\u60a8", s3b:"\u6211\u4eec\u7684\u7259\u79d1\u56e2\u961f\u4e0e\u60a8\u8054\u7cfb\u3002", howBtn:"\u5f00\u59cb\u8bc4\u4f30", condTitle:"\u73b0\u5728\u9700\u8981\u5e2e\u52a9\uff1f", condSub:"Sam\u53ef\u4ee5\u5e2e\u52a9\u5904\u7406\u5404\u79cd\u7259\u79d1\u95ee\u9898\u3002" }
+  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  var currentLang = "en";
+  var RTL_LANGS = ["ar", "fa"];
+
+  // ── Translations (all 9 languages) ────────────────────────────
+  var T = {
+    en: {
+      widgetTitle: "Have a dental concern?", widgetAccent: "Talk to Sam.",
+      widgetSub: "Fill out this short form and Sam, our AI dental triage assistant, will follow up to assess your concern. Our dental team will follow up with you directly.",
+      widgetFree: "This service is free.", widgetBadge: "Sam responds in minutes \u00b7 Available 24/7",
+      secAbout: "About you", lblName: "Full name", phName: "First and last name", lblDob: "Date of birth",
+      lblPhone: "Phone number", phPhone: "10-digit number", phoneHelper: "Sam will call this number shortly after you submit.",
+      phoneHelperSms: "Sam will text this number shortly after you submit.",
+      lblCity: "City", phCity: "City", lblEmail: "Email address", emailOpt: "(optional)", phEmail: "For follow-up communications only",
+      secConcern: "Today's concern", lblComplaint: "What's been bothering you?",
+      phComplaint: "e.g. My back tooth has been throbbing for two days and is sensitive to cold",
+      lblOnset: "When did this start?", optSelect: "Select one", optToday: "Today", optDays: "Within the last few days",
+      optWeek: "About a week ago", optMore: "More than a week ago", optUnsure: "Not sure",
+      lblRedflags: "Are any of these happening right now?",
+      rfBreathing: "Trouble breathing or swallowing", rfBleeding: "Uncontrolled bleeding", rfSwelling: "Facial swelling",
+      rfFever: "Fever or feeling unwell", rfTrauma: "Injury from an accident, fall, or impact",
+      rfAvulsion: "Tooth completely knocked out", rfNone: "None of the above",
+      lblAvulsionTime: "How long ago did the tooth come out?", avulsionHelper: "This helps the dentist assess the urgency.",
+      avUnder5: "Just now (under 5 minutes)", av5to15: "5 to 15 minutes ago", av15to30: "15 to 30 minutes ago",
+      av30to60: "30 to 60 minutes ago", avOver60: "More than 60 minutes ago",
+      secMedical: "Relevant medical information", medHelper: "Select any that apply.",
+      mhAntibiotics: "Allergy to antibiotics", mhPain: "Allergy to pain medication", mhBlood: "Blood thinners",
+      mhDiabetes: "Diabetes", mhPregnancy: "Pregnancy", mhImmuno: "Immunocompromised",
+      mhOther: "Other important medical condition", mhNone: "None of the above",
+      mhOtherLabel: "Please tell us more", mhOtherPh: "Anything important we should know",
+      secCoverage: "Coverage information (optional)", covHelper: "This helps with follow-up planning only.",
+      lblCoverage: "Coverage information", covPrivate: "Private dental insurance", covCdcp: "CDCP", covOdsp: "ODSP",
+      covOw: "OW", covNone: "No dental coverage", covPrefer: "Prefer not to say",
+      preNote: "After you submit, Sam will call the phone number you provided to continue your assessment. The call will come from",
+      preNoteSms: "After you submit, Sam will text the phone number you provided to continue your assessment in your language.",
+      warning: "If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, seek emergency care immediately by calling 911.",
+      consent: "By continuing, you understand that you will next speak with Sam, an AI dental triage assistant provided by VirtualDentist.ai on behalf of Martindale Dental, that you may receive an SMS follow-up, and that this service does not replace emergency or in-person dental care.",
+      consentSms: "By continuing, you understand that you will exchange text messages with Sam, an AI dental triage assistant provided by VirtualDentist.ai on behalf of Martindale Dental, and that this service does not replace emergency or in-person dental care.",
+      btnSubmit: "Talk to Sam", btnSubmitSms: "Text Sam",
+      handoffTitle: "Next step: answer Sam's call", handoffTitleSms: "Next step: check your text messages",
+      handoffCopy: "Sam will call you shortly to continue your assessment. Our dental team will follow up with you directly.",
+      handoffCopySms: "Sam will text you shortly in your language. Please reply to Sam's messages. Our dental team will follow up with you directly.",
+      handoffSub: "Save this number so you recognize Sam's call.", handoffSubSms: "Save this number so you recognize Sam's message."
+    },
+    ar: {
+      widgetTitle: "هل لديك مشكلة في الأسنان؟", widgetAccent: "تحدث مع سام.",
+      widgetSub: "املأ هذا النموذج القصير وسيتواصل سام معك لتقييم حالتك. سيتواصل فريق طب الأسنان لدينا معك مباشرة.",
+      widgetFree: "هذه الخدمة مجانية.", widgetBadge: "سام يرد في دقائق · متاح على مدار الساعة",
+      secAbout: "معلوماتك", lblName: "الاسم الكامل", phName: "الاسم الأول والأخير", lblDob: "تاريخ الميلاد",
+      lblPhone: "رقم الهاتف", phPhone: "رقم من 10 أرقام", phoneHelper: "سيتصل بك سام على هذا الرقم.",
+      phoneHelperSms: "سيرسل سام رسالة نصية إلى هذا الرقم.",
+      lblCity: "المدينة", phCity: "المدينة", lblEmail: "البريد الإلكتروني", emailOpt: "(اختياري)", phEmail: "للمتابعة فقط",
+      secConcern: "مخاوفك اليوم", lblComplaint: "ما الذي يزعجك اليوم؟",
+      phComplaint: "مثال: ضرسي الخلفي يؤلمني منذ يومين وحساس للبرد",
+      lblOnset: "متى بدأ هذا؟", optSelect: "اختر", optToday: "اليوم", optDays: "خلال الأيام القليلة الماضية",
+      optWeek: "منذ حوالي أسبوع", optMore: "منذ أكثر من أسبوع", optUnsure: "غير متأكد",
+      lblRedflags: "هل يحدث أي من هذا الآن؟",
+      rfBreathing: "صعوبة في التنفس أو البلع", rfBleeding: "نزيف لا يتوقف", rfSwelling: "تورم في الوجه",
+      rfFever: "حمى أو شعور بالمرض", rfTrauma: "إصابة من حادث أو سقوط",
+      rfAvulsion: "سن خرج بالكامل", rfNone: "لا شيء مما سبق",
+      lblAvulsionTime: "منذ متى خرج السن؟", avulsionHelper: "هذا يساعد طبيب الأسنان في تقييم الحالة.",
+      avUnder5: "الآن (أقل من 5 دقائق)", av5to15: "من 5 إلى 15 دقيقة", av15to30: "من 15 إلى 30 دقيقة",
+      av30to60: "من 30 إلى 60 دقيقة", avOver60: "أكثر من 60 دقيقة",
+      secMedical: "معلومات طبية", medHelper: "اختر كل ما ينطبق.",
+      mhAntibiotics: "حساسية من المضادات الحيوية", mhPain: "حساسية من مسكنات الألم", mhBlood: "أدوية مميعة للدم",
+      mhDiabetes: "السكري", mhPregnancy: "الحمل", mhImmuno: "ضعف المناعة",
+      mhOther: "حالة طبية مهمة أخرى", mhNone: "لا شيء مما سبق",
+      mhOtherLabel: "يرجى إخبارنا بالمزيد", mhOtherPh: "أي شيء مهم يجب أن نعرفه",
+      secCoverage: "معلومات التغطية (اختياري)", covHelper: "هذا يساعد في التخطيط للمتابعة فقط.",
+      lblCoverage: "معلومات التغطية", covPrivate: "تأمين أسنان خاص", covCdcp: "CDCP", covOdsp: "ODSP",
+      covOw: "OW", covNone: "لا يوجد تغطية", covPrefer: "أفضل عدم الإجابة",
+      preNote: "بعد الإرسال، سيرسل سام رسالة نصية بلغتك.", preNoteSms: "بعد الإرسال، سيرسل سام رسالة نصية بلغتك.",
+      warning: "إذا كنت تعاني من صعوبة في التنفس أو نزيف أو تورم كبير أو إصابة في الوجه، اطلب الرعاية الطارئة فورا بالاتصال على 911.",
+      consent: "بالمتابعة، أنت تفهم أنك ستتبادل رسائل نصية مع سام، مساعد فرز أسنان يعمل بالذكاء الاصطناعي مقدم من VirtualDentist.ai نيابة عن عيادة مارتنديل، وأن هذه الخدمة لا تحل محل رعاية الطوارئ أو فحص الأسنان الشخصي.",
+      consentSms: "بالمتابعة، أنت تفهم أنك ستتبادل رسائل نصية مع سام، مساعد فرز أسنان يعمل بالذكاء الاصطناعي مقدم من VirtualDentist.ai نيابة عن عيادة مارتنديل، وأن هذه الخدمة لا تحل محل رعاية الطوارئ أو فحص الأسنان الشخصي.",
+      btnSubmit: "تحدث مع سام", btnSubmitSms: "أرسل رسالة لسام",
+      handoffTitle: "تحقق من رسائلك النصية", handoffTitleSms: "تحقق من رسائلك النصية",
+      handoffCopy: "سيرسل لك سام رسالة نصية قريبا بلغتك. يرجى الرد على رسائل سام.",
+      handoffCopySms: "سيرسل لك سام رسالة نصية قريبا بلغتك. يرجى الرد على رسائل سام.",
+      handoffSub: "احفظ هذا الرقم لتتعرف على رسالة سام.", handoffSubSms: "احفظ هذا الرقم لتتعرف على رسالة سام."
+    },
+    hi: {
+      widgetTitle: "क्या आपको दांतों की समस्या है?", widgetAccent: "सैम से बात करें।",
+      widgetSub: "यह छोटा फॉर्म भरें और सैम आपकी समस्या का आकलन करने के लिए संपर्क करेगा।",
+      widgetFree: "यह सेवा निःशुल्क है।", widgetBadge: "सैम मिनटों में जवाब देता है · 24/7 उपलब्ध",
+      secAbout: "आपके बारे में", lblName: "पूरा नाम", phName: "पहला और अंतिम नाम", lblDob: "जन्म तिथि",
+      lblPhone: "फोन नंबर", phPhone: "10 अंकों का नंबर", phoneHelper: "सैम इस नंबर पर कॉल करेगा।",
+      phoneHelperSms: "सैम इस नंबर पर मैसेज करेगा।",
+      lblCity: "शहर", phCity: "शहर", lblEmail: "ईमेल पता", emailOpt: "(वैकल्पिक)", phEmail: "केवल फॉलो-अप के लिए",
+      secConcern: "आज की समस्या", lblComplaint: "आज आपको क्या परेशानी हो रही है?",
+      phComplaint: "उदा. मेरे पीछे के दांत में दो दिन से दर्द है",
+      lblOnset: "यह कब शुरू हुआ?", optSelect: "चुनें", optToday: "आज", optDays: "पिछले कुछ दिनों में",
+      optWeek: "लगभग एक हफ्ते पहले", optMore: "एक हफ्ते से अधिक पहले", optUnsure: "पता नहीं",
+      lblRedflags: "क्या अभी इनमें से कुछ हो रहा है?",
+      rfBreathing: "सांस लेने या निगलने में कठिनाई", rfBleeding: "रुकने वाला नहीं खून बहना", rfSwelling: "चेहरे पर सूजन",
+      rfFever: "बुखार या अस्वस्थ महसूस करना", rfTrauma: "दुर्घटना या गिरने से चोट",
+      rfAvulsion: "दांत पूरी तरह से निकल गया", rfNone: "इनमें से कोई नहीं",
+      lblAvulsionTime: "दांत कब निकला?", avulsionHelper: "इससे डॉक्टर को तात्कालिकता का आकलन करने में मदद मिलती है।",
+      avUnder5: "अभी (5 मिनट से कम)", av5to15: "5 से 15 मिनट पहले", av15to30: "15 से 30 मिनट पहले",
+      av30to60: "30 से 60 मिनट पहले", avOver60: "60 मिनट से अधिक पहले",
+      secMedical: "संबंधित चिकित्सा जानकारी", medHelper: "जो भी लागू हो चुनें।",
+      mhAntibiotics: "एंटीबायोटिक से एलर्जी", mhPain: "दर्द की दवा से एलर्जी", mhBlood: "रक्त पतला करने की दवा",
+      mhDiabetes: "मधुमेह", mhPregnancy: "गर्भावस्था", mhImmuno: "कमज़ोर प्रतिरक्षा",
+      mhOther: "अन्य महत्वपूर्ण चिकित्सा स्थिति", mhNone: "इनमें से कोई नहीं",
+      mhOtherLabel: "कृपया और बताएं", mhOtherPh: "कुछ भी महत्वपूर्ण",
+      secCoverage: "कवरेज जानकारी (वैकल्पिक)", covHelper: "यह केवल फॉलो-अप योजना में मदद करता है।",
+      lblCoverage: "कवरेज जानकारी", covPrivate: "निजी डेंटल इंश्योरेंस", covCdcp: "CDCP", covOdsp: "ODSP",
+      covOw: "OW", covNone: "कोई डेंटल कवरेज नहीं", covPrefer: "बताना नहीं चाहता",
+      preNote: "सबमिट करने के बाद, सैम आपकी भाषा में मैसेज करेगा।", preNoteSms: "सबमिट करने के बाद, सैम आपकी भाषा में मैसेज करेगा।",
+      warning: "यदि आपको सांस लेने में कठिनाई, अनियंत्रित रक्तस्राव, बड़ी सूजन, या गंभीर चेहरे की चोट है, तो 911 पर कॉल करें।",
+      consent: "जारी रखकर, आप समझते हैं कि आप सैम के साथ टेक्स्ट मैसेज का आदान-प्रदान करेंगे, और यह सेवा आपातकालीन चिकित्सा या व्यक्तिगत दंत परीक्षा का विकल्प नहीं है।",
+      consentSms: "जारी रखकर, आप समझते हैं कि आप सैम के साथ टेक्स्ट मैसेज का आदान-प्रदान करेंगे, और यह सेवा आपातकालीन चिकित्सा या व्यक्तिगत दंत परीक्षा का विकल्प नहीं है।",
+      btnSubmit: "सैम से बात करें", btnSubmitSms: "सैम को मैसेज करें",
+      handoffTitle: "अपने टेक्स्ट मैसेज देखें", handoffTitleSms: "अपने टेक्स्ट मैसेज देखें",
+      handoffCopy: "सैम जल्द ही आपकी भाषा में मैसेज करेगा। कृपया जवाब दें।",
+      handoffCopySms: "सैम जल्द ही आपकी भाषा में मैसेज करेगा। कृपया जवाब दें।",
+      handoffSub: "इस नंबर को सेव करें।", handoffSubSms: "इस नंबर को सेव करें।"
+    },
+    pa: {
+      widgetTitle: "ਕੀ ਤੁਹਾਨੂੰ ਦੰਦਾਂ ਦੀ ਸਮੱਸਿਆ ਹੈ?", widgetAccent: "ਸੈਮ ਨਾਲ ਗੱਲ ਕਰੋ।",
+      widgetSub: "ਇਹ ਛੋਟਾ ਫਾਰਮ ਭਰੋ ਅਤੇ ਸੈਮ ਤੁਹਾਡੀ ਸਮੱਸਿਆ ਦਾ ਮੁਲਾਂਕਣ ਕਰਨ ਲਈ ਸੰਪਰਕ ਕਰੇਗਾ।",
+      widgetFree: "ਇਹ ਸੇਵਾ ਮੁਫ਼ਤ ਹੈ।", widgetBadge: "ਸੈਮ ਮਿੰਟਾਂ ਵਿੱਚ ਜਵਾਬ ਦਿੰਦਾ ਹੈ · 24/7 ਉਪਲਬਧ",
+      secAbout: "ਤੁਹਾਡੇ ਬਾਰੇ", lblName: "ਪੂਰਾ ਨਾਮ", phName: "ਪਹਿਲਾ ਅਤੇ ਆਖਰੀ ਨਾਮ", lblDob: "ਜਨਮ ਮਿਤੀ",
+      lblPhone: "ਫੋਨ ਨੰਬਰ", phPhone: "10 ਅੰਕਾਂ ਦਾ ਨੰਬਰ", phoneHelper: "ਸੈਮ ਇਸ ਨੰਬਰ ਤੇ ਕਾਲ ਕਰੇਗਾ।",
+      phoneHelperSms: "ਸੈਮ ਇਸ ਨੰਬਰ ਤੇ ਮੈਸੇਜ ਕਰੇਗਾ।",
+      lblCity: "ਸ਼ਹਿਰ", phCity: "ਸ਼ਹਿਰ", lblEmail: "ਈਮੇਲ", emailOpt: "(ਵਿਕਲਪਿਕ)", phEmail: "ਸਿਰਫ਼ ਫਾਲੋ-ਅੱਪ ਲਈ",
+      secConcern: "ਅੱਜ ਦੀ ਸਮੱਸਿਆ", lblComplaint: "ਅੱਜ ਤੁਹਾਨੂੰ ਕੀ ਪਰੇਸ਼ਾਨੀ ਹੋ ਰਹੀ ਹੈ?",
+      phComplaint: "ਉਦਾ. ਮੇਰੇ ਪਿਛਲੇ ਦੰਦ ਵਿੱਚ ਦਰਦ ਹੈ",
+      lblOnset: "ਇਹ ਕਦੋਂ ਸ਼ੁਰੂ ਹੋਇਆ?", optSelect: "ਚੁਣੋ", optToday: "ਅੱਜ", optDays: "ਪਿਛਲੇ ਕੁਝ ਦਿਨਾਂ ਵਿੱਚ",
+      optWeek: "ਲਗਭਗ ਇੱਕ ਹਫ਼ਤਾ ਪਹਿਲਾਂ", optMore: "ਇੱਕ ਹਫ਼ਤੇ ਤੋਂ ਵੱਧ ਪਹਿਲਾਂ", optUnsure: "ਪੱਕਾ ਨਹੀਂ",
+      lblRedflags: "ਕੀ ਹੁਣ ਇਹਨਾਂ ਵਿੱਚੋਂ ਕੁਝ ਹੋ ਰਿਹਾ ਹੈ?",
+      rfBreathing: "ਸਾਹ ਲੈਣ ਜਾਂ ਨਿਗਲਣ ਵਿੱਚ ਮੁਸ਼ਕਲ", rfBleeding: "ਬੰਦ ਨਾ ਹੋਣ ਵਾਲਾ ਖੂਨ", rfSwelling: "ਚਿਹਰੇ ਤੇ ਸੋਜ",
+      rfFever: "ਬੁਖਾਰ ਜਾਂ ਬਿਮਾਰ ਮਹਿਸੂਸ", rfTrauma: "ਦੁਰਘਟਨਾ ਤੋਂ ਸੱਟ",
+      rfAvulsion: "ਦੰਦ ਪੂਰੀ ਤਰ੍ਹਾਂ ਨਿਕਲ ਗਿਆ", rfNone: "ਇਹਨਾਂ ਵਿੱਚੋਂ ਕੋਈ ਨਹੀਂ",
+      lblAvulsionTime: "ਦੰਦ ਕਦੋਂ ਨਿਕਲਿਆ?", avulsionHelper: "ਇਹ ਡਾਕਟਰ ਨੂੰ ਮਦਦ ਕਰਦਾ ਹੈ।",
+      avUnder5: "ਹੁਣੇ (5 ਮਿੰਟ ਤੋਂ ਘੱਟ)", av5to15: "5 ਤੋਂ 15 ਮਿੰਟ ਪਹਿਲਾਂ", av15to30: "15 ਤੋਂ 30 ਮਿੰਟ ਪਹਿਲਾਂ",
+      av30to60: "30 ਤੋਂ 60 ਮਿੰਟ ਪਹਿਲਾਂ", avOver60: "60 ਮਿੰਟ ਤੋਂ ਵੱਧ",
+      secMedical: "ਸੰਬੰਧਿਤ ਡਾਕਟਰੀ ਜਾਣਕਾਰੀ", medHelper: "ਜੋ ਵੀ ਲਾਗੂ ਹੋਵੇ ਚੁਣੋ।",
+      mhAntibiotics: "ਐਂਟੀਬਾਇਓਟਿਕ ਤੋਂ ਐਲਰਜੀ", mhPain: "ਦਰਦ ਦੀ ਦਵਾਈ ਤੋਂ ਐਲਰਜੀ", mhBlood: "ਖੂਨ ਪਤਲਾ ਕਰਨ ਦੀ ਦਵਾਈ",
+      mhDiabetes: "ਸ਼ੂਗਰ", mhPregnancy: "ਗਰਭ ਅਵਸਥਾ", mhImmuno: "ਕਮਜ਼ੋਰ ਇਮਿਊਨ ਸਿਸਟਮ",
+      mhOther: "ਹੋਰ ਮਹੱਤਵਪੂਰਨ ਡਾਕਟਰੀ ਸਥਿਤੀ", mhNone: "ਇਹਨਾਂ ਵਿੱਚੋਂ ਕੋਈ ਨਹੀਂ",
+      mhOtherLabel: "ਕਿਰਪਾ ਕਰਕੇ ਹੋਰ ਦੱਸੋ", mhOtherPh: "ਕੁਝ ਵੀ ਮਹੱਤਵਪੂਰਨ",
+      secCoverage: "ਕਵਰੇਜ ਜਾਣਕਾਰੀ (ਵਿਕਲਪਿਕ)", covHelper: "ਇਹ ਸਿਰਫ਼ ਫਾਲੋ-ਅੱਪ ਲਈ ਹੈ।",
+      lblCoverage: "ਕਵਰੇਜ ਜਾਣਕਾਰੀ", covPrivate: "ਨਿੱਜੀ ਡੈਂਟਲ ਬੀਮਾ", covCdcp: "CDCP", covOdsp: "ODSP",
+      covOw: "OW", covNone: "ਕੋਈ ਡੈਂਟਲ ਕਵਰੇਜ ਨਹੀਂ", covPrefer: "ਦੱਸਣਾ ਨਹੀਂ ਚਾਹੁੰਦੇ",
+      preNote: "ਸਬਮਿਟ ਕਰਨ ਤੋਂ ਬਾਅਦ, ਸੈਮ ਤੁਹਾਡੀ ਭਾਸ਼ਾ ਵਿੱਚ ਮੈਸੇਜ ਕਰੇਗਾ।", preNoteSms: "ਸਬਮਿਟ ਕਰਨ ਤੋਂ ਬਾਅਦ, ਸੈਮ ਤੁਹਾਡੀ ਭਾਸ਼ਾ ਵਿੱਚ ਮੈਸੇਜ ਕਰੇਗਾ।",
+      warning: "ਜੇ ਤੁਹਾਨੂੰ ਸਾਹ ਲੈਣ ਵਿੱਚ ਮੁਸ਼ਕਲ, ਬੇਕਾਬੂ ਖੂਨ, ਵੱਡੀ ਸੋਜ, ਜਾਂ ਗੰਭੀਰ ਚਿਹਰੇ ਦੀ ਸੱਟ ਹੈ, ਤਾਂ 911 ਤੇ ਕਾਲ ਕਰੋ।",
+      consent: "ਜਾਰੀ ਰੱਖ ਕੇ, ਤੁਸੀਂ ਸਮਝਦੇ ਹੋ ਕਿ ਤੁਸੀਂ ਸੈਮ ਨਾਲ ਟੈਕਸਟ ਮੈਸੇਜ ਕਰੋਗੇ, ਅਤੇ ਇਹ ਸੇਵਾ ਐਮਰਜੈਂਸੀ ਦੇਖਭਾਲ ਜਾਂ ਵਿਅਕਤੀਗਤ ਦੰਦਾਂ ਦੀ ਜਾਂਚ ਦਾ ਬਦਲ ਨਹੀਂ ਹੈ।",
+      consentSms: "ਜਾਰੀ ਰੱਖ ਕੇ, ਤੁਸੀਂ ਸਮਝਦੇ ਹੋ ਕਿ ਤੁਸੀਂ ਸੈਮ ਨਾਲ ਟੈਕਸਟ ਮੈਸੇਜ ਕਰੋਗੇ, ਅਤੇ ਇਹ ਸੇਵਾ ਐਮਰਜੈਂਸੀ ਦੇਖਭਾਲ ਜਾਂ ਵਿਅਕਤੀਗਤ ਦੰਦਾਂ ਦੀ ਜਾਂਚ ਦਾ ਬਦਲ ਨਹੀਂ ਹੈ।",
+      btnSubmit: "ਸੈਮ ਨਾਲ ਗੱਲ ਕਰੋ", btnSubmitSms: "ਸੈਮ ਨੂੰ ਮੈਸੇਜ ਕਰੋ",
+      handoffTitle: "ਆਪਣੇ ਟੈਕਸਟ ਮੈਸੇਜ ਦੇਖੋ", handoffTitleSms: "ਆਪਣੇ ਟੈਕਸਟ ਮੈਸੇਜ ਦੇਖੋ",
+      handoffCopy: "ਸੈਮ ਜਲਦੀ ਹੀ ਤੁਹਾਡੀ ਭਾਸ਼ਾ ਵਿੱਚ ਮੈਸੇਜ ਕਰੇਗਾ। ਕਿਰਪਾ ਕਰਕੇ ਜਵਾਬ ਦਿਓ।",
+      handoffCopySms: "ਸੈਮ ਜਲਦੀ ਹੀ ਤੁਹਾਡੀ ਭਾਸ਼ਾ ਵਿੱਚ ਮੈਸੇਜ ਕਰੇਗਾ। ਕਿਰਪਾ ਕਰਕੇ ਜਵਾਬ ਦਿਓ।",
+      handoffSub: "ਇਸ ਨੰਬਰ ਨੂੰ ਸੇਵ ਕਰੋ।", handoffSubSms: "ਇਸ ਨੰਬਰ ਨੂੰ ਸੇਵ ਕਰੋ।"
+    },
+    fr: {
+      widgetTitle: "Avez-vous un probleme dentaire?", widgetAccent: "Parlez a Sam.",
+      widgetSub: "Remplissez ce court formulaire et Sam, notre assistant de triage dentaire IA, vous contactera.",
+      widgetFree: "Ce service est gratuit.", widgetBadge: "Sam repond en quelques minutes · Disponible 24/7",
+      secAbout: "A propos de vous", lblName: "Nom complet", phName: "Prenom et nom", lblDob: "Date de naissance",
+      lblPhone: "Numero de telephone", phPhone: "Numero a 10 chiffres", phoneHelper: "Sam appellera ce numero.",
+      phoneHelperSms: "Sam enverra un message a ce numero.",
+      lblCity: "Ville", phCity: "Ville", lblEmail: "Adresse courriel", emailOpt: "(facultatif)", phEmail: "Pour le suivi uniquement",
+      secConcern: "Probleme d'aujourd'hui", lblComplaint: "Qu'est-ce qui vous derange?",
+      phComplaint: "ex. Ma dent arriere me fait mal depuis deux jours",
+      lblOnset: "Quand cela a-t-il commence?", optSelect: "Choisir", optToday: "Aujourd'hui", optDays: "Ces derniers jours",
+      optWeek: "Il y a environ une semaine", optMore: "Il y a plus d'une semaine", optUnsure: "Pas certain",
+      lblRedflags: "Est-ce que l'un de ces problemes se produit maintenant?",
+      rfBreathing: "Difficulte a respirer ou a avaler", rfBleeding: "Saignement incontrole", rfSwelling: "Gonflement facial",
+      rfFever: "Fievre ou malaise", rfTrauma: "Blessure suite a un accident ou une chute",
+      rfAvulsion: "Dent completement arrachee", rfNone: "Aucun de ces problemes",
+      lblAvulsionTime: "Il y a combien de temps?", avulsionHelper: "Cela aide le dentiste a evaluer l'urgence.",
+      avUnder5: "A l'instant (moins de 5 min)", av5to15: "Il y a 5 a 15 min", av15to30: "Il y a 15 a 30 min",
+      av30to60: "Il y a 30 a 60 min", avOver60: "Il y a plus de 60 min",
+      secMedical: "Informations medicales", medHelper: "Selectionnez tout ce qui s'applique.",
+      mhAntibiotics: "Allergie aux antibiotiques", mhPain: "Allergie aux analgesiques", mhBlood: "Anticoagulants",
+      mhDiabetes: "Diabete", mhPregnancy: "Grossesse", mhImmuno: "Immunodeprime",
+      mhOther: "Autre condition medicale importante", mhNone: "Aucun de ces problemes",
+      mhOtherLabel: "Veuillez nous en dire plus", mhOtherPh: "Tout ce qui est important",
+      secCoverage: "Couverture (facultatif)", covHelper: "Cela aide uniquement a la planification.",
+      lblCoverage: "Information sur la couverture", covPrivate: "Assurance dentaire privee", covCdcp: "CDCP", covOdsp: "POSPH",
+      covOw: "OW", covNone: "Pas de couverture dentaire", covPrefer: "Prefere ne pas repondre",
+      preNote: "Apres soumission, Sam vous enverra un message dans votre langue.", preNoteSms: "Apres soumission, Sam vous enverra un message dans votre langue.",
+      warning: "Si vous avez des difficultes a respirer, un saignement incontrole, un gonflement important, appelez le 911.",
+      consent: "En continuant, vous comprenez que vous echangerez des messages texte avec Sam, et que ce service ne remplace pas les soins medicaux d'urgence ou un examen dentaire en personne.",
+      consentSms: "En continuant, vous comprenez que vous echangerez des messages texte avec Sam, et que ce service ne remplace pas les soins medicaux d'urgence ou un examen dentaire en personne.",
+      btnSubmit: "Parler a Sam", btnSubmitSms: "Envoyer un message a Sam",
+      handoffTitle: "Verifiez vos messages", handoffTitleSms: "Verifiez vos messages",
+      handoffCopy: "Sam vous enverra bientot un message. Veuillez repondre.",
+      handoffCopySms: "Sam vous enverra bientot un message. Veuillez repondre.",
+      handoffSub: "Enregistrez ce numero.", handoffSubSms: "Enregistrez ce numero."
+    },
+    fa: {
+      widgetTitle: "آیا مشکل دندانی دارید؟", widgetAccent: "با سام صحبت کنید.",
+      widgetSub: "این فرم کوتاه را پر کنید و سام برای ارزیابی مشکل شما تماس خواهد گرفت.",
+      widgetFree: "این خدمات رایگان است.", widgetBadge: "سام در عرض چند دقیقه پاسخ می دهد · 24/7",
+      secAbout: "درباره شما", lblName: "نام کامل", phName: "نام و نام خانوادگی", lblDob: "تاریخ تولد",
+      lblPhone: "شماره تلفن", phPhone: "شماره 10 رقمی", phoneHelper: "سام با این شماره تماس خواهد گرفت.",
+      phoneHelperSms: "سام به این شماره پیام خواهد داد.",
+      lblCity: "شهر", phCity: "شهر", lblEmail: "آدرس ایمیل", emailOpt: "(اختیاری)", phEmail: "فقط برای پیگیری",
+      secConcern: "مشکل امروز", lblComplaint: "امروز چه چیزی شما را اذیت می کند؟",
+      phComplaint: "مثال: دندان عقبم دو روز است درد می کند",
+      lblOnset: "این کی شروع شد؟", optSelect: "انتخاب کنید", optToday: "امروز", optDays: "چند روز گذشته",
+      optWeek: "حدود یک هفته پیش", optMore: "بیش از یک هفته پیش", optUnsure: "مطمئن نیستم",
+      lblRedflags: "آیا هم اکنون هر یک از این موارد رخ می دهد؟",
+      rfBreathing: "مشکل در تنفس یا بلع", rfBleeding: "خونریزی غیرقابل کنترل", rfSwelling: "تورم صورت",
+      rfFever: "تب یا احساس بیماری", rfTrauma: "آسیب ناشی از تصادف یا سقوط",
+      rfAvulsion: "دندان کاملا کنده شده", rfNone: "هیچکدام",
+      lblAvulsionTime: "چه مدت پیش دندان کنده شد؟", avulsionHelper: "این به دندانپزشک کمک می کند.",
+      avUnder5: "همین الان (کمتر از 5 دقیقه)", av5to15: "5 تا 15 دقیقه پیش", av15to30: "15 تا 30 دقیقه پیش",
+      av30to60: "30 تا 60 دقیقه پیش", avOver60: "بیش از 60 دقیقه",
+      secMedical: "اطلاعات پزشکی", medHelper: "هر کدام که صدق می کند انتخاب کنید.",
+      mhAntibiotics: "حساسیت به آنتی بیوتیک", mhPain: "حساسیت به مسکن", mhBlood: "داروهای رقیق کننده خون",
+      mhDiabetes: "دیابت", mhPregnancy: "بارداری", mhImmuno: "ضعف ایمنی",
+      mhOther: "وضعیت پزشکی مهم دیگر", mhNone: "هیچکدام",
+      mhOtherLabel: "لطفا بیشتر توضیح دهید", mhOtherPh: "هر چیز مهمی",
+      secCoverage: "اطلاعات پوشش (اختیاری)", covHelper: "این فقط برای برنامه ریزی کمک می کند.",
+      lblCoverage: "اطلاعات پوشش", covPrivate: "بیمه دندانپزشکی خصوصی", covCdcp: "CDCP", covOdsp: "ODSP",
+      covOw: "OW", covNone: "بدون پوشش", covPrefer: "ترجیح می دهم پاسخ ندهم",
+      preNote: "پس از ارسال، سام به زبان شما پیام خواهد داد.", preNoteSms: "پس از ارسال، سام به زبان شما پیام خواهد داد.",
+      warning: "اگر مشکل تنفس، خونریزی، تورم شدید یا آسیب صورت دارید، فورا با 911 تماس بگیرید.",
+      consent: "با ادامه، شما درک می کنید که با سام پیام متنی رد و بدل خواهید کرد، و این خدمت جایگزین مراقبت اورژانسی یا معاینه حضوری دندانپزشکی نیست.",
+      consentSms: "با ادامه، شما درک می کنید که با سام پیام متنی رد و بدل خواهید کرد، و این خدمت جایگزین مراقبت اورژانسی یا معاینه حضوری دندانپزشکی نیست.",
+      btnSubmit: "صحبت با سام", btnSubmitSms: "پیام به سام",
+      handoffTitle: "پیام های خود را بررسی کنید", handoffTitleSms: "پیام های خود را بررسی کنید",
+      handoffCopy: "سام به زودی به زبان شما پیام خواهد داد. لطفا پاسخ دهید.",
+      handoffCopySms: "سام به زودی به زبان شما پیام خواهد داد. لطفا پاسخ دهید.",
+      handoffSub: "این شماره را ذخیره کنید.", handoffSubSms: "این شماره را ذخیره کنید."
+    },
+    so: {
+      widgetTitle: "Ma leedahay dhibaato ilko?", widgetAccent: "La hadal Sam.",
+      widgetSub: "Buuxi foomkan gaaban, Sam ayaana kula soo xiriiri doona si uu u qiimeeyo dhibaatadaada.",
+      widgetFree: "Adeeggan waa bilaash.", widgetBadge: "Sam wuu ku jawaabi doonaa daqiiqado · 24/7",
+      secAbout: "Adiga ku saabsan", lblName: "Magaca oo buuxa", phName: "Magaca hore iyo kan dambe", lblDob: "Taariikhda dhalashada",
+      lblPhone: "Lambarka taleefanka", phPhone: "Lambar 10 nambar ah", phoneHelper: "Sam ayaa wici doona lambarkaan.",
+      phoneHelperSms: "Sam ayaa fariin u diri doona lambarkaan.",
+      lblCity: "Magaalada", phCity: "Magaalada", lblEmail: "Ciwaanka iimaylka", emailOpt: "(ikhtiyaari)", phEmail: "Kaliya la socodsiinta",
+      secConcern: "Dhibaatada maanta", lblComplaint: "Maxaa ku dhibaya maanta?",
+      phComplaint: "Tusaale: Ilkahayga dambe ayaa xanuunaya",
+      lblOnset: "Goorma ayay bilaabatay?", optSelect: "Dooro", optToday: "Maanta", optDays: "Dhowr maalmood",
+      optWeek: "Toddobaad ka hor", optMore: "Ka badan toddobaad", optUnsure: "Lama hubo",
+      lblRedflags: "Ma dhacayaan kuwan hadda?",
+      rfBreathing: "Dhibaato neefsasho ama liqid", rfBleeding: "Dhiig aan joogsan karin", rfSwelling: "Bararka wajiga",
+      rfFever: "Qandho ama dareen xanuun", rfTrauma: "Dhaawac shil ama dhicis",
+      rfAvulsion: "Ilko soo baxday", rfNone: "Midkoodna ma ahan",
+      lblAvulsionTime: "Goorma buu soo baxay?", avulsionHelper: "Tani waxay caawisaa dhakhtarka.",
+      avUnder5: "Hadda (ka yar 5 daqiiqo)", av5to15: "5-15 daqiiqo ka hor", av15to30: "15-30 daqiiqo ka hor",
+      av30to60: "30-60 daqiiqo ka hor", avOver60: "Ka badan 60 daqiiqo",
+      secMedical: "Macluumaadka caafimaadka", medHelper: "Dooro dhammaan kuwa khuseeya.",
+      mhAntibiotics: "Xasaasiyadda antibiyootiga", mhPain: "Xasaasiyadda daawada xanuunka", mhBlood: "Daawada dhiiga jilicisa",
+      mhDiabetes: "Sonkorowga", mhPregnancy: "Uurka", mhImmuno: "Difaaca jirka oo daciif ah",
+      mhOther: "Xaalad caafimaad oo muhiim ah", mhNone: "Midkoodna ma ahan",
+      mhOtherLabel: "Fadlan noo sheeg wax badan", mhOtherPh: "Wax muhiim ah",
+      secCoverage: "Macluumaadka caymiska (ikhtiyaari)", covHelper: "Tani kaliya ayay caawisaa qorshaynta.",
+      lblCoverage: "Macluumaadka caymiska", covPrivate: "Caymis ilko gaar ah", covCdcp: "CDCP", covOdsp: "ODSP",
+      covOw: "OW", covNone: "Caymis ma laha", covPrefer: "Doorbidayo inaan ka jawaabo",
+      preNote: "Ka dib markii aad dirto, Sam wuxuu kugu soo diri doonaa fariin luqaddaada.", preNoteSms: "Ka dib markii aad dirto, Sam wuxuu kugu soo diri doonaa fariin luqaddaada.",
+      warning: "Haddii aad dhibaato neefsashada, dhiig, bararka weyn, ama dhaawac weji ah, wac 911.",
+      consent: "Adiga oo sii wadaya, waxaad fahantahay inaad fariimo qoraal ah la wadaagi doonto Sam, iyo in adeeggan uusan beddelin daryeelka deg degga ama baaritaanka ilkaha qofka.",
+      consentSms: "Adiga oo sii wadaya, waxaad fahantahay inaad fariimo qoraal ah la wadaagi doonto Sam, iyo in adeeggan uusan beddelin daryeelka deg degga ama baaritaanka ilkaha qofka.",
+      btnSubmit: "La hadal Sam", btnSubmitSms: "Fariin u dir Sam",
+      handoffTitle: "Hubi fariimaha", handoffTitleSms: "Hubi fariimaha",
+      handoffCopy: "Sam ayaa dhaqso kuugu soo diri doona fariin luqaddaada.",
+      handoffCopySms: "Sam ayaa dhaqso kuugu soo diri doona fariin luqaddaada.",
+      handoffSub: "Kaydi lambarkaan.", handoffSubSms: "Kaydi lambarkaan."
+    },
+    es: {
+      widgetTitle: "Tiene un problema dental?", widgetAccent: "Hable con Sam.",
+      widgetSub: "Complete este breve formulario y Sam, nuestro asistente de triaje dental con IA, se comunicara con usted.",
+      widgetFree: "Este servicio es gratuito.", widgetBadge: "Sam responde en minutos · Disponible 24/7",
+      secAbout: "Sobre usted", lblName: "Nombre completo", phName: "Nombre y apellido", lblDob: "Fecha de nacimiento",
+      lblPhone: "Numero de telefono", phPhone: "Numero de 10 digitos", phoneHelper: "Sam llamara a este numero.",
+      phoneHelperSms: "Sam enviara un mensaje a este numero.",
+      lblCity: "Ciudad", phCity: "Ciudad", lblEmail: "Correo electronico", emailOpt: "(opcional)", phEmail: "Solo para seguimiento",
+      secConcern: "Problema de hoy", lblComplaint: "Que le esta molestando?",
+      phComplaint: "Ej. Mi muela trasera me ha estado doliendo por dos dias",
+      lblOnset: "Cuando comenzo?", optSelect: "Seleccionar", optToday: "Hoy", optDays: "En los ultimos dias",
+      optWeek: "Hace una semana", optMore: "Hace mas de una semana", optUnsure: "No estoy seguro",
+      lblRedflags: "Esta experimentando alguno de estos ahora?",
+      rfBreathing: "Dificultad para respirar o tragar", rfBleeding: "Sangrado incontrolable", rfSwelling: "Hinchazon facial",
+      rfFever: "Fiebre o malestar", rfTrauma: "Lesion por accidente o caida",
+      rfAvulsion: "Diente completamente desprendido", rfNone: "Ninguno de los anteriores",
+      lblAvulsionTime: "Hace cuanto se salio?", avulsionHelper: "Esto ayuda al dentista a evaluar la urgencia.",
+      avUnder5: "Ahora mismo (menos de 5 min)", av5to15: "Hace 5-15 min", av15to30: "Hace 15-30 min",
+      av30to60: "Hace 30-60 min", avOver60: "Mas de 60 min",
+      secMedical: "Informacion medica", medHelper: "Seleccione todo lo que aplique.",
+      mhAntibiotics: "Alergia a antibioticos", mhPain: "Alergia a analgesicos", mhBlood: "Anticoagulantes",
+      mhDiabetes: "Diabetes", mhPregnancy: "Embarazo", mhImmuno: "Inmunocomprometido",
+      mhOther: "Otra condicion medica importante", mhNone: "Ninguno de los anteriores",
+      mhOtherLabel: "Por favor diganos mas", mhOtherPh: "Cualquier cosa importante",
+      secCoverage: "Cobertura (opcional)", covHelper: "Esto solo ayuda con la planificacion.",
+      lblCoverage: "Informacion de cobertura", covPrivate: "Seguro dental privado", covCdcp: "CDCP", covOdsp: "ODSP",
+      covOw: "OW", covNone: "Sin cobertura dental", covPrefer: "Prefiero no decir",
+      preNote: "Despues de enviar, Sam le enviara un mensaje en su idioma.", preNoteSms: "Despues de enviar, Sam le enviara un mensaje en su idioma.",
+      warning: "Si tiene dificultad para respirar, sangrado, hinchazon importante o trauma facial, llame al 911.",
+      consent: "Al continuar, usted entiende que intercambiara mensajes de texto con Sam, y que este servicio no reemplaza la atencion medica de emergencia ni un examen dental en persona.",
+      consentSms: "Al continuar, usted entiende que intercambiara mensajes de texto con Sam, y que este servicio no reemplaza la atencion medica de emergencia ni un examen dental en persona.",
+      btnSubmit: "Hablar con Sam", btnSubmitSms: "Enviar mensaje a Sam",
+      handoffTitle: "Revise sus mensajes", handoffTitleSms: "Revise sus mensajes",
+      handoffCopy: "Sam le enviara un mensaje pronto en su idioma. Por favor responda.",
+      handoffCopySms: "Sam le enviara un mensaje pronto en su idioma. Por favor responda.",
+      handoffSub: "Guarde este numero.", handoffSubSms: "Guarde este numero."
+    },
+    zh: {
+      widgetTitle: "您有牙齿问题吗？", widgetAccent: "与Sam交谈。",
+      widgetSub: "填写此简短表格，Sam将跟进评估您的问题。",
+      widgetFree: "此服务免费。", widgetBadge: "Sam几分钟内回复 · 全天候服务",
+      secAbout: "关于您", lblName: "全名", phName: "姓名", lblDob: "出生日期",
+      lblPhone: "电话号码", phPhone: "10位数号码", phoneHelper: "Sam将拨打此号码。",
+      phoneHelperSms: "Sam将向此号码发送消息。",
+      lblCity: "城市", phCity: "城市", lblEmail: "电子邮箱", emailOpt: "（可选）", phEmail: "仅用于后续联系",
+      secConcern: "今天的问题", lblComplaint: "今天什么在困扰您？",
+      phComplaint: "例如：我的后牙疼了两天，对冷敏感",
+      lblOnset: "什么时候开始的？", optSelect: "请选择", optToday: "今天", optDays: "最近几天",
+      optWeek: "大约一周前", optMore: "一周以上前", optUnsure: "不确定",
+      lblRedflags: "您现在是否有以下情况？",
+      rfBreathing: "呼吸或吞咽困难", rfBleeding: "无法控制的出血", rfSwelling: "面部肿胀",
+      rfFever: "发烧或感觉不适", rfTrauma: "事故或跌倒造成的伤害",
+      rfAvulsion: "牙齿完全脱落", rfNone: "以上都没有",
+      lblAvulsionTime: "牙齿脱落多久了？", avulsionHelper: "这有助于牙医评估紧急程度。",
+      avUnder5: "刚刚（不到5分钟）", av5to15: "5-15分钟前", av15to30: "15-30分钟前",
+      av30to60: "30-60分钟前", avOver60: "超过60分钟",
+      secMedical: "相关医疗信息", medHelper: "选择所有适用项。",
+      mhAntibiotics: "抗生素过敏", mhPain: "止痛药过敏", mhBlood: "血液稀释剂",
+      mhDiabetes: "糖尿病", mhPregnancy: "怀孕", mhImmuno: "免疫力低下",
+      mhOther: "其他重要医疗状况", mhNone: "以上都没有",
+      mhOtherLabel: "请告诉我们更多", mhOtherPh: "任何重要信息",
+      secCoverage: "保险信息（可选）", covHelper: "仅用于帮助后续计划。",
+      lblCoverage: "保险信息", covPrivate: "私人牙科保险", covCdcp: "CDCP", covOdsp: "ODSP",
+      covOw: "OW", covNone: "没有牙科保险", covPrefer: "不想回答",
+      preNote: "提交后，Sam将用您的语言发消息。", preNoteSms: "提交后，Sam将用您的语言发消息。",
+      warning: "如果您呼吸困难、出血不止、严重肿胀或面部受伤，请立即拨打911。",
+      consent: "继续即表示您了解您将与Sam交换短信，且此服务不能替代紧急医疗或面对面牙科检查。",
+      consentSms: "继续即表示您了解您将与Sam交换短信，且此服务不能替代紧急医疗或面对面牙科检查。",
+      btnSubmit: "与Sam交谈", btnSubmitSms: "给Sam发消息",
+      handoffTitle: "查看您的短信", handoffTitleSms: "查看您的短信",
+      handoffCopy: "Sam将很快用您的语言发消息。请回复。",
+      handoffCopySms: "Sam将很快用您的语言发消息。请回复。",
+      handoffSub: "保存此号码。", handoffSubSms: "保存此号码。"
+    }
   };
 
-  var RTL = ["ar","fa"];
-  var curLang = "en";
+  function isSmsMode() { return currentLang !== "en"; }
+  function t(key) { var lang = T[currentLang] || T.en; return lang[key] || T.en[key] || key; }
 
-  function vdt(key) { return (VDT[curLang] && VDT[curLang][key]) || VDT.en[key] || key; }
+  function applyLanguage(lang) {
+    currentLang = lang;
+    var isRtl = RTL_LANGS.indexOf(lang) >= 0;
+    document.documentElement.setAttribute("dir", isRtl ? "rtl" : "ltr");
+    document.documentElement.setAttribute("lang", lang);
+    var sms = isSmsMode();
 
-  function setEl(id, txt) { var el = document.getElementById(id); if (el) el.textContent = txt; }
-
-  function applyVDLang(lang) {
-    curLang = lang;
-    var block = document.getElementById("vd-block");
-    if (block) block.setAttribute("dir", RTL.indexOf(lang) >= 0 ? "rtl" : "ltr");
-
-    // Active state on pills
-    document.querySelectorAll(".vd-lang").forEach(function(el) {
-      el.classList.toggle("vd-lang-active", el.getAttribute("data-lang") === lang);
+    document.querySelectorAll(".lang-btn").forEach(function(btn) {
+      btn.classList.toggle("active", btn.getAttribute("data-lang") === lang);
     });
 
-    var sms = lang !== "en";
-    setEl("vd-kicker", vdt("kicker"));
-    document.getElementById("vd-title").innerHTML = vdt("title") + ' <span class="vd-sam-accent">' + vdt("accent") + '</span>';
-    setEl("vd-sub", vdt("sub"));
-    var btnEl = document.getElementById("vd-btn");
-    btnEl.textContent = sms ? vdt("btn") : vdt("btn");
-    btnEl.href = INTAKE_URL + "?src=" + SRC + (sms ? "&lang=" + lang : "");
-    setEl("vd-btn-sub", vdt("btnSub"));
-    setEl("vd-lang-title", vdt("langTitle"));
-    setEl("vd-lang-note", vdt("langNote"));
-    setEl("vd-how-title", vdt("howTitle"));
-    setEl("vd-s1-title", vdt("s1t")); setEl("vd-s1-body", vdt("s1b"));
-    setEl("vd-s2-title", vdt("s2t")); setEl("vd-s2-body", vdt("s2b"));
-    setEl("vd-s3-title", vdt("s3t")); setEl("vd-s3-body", vdt("s3b"));
-    var howBtn = document.getElementById("vd-how-btn");
-    howBtn.textContent = vdt("howBtn");
-    howBtn.href = INTAKE_URL + "?src=" + SRC + "_how" + (sms ? "&lang=" + lang : "");
-    setEl("vd-cond-title", vdt("condTitle"));
-    setEl("vd-cond-sub", vdt("condSub"));
-    setEl("vd-how-btn-sub", VD_BTNSUB[curLang] || VD_BTNSUB.en);
-    setEl("vd-911", VD_WARN[curLang] || VD_WARN.en);
-    setEl("vd-disclaimer", VD_DISCL[curLang] || VD_DISCL.en);
-    // Rebuild pills
-    var pillGrid = document.getElementById("vd-cond-grid");
-    var pills = VD_PILLS[curLang] || VD_PILLS.en;
-    if (pillGrid && Array.isArray(pills)) {
-      pillGrid.innerHTML = pills.map(function(p) { return '<span class="vd-cond-pill">' + p + '</span>'; }).join("");
-    }
+    // Header
+    document.getElementById("widget-title").innerHTML = t("widgetTitle") + '<br><span class="widget-title-accent">' + t("widgetAccent") + '</span>';
+    document.getElementById("widget-sub").textContent = t("widgetSub");
+    document.getElementById("widget-free").textContent = t("widgetFree");
+    document.getElementById("widget-badge").textContent = t("widgetBadge");
+
+    // Section titles
+    document.getElementById("sec-about").textContent = t("secAbout");
+    document.getElementById("sec-concern").textContent = t("secConcern");
+    document.getElementById("sec-medical").textContent = t("secMedical");
+    document.getElementById("sec-coverage").textContent = t("secCoverage");
+
+    // Field labels
+    document.getElementById("lbl-name").textContent = t("lblName");
+    document.getElementById("patient-name").placeholder = t("phName");
+    document.getElementById("lbl-dob").textContent = t("lblDob");
+    document.getElementById("lbl-phone").textContent = t("lblPhone");
+    document.getElementById("patient-phone").placeholder = t("phPhone");
+    document.getElementById("phone-helper").textContent = sms ? t("phoneHelperSms") : t("phoneHelper");
+    document.getElementById("lbl-city").textContent = t("lblCity");
+    document.getElementById("patient-city").placeholder = t("phCity");
+    document.getElementById("lbl-email").innerHTML = t("lblEmail") + ' <span style="font-weight:400;color:var(--text-light);">' + t("emailOpt") + '</span>';
+    document.getElementById("patient-email").placeholder = t("phEmail");
+    document.getElementById("lbl-complaint").textContent = t("lblComplaint");
+    document.getElementById("chief-complaint").placeholder = t("phComplaint");
+    document.getElementById("lbl-onset").textContent = t("lblOnset");
+
+    var onset = document.getElementById("onset-bucket");
+    onset.options[0].text = t("optSelect"); onset.options[1].text = t("optToday"); onset.options[2].text = t("optDays");
+    onset.options[3].text = t("optWeek"); onset.options[4].text = t("optMore"); onset.options[5].text = t("optUnsure");
+
+    document.getElementById("lbl-redflags").textContent = t("lblRedflags");
+    document.getElementById("sp-rf-breathing").textContent = t("rfBreathing");
+    document.getElementById("sp-rf-bleeding").textContent = t("rfBleeding");
+    document.getElementById("sp-rf-swelling").textContent = t("rfSwelling");
+    document.getElementById("sp-rf-fever").textContent = t("rfFever");
+    document.getElementById("sp-rf-trauma").textContent = t("rfTrauma");
+    document.getElementById("sp-rf-avulsion").textContent = t("rfAvulsion");
+    document.getElementById("sp-rf-none").textContent = t("rfNone");
+
+    document.getElementById("sp-mh-antibiotics").textContent = t("mhAntibiotics");
+    document.getElementById("sp-mh-pain").textContent = t("mhPain");
+    document.getElementById("sp-mh-blood").textContent = t("mhBlood");
+    document.getElementById("sp-mh-diabetes").textContent = t("mhDiabetes");
+    document.getElementById("sp-mh-pregnancy").textContent = t("mhPregnancy");
+    document.getElementById("sp-mh-immuno").textContent = t("mhImmuno");
+    document.getElementById("sp-mh-other").textContent = t("mhOther");
+    document.getElementById("sp-mh-none").textContent = t("mhNone");
+    document.getElementById("med-helper").textContent = t("medHelper");
+    document.getElementById("cov-helper").textContent = t("covHelper");
+    document.getElementById("lbl-coverage").textContent = t("lblCoverage");
+
+    var cov = document.getElementById("coverage-status");
+    cov.options[0].text = t("optSelect"); cov.options[1].text = t("covPrivate"); cov.options[2].text = t("covCdcp");
+    cov.options[3].text = t("covOdsp"); cov.options[4].text = t("covOw"); cov.options[5].text = t("covNone"); cov.options[6].text = t("covPrefer");
+
+    var preNote = document.getElementById("pre-submit-note");
+    if (sms) { preNote.textContent = t("preNoteSms"); }
+    else { preNote.innerHTML = t("preNote") + ' <span class="plain-phone">1-833-959-3932</span>.'; }
+
+    document.getElementById("warning-note").textContent = t("warning");
+    document.getElementById("consent-text").textContent = sms ? t("consentSms") : t("consent");
+    document.getElementById("intake-submit-btn").textContent = sms ? t("btnSubmitSms") : t("btnSubmit");
   }
 
-
-  // Translated pills, howBtnSub, and warn for all languages
-  var VD_PILLS = {
-    en: ["Toothache","Broken tooth","Knocked-out tooth","Infection","Swelling","Lost filling or crown","Mouth injury","Post-procedure pain","Sensitivity","Appointment request","New patient inquiry","Cleaning or checkup","Insurance question","General concern"],
-    ar: ["ألم الأسنان","سن مكسور","سن مخلوع","عدوى","تورم","حشوة مفقودة","إصابة الفم","ألم بعد العلاج","حساسية","طلب موعد","مريض جديد","تنظيف","سؤال تأمين","استفسار عام"],
-    hi: ["दांत दर्द","टूटा दांत","निकला दांत","संक्रमण","सूजन","फिलिंग या क्राउन","मुंह की चोट","उपचार के बाद दर्द","संवेदनशीलता","मुलाकात का अनुरोध","नए मरीज़","सफाई या जांच","बीमा प्रश्न","सामान्य पूछताछ"],
-    pa: ["ਦੰਦ ਦਰਦ","ਟੁੱਟਾ ਦੰਦ","ਨਿਕਲਿਆ ਦੰਦ","ਇਨਫੈਕਸ਼ਨ","ਸੋਜ","ਫਿਲਿੰਗ ਜਾਂ ਕਰਾਊਨ","ਮੂੰਹ ਦੀ ਸੱਟ","ਇਲਾਜ ਤੋਂ ਬਾਅਦ ਦਰਦ","ਸੰਵੇਦਨਸ਼ੀਲਤਾ","ਮੁਲਾਕਾਤ","ਨਵਾਂ ਮਰੀਜ਼","ਸਫਾਈ ਜਾਂ ਜਾਂਚ","ਬੀਮਾ ਸਵਾਲ","ਆਮ ਪੁੱਛਗਿੱਛ"],
-    fr: ["Mal de dent","Dent cass\u00e9e","Dent arrach\u00e9e","Infection","Gonflement","Obturation perdue","Blessure buccale","Douleur post-op","Sensibilit\u00e9","Rendez-vous","Nouveau patient","Nettoyage","Question assurance","Question g\u00e9n\u00e9rale"],
-    fa: ["دندان درد","دندان شکسته","دندان کنده","عفونت","تورم","پر کردگی افتاده","آسیب دهان","درد پس از درمان","حساسیت","وقت ملاقات","بیمار جدید","تمیزکاری","سوال بیمه","سوال عمومی"],
-    so: ["Ilko xanuun","Ilko jabay","Ilko soo baxay","Infekshan","Baraar","Buuxa lumay","Dhaawac afka","Xanuun ka dib","Xasaasiyadda","Ballan","Bukaan cusub","Nadiifin","Caymis","Su'aal guud"],
-    es: ["Dolor de muela","Diente roto","Diente desprendido","Infecci\u00f3n","Hinchaz\u00f3n","Relleno perdido","Lesi\u00f3n bucal","Dolor post-tratamiento","Sensibilidad","Cita","Paciente nuevo","Limpieza","Pregunta de seguro","Consulta general"],
-    zh: ["牙痛","牙齿断裂","牙齿脱落","感染","肿胀","填充物脱落","口腔损伤","术后疼痛","敏感","预约","新患者","洁牙","保险咨询","一般咨询"]
-  };
-  var VD_BTNSUB = {
-    en: "Free \u00b7 Takes about 2 minutes", ar: "\u0645\u062c\u0627\u0646\u064a \u00b7 \u062f\u0642\u064a\u0642\u062a\u0627\u0646", hi: "\u0928\u093f\u0903\u0936\u0941\u0932\u094d\u0915 \u00b7 \u0932\u0917\u092d\u0917 2 \u092e\u093f\u0928\u091f", pa: "\u0a2e\u0a41\u0a2b\u0a3c\u0a24 \u00b7 2 \u0a2e\u0a3f\u0a70\u0a1f", fr: "Gratuit \u00b7 Environ 2 minutes", fa: "\u0631\u0627\u06cc\u06af\u0627\u0646 \u00b7 \u06f2 \u062f\u0642\u06cc\u0642\u0647", so: "Bilaash \u00b7 2 daqiiqo", es: "Gratis \u00b7 Unos 2 minutos", zh: "\u514d\u8d39 \u00b7 \u7ea62\u5206\u949f"
-  };
-  var VD_WARN = {
-    en: "If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, seek emergency care immediately by calling 911.",
-    ar: "\u0625\u0630\u0627 \u0643\u0646\u062a \u062a\u0639\u0627\u0646\u064a \u0645\u0646 \u0635\u0639\u0648\u0628\u0629 \u0641\u064a \u0627\u0644\u062a\u0646\u0641\u0633 \u0623\u0648 \u0646\u0632\u064a\u0641 \u0623\u0648 \u062a\u0648\u0631\u0645 \u0643\u0628\u064a\u0631 \u0623\u0648 \u0625\u0635\u0627\u0628\u0629 \u0641\u064a \u0627\u0644\u0648\u062c\u0647\u060c \u0627\u062a\u0635\u0644 \u0628\u0640 911 \u0641\u0648\u0631\u0627.",
-    hi: "\u092f\u0926\u093f \u0906\u092a\u0915\u094b \u0938\u093e\u0902\u0938 \u0932\u0947\u0928\u0947 \u092e\u0947\u0902 \u0915\u0920\u093f\u0928\u093e\u0908, \u0905\u0928\u093f\u092f\u0902\u0924\u094d\u0930\u093f\u0924 \u0930\u0915\u094d\u0924\u0938\u094d\u0930\u093e\u0935, \u092c\u0921\u093c\u0940 \u0938\u0942\u091c\u0928, \u092f\u093e \u0917\u0902\u092d\u0940\u0930 \u091a\u0947\u0939\u0930\u0947 \u0915\u0940 \u091a\u094b\u091f \u0939\u0948, \u0924\u094b 911 \u092a\u0930 \u0915\u0949\u0932 \u0915\u0930\u0947\u0902\u0964",
-    pa: "\u0a1c\u0a47 \u0a24\u0a41\u0a39\u0a3e\u0a28\u0a42\u0a70 \u0a38\u0a3e\u0a39 \u0a32\u0a48\u0a23 \u0a35\u0a3f\u0a71\u0a1a \u0a2e\u0a41\u0a38\u0a3c\u0a15\u0a32, \u0a2c\u0a47\u0a15\u0a3e\u0a2c\u0a42 \u0a16\u0a42\u0a28, \u0a35\u0a71\u0a21\u0a40 \u0a38\u0a4b\u0a1c, \u0a1c\u0a3e\u0a02 \u0a17\u0a70\u0a2d\u0a40\u0a30 \u0a1a\u0a3f\u0a39\u0a30\u0a47 \u0a26\u0a40 \u0a38\u0a71\u0a1f \u0a39\u0a48, \u0a24\u0a3e\u0a02 911 \u0a24\u0a47 \u0a15\u0a3e\u0a32 \u0a15\u0a30\u0a4b\u0964",
-    fr: "Si vous avez des difficult\u00e9s respiratoires, un saignement incontr\u00f4l\u00e9, un gonflement important ou un traumatisme facial grave, appelez le 911.",
-    fa: "\u0627\u06af\u0631 \u0645\u0634\u06a9\u0644 \u062a\u0646\u0641\u0633\u060c \u062e\u0648\u0646\u0631\u06cc\u0632\u06cc\u060c \u062a\u0648\u0631\u0645 \u0634\u062f\u06cc\u062f \u06cc\u0627 \u0622\u0633\u06cc\u0628 \u0635\u0648\u0631\u062a \u062f\u0627\u0631\u06cc\u062f\u060c \u0641\u0648\u0631\u0627 911 \u0628\u06af\u06cc\u0631\u06cc\u062f.",
-    so: "Haddii aad dhibaato neefsasho, dhiig, baraar weyn, ama dhaawac weji ah, wac 911.",
-    es: "Si tiene dificultad para respirar, sangrado incontrolable, hinchaz\u00f3n grave o trauma facial, llame al 911.",
-    zh: "\u5982\u679c\u60a8\u547c\u5438\u56f0\u96be\u3001\u51fa\u8840\u4e0d\u6b62\u3001\u4e25\u91cd\u80bf\u80c0\u6216\u9762\u90e8\u53d7\u4f24\uff0c\u8bf7\u7acb\u5373\u62e8\u6253911\u3002"
-  };
-
-  var VD_DISCL = {
-    en: "This service provides dental triage guidance and does not replace emergency medical care or an in-person dental examination.",
-    ar: "\u062a\u0648\u0641\u0631 \u0647\u0630\u0647 \u0627\u0644\u062e\u062f\u0645\u0629 \u0625\u0631\u0634\u0627\u062f\u0627\u062a \u0641\u0631\u0632 \u0627\u0644\u0623\u0633\u0646\u0627\u0646 \u0648\u0644\u0627 \u062a\u062d\u0644 \u0645\u062d\u0644 \u0627\u0644\u0631\u0639\u0627\u064a\u0629 \u0627\u0644\u0637\u0628\u064a\u0629 \u0627\u0644\u0637\u0627\u0631\u0626\u0629 \u0623\u0648 \u0641\u062d\u0635 \u0627\u0644\u0623\u0633\u0646\u0627\u0646 \u0627\u0644\u0634\u062e\u0635\u064a.",
-    hi: "\u092f\u0939 \u0938\u0947\u0935\u093e \u0921\u0947\u0902\u091f\u0932 \u091f\u094d\u0930\u093e\u092f\u091c \u092e\u093e\u0930\u094d\u0917\u0926\u0930\u094d\u0936\u0928 \u092a\u094d\u0930\u0926\u093e\u0928 \u0915\u0930\u0924\u0940 \u0939\u0948 \u0914\u0930 \u0906\u092a\u093e\u0924\u0915\u093e\u0932\u0940\u0928 \u091a\u093f\u0915\u093f\u0924\u094d\u0938\u093e \u092f\u093e \u0935\u094d\u092f\u0915\u094d\u0924\u093f\u0917\u0924 \u091c\u093e\u0902\u091a \u0915\u093e \u0935\u093f\u0915\u0932\u094d\u092a \u0928\u0939\u0940\u0902 \u0939\u0948\u0964",
-    pa: "\u0a07\u0a39 \u0a38\u0a47\u0a35\u0a3e \u0a21\u0a48\u0a02\u0a1f\u0a32 \u0a1f\u0a4d\u0a30\u0a3e\u0a07\u0a1c \u0a2e\u0a3e\u0a30\u0a17\u0a26\u0a30\u0a36\u0a28 \u0a2a\u0a4d\u0a30\u0a26\u0a3e\u0a28 \u0a15\u0a30\u0a26\u0a40 \u0a39\u0a48 \u0a05\u0a24\u0a47 \u0a10\u0a2e\u0a30\u0a1c\u0a48\u0a02\u0a38\u0a40 \u0a26\u0a47\u0a16\u0a2d\u0a3e\u0a32 \u0a1c\u0a3e\u0a02 \u0a35\u0a3f\u0a05\u0a15\u0a24\u0a40\u0a17\u0a24 \u0a1c\u0a3e\u0a02\u0a1a \u0a26\u0a3e \u0a2c\u0a26\u0a32 \u0a28\u0a39\u0a40\u0a02 \u0a39\u0a48\u0964",
-    fr: "Ce service fournit des conseils de triage dentaire et ne remplace pas les soins m\u00e9dicaux d'urgence ou un examen dentaire en personne.",
-    fa: "\u0627\u06cc\u0646 \u062e\u062f\u0645\u062a \u0631\u0627\u0647\u0646\u0645\u0627\u06cc\u06cc \u062a\u0631\u06cc\u0627\u0698 \u062f\u0646\u062f\u0627\u0646\u067e\u0632\u0634\u06a9\u06cc \u0627\u0631\u0627\u0626\u0647 \u0645\u06cc \u062f\u0647\u062f \u0648 \u062c\u0627\u06cc\u06af\u0632\u06cc\u0646 \u0645\u0631\u0627\u0642\u0628\u062a \u0627\u0648\u0631\u0698\u0627\u0646\u0633\u06cc \u06cc\u0627 \u0645\u0639\u0627\u06cc\u0646\u0647 \u062d\u0636\u0648\u0631\u06cc \u0646\u06cc\u0633\u062a.",
-    so: "Adeeggan wuxuu bixiyaa talo ilko oo aan beddelin daryeelka deg degga ama baaritaanka ilkaha qofka.",
-    es: "Este servicio proporciona orientaci\u00f3n de triaje dental y no reemplaza la atenci\u00f3n m\u00e9dica de emergencia ni un examen dental en persona.",
-    zh: "\u6b64\u670d\u52a1\u63d0\u4f9b\u7259\u79d1\u5206\u8bca\u6307\u5bfc\uff0c\u4e0d\u80fd\u66ff\u4ee3\u7d27\u6025\u533b\u7597\u6216\u9762\u5bf9\u9762\u7259\u79d1\u68c0\u67e5\u3002"
-  };
-
-  // Initialize pills on page load
-  var initGrid = document.getElementById("vd-cond-grid");
-  if (initGrid) {
-    var initPills = VD_PILLS.en;
-    initGrid.innerHTML = initPills.map(function(p) { return '<span class="vd-cond-pill">' + p + '</span>'; }).join("");
-  }
-
-  // Language pill clicks
-  document.getElementById("vd-lang-grid").addEventListener("click", function(e) {
-    var btn = e.target.closest(".vd-lang");
+  // Language bar
+  document.getElementById("lang-bar").addEventListener("click", function(e) {
+    var btn = e.target.closest(".lang-btn");
     if (!btn) return;
     var lang = btn.getAttribute("data-lang");
-    if (lang) applyVDLang(lang);
+    applyLanguage(lang);
   });
-})();
-</script>
 
-<!-- END VirtualDentist.ai Sam Integration Block -->
+  // ── Form logic ─────────────────────────────────────────────────
+  document.getElementById("patient-dob").max = new Date().toISOString().split("T")[0];
+
+  var rfNone = document.getElementById("rf-none");
+  var rfIds = ["rf-breathing-swallowing","rf-uncontrolled-bleeding","rf-facial-swelling","rf-fever-unwell","rf-trauma","rf-avulsion"];
+  rfNone.addEventListener("change", function() { if (rfNone.checked) rfIds.forEach(function(id) { document.getElementById(id).checked = false; }); toggleAvulsion(); });
+  rfIds.forEach(function(id) { document.getElementById(id).addEventListener("change", function() { if (this.checked) rfNone.checked = false; toggleAvulsion(); }); });
+
+  var mhNone = document.getElementById("mh-none");
+  var mhIds = ["mh-allergy-antibiotics","mh-allergy-pain","mh-blood-thinners","mh-diabetes","mh-pregnancy","mh-immunocompromised","mh-other"];
+  mhNone.addEventListener("change", function() { if (mhNone.checked) { mhIds.forEach(function(id) { document.getElementById(id).checked = false; }); toggleMhOther(); } });
+  mhIds.forEach(function(id) { document.getElementById(id).addEventListener("change", function() { if (this.checked) mhNone.checked = false; toggleMhOther(); }); });
+
+  function toggleAvulsion() { document.getElementById("avulsion-time-wrapper").style.display = document.getElementById("rf-avulsion").checked ? "block" : "none"; }
+  function toggleMhOther() { document.getElementById("mh-other-wrapper").style.display = document.getElementById("mh-other").checked ? "block" : "none"; }
+
+  // Phone formatting
+  var phoneInput = document.getElementById("patient-phone");
+  phoneInput.addEventListener("input", function() {
+    var d = phoneInput.value.replace(/\D/g, "").slice(0, 11);
+    if (d.length >= 7) phoneInput.value = d.length === 11 ? d.replace(/(\d)(\d{3})(\d{3})(\d{4})/, "$1-$2-$3-$4") : d.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3");
+    else if (d.length >= 4) phoneInput.value = "(" + d.slice(0, 3) + ") " + d.slice(3);
+    else phoneInput.value = d;
+  });
+
+  function normalizePhone(v) { return v.replace(/\D/g, ""); }
+  function formatPhoneForStorage(d) { return d.length === 11 && d[0] === "1" ? d.slice(1) : d; }
+  function looksLikeNAPhone(d) { return d.length === 10 || (d.length === 11 && d[0] === "1"); }
+  function getValue(id) { return (document.getElementById(id).value || "").trim(); }
+  function getOptionalValue(id) { var v = getValue(id); return v || null; }
+  function isChecked(id) { return document.getElementById(id).checked; }
+  function atLeastOneTrue(obj) { for (var k in obj) { if (obj[k] === true) return true; } return false; }
+
+  function validate() {
+    var n = getValue("patient-name"); if (!n || n.length < 2) return "Please enter your full name.";
+    var d = getValue("patient-dob"); if (!d) return "Please enter your date of birth.";
+    var p = normalizePhone(getValue("patient-phone")); if (!p) return "Please enter your phone number.";
+    if (!looksLikeNAPhone(p)) return "Please enter a valid 10-digit phone number.";
+    if (!getValue("patient-city")) return "Please enter your city.";
+    var cc = getValue("chief-complaint"); if (!cc || cc.length < 3) return "Please describe what's been bothering you.";
+    if (!getValue("onset-bucket")) return "Please tell us when this started.";
+    var rf = { a: isChecked("rf-breathing-swallowing"), b: isChecked("rf-uncontrolled-bleeding"), c: isChecked("rf-facial-swelling"), d: isChecked("rf-fever-unwell"), e: isChecked("rf-trauma"), f: isChecked("rf-avulsion"), g: isChecked("rf-none") };
+    if (!atLeastOneTrue(rf)) return "Please select at least one option under current symptoms.";
+    var mh = { a: isChecked("mh-allergy-antibiotics"), b: isChecked("mh-allergy-pain"), c: isChecked("mh-blood-thinners"), d: isChecked("mh-diabetes"), e: isChecked("mh-pregnancy"), f: isChecked("mh-immunocompromised"), g: isChecked("mh-other"), h: isChecked("mh-none") };
+    if (!atLeastOneTrue(mh)) return "Please select at least one option under medical information.";
+    if (isChecked("mh-other") && !getValue("mh-other-detail")) return "Please tell us more about the other medical condition.";
+    if (!isChecked("intake-acknowledge")) return "Please confirm the acknowledgement.";
+    return null;
+  }
+
+  function getIntakeSource() {
+    var params = new URLSearchParams(window.location.search);
+    return params.get("src") || "widget";
+  }
+
+  document.getElementById("intake-submit-btn").addEventListener("click", async function() {
+    var btn = document.getElementById("intake-submit-btn");
+    var errEl = document.getElementById("intake-error");
+    errEl.classList.remove("show"); errEl.textContent = "";
+    btn.disabled = true; btn.textContent = "Saving...";
+
+    try {
+      var err = validate();
+      if (err) { errEl.textContent = err; errEl.classList.add("show"); return; }
+
+      var phone = formatPhoneForStorage(normalizePhone(getValue("patient-phone")));
+      var payload = {
+        patient_name: getValue("patient-name"),
+        patient_dob: getValue("patient-dob"),
+        patient_phone: phone,
+        patient_city: getValue("patient-city"),
+        patient_province: getValue("patient-province") || "ON",
+        chief_complaint: getValue("chief-complaint"),
+        onset_bucket: getValue("onset-bucket"),
+        coverage_status: getOptionalValue("coverage-status"),
+        intake_red_flags: {
+          trouble_breathing_or_swallowing: isChecked("rf-breathing-swallowing"),
+          uncontrolled_bleeding: isChecked("rf-uncontrolled-bleeding"),
+          facial_swelling: isChecked("rf-facial-swelling"),
+          fever_or_feeling_unwell: isChecked("rf-fever-unwell"),
+          injury_to_teeth_jaw_face: isChecked("rf-trauma"),
+          tooth_knocked_out: isChecked("rf-avulsion"),
+          none_of_the_above: isChecked("rf-none")
+        },
+        intake_medical_flags: {
+          allergy_antibiotics: isChecked("mh-allergy-antibiotics"),
+          allergy_pain_medication: isChecked("mh-allergy-pain"),
+          blood_thinners: isChecked("mh-blood-thinners"),
+          diabetes: isChecked("mh-diabetes"),
+          pregnancy: isChecked("mh-pregnancy"),
+          immunocompromised: isChecked("mh-immunocompromised"),
+          other_important_medical_condition: isChecked("mh-other"),
+          other_medical_detail: getOptionalValue("mh-other-detail"),
+          none_of_the_above: isChecked("mh-none")
+        },
+        avulsion_time_bucket: isChecked("rf-avulsion") ? getOptionalValue("avulsion-time") : null,
+        patient_email: getOptionalValue("patient-email"),
+        intake_source: getIntakeSource(),
+        intake_version: "widget-v1",
+        intake_acknowledged_at: new Date().toISOString(),
+        patient_language: currentLang
+      };
+
+      var resp = await fetch(INTAKE_TRIGGER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-vd-secret": INTAKE_SECRET },
+        body: JSON.stringify(payload)
+      });
+      var result = null;
+      try { result = await resp.json(); } catch(e) {}
+
+      if (!resp.ok || !result || !result.ok) {
+        errEl.textContent = (result && result.error) || "Unable to save your information right now.";
+        errEl.classList.add("show");
+        return;
+      }
+
+      // Show handoff
+      var sms = isSmsMode();
+      document.getElementById("widget-form").style.display = "none";
+      var handoff = document.getElementById("widget-handoff");
+      handoff.classList.add("show");
+      document.getElementById("handoff-title").textContent = sms ? t("handoffTitleSms") : t("handoffTitle");
+      document.getElementById("handoff-copy").textContent = sms ? t("handoffCopySms") : t("handoffCopy");
+      document.getElementById("handoff-sub").textContent = sms ? t("handoffSubSms") : t("handoffSub");
+
+      // Notify parent iframe of resize
+      if (window.parent !== window) {
+        try { window.parent.postMessage({ type: "vd-widget-resize", height: document.body.scrollHeight }, "*"); } catch(e) {}
+      }
+
+    } catch(e) {
+      errEl.textContent = "Unexpected error. Please try again.";
+      errEl.classList.add("show");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = isSmsMode() ? t("btnSubmitSms") : t("btnSubmit");
+    }
+  });
+
+  // Auto-resize for iframe
+  if (window.parent !== window) {
+    var resizeObserver = new ResizeObserver(function() {
+      try { window.parent.postMessage({ type: "vd-widget-resize", height: document.body.scrollHeight }, "*"); } catch(e) {}
+    });
+    resizeObserver.observe(document.body);
+  }
+</script>
+</body>
+</html>
