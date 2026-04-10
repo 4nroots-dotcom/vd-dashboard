@@ -1108,7 +1108,7 @@
 
     var result = await sb
       .from("triage_cases")
-      .select("id, patient_name, patient_phone, patient_dob, patient_city, patient_email, chief_complaint, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at, revenue_generated, sms_transcript, sms_structured_output, has_sms_continuation, sms_received_at, intake_medical_flags, clinical_note, patient_language")
+      .select("id, patient_name, patient_phone, patient_dob, patient_city, patient_email, chief_complaint, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at, revenue_generated, sms_transcript, sms_structured_output, has_sms_continuation, sms_received_at, intake_medical_flags, clinical_note, patient_language, extraction_source")
       .order("created_at", { ascending: currentSortAsc });
 
     if (result.error) {
@@ -1280,13 +1280,18 @@
     // SMS banner
     var existingBanner = document.getElementById("sms-case-banner");
     if (existingBanner) existingBanner.remove();
-    if (c.has_sms_continuation) {
+    var isSmsExtraction = c.extraction_source === "sms-openai";
+    var isSmsTriage = isSmsExtraction && c.patient_language && c.patient_language !== "en";
+    if (c.has_sms_continuation || isSmsExtraction) {
       var smsBanner = document.createElement("div");
       smsBanner.id = "sms-case-banner";
       smsBanner.className = "sms-banner";
-      var isSmsPrimary = c.intake_source === "sms";
-      smsBanner.innerHTML = isSmsPrimary
-        ? "<strong>&#128172; SMS intake submission.</strong> This case was triaged entirely via text &mdash; no voice call was made. The AI-generated clinical note should be reviewed carefully for completeness and errors before taking action."
+      var langLabels = { ar: "Arabic", hi: "Hindi", pa: "Punjabi", fr: "French", fa: "Farsi", so: "Somali", es: "Spanish", zh: "Chinese" };
+      var langName = langLabels[c.patient_language] || c.patient_language;
+      smsBanner.innerHTML = isSmsTriage
+        ? "<strong>&#128172; SMS triage (" + esc(langName) + ").</strong> This case was triaged entirely via text in the patient's language. The AI-generated clinical note is in English. Review carefully for completeness before taking action."
+        : isSmsExtraction
+        ? "<strong>&#128172; SMS triage.</strong> This case was triaged entirely via text &mdash; no voice call was made. Review the AI-generated clinical note carefully for completeness before taking action."
         : "<strong>&#9888; SMS continuation.</strong> This patient provided additional information via text after the call ended. Review the SMS thread below and verify the clinical note is complete before finalising this case.";
       revenueBar.parentNode.insertBefore(smsBanner, revenueBar.nextSibling);
     }
