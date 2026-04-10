@@ -1108,7 +1108,7 @@
 
     var result = await sb
       .from("triage_cases")
-      .select("id, patient_name, patient_phone, patient_dob, patient_city, patient_email, chief_complaint, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at, revenue_generated, sms_transcript, sms_structured_output, has_sms_continuation, sms_received_at, intake_medical_flags, clinical_note")
+      .select("id, patient_name, patient_phone, patient_dob, patient_city, patient_email, chief_complaint, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at, revenue_generated, sms_transcript, sms_structured_output, has_sms_continuation, sms_received_at, intake_medical_flags, clinical_note, patient_language")
       .order("created_at", { ascending: currentSortAsc });
 
     if (result.error) {
@@ -1201,11 +1201,17 @@
         ? "<span style=\"display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:1px 6px;border-radius:999px;background:#f0fff4;color:#276749;border:1px solid #68d391;margin-left:4px;\">In-Office</span>"
         : "<span style=\"display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:1px 6px;border-radius:999px;background:#ebf8ff;color:#2b6cb0;border:1px solid #90cdf4;margin-left:4px;\">Web</span>";
 
+      var langCode = c.patient_language || "en";
+      var langLabels = { ar: "Arabic", hi: "Hindi", pa: "Punjabi", fr: "French", fa: "Farsi", so: "Somali", es: "Spanish", zh: "Chinese" };
+      var langPip = langCode !== "en" && langLabels[langCode]
+        ? "<span style=\"display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:1px 6px;border-radius:999px;background:#faf5ff;color:#6b46c1;border:1px solid #b794f4;margin-left:4px;\">SMS \u00b7 " + langLabels[langCode] + "</span>"
+        : "";
+
       item.innerHTML =
         "<div class=\"case-item-time\">" + esc(date) + " &middot; " + esc(time) + completed + "</div>" +
         "<div class=\"case-item-name\">" + esc(name) + "</div>" +
         "<div class=\"case-item-complaint\">" + esc(complaint) + "</div>" +
-        "<span class=\"badge " + badgeCls + "\">" + badgeTxt + "</span>" + sourcePip + nonDentalPip;
+        "<span class=\"badge " + badgeCls + "\">" + badgeTxt + "</span>" + sourcePip + nonDentalPip + langPip;
 
       item.addEventListener("click", function() { selectCase(c.id); });
       el.appendChild(item);
@@ -1371,6 +1377,7 @@
             '<div class="contact-row"><div class="contact-field-label">Phone</div><div class="contact-field-value">' + esc(pendingPhone) + '</div></div>' +
             '<div class="contact-row"><div class="contact-field-label">Date of Birth</div><div class="contact-field-value">' + esc(pendingDob) + '</div></div>' +
             '<div class="contact-row"><div class="contact-field-label">City</div><div class="contact-field-value">' + esc(c.patient_city || "—") + '</div></div>' +
+            (c.patient_language && c.patient_language !== "en" ? '<div class="contact-row"><div class="contact-field-label">Language</div><div class="contact-field-value" style="color:#6b46c1;font-weight:600;">' + esc(({"ar":"Arabic","hi":"Hindi","pa":"Punjabi","fr":"French","fa":"Farsi","so":"Somali","es":"Spanish","zh":"Chinese"})[c.patient_language] || c.patient_language) + ' (SMS triage)</div></div>' : '') +
             '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Chief Complaint</div><div class="contact-field-value">' + esc(c.chief_complaint || "—") + '</div></div>' +
             '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Medical History</div><div class="contact-field-value">' + esc(humanizeMedicalFlags(c.intake_medical_flags || {})) + '</div></div>' +
           '</div>' +
@@ -1408,6 +1415,7 @@
         '<div class="contact-row"><div class="contact-field-label">Email</div><div class="contact-field-value">' + esc(c.patient_email || "—") + '</div></div>' +
         '<div class="contact-row"><div class="contact-field-label">City</div><div class="contact-field-value">' + esc(c.patient_city || "—") + '</div></div>' +
         '<div class="contact-row"><div class="contact-field-label">Coverage</div><div class="contact-field-value">' + esc(coverageDisplay) + '</div></div>' +
+        (c.patient_language && c.patient_language !== "en" ? '<div class="contact-row"><div class="contact-field-label">Language</div><div class="contact-field-value" style="color:#6b46c1;font-weight:600;">' + esc(({"ar":"Arabic","hi":"Hindi","pa":"Punjabi","fr":"French","fa":"Farsi","so":"Somali","es":"Spanish","zh":"Chinese"})[c.patient_language] || c.patient_language) + ' (SMS triage)</div></div>' : '') +
       '</div>';
     body.appendChild(contactCard);
 
