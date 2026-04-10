@@ -1373,6 +1373,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     // Store variant for intake_source tracking
     var srcParam = urlParams.get("src");
     var variantSrc = srcParam || (variantKey ? "lp_" + variantKey : null);
+
+    // Auto-select language from URL param (e.g., ?lang=ar from Jackson Square page)
+    var langParam = urlParams.get("lang");
+    if (langParam && T[langParam]) {
+      applyLanguage(langParam);
+    }
     var welcomeScreen = document.getElementById("screen-welcome");
     var formScreen = document.getElementById("screen-form");
     var handoffScreen = document.getElementById("screen-handoff");
