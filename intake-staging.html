@@ -1213,7 +1213,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       if (warningPanel) warningPanel.textContent = t("warningPanel");
       if (flowTitle) flowTitle.textContent = sms ? t("flowTitleSms") : t("flowTitle");
       if (flowCopy) flowCopy.textContent = sms ? t("flowCopySms") : t("flowCopy");
-      // Legal note: stays in English — legal disclaimer and address do not translate
+      // Legal note: translate the disclaimer text, keep address in English
+      var legalDisclaimer = document.getElementById("legal-disclaimer");
+      if (legalDisclaimer) legalDisclaimer.textContent = t("legalNote");
 
       // Trust row
       var trustItems = document.querySelectorAll(".trust-item span:not(.trust-dot)");
