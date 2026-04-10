@@ -893,7 +893,7 @@
 
         '<div class="detail-section"><div class="section-header"><span class="section-title">Clinical Flags</span></div><div class="flags-grid">' + flags.map(function(f) { return '<div class="flag-item"><div class="flag-dot ' + (f.val === true ? "present" : "absent") + '"></div><span' + (f.val === true ? ' style="color:#e8f0fe"' : '') + '>' + escHtml(f.label) + '</span></div>'; }).join("") + '</div></div>' +
 
-        '<div class="detail-section"><div class="section-header"><span class="section-title">AI Clinical Note</span><span class="note-lock-badge">Draft \u00B7 Read Only</span></div><div class="section-body"><div class="clinical-note-text">' + escHtml((function(){ var age = calcAge(c.patient_dob); var note = c.clinical_note || "No clinical note generated."; return age ? age + "-year-old patient.\n\n" + note : note; })()) + '</div></div></div>' +
+        '<div class="detail-section"><div class="section-header"><span class="section-title">AI Clinical Note</span><span class="note-lock-badge">Draft \u00B7 Read Only</span></div><div class="section-body"><div class="clinical-note-text">' + escHtml((function(){ var age = calcAge(c.patient_dob); var note = c.clinical_note || "No clinical note generated."; var hasAge = /^\d{1,3}-year-old patient/.test(note); return (age && !hasAge) ? age + "-year-old patient.\n\n" + note : note; })()) + '</div></div></div>' +
 
         transcriptHtml +
 
