@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-K7XDHFB8');</script>
+<!-- End Google Tag Manager -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>Martindale Dental &mdash; Emergency Dental Triage</title>
@@ -63,6 +70,22 @@
     .hero-lang-line em { font-style: italic; color: var(--cyan); }
     .hero-multilingual.hidden { display: none; }
     .hero-title-accent { font-family: "DM Serif Display", serif; font-style: italic; color: var(--cyan); }
+    .hero-response { font-size: 13px; color: var(--cyan); font-weight: 600; letter-spacing: 0.03em; margin-top: 4px; margin-bottom: 8px; }
+
+    .lf-section { margin-top: 36px; padding: 28px 24px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); }
+    .lf-title { font-family: "DM Serif Display", serif; font-size: 24px; color: var(--white); margin-bottom: 16px; line-height: 1.2; }
+    .lf-body { font-size: 14px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 12px; }
+    .lf-step { display: flex; gap: 14px; margin-bottom: 18px; }
+    .lf-step-num { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: rgba(0,200,232,0.12); border: 1px solid rgba(0,200,232,0.3); color: var(--cyan); font-weight: 700; font-size: 14px; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
+    .lf-step-title { font-size: 15px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+    .lf-step-body { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+    .lf-micro-cta { margin-top: 20px; text-align: center; }
+    .lf-micro-sub { font-size: 12px; color: var(--text-muted); margin-top: 8px; }
+    .lf-cta-btn { font-size: 15px; padding: 14px 36px; }
+    .lf-conditions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .lf-condition { font-size: 12px; padding: 6px 12px; border-radius: 999px; background: rgba(0,200,232,0.08); border: 1px solid rgba(0,200,232,0.2); color: var(--cyan-soft); font-weight: 500; }
+    .lf-final-cta { text-align: center; background: rgba(0,200,232,0.04); border-color: rgba(0,200,232,0.15); }
+    .hero-context { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-top: 8px; font-style: italic; }
     .lang-btn {
       padding: 9px 18px; border-radius: 999px; border: 1px solid rgba(0,200,232,0.25);
       background: rgba(0,200,232,0.06); color: var(--cyan-soft); font-size: 14px;
@@ -341,6 +364,10 @@
 
 </head>
 <body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K7XDHFB8"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
   <div class="shell">
 
     <div class="brand">
@@ -405,6 +432,7 @@
           </div>
           <div class="hero-sub" id="hero-sub">Tell us what is happening, and we'll help assess the situation and guide next steps.</div>
           <div class="hero-cost">This service is available at no cost.</div>
+          <div class="hero-response" id="hero-response">Sam responds in minutes &middot; Available 24/7</div>
           <div class="hero-cta-block">
             <button class="hero-primary-btn" id="start-assessment-btn" type="button">Start assessment</button>
             <div class="trust-row">
@@ -433,8 +461,56 @@
           </div>
         </div>
 
-        <div class="legal-note">
+        <div id="long-form-sections" style="display:none;">
+          <div class="lf-section">
+            <div class="lf-title">Here's exactly what happens after you click.</div>
+            <div class="lf-step"><span class="lf-step-num">1</span><div><div class="lf-step-title">Fill out a short form (about 2 minutes)</div><div class="lf-step-body">Describe your concern in your own words &mdash; what happened, where it hurts, when it started. No account needed. No insurance information required to start.</div></div></div>
+            <div class="lf-step"><span class="lf-step-num">2</span><div><div class="lf-step-title">Sam follows up</div><div class="lf-step-body">Sam is our AI dental triage assistant. After you submit, Sam calls or texts the phone number you provided and walks you through a short set of guided clinical questions &mdash; covering pain level, swelling, trauma, and key red flag symptoms. Sam is not a dentist and does not diagnose &mdash; Sam collects structured information so the dentist doesn't have to start from scratch.</div></div></div>
+            <div class="lf-step"><span class="lf-step-num">3</span><div><div class="lf-step-title">A licensed dentist reviews your case</div><div class="lf-step-body">A licensed Ontario dentist from Martindale Dental at Jackson Square reviews the structured triage summary. During office hours, the dentist may follow up with you directly by phone with guidance, next steps, or an appointment. After hours, your case is reviewed first thing the next business day.</div></div></div>
+            <div class="lf-micro-cta"><button class="hero-primary-btn lf-cta-btn" type="button" onclick="document.getElementById('start-assessment-btn').click()">Start assessment</button><div class="lf-micro-sub">Free &middot; Takes about 2 minutes</div></div>
+          </div>
+
+          <div class="lf-section">
+            <div class="lf-title">Why we built this.</div>
+            <div class="lf-body">Dental emergencies don't wait for office hours. But most dental clinics aren't set up to help you at 11pm on a Saturday. You're stuck Googling symptoms, debating whether to go to the ER, or just waiting it out in pain until Monday.</div>
+            <div class="lf-body">We built this triage service so you can get your concern in front of a real dentist &mdash; even when our doors are closed. You tell us what's happening, Sam gathers the clinical details, and a dentist reviews it all. No guesswork. No waiting on hold. No unnecessary ER visit for something a dentist should handle.</div>
+            <div class="lf-body">And yes, it's free. There's no charge for the triage assessment. If you need to come in for treatment, that's a separate conversation &mdash; and we'll walk you through costs before anything happens.</div>
+          </div>
+
+          <div class="lf-section">
+            <div class="lf-title">Not sure if it counts as an emergency? Start here anyway.</div>
+            <div class="lf-body">Our triage service handles a wide range of dental concerns, including:</div>
+            <div class="lf-conditions">
+              <span class="lf-condition">Severe or persistent toothache</span>
+              <span class="lf-condition">Broken, cracked, or chipped teeth</span>
+              <span class="lf-condition">Knocked-out (avulsed) tooth</span>
+              <span class="lf-condition">Dental abscess or signs of infection</span>
+              <span class="lf-condition">Facial or gum swelling</span>
+              <span class="lf-condition">Lost filling, crown, or restoration</span>
+              <span class="lf-condition">Injury to the mouth, jaw, or teeth</span>
+              <span class="lf-condition">Post-procedure pain or complications</span>
+            </div>
+            <div class="lf-body" style="margin-top:12px;">If you're not sure whether your situation qualifies, start the assessment anyway. That's exactly what the triage is for.</div>
+            <div class="lf-micro-cta"><button class="hero-primary-btn lf-cta-btn" type="button" onclick="document.getElementById('start-assessment-btn').click()">Start assessment</button><div class="lf-micro-sub">Describe your concern now. Sam will take it from there.</div></div>
+          </div>
+
+          <div class="lf-section">
+            <div class="lf-title">A real dental clinic in downtown Hamilton.</div>
+            <div class="lf-body">Martindale Dental is located in Jackson Square Mall at 2 King St W, Unit #270, Hamilton, ON L8P 1A1. We're a full-service dental clinic serving the Hamilton community. The VirtualDentist.ai triage service is an extension of our practice &mdash; a way for us to start helping you before you even walk through our door.</div>
+          </div>
+
+          <div class="lf-section lf-final-cta">
+            <div class="lf-title">Don't wait it out. Get assessed now.</div>
+            <div class="lf-body">Free. Private. Reviewed by a licensed Ontario dentist. Available 24/7 from your phone.</div>
+            <div class="lf-micro-cta"><button class="hero-primary-btn lf-cta-btn" type="button" onclick="document.getElementById('start-assessment-btn').click()">Start assessment</button></div>
+            <div class="warning-panel" style="margin-top:20px;">If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, seek emergency care immediately by calling 911.</div>
+          </div>
+        </div>
+
+        <div class="legal-note" id="legal-note">
+          <div style="margin-bottom:6px;font-weight:600;color:var(--text-secondary);">Martindale Dental &middot; Jackson Square &middot; 2 King St W, Unit #270, Hamilton, ON L8P 1A1</div>
           This service is provided by Martindale Dental at Jackson Square, powered by VirtualDentist.ai. It provides dental triage guidance and does not replace emergency medical care or an in-person dental examination.
+          <div style="margin-top:6px;color:var(--text-muted);font-size:11px;">Your information stays in Canada. Built for Canadian privacy standards and Ontario dental regulations.</div>
         </div>
       </div>
     </section>
@@ -648,7 +724,7 @@
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
         heroTitle: "Are you having a dental concern?", heroAccent: "We can help.",
         heroSub: "Tell us what is happening, and we'll help assess the situation and guide next steps.",
-        heroCost: "This service is available at no cost.",
+        heroCost: "This service is available at no cost.", heroResponse: "Sam responds in minutes 00b7 Available 24/7",
         heroBtn: "Start assessment",
         trustSecure: "Secure and private",
         trustSam: "Speak first with Sam, our AI dental triage assistant",
@@ -711,7 +787,7 @@
         heroKicker: "عيادة مارتنديل لطب الأسنان \u00b7 جاكسون سكوير",
         heroTitle: "هل لديك مشكلة في الأسنان؟", heroAccent: "نستطيع المساعدة.",
         heroSub: "أخبرنا بما يحدث وسنساعدك في تقييم الوضع وإرشادك للخطوات التالية.",
-        heroCost: "هذه الخدمة متاحة مجانا.",
+        heroCost: "هذه الخدمة متاحة مجانا.", heroResponse: "سام يرد في دقائق · متاح على مدار الساعة",
         heroBtn: "ابدأ التقييم",
         trustSecure: "آمن وخاص",
         trustSam: "تحدث أولا مع سام، مساعد فرز الأسنان بالذكاء الاصطناعي",
@@ -774,7 +850,7 @@
         heroKicker: "मार्टिंडेल डेंटल \u00b7 जैक्सन स्क्वेयर",
         heroTitle: "क्या आपको दांतों की समस्या है?", heroAccent: "हम मदद कर सकते हैं।",
         heroSub: "हमें बताएं क्या हो रहा है, और हम स्थिति का आकलन करने और अगले कदमों का मार्गदर्शन करने में मदद करेंगे।",
-        heroCost: "यह सेवा निःशुल्क उपलब्ध है।",
+        heroCost: "यह सेवा निःशुल्क उपलब्ध है।", heroResponse: "सैम मिनटों में जवाब देता है · 24/7 उपलब्ध",
         heroBtn: "आकलन शुरू करें",
         trustSecure: "सुरक्षित और निजी", trustSam: "पहले सैम से बात करें, हमारे AI डेंटल ट्रायज सहायक", trustDentist: "एक लाइसेंस प्राप्त ओंटारियो दंत चिकित्सक हर मामले की समीक्षा करता है",
         warningPanel: "यदि आपको सांस लेने में कठिनाई, अनियंत्रित रक्तस्राव, बड़ी सूजन, या गंभीर चेहरे की चोट है, तो 911 पर कॉल करके तुरंत आपातकालीन देखभाल लें।",
@@ -834,7 +910,7 @@
         heroKicker: "ਮਾਰਟਿੰਡੇਲ ਡੈਂਟਲ \u00b7 ਜੈਕਸਨ ਸਕੁਆਇਰ",
         heroTitle: "ਕੀ ਤੁਹਾਨੂੰ ਦੰਦਾਂ ਦੀ ਸਮੱਸਿਆ ਹੈ?", heroAccent: "ਅਸੀਂ ਮਦਦ ਕਰ ਸਕਦੇ ਹਾਂ।",
         heroSub: "ਸਾਨੂੰ ਦੱਸੋ ਕੀ ਹੋ ਰਿਹਾ ਹੈ, ਅਤੇ ਅਸੀਂ ਸਥਿਤੀ ਦਾ ਮੁਲਾਂਕਣ ਕਰਨ ਅਤੇ ਅਗਲੇ ਕਦਮਾਂ ਵਿੱਚ ਮਦਦ ਕਰਾਂਗੇ।",
-        heroCost: "ਇਹ ਸੇਵਾ ਮੁਫ਼ਤ ਉਪਲਬਧ ਹੈ।",
+        heroCost: "ਇਹ ਸੇਵਾ ਮੁਫ਼ਤ ਉਪਲਬਧ ਹੈ।", heroResponse: "ਸੈਮ ਮਿੰਟਾਂ ਵਿੱਚ ਜਵਾਬ ਦਿੰਦਾ ਹੈ · 24/7 ਉਪਲਬਧ",
         heroBtn: "ਮੁਲਾਂਕਣ ਸ਼ੁਰੂ ਕਰੋ",
         trustSecure: "ਸੁਰੱਖਿਅਤ ਅਤੇ ਨਿੱਜੀ", trustSam: "ਪਹਿਲਾਂ ਸੈਮ ਨਾਲ ਗੱਲ ਕਰੋ, ਸਾਡਾ AI ਡੈਂਟਲ ਸਹਾਇਕ", trustDentist: "ਇੱਕ ਲਾਇਸੈਂਸ ਪ੍ਰਾਪਤ ਓਂਟਾਰੀਓ ਦੰਦਾਂ ਦਾ ਡਾਕਟਰ ਹਰ ਕੇਸ ਦੀ ਸਮੀਖਿਆ ਕਰਦਾ ਹੈ",
         warningPanel: "ਜੇ ਤੁਹਾਨੂੰ ਸਾਹ ਲੈਣ ਵਿੱਚ ਮੁਸ਼ਕਲ, ਬੇਕਾਬੂ ਖੂਨ ਵਹਿਣਾ, ਵੱਡੀ ਸੋਜ, ਜਾਂ ਗੰਭੀਰ ਚਿਹਰੇ ਦੀ ਸੱਟ ਹੈ, ਤਾਂ 911 ਤੇ ਕਾਲ ਕਰਕੇ ਤੁਰੰਤ ਐਮਰਜੈਂਸੀ ਦੇਖਭਾਲ ਲਓ।",
@@ -876,7 +952,7 @@
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
         heroTitle: "Avez-vous un probleme dentaire?", heroAccent: "Nous pouvons aider.",
         heroSub: "Dites-nous ce qui se passe et nous vous aiderons a evaluer la situation et a vous guider.",
-        heroCost: "Ce service est offert sans frais.",
+        heroCost: "Ce service est offert sans frais.", heroResponse: "Sam repond en quelques minutes · Disponible 24/7",
         heroBtn: "Commencer l'evaluation",
         trustSecure: "Securise et prive", trustSam: "Parlez d'abord avec Sam, notre assistant de triage dentaire IA", trustDentist: "Un dentiste agree de l'Ontario examine chaque cas et notre bureau vous contactera directement",
         warningPanel: "Si vous avez des difficultes a respirer, un saignement incontrole, un gonflement important ou un traumatisme facial grave, appelez le 911 immediatement.",
@@ -918,7 +994,7 @@
         heroKicker: "مارتیندیل دنتال \u00b7 جکسون اسکوئر",
         heroTitle: "آیا مشکل دندانی دارید؟", heroAccent: "ما می‌توانیم کمک کنیم.",
         heroSub: "به ما بگویید چه اتفاقی افتاده و ما به شما کمک خواهیم کرد وضعیت را ارزیابی کنید.",
-        heroCost: "این خدمات رایگان است.",
+        heroCost: "این خدمات رایگان است.", heroResponse: "سام در عرض چند دقیقه پاسخ می دهد · 24/7 در دسترس",
         heroBtn: "شروع ارزیابی",
         trustSecure: "امن و خصوصی", trustSam: "ابتدا با سام صحبت کنید، دستیار تریاژ دندانپزشکی ما", trustDentist: "یک دندانپزشک دارای مجوز انتاریو هر مورد را بررسی می کند",
         warningPanel: "اگر مشکل تنفس، خونریزی غیرقابل کنترل، تورم شدید یا آسیب جدی صورت دارید، فورا با 911 تماس بگیرید.",
@@ -959,7 +1035,7 @@
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
         heroTitle: "Ma leedahay dhibaato ilko?", heroAccent: "Waan ku caawin karnaa.",
         heroSub: "Noo sheeg waxa dhacaya, waana ku caawin doonaa qiimaynta xaaladda iyo talaabooyinka xiga.",
-        heroCost: "Adeeggan waa bilaash.",
+        heroCost: "Adeeggan waa bilaash.", heroResponse: "Sam wuu ku jawaabi doonaa daqiiqado gudahood · 24/7",
         heroBtn: "Bilow qiimaynta",
         trustSecure: "Amaan ah oo gaar ah", trustSam: "Marka hore la hadal Sam, kaaliyaha qiimaynta ilkaha AI", trustDentist: "Dhakhtarka ilkaha ee Ontario oo liisan leh ayaa dib u eegaya kiis kasta",
         warningPanel: "Haddii aad dhibaato neefsashada, dhiig aan joogsan karin, bararka weyn, ama dhaawac weji ah aad u daran, wac 911 isla markiiba.",
@@ -998,7 +1074,7 @@
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
         heroTitle: "Tiene un problema dental?", heroAccent: "Podemos ayudar.",
         heroSub: "Diganos que esta pasando y le ayudaremos a evaluar la situacion y guiarle en los proximos pasos.",
-        heroCost: "Este servicio es gratuito.",
+        heroCost: "Este servicio es gratuito.", heroResponse: "Sam responde en minutos · Disponible 24/7",
         heroBtn: "Iniciar evaluacion",
         trustSecure: "Seguro y privado", trustSam: "Hable primero con Sam, nuestro asistente de triaje dental con IA", trustDentist: "Un dentista licenciado de Ontario revisa cada caso y nuestra oficina se comunicara con usted directamente",
         warningPanel: "Si tiene dificultad para respirar, sangrado incontrolable, hinchazon importante o trauma facial grave, llame al 911 inmediatamente.",
@@ -1038,7 +1114,7 @@
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
         heroTitle: "您有牙齿问题吗？", heroAccent: "我们可以帮助您。",
         heroSub: "告诉我们发生了什么，我们将帮助您评估情况并指导下一步。",
-        heroCost: "此服务免费提供。",
+        heroCost: "此服务免费提供。", heroResponse: "Sam几分钟内回复 · 全天候服务",
         heroBtn: "开始评估",
         trustSecure: "安全且私密", trustSam: "先与Sam交谈，我们的AI牙科分诊助手", trustDentist: "安大略省持牌牙医审查每个病例，我们的诊所将直接与您联系",
         warningPanel: "如果您呼吸困难、出血不止、严重肿胀或面部严重受伤，请立即拨打911。",
@@ -1106,6 +1182,7 @@
       var heroTitle = document.getElementById("hero-title");
       var heroSub = document.getElementById("hero-sub");
       var heroCost = document.querySelector(".hero-cost");
+      var heroResponse = document.getElementById("hero-response");
       var heroBtn = document.getElementById("start-assessment-btn");
       var warningPanel = document.querySelector(".warning-panel");
       var flowTitle = document.querySelector(".flow-title");
@@ -1113,9 +1190,17 @@
       var legalNote = document.querySelector(".legal-note");
 
       if (heroKicker) heroKicker.textContent = t("heroKicker");
-      if (heroTitle) heroTitle.innerHTML = t("heroTitle") + '<br><span class="hero-title-accent">' + t("heroAccent") + '</span>';
-      if (heroSub) heroSub.textContent = t("heroSub");
+      // If variant is active and English, use variant hero; otherwise use translation
+      if (variantKey && VARIANTS[variantKey] && lang === "en") {
+        var v = VARIANTS[variantKey];
+        if (heroTitle) heroTitle.innerHTML = v.title + '<br><span class="hero-title-accent">' + v.accent + '</span>';
+        if (heroSub) heroSub.textContent = v.sub;
+      } else {
+        if (heroTitle) heroTitle.innerHTML = t("heroTitle") + '<br><span class="hero-title-accent">' + t("heroAccent") + '</span>';
+        if (heroSub) heroSub.textContent = t("heroSub");
+      }
       if (heroCost) heroCost.textContent = t("heroCost");
+      if (heroResponse) heroResponse.textContent = t("heroResponse");
       if (heroBtn) heroBtn.textContent = t("heroBtn");
       if (warningPanel) warningPanel.textContent = t("warningPanel");
       if (flowTitle) flowTitle.textContent = sms ? t("flowTitleSms") : t("flowTitle");
@@ -1213,6 +1298,73 @@
       var lang = btn.getAttribute("data-lang");
       if (lang && T[lang]) applyLanguage(lang);
     });
+
+    // ── Variant system ───────────────────────────────────────────
+    var VARIANTS = {
+      emergency: {
+        title: "Dental emergency in Hamilton?",
+        accent: "Help is here — 24/7.",
+        sub: "Tell us what's happening and get assessed by a licensed Ontario dentist. No waiting room. No phone hold. Start online now — it takes about 2 minutes.",
+        context: "Located in Jackson Square, downtown Hamilton. Walk-ins welcome during office hours. After hours? Start here and a dentist will follow up first thing."
+      },
+      afterhours: {
+        title: "It's after hours —",
+        accent: "but we're still here.",
+        sub: "Our AI triage assistant Sam is available nights, weekends, and holidays. Describe your concern now, and a licensed Ontario dentist will review your case and follow up during the next available office hours.",
+        context: "No need to wait until Monday. No need to go to the ER for a dental issue. Start your assessment now and wake up with a plan."
+      },
+      toothache: {
+        title: "Toothache keeping you up?",
+        accent: "Get assessed now.",
+        sub: "Describe your pain and symptoms. Sam, our AI dental triage assistant, will follow up with guided questions — and a licensed Ontario dentist reviews every case.",
+        context: "You don't need to wait it out or guess what's wrong. Get a professional assessment started from your phone — day or night."
+      },
+      broken: {
+        title: "Broken or knocked-out tooth?",
+        accent: "Start here.",
+        sub: "Tell us what happened — a fall, a bite, an accident. Sam will walk you through a quick triage, and a licensed Ontario dentist will follow up with guidance and next steps.",
+        context: "Time matters with dental trauma. Start your assessment now — even if it's after hours — so your dentist has the details first thing."
+      },
+      infection: {
+        title: "Swelling or signs of infection?",
+        accent: "Don't wait.",
+        sub: "Dental infections can escalate quickly. Describe your symptoms now — Sam will follow up with clinical triage questions, and a licensed Ontario dentist reviews every case.",
+        context: "If you have a fever, facial swelling, or difficulty swallowing along with dental pain, getting assessed promptly is important. Start here — a dentist will follow up."
+      },
+      virtual: {
+        title: "See a dentist",
+        accent: "without leaving home.",
+        sub: "Start with a quick online assessment. Sam, our AI triage assistant, follows up to gather details — then a licensed Ontario dentist reviews your case and follows up directly.",
+        context: "No commute, no waiting room. Get your dental concern assessed from your couch, your office, or wherever you are. Available 24/7 in Hamilton."
+      }
+    };
+
+    var urlParams = new URLSearchParams(window.location.search);
+    var variantKey = urlParams.get("v");
+    var isLongForm = urlParams.get("long") === "1";
+
+    if (variantKey && VARIANTS[variantKey]) {
+      var v = VARIANTS[variantKey];
+      var heroTitle = document.getElementById("hero-title");
+      if (heroTitle) heroTitle.innerHTML = v.title + '<br><span class="hero-title-accent">' + v.accent + '</span>';
+      var heroSub = document.getElementById("hero-sub");
+      if (heroSub) heroSub.textContent = v.sub;
+      // Add context line
+      var heroContext = document.createElement("div");
+      heroContext.className = "hero-context";
+      heroContext.id = "hero-context";
+      heroContext.textContent = v.context;
+      heroSub.parentNode.insertBefore(heroContext, heroSub.nextSibling);
+    }
+
+    if (isLongForm) {
+      var lf = document.getElementById("long-form-sections");
+      if (lf) lf.style.display = "block";
+    }
+
+    // Store variant for intake_source tracking
+    var srcParam = urlParams.get("src");
+    var variantSrc = srcParam || (variantKey ? "lp_" + variantKey : null);
     var welcomeScreen = document.getElementById("screen-welcome");
     var formScreen = document.getElementById("screen-form");
     var handoffScreen = document.getElementById("screen-handoff");
@@ -1420,6 +1572,7 @@
     }
 
     function getIntakeSource() {
+      if (variantSrc) return variantSrc;
       var params = new URLSearchParams(window.location.search);
       return params.get("src") === "office" ? "in_office" : "web_form";
     }
