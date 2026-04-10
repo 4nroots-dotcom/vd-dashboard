@@ -1196,7 +1196,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var warningPanel = document.querySelector(".warning-panel");
       var flowTitle = document.querySelector(".flow-title");
       var flowCopy = document.querySelector(".flow-copy");
-      var legalNote = document.querySelector(".legal-note");
 
       if (heroKicker) heroKicker.textContent = t("heroKicker");
       // If variant is active and English, use variant hero; otherwise use translation
@@ -1214,11 +1213,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       if (warningPanel) warningPanel.textContent = t("warningPanel");
       if (flowTitle) flowTitle.textContent = sms ? t("flowTitleSms") : t("flowTitle");
       if (flowCopy) flowCopy.textContent = sms ? t("flowCopySms") : t("flowCopy");
-      // Legal note: translate disclaimer and privacy line, keep address in English
-      var legalDisclaimer = document.getElementById("legal-disclaimer");
-      var legalPrivacy = document.getElementById("legal-privacy");
-      if (legalDisclaimer) legalDisclaimer.textContent = t("legalDisclaimer");
-      if (legalPrivacy) legalPrivacy.textContent = t("legalPrivacy");
+      // Legal note: stays in English — legal disclaimer and address do not translate
 
       // Trust row
       var trustItems = document.querySelectorAll(".trust-item span:not(.trust-dot)");
