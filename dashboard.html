@@ -31,8 +31,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       --cyan-soft: #73d7f3;
       --cyan-dim: #0097b2;
       --cyan-faint: rgba(0, 200, 232, 0.08);
-      --urgent: #e84545;
-      --emergency: #f0a500;
+      --critical: #e84545;
+      --urgent: #f0a500;
       --routine: #00c87a;
       --white: #f5f9ff;
       --text-primary: #e8f0fe;
@@ -249,7 +249,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .nav-tab { background: none; border: none; color: var(--text-muted); font-size: 13px; font-weight: 500; padding: 12px 12px; cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s, opacity 0.2s; white-space: nowrap; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
     .nav-tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
     .nav-tab:hover:not(.active) { color: var(--text-primary); }
-    .tab-badge { background: var(--urgent); color: #fff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; min-width: 18px; text-align: center; }
+    .tab-badge { background: var(--critical); color: #fff; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px; min-width: 18px; text-align: center; }
 
     .queue-controls { position: sticky; top: 105px; z-index: 130; background: rgba(15, 32, 68, 0.94); border-bottom: 1px solid var(--border); flex-shrink: 0; backdrop-filter: blur(10px); }
     .filter-bar { padding: 10px 12px; display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; background: rgba(0, 0, 0, 0.14); }
@@ -281,8 +281,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .case-list { padding: 12px 16px 20px; display: flex; flex-direction: column; gap: 10px; }
     .case-card { background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02)); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; cursor: pointer; transition: border-color 0.2s, background 0.2s, opacity 0.2s, transform 0.12s; position: relative; overflow: hidden; box-shadow: 0 6px 16px rgba(0,0,0,0.08); }
     .case-card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+    .case-card.critical::before { background: var(--critical); }
     .case-card.urgent::before { background: var(--urgent); }
-    .case-card.emergency::before { background: var(--emergency); }
     .case-card.routine::before { background: var(--routine); }
     .case-card.unknown::before { background: var(--cyan); }
     .case-card:hover { border-color: var(--border-active); background: var(--surface-hover); transform: translateY(-1px); }
@@ -297,8 +297,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     .case-row1 { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
     .severity-badge { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.06em; flex-shrink: 0; }
-    .badge-urgent { background: rgba(232, 69, 69, 0.12); color: var(--urgent); border: 1px solid rgba(232, 69, 69, 0.25); }
-    .badge-emergency { background: rgba(240, 165, 0, 0.12); color: var(--emergency); border: 1px solid rgba(240, 165, 0, 0.25); }
+    .badge-critical { background: rgba(232, 69, 69, 0.12); color: var(--critical); border: 1px solid rgba(232, 69, 69, 0.25); }
+    .badge-urgent { background: rgba(240, 165, 0, 0.12); color: var(--urgent); border: 1px solid rgba(240, 165, 0, 0.25); }
     .badge-routine { background: rgba(0, 200, 122, 0.1); color: var(--routine); border: 1px solid rgba(0, 200, 122, 0.25); }
     .badge-unknown { background: rgba(0, 200, 232, 0.08); color: var(--cyan); border: 1px solid rgba(0, 200, 232, 0.2); }
 
@@ -334,8 +334,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     .severity-row { display: flex; align-items: flex-start; gap: 12px; padding: 16px; }
     .severity-icon { width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
-    .severity-icon.urgent { background: rgba(232, 69, 69, 0.12); }
-    .severity-icon.emergency { background: rgba(240, 165, 0, 0.12); }
+    .severity-icon.critical { background: rgba(232, 69, 69, 0.12); }
+    .severity-icon.urgent { background: rgba(240, 165, 0, 0.12); }
     .severity-icon.routine { background: rgba(0, 200, 122, 0.1); }
     .severity-icon.unknown { background: rgba(0, 200, 232, 0.08); }
     .severity-detail-label { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 4px; }
@@ -450,12 +450,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .sms-char-row { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-muted); }
     .sms-char-counter { font-family: ui-monospace, monospace; }
     .sms-char-counter.warn { color: #f0a500; }
-    .sms-char-counter.over { color: var(--urgent); }
+    .sms-char-counter.over { color: var(--critical); }
     .sms-send-btn { width: 100%; background: linear-gradient(135deg, #1a7fc4, #0097b2); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; padding: 13px; cursor: pointer; transition: opacity 0.2s; }
     .sms-send-btn:disabled { opacity: 0.45; cursor: not-allowed; }
     .sms-send-status { font-size: 12px; text-align: center; min-height: 16px; }
     .sms-send-status.ok { color: #00c87a; }
-    .sms-send-status.err { color: var(--urgent); }
+    .sms-send-status.err { color: var(--critical); }
     .btn-message-patient { background: rgba(0,200,232,0.08); border: 1px solid rgba(0,200,232,0.22); color: var(--cyan); border-radius: 8px; font-size: 13px; font-weight: 600; padding: 10px 14px; cursor: pointer; transition: background 0.15s, border-color 0.15s; white-space: nowrap; }
     .btn-message-patient:hover { background: rgba(0,200,232,0.14); border-color: rgba(0,200,232,0.38); }
 
@@ -476,7 +476,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     .save-status { font-size: 12px; text-align: center; color: var(--text-muted); min-height: 18px; }
     .save-status.success { color: var(--routine); }
-    .save-status.error { color: var(--urgent); }
+    .save-status.error { color: var(--critical); }
 
     .detail-state-text { font-size: 11px; color: var(--text-secondary); }
     .detail-state-text.reviewed { color: var(--routine); }
@@ -486,7 +486,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .flags-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 16px; }
     .flag-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #b0c8e8; background: rgba(255,255,255,0.015); border: 1px solid rgba(255,255,255,0.04); border-radius: 10px; padding: 10px 12px; }
     .flag-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
-    .flag-dot.present { background: var(--urgent); box-shadow: 0 0 6px rgba(232, 69, 69, 0.5); }
+    .flag-dot.present { background: var(--critical); box-shadow: 0 0 6px rgba(232, 69, 69, 0.5); }
     .flag-dot.absent { background: #4a6080; opacity: 0.38; }
 
     .clinical-note-text, .transcript-text { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; color: #c8daf0; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
@@ -612,8 +612,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="queue-controls" id="queue-controls">
       <div class="filter-bar">
         <button class="filter-chip active" id="chip-all" type="button">All</button>
-        <button class="filter-chip" id="chip-urgent" type="button">Urgent</button>
-        <button class="filter-chip" id="chip-emergency" type="button">Emergency</button>
+        <button class="filter-chip" id="chip-critical" type="button">Critical</button>
+        <button class="filter-chip" id="chip-critical" type="button">Urgent</button>
         <button class="filter-chip" id="chip-routine" type="button">Routine</button>
         <div class="filter-right"><button class="refresh-btn" id="refresh-btn" type="button" title="Refresh">&#8635;</button></div>
       </div>
@@ -689,8 +689,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     document.getElementById("tab-reviewed").addEventListener("click", function() { switchTab("reviewed"); });
     document.getElementById("tab-all").addEventListener("click", function() { switchTab("all"); });
     document.getElementById("chip-all").addEventListener("click", function() { setFilter("all"); });
+    document.getElementById("chip-critical").addEventListener("click", function() { setFilter("critical"); });
     document.getElementById("chip-urgent").addEventListener("click", function() { setFilter("urgent"); });
-    document.getElementById("chip-emergency").addEventListener("click", function() { setFilter("emergency"); });
     document.getElementById("chip-routine").addEventListener("click", function() { setFilter("routine"); });
     document.getElementById("sort-severity").addEventListener("click", function() { if (currentTab === "queue") { setSort("severity"); return; } if (!isUrgencySortRedundant()) setSort("severity"); });
     document.getElementById("sort-newest").addEventListener("click", function() { setSort("newest"); });
@@ -715,15 +715,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     async function loadCases() { var btn = document.getElementById("refresh-btn"); btn.classList.add("spinning"); try { await Promise.all([loadCurrentTabCases(), loadQueueCount()]); renderQueue(); updateQueueBadge(); updateSortChipState(); updateSortBarVisibility(); updateControlsDisabledState(); syncModes(); } catch (err) { console.error("Load exception:", err); showToast("Unexpected load error"); } finally { btn.classList.remove("spinning"); } }
 
-    async function loadCurrentTabCases() { var query; if (currentTab === "queue") { query = sb.from("triage_cases").select("*").or("review_status.eq.new,review_status.eq.draft,review_status.is.null").order("created_at", { ascending: false }).limit(300); } else if (currentTab === "new") { query = sb.from("triage_cases").select("*").or("review_status.eq.new,review_status.is.null").order("created_at", { ascending: false }).limit(300); } else if (currentTab === "drafts") { query = sb.from("triage_cases").select("*").eq("review_status", "draft").order("created_at", { ascending: false }).limit(300); } else if (currentTab === "reviewed") { query = sb.from("triage_cases").select("*").eq("review_status", "reviewed").order("created_at", { ascending: false }).limit(300); } else { query = sb.from("triage_cases").select("*").order("created_at", { ascending: false }).limit(300); } var result = await query; var data = result.data; var error = result.error; if (error) { console.error("Load error:", error); showToast("Error loading cases: " + (error.message || "unknown")); allCases = []; return; } allCases = Array.isArray(data) ? data : []; }
+    async function loadCurrentTabCases() { var query; if (currentTab === "queue") { query = sb.from("triage_cases").select("*").or("review_status.eq.new,review_status.eq.draft,review_status.is.null").order("created_at", { ascending: false }).limit(300); } else if (currentTab === "new") { query = sb.from("triage_cases").select("*").or("review_status.eq.new,review_status.is.null").order("created_at", { ascending: false }).limit(300); } else if (currentTab === "drafts") { query = sb.from("triage_cases").select("*").eq("review_status", "draft").order("created_at", { ascending: false }).limit(300); } else if (currentTab === "reviewed") { query = sb.from("triage_cases").select("*").eq("review_status", "reviewed").order("created_at", { ascending: false }).limit(300); } else { query = sb.from("triage_cases").select("*").order("created_at", { ascending: false }).limit(300); } var result = await query; var data = result.data; var error = result.error; if (error) { console.error("Load error:", error); showToast("Error loading cases: " + (error.message || "unknown")); allCases = []; return; } allCases = Array.isArray(data) ? data : []; allCases.forEach(function(c) { if (c.severity === "emergency") c.severity = "urgent"; }); }
     async function loadQueueCount() { var result = await sb.from("triage_cases").select("id", { count: "exact", head: true }).or("review_status.eq.new,review_status.eq.draft,review_status.is.null"); var count = result.count; var error = result.error; if (error) { console.error("Queue count error:", error); return; } queueCount = typeof count === "number" ? count : 0; }
     function updateQueueBadge() { var badge = document.getElementById("queue-count-badge"); if (queueCount > 0) { badge.textContent = String(queueCount); badge.style.display = "inline-block"; } else { badge.style.display = "none"; } }
 
-    function switchTab(tab) { if (controlsShouldBeDisabled()) return; currentTab = tab; selectedCaseId = null; currentCase = null; ["queue","new","drafts","reviewed","all"].forEach(function(t) { document.getElementById("tab-" + t).classList.toggle("active", t === tab); }); currentFilter = "all"; ["all","urgent","emergency","routine"].forEach(function(c) { document.getElementById("chip-" + c).classList.toggle("active", c === "all"); }); currentSort = "newest"; ["severity","newest","oldest"].forEach(function(k) { var el = document.getElementById("sort-" + k); if (el) el.classList.toggle("active", k === "newest"); }); if (isMobile) { document.getElementById("queue-column").style.display = "flex"; document.getElementById("detail-column").style.display = "none"; } else { renderEmptyDetailPane(); } syncModes(); updateSortBarVisibility(); updateSortChipState(); updateControlsDisabledState(); loadCases(); }
+    function switchTab(tab) { if (controlsShouldBeDisabled()) return; currentTab = tab; selectedCaseId = null; currentCase = null; ["queue","new","drafts","reviewed","all"].forEach(function(t) { document.getElementById("tab-" + t).classList.toggle("active", t === tab); }); currentFilter = "all"; ["all","critical","urgent","routine"].forEach(function(c) { document.getElementById("chip-" + c).classList.toggle("active", c === "all"); }); currentSort = "newest"; ["severity","newest","oldest"].forEach(function(k) { var el = document.getElementById("sort-" + k); if (el) el.classList.toggle("active", k === "newest"); }); if (isMobile) { document.getElementById("queue-column").style.display = "flex"; document.getElementById("detail-column").style.display = "none"; } else { renderEmptyDetailPane(); } syncModes(); updateSortBarVisibility(); updateSortChipState(); updateControlsDisabledState(); loadCases(); }
     function updateSortBarVisibility() { var sortBar = document.getElementById("sort-bar"); var oldestBtn = document.getElementById("sort-oldest"); sortBar.style.display = "flex"; oldestBtn.style.display = currentTab === "queue" ? "none" : "inline-flex"; if (currentTab === "queue" && currentSort === "oldest") { currentSort = "newest"; ["severity","newest","oldest"].forEach(function(k) { var el = document.getElementById("sort-" + k); if (el) el.classList.toggle("active", k === "newest"); }); } }
     function renderEmptyDetailPane() { var panel = document.getElementById("detail-panel"); panel.innerHTML = '<div class="detail-placeholder" id="detail-placeholder"><div class="detail-placeholder-icon">&#129463;</div><div class="detail-placeholder-text">Select a case to review</div></div>'; }
     function setSort(sortKey) { if (controlsShouldBeDisabled()) return; if (sortKey === "oldest" && currentTab === "queue") return; currentSort = sortKey; ["severity","newest","oldest"].forEach(function(k) { var el = document.getElementById("sort-" + k); if (el) el.classList.toggle("active", k === sortKey); }); updateSortChipState(); renderQueue(); }
-    function setFilter(filterKey) { if (controlsShouldBeDisabled()) return; currentFilter = filterKey; ["all","urgent","emergency","routine"].forEach(function(k) { document.getElementById("chip-" + k).classList.toggle("active", k === filterKey); }); if (isUrgencySortRedundant() && currentSort === "severity") { currentSort = "newest"; ["severity","newest","oldest"].forEach(function(k) { var el = document.getElementById("sort-" + k); if (el) el.classList.toggle("active", k === "newest"); }); } updateSortChipState(); renderQueue(); }
+    function setFilter(filterKey) { if (controlsShouldBeDisabled()) return; currentFilter = filterKey; ["all","critical","urgent","routine"].forEach(function(k) { document.getElementById("chip-" + k).classList.toggle("active", k === filterKey); }); if (isUrgencySortRedundant() && currentSort === "severity") { currentSort = "newest"; ["severity","newest","oldest"].forEach(function(k) { var el = document.getElementById("sort-" + k); if (el) el.classList.toggle("active", k === "newest"); }); } updateSortChipState(); renderQueue(); }
     function isUrgencySortRedundant() { return currentFilter !== "all"; }
     function updateSortChipState() { var severityChip = document.getElementById("sort-severity"); if (!severityChip) return; var redundant = isUrgencySortRedundant(); severityChip.classList.toggle("disabled", redundant); if (redundant && currentSort === "severity") { currentSort = "newest"; ["severity","newest","oldest"].forEach(function(k) { var el = document.getElementById("sort-" + k); if (el) el.classList.toggle("active", k === "newest"); }); } }
     function controlsShouldBeDisabled() { return !!selectedCaseId; }
@@ -743,7 +743,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       panel.querySelectorAll(".case-card").forEach(function(el) { el.addEventListener("click", function() { openCase(el.dataset.caseId); }); });
     }
 
-    function renderQueue() { var panel = document.getElementById("queue-panel"); var cases = allCases.slice(); if (currentTab === "queue") { cases = cases.filter(function(c) { return c.review_status !== "reviewed"; }); } if (currentFilter !== "all") { cases = cases.filter(function(c) { return (c.severity || "unknown") === currentFilter; }); } if (searchQuery) { var q = searchQuery.toLowerCase(); cases = cases.filter(function(c) { return (c.patient_name || "").toLowerCase().includes(q) || (c.patient_phone || "").replace(/\D/g,"").includes(q.replace(/\D/g,"")); }); } var sevOrder = { urgent: 1, emergency: 2, routine: 3, unknown: 4 }; if (currentSort === "severity" && !isUrgencySortRedundant()) { cases.sort(function(a, b) { var aOrder = sevOrder[a.severity || "unknown"] || 9; var bOrder = sevOrder[b.severity || "unknown"] || 9; return aOrder - bOrder || new Date(b.created_at) - new Date(a.created_at); }); } else if (currentSort === "newest") { cases.sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); }); } else if (currentSort === "oldest") { cases.sort(function(a, b) { return new Date(a.created_at) - new Date(b.created_at); }); } if (!cases.length) { var emptyState = getEmptyStateCopy(); panel.innerHTML = '<div class="empty-state"><div class="empty-icon">\u2713</div><div class="empty-title">' + emptyState.emptyTitle + '</div><div class="empty-sub">' + emptyState.emptySub + '</div></div>'; return; } panel.innerHTML = '<div class="case-list">' + cases.map(renderCaseCard).join("") + '</div>'; panel.querySelectorAll(".case-card").forEach(function(el) { el.addEventListener("click", function() { openCase(el.dataset.caseId); }); }); }
+    function renderQueue() { var panel = document.getElementById("queue-panel"); var cases = allCases.slice(); if (currentTab === "queue") { cases = cases.filter(function(c) { return c.review_status !== "reviewed"; }); } if (currentFilter !== "all") { cases = cases.filter(function(c) { return (c.severity || "unknown") === currentFilter; }); } if (searchQuery) { var q = searchQuery.toLowerCase(); cases = cases.filter(function(c) { return (c.patient_name || "").toLowerCase().includes(q) || (c.patient_phone || "").replace(/\D/g,"").includes(q.replace(/\D/g,"")); }); } var sevOrder = { critical: 1, urgent: 2, routine: 3, unknown: 4 }; if (currentSort === "severity" && !isUrgencySortRedundant()) { cases.sort(function(a, b) { var aOrder = sevOrder[a.severity || "unknown"] || 9; var bOrder = sevOrder[b.severity || "unknown"] || 9; return aOrder - bOrder || new Date(b.created_at) - new Date(a.created_at); }); } else if (currentSort === "newest") { cases.sort(function(a, b) { return new Date(b.created_at) - new Date(a.created_at); }); } else if (currentSort === "oldest") { cases.sort(function(a, b) { return new Date(a.created_at) - new Date(b.created_at); }); } if (!cases.length) { var emptyState = getEmptyStateCopy(); panel.innerHTML = '<div class="empty-state"><div class="empty-icon">\u2713</div><div class="empty-title">' + emptyState.emptyTitle + '</div><div class="empty-sub">' + emptyState.emptySub + '</div></div>'; return; } panel.innerHTML = '<div class="case-list">' + cases.map(renderCaseCard).join("") + '</div>'; panel.querySelectorAll(".case-card").forEach(function(el) { el.addEventListener("click", function() { openCase(el.dataset.caseId); }); }); }
     function getEmptyStateCopy() { if (currentTab === "queue") return { emptyTitle: "No active cases", emptySub: "No new or draft cases are currently waiting in the queue." }; if (currentTab === "new") return { emptyTitle: "No new cases", emptySub: "No untouched cases match this filter." }; if (currentTab === "drafts") return { emptyTitle: "No drafts", emptySub: "No cases are currently in draft status." }; if (currentTab === "reviewed") return { emptyTitle: "No reviewed cases", emptySub: "No reviewed cases match this filter." }; return { emptyTitle: "All clear", emptySub: "No cases match this filter." }; }
 
     function renderCaseCard(c) { var so = c.structured_output || {}; var name = c.patient_name || "Unknown Patient"; var phone = c.patient_phone ? formatPhone(c.patient_phone) : "-"; var phoneRaw = c.patient_phone || ""; var complaint = so.chief_complaint || so.chief_complaint_quote || c.chief_complaint || "-"; var painValue = so.pain_score != null ? so.pain_score : c.pain_score; var pain = (painValue !== null && painValue !== undefined && painValue !== "") ? ("Pain " + painValue + "/10") : ""; var time = formatTime(c.created_at); var reviewStatus = c.review_status || "new"; var reviewed = reviewStatus === "reviewed"; var draft = reviewStatus === "draft"; var isActive = c.id === selectedCaseId; var severity = c.severity || "unknown"; var phoneEl = phoneRaw ? '<a class="tel-link" href="tel:' + escAttr(phoneRaw) + '">' + escHtml(phone) + '</a>' : '<span>' + escHtml(phone) + '</span>'; return '<div class="case-card ' + escAttr(severity) + (reviewed ? " reviewed" : "") + (draft ? " draft" : "") + (isActive ? " active" : "") + '" id="card-' + escAttr(c.id) + '" data-case-id="' + escAttr(c.id) + '"><div class="case-row1"><span class="severity-badge badge-' + escAttr(severity) + '">' + escHtml(severity) + '</span><span class="case-name">' + escHtml(name) + (reviewed ? ' <span class="status-badge reviewed">Reviewed</span>' : "") + (draft ? ' <span class="status-badge draft">Draft</span>' : "") + '</span><span class="case-time">' + escHtml(time) + '</span></div><div class="case-row2">' + escHtml(complaint) + '</div><div class="case-row3"><span class="case-meta-item">' + phoneEl + '</span>' + (pain ? '<span class="case-meta-item">' + escHtml(pain) + '</span>' : "") + (reviewed ? '<span class="reviewed-dot" title="Reviewed"></span>' : "") + (draft ? '<span class="draft-dot" title="Draft"></span>' : "") + '</div></div>'; }
@@ -772,8 +772,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var severity = c.severity || "unknown";
       var reviewerName = resolveReviewerName(c.reviewed_by);
       var finalDispositionLabel = formatDisposition(c.final_disposition);
-      var sevColor = severity === "urgent" ? "#e84545" : severity === "emergency" ? "#f0a500" : severity === "routine" ? "#00c87a" : "#00c8e8";
-      var sevIcon = severity === "urgent" ? "!" : severity === "emergency" ? "\u26A0" : severity === "routine" ? "\u2713" : "?";
+      var sevColor = severity === "critical" ? "#e84545" : severity === "urgent" ? "#f0a500" : severity === "routine" ? "#00c87a" : "#00c8e8";
+      var sevIcon = severity === "critical" ? "!" : severity === "urgent" ? "\u26A0" : severity === "routine" ? "\u2713" : "?";
 
       var flags = [
         { label: "Airway / swallowing", val: so.difficulty_breathing_or_swallowing },
