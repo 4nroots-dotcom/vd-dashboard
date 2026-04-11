@@ -311,7 +311,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       try {
         // Main cases query (period-filtered)
         var query = sb.from("triage_cases")
-          .select("id, created_at, severity, extraction_source, review_status, reviewed_at, reviewed_by, contacted_patient_at, final_disposition, prescription_issued, duration_seconds, structured_output, triage_tag, contradictions, revenue_generated, subsequent_appointment_booked, satisfaction_score, return_likelihood, survey_feedback, appointment_completed_at")
+          .select("id, created_at, severity, extraction_source, review_status, reviewed_at, reviewed_by, contacted_patient_at, final_disposition, prescription_issued, duration_seconds, structured_output, triage_tag, contradictions, revenue_generated, subsequent_appointment_booked, satisfaction_score, return_likelihood, survey_feedback, appointment_completed_at, patient_language, intake_source, has_sms_continuation, sms_structured_output")
           .order("created_at", { ascending: true });
         if (currentPeriod > 0) { var since = new Date(); since.setDate(since.getDate() - currentPeriod); query = query.gte("created_at", since.toISOString()); }
         var result = await query;
@@ -387,6 +387,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var nullOnset = cases.filter(function(c) { var so = getSO(c); return !so.onset; }).length;
       var nullLoc = cases.filter(function(c) { var so = getSO(c); return !so.jaw && !so.side; }).length;
 
+      // ── NEW: Language distribution ──
+      var langCounts = {}; cases.forEach(function(c) { var lang = c.patient_language || "en"; langCounts[lang] = (langCounts[lang] || 0) + 1; });
+      var langLabels = { en:"English", ar:"Arabic", hi:"Hindi", pa:"Punjabi", fr:"French", fa:"Farsi", so:"Somali", es:"Spanish", zh:"Chinese" };
+
+      // ── NEW: Channel distribution ──
+      var voiceCases = cases.filter(function(c) { return c.extraction_source !== "sms-openai"; }).length;
+      var smsCases = cases.filter(function(c) { return c.extraction_source === "sms-openai"; }).length;
+
+      // ── NEW: Intake source distribution ──
+      var srcCounts = {}; cases.forEach(function(c) { var src = c.intake_source || "unknown"; srcCounts[src] = (srcCounts[src] || 0) + 1; });
+      var srcLabels = { web_form:"Website", in_office:"In-office QR", widget:"Widget", widget_contact:"Contact page widget", widget_jackson:"Jackson Sq widget", jackson_block:"Jackson Sq page", jackson_header:"Jackson header CTA", jackson_sam:"Jackson Sam CTA", jackson_how:"Jackson how-it-works", jackson_clinic:"Jackson clinic CTA", jackson_final:"Jackson final CTA", jackson_lang:"Jackson language pill", lp_emergency:"LP Emergency", lp_afterhours:"LP After-hours", lp_toothache:"LP Toothache", lp_broken:"LP Broken tooth", lp_infection:"LP Infection", lp_virtual:"LP Virtual" };
+
+      // ── NEW: Non-emergent rate ──
+      var nonEmergent = cases.filter(function(c) { var so = getSO(c); return c.triage_tag === "non_emergent_inquiry" || so.triage_tag === "non_emergent_inquiry"; }).length;
+
+      // ── NEW: SMS extraction success rate ──
+      var smsSubmissions = cases.filter(function(c) { return c.has_sms_continuation || c.extraction_source === "sms-openai"; }).length;
+      var smsExtracted = cases.filter(function(c) { return c.extraction_source === "sms-openai" && c.sms_structured_output; }).length;
+
+      // ── NEW: Multilingual conversion (non-English submissions that completed triage) ──
+      var multilingualTotal = cases.filter(function(c) { return c.patient_language && c.patient_language !== "en"; }).length;
+      var multilingualComplete = cases.filter(function(c) { return c.patient_language && c.patient_language !== "en" && c.extraction_source === "sms-openai"; }).length;
+
+      // ── FIX: TTR split (remote vs in-office) ──
+      var remoteCases = cases.filter(function(c) { return c.intake_source !== "in_office"; });
+      var inOfficeCases = cases.filter(function(c) { return c.intake_source === "in_office"; });
+      var remoteReviewMin = remoteCases.filter(function(c) { return c.created_at && c.reviewed_at && c.reviewed_by; }).map(function(c) { return (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000; }).filter(function(n) { return Number.isFinite(n) && n >= 0; });
+      var inOfficeReviewMin = inOfficeCases.filter(function(c) { return c.created_at && c.reviewed_at && c.reviewed_by; }).map(function(c) { return (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000; }).filter(function(n) { return Number.isFinite(n) && n >= 0; });
+      var avgRemoteTTR = remoteReviewMin.length ? Math.round(remoteReviewMin.reduce(function(a, b) { return a + b; }, 0) / remoteReviewMin.length) : null;
+      var avgInOfficeTTR = inOfficeReviewMin.length ? Math.round(inOfficeReviewMin.reduce(function(a, b) { return a + b; }, 0) / inOfficeReviewMin.length) : null;
+
       var dispoLabels = { booked: "Appointment booked", referred_er: "Referred to ER", rx_only: "Prescription only", declined: "Patient declined", no_response: "No response" };
       var contradictionFieldLabels = { fever: "Fever", swelling: "Swelling", trauma: "Trauma", bleeding: "Bleeding", uncontrolled_bleeding: "Uncontrolled bleeding", breathing_swallowing: "Airway / Swallowing", difficulty_breathing_or_swallowing: "Airway / Swallowing", feeling_unwell: "Feeling Unwell", immunocompromised: "Immunocompromised", pregnant: "Pregnancy", anticoagulant: "Blood Thinners", recent_extraction: "Recent extraction" };
 
@@ -418,9 +449,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       html += secHead("Speed");
       html += '<div class="hero-grid">' +
         hc("Clinically Reviewed", clinicallyReviewed + " / " + total, p(clinicallyReviewed, total) + "% with reviewed_by present", "rgba(0,200,232,0.35)", "#00c8e8") +
-        hc("Avg Time to Review", fmtMin(avgTTR), "created \u2192 reviewed", "rgba(0,200,232,0.35)", "#00c8e8") +
+        hc("Remote TTR", fmtMin(avgRemoteTTR), "excludes in-office cases" + (remoteReviewMin.length ? " (" + remoteReviewMin.length + " cases)" : ""), "rgba(0,200,232,0.35)", "#00c8e8") +
+        hc("In-Office TTR", fmtMin(avgInOfficeTTR), "in-office QR cases only" + (inOfficeReviewMin.length ? " (" + inOfficeReviewMin.length + " cases)" : ""), "rgba(0,200,232,0.35)", "#00c8e8") +
         hc("Avg Time to Contact", fmtMin(avgTTC), "created \u2192 contacted", "rgba(0,200,232,0.35)", "#00c8e8") +
-        hc("Contact Rate", contactedAfterClinicalReview + " / " + (clinicallyReviewed || 0), clinicallyReviewed > 0 ? (p(contactedAfterClinicalReview, clinicallyReviewed) + "% of clinically reviewed") : "no clinically reviewed cases yet", "rgba(0,200,122,0.35)", "#00c87a") +
       '</div>';
 
       /* === OUTCOMES === */
@@ -449,10 +480,48 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       /* Severity panel */
       html += '<div class="panel"><div class="panel-head"><div class="panel-title">Severity Distribution</div><div class="panel-subtle">' + total + ' call' + (total !== 1 ? 's' : '') + '</div></div><div class="panel-body"><div class="stack-list">' +
-        stackBar("urgent", "Urgent", urgent, total) + stackBar("emergency", "Emergency", emergency, total) + stackBar("routine", "Routine", routine, total) + '</div>';
+        stackBar("urgent", "Urgent", urgent, total) + stackBar("emergency", "Emergency", emergency, total) + stackBar("routine", "Routine", routine, total) + stackBar("cyan", "Non-emergent inquiry", nonEmergent, total) + '</div>';
 
       var tagKeys = Object.keys(tagCounts);
       if (tagKeys.length > 0) { html += '<div class="panel-divider"></div><div class="panel-sub-label">Triage Tag Distribution</div><div class="stack-list">'; tagKeys.sort(function(a, b) { return tagCounts[b] - tagCounts[a]; }).forEach(function(tag) { var tCount = tagCounts[tag]; var tPct = p(tCount, total); var tagLabel = TRIAGE_TAG_LABELS[tag] || formatTag(tag); html += '<div><div class="stack-row-label"><span class="stack-name cyan">' + escHtml(tagLabel) + '</span><span class="stack-stats">' + tCount + ' \u00B7 ' + tPct + '%</span></div><div class="stack-track"><div class="stack-fill cyan" style="width:' + tPct + '%"></div></div></div>'; }); html += '</div>'; }
+
+      html += '</div></div></div>';
+
+      /* === CHANNELS & LANGUAGES === */
+      html += secHead("Channels & languages");
+      html += '<div class="two-col">';
+
+      // Language distribution
+      var langKeys = Object.keys(langCounts).sort(function(a, b) { return langCounts[b] - langCounts[a]; });
+      html += '<div class="panel"><div class="panel-head"><div class="panel-title">Language Distribution</div><div class="panel-subtle">' + langKeys.length + ' language' + (langKeys.length !== 1 ? 's' : '') + '</div></div><div class="panel-body"><div class="stack-list">';
+      langKeys.forEach(function(lang) { var count = langCounts[lang]; var pp = p(count, total); var label = langLabels[lang] || lang; html += '<div><div class="stack-row-label"><span class="stack-name cyan">' + escHtml(label) + '</span><span class="stack-stats">' + count + ' \u00B7 ' + pp + '%</span></div><div class="stack-track"><div class="stack-fill cyan" style="width:' + pp + '%"></div></div></div>'; });
+      html += '</div>';
+      if (multilingualTotal > 0) {
+        html += '<div class="panel-divider"></div><div class="panel-sub-label">Multilingual Triage</div><div class="mini-list">' +
+          '<div class="mini-row"><span class="mini-row-label">Non-English submissions</span><span class="mini-row-val cyan">' + multilingualTotal + '</span></div>' +
+          '<div class="mini-row"><span class="mini-row-label">Completed SMS triage</span><span class="mini-row-val ok">' + multilingualComplete + ' (' + p(multilingualComplete, multilingualTotal) + '%)</span></div>' +
+          '</div>';
+      }
+      html += '</div></div>';
+
+      // Channel + Source
+      html += '<div class="panel"><div class="panel-head"><div class="panel-title">Channel & Source</div></div><div class="panel-body">';
+      html += '<div class="panel-sub-label">Channel</div><div class="stack-list">' +
+        '<div><div class="stack-row-label"><span class="stack-name cyan">Voice (phone call)</span><span class="stack-stats">' + voiceCases + ' \u00B7 ' + p(voiceCases, total) + '%</span></div><div class="stack-track"><div class="stack-fill cyan" style="width:' + p(voiceCases, total) + '%"></div></div></div>' +
+        '<div><div class="stack-row-label"><span class="stack-name urgent">SMS (text message)</span><span class="stack-stats">' + smsCases + ' \u00B7 ' + p(smsCases, total) + '%</span></div><div class="stack-track"><div class="stack-fill urgent" style="width:' + p(smsCases, total) + '%"></div></div></div>' +
+        '</div>';
+
+      var srcKeys = Object.keys(srcCounts).sort(function(a, b) { return srcCounts[b] - srcCounts[a]; });
+      html += '<div class="panel-divider"></div><div class="panel-sub-label">Intake Source</div><div class="mini-list">';
+      srcKeys.forEach(function(src) { var label = srcLabels[src] || src; html += '<div class="mini-row"><span class="mini-row-label">' + escHtml(label) + '</span><span class="mini-row-val cyan">' + srcCounts[src] + ' (' + p(srcCounts[src], total) + '%)</span></div>'; });
+      html += '</div>';
+
+      if (smsSubmissions > 0) {
+        html += '<div class="panel-divider"></div><div class="panel-sub-label">SMS Extraction</div><div class="mini-list">' +
+          '<div class="mini-row"><span class="mini-row-label">SMS submissions</span><span class="mini-row-val">' + smsSubmissions + '</span></div>' +
+          '<div class="mini-row"><span class="mini-row-label">Successfully extracted</span><span class="mini-row-val ok">' + smsExtracted + ' (' + p(smsExtracted, smsSubmissions) + '%)</span></div>' +
+          '</div>';
+      }
 
       html += '</div></div></div>';
 
@@ -485,7 +554,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       '</div></div></div>';
 
       html += '<div class="panel"><div class="panel-head"><div class="panel-title">Extraction Source</div></div><div class="panel-body">' +
-        extractionRow("Vapi (primary)", extCounts["vapi"] || 0, total, "#00c8e8") + extractionRow("OpenAI (fallback)", extCounts["openai"] || 0, total, "#a78bfa") + extractionRow("None / unknown", extCounts["none"] || 0, total, "#5f7597") +
+        extractionRow("Vapi (primary)", extCounts["vapi"] || 0, total, "#00c8e8") + extractionRow("SMS-OpenAI", extCounts["sms-openai"] || 0, total, "#00c87a") + extractionRow("OpenAI (fallback)", extCounts["openai"] || 0, total, "#a78bfa") + extractionRow("None / unknown", extCounts["none"] || 0, total, "#5f7597") +
         '<div class="panel-divider"></div><div class="panel-sub-label">Intake vs. Call Discrepancies</div><div class="mini-list">' +
         '<div class="mini-row"><span class="mini-row-label">Cases with discrepancies</span><span class="mini-row-val ' + (casesWithContradictions > 0 ? "warn" : "ok") + '">' + casesWithContradictions + ' / ' + total + '</span></div>';
 
