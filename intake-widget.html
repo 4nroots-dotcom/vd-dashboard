@@ -81,10 +81,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .plain-phone { font-weight: 700; color: var(--text-dark); white-space: nowrap; }
     .error-box { display: none; margin-top: 10px; padding: 10px; border-radius: var(--radius); background: #fff5f5; border: 1px solid #feb2b2; color: var(--error); font-size: 12px; font-weight: 600; }
     .error-box.show { display: block; }
-    .action-bar { display: flex; justify-content: flex-end; margin-top: 14px; }
+    .action-bar { display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px; }
     .btn-primary { padding: 12px 28px; border-radius: 999px; border: none; background: var(--green); color: #fff; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 0.2s, transform 0.1s; }
     .btn-primary:hover { background: var(--green-dark); transform: translateY(-1px); }
     .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-text-sam { padding: 12px 20px; border-radius: 999px; border: 1px solid rgba(46,125,50,0.4); background: transparent; color: var(--green); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "DM Sans", sans-serif; }
+    .btn-text-sam:hover { background: rgba(46,125,50,0.08); border-color: rgba(46,125,50,0.6); }
+    .btn-text-sam:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-text-sam.hidden { display: none; }
 
     /* Handoff */
     .handoff { display: none; text-align: center; padding: 30px 16px; }
@@ -266,6 +270,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div id="intake-error" class="error-box"></div>
 
   <div class="action-bar">
+    <button class="btn-text-sam" id="intake-text-btn" type="button">Text Sam instead</button>
     <button class="btn-primary" id="intake-submit-btn" type="button">Talk to Sam</button>
   </div>
 
@@ -289,6 +294,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   var currentLang = "en";
+  var widgetPreferredChannel = "voice";
   var RTL_LANGS = ["ar", "fa"];
 
   // ── Translations (all 9 languages) ────────────────────────────
@@ -629,11 +635,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
   };
 
-  function isSmsMode() { return currentLang !== "en"; }
+  function isSmsMode() { return currentLang !== "en" || widgetPreferredChannel === "sms"; }
   function t(key) { var lang = T[currentLang] || T.en; return lang[key] || T.en[key] || key; }
 
   function applyLanguage(lang) {
     currentLang = lang;
+    // Reset channel when switching languages
+    if (lang !== "en") widgetPreferredChannel = "sms";
+    else widgetPreferredChannel = "voice";
     var isRtl = RTL_LANGS.indexOf(lang) >= 0;
     document.documentElement.setAttribute("dir", isRtl ? "rtl" : "ltr");
     document.documentElement.setAttribute("lang", lang);
@@ -705,6 +714,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     document.getElementById("warning-note").textContent = t("warning");
     document.getElementById("consent-text").textContent = sms ? t("consentSms") : t("consent");
+    var textBtn = document.getElementById("intake-text-btn");
+    if (textBtn) textBtn.classList.toggle("hidden", sms);
     document.getElementById("intake-submit-btn").textContent = sms ? t("btnSubmitSms") : t("btnSubmit");
   }
 
@@ -771,11 +782,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     return params.get("src") || "widget";
   }
 
-  document.getElementById("intake-submit-btn").addEventListener("click", async function() {
+  async function widgetSubmit() {
     var btn = document.getElementById("intake-submit-btn");
+    var textBtn = document.getElementById("intake-text-btn");
     var errEl = document.getElementById("intake-error");
     errEl.classList.remove("show"); errEl.textContent = "";
-    btn.disabled = true; btn.textContent = "Saving...";
+    btn.disabled = true; if (textBtn) textBtn.disabled = true;
+    btn.textContent = "Saving...";
 
     try {
       var err = validate();
@@ -816,7 +829,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         intake_source: getIntakeSource(),
         intake_version: "widget-v1",
         intake_acknowledged_at: new Date().toISOString(),
-        patient_language: currentLang
+        patient_language: currentLang,
+        preferred_channel: widgetPreferredChannel
       };
 
       var resp = await fetch(INTAKE_TRIGGER_URL, {
@@ -852,8 +866,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       errEl.classList.add("show");
     } finally {
       btn.disabled = false;
+      if (textBtn) textBtn.disabled = false;
       btn.textContent = isSmsMode() ? t("btnSubmitSms") : t("btnSubmit");
     }
+  }
+
+  document.getElementById("intake-submit-btn").addEventListener("click", function() {
+    widgetPreferredChannel = "voice";
+    widgetSubmit();
+  });
+  document.getElementById("intake-text-btn").addEventListener("click", function() {
+    widgetPreferredChannel = "sms";
+    widgetSubmit();
   });
 
   // Auto-resize for iframe
