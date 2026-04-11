@@ -23,9 +23,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       --text-primary: #1A202C;
       --text-secondary: #4A5568;
       --text-muted: #718096;
-      --emergency: #C53030;
-      --emergency-bg: #FFF5F5;
-      --emergency-border: #FC8181;
+      --critical: #C53030;
+      --critical-bg: #FFF5F5;
+      --critical-border: #FC8181;
       --urgent: #C05621;
       --urgent-bg: #FFFAF0;
       --urgent-border: #F6AD55;
@@ -135,10 +135,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .auth-error {
       margin-top: 12px;
       padding: 10px 12px;
-      background: var(--emergency-bg);
-      border: 1px solid var(--emergency-border);
+      background: var(--critical-bg);
+      border: 1px solid var(--critical-border);
       border-radius: 8px;
-      color: var(--emergency);
+      color: var(--critical);
       font-size: 13px;
       display: none;
     }
@@ -353,7 +353,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       border-radius: 999px;
     }
 
-    .badge-emergency { background: var(--emergency-bg); color: var(--emergency); border: 1px solid var(--emergency-border); }
+    .badge-critical { background: var(--critical-bg); color: var(--critical); border: 1px solid var(--critical-border); }
     .badge-urgent { background: var(--urgent-bg); color: var(--urgent); border: 1px solid var(--urgent-border); }
     .badge-routine { background: var(--routine-bg); color: var(--routine); border: 1px solid var(--routine-border); }
     .badge-pending { background: var(--pending-bg); color: var(--text-muted); border: 1px solid var(--pending-border); }
@@ -579,9 +579,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
 
     .flag-dot-ok { background: #CBD5E0; }
-    .flag-dot-alert { background: var(--emergency); }
+    .flag-dot-alert { background: var(--critical); }
     .flag-text-ok { color: var(--text-muted); }
-    .flag-text-alert { color: var(--emergency); font-weight: 700; }
+    .flag-text-alert { color: var(--critical); font-weight: 700; }
 
     .note-pending {
       padding: 36px 20px;
@@ -1198,7 +1198,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var name = maskName(c.patient_name);
       var complaint = c.chief_complaint || "No complaint recorded";
       var sev = (c.severity || "").toLowerCase();
-      var badgeCls = sev === "urgent" ? "badge-urgent" : sev === "emergency" ? "badge-emergency" : sev === "routine" ? "badge-routine" : "badge-pending";
+      // Backward compat: old "emergency" (same-day) → now "urgent". Run SQL migration first for "urgent"→"critical".
+      if (sev === "emergency") { sev = "urgent"; c.severity = "urgent"; }
+      var badgeCls = sev === "critical" ? "badge-critical" : sev === "urgent" ? "badge-urgent" : sev === "routine" ? "badge-routine" : "badge-pending";
       var badgeTxt = sev ? sev.toUpperCase() : "PENDING";
       var completed = c.appointment_completed_at ? " <span style=\"font-size:10px;color:#276749;\">&#10003; Seen</span>" : "";
 
@@ -1602,11 +1604,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   function buildNextSteps(so) {
     var sev = (so.recommended_disposition || "").toLowerCase();
-    var line1 = sev === "urgent"
-      ? "Urgent assessment required. Patient should be seen immediately or directed to emergency care if not seen promptly."
-      : sev === "emergency"
+    var line1 = (sev === "critical" || sev === "urgent")
       ? "Same-day or as-soon-as-possible assessment is recommended based on symptom severity and risk features."
       : "Schedule dental assessment at the earliest available appointment.";
+    if (sev === "critical") line1 = "Critical assessment required. Patient should be seen immediately or directed to emergency care if not seen promptly.";
     return esc(line1) + "<br><br>If symptoms worsen -- especially swelling, fever, uncontrolled bleeding, or any trouble breathing or swallowing -- patient should seek urgent medical care.";
   }
 
