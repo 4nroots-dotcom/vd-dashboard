@@ -189,7 +189,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="container">
     <div class="hero-badge">AI-powered dental triage</div>
     <h1 class="hero-title serif"><span id="typewriter"></span><span class="tw-cursor">|</span></h1>
-    <p class="hero-sub">Your patients describe their concern. Sam triages via voice or text in 9 languages. Your team gets a structured clinical note with severity, flags, and recommended next steps. Available 24/7.</p>
+    <p class="hero-sub">Your patients describe their concern. Sam triages via voice or text in 9 languages. Your office gets a structured clinical note with severity, flags, and recommended next steps — ready for your team to act on. Every call captured. Every case documented. Even at 2am.</p>
     <div class="hero-stats">
       <div class="hero-stat"><div class="hero-stat-val">9</div><div class="hero-stat-label">Languages</div></div>
       <div class="hero-stat"><div class="hero-stat-val">24/7</div><div class="hero-stat-label">Coverage</div></div>
@@ -247,8 +247,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
       <div class="step">
         <div class="step-num">3</div>
-        <div class="step-title">Your team gets the note</div>
-        <div class="step-body">A structured clinical note lands in your dashboard with severity classification, clinical flags, recommended disposition, and the patient's contact info. Your team follows up.</div>
+        <div class="step-title">Your office takes it from here</div>
+        <div class="step-body">A structured clinical note lands in your dashboard with severity, flags, and recommended disposition. Your admin can message the patient, book the appointment, or escalate to the dentist — all from one screen.</div>
       </div>
     </div>
   </div>
@@ -261,7 +261,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <h2 class="section-title serif" style="text-align:center">What the platform does.</h2>
     <div class="caps-grid">
       <div class="cap">
-        <div class="cap-icon">&#129656;</div>
+        <div class="cap-icon">&#129658;</div>
         <div class="cap-title">Clinical-grade triage</div>
         <div class="cap-body">30+ clinical rules covering endodontic diagnostics (cold lingering, heat sensitivity, nocturnal pain), infection screening, trauma assessment, and periapical pathology detection. Severity is computed, not guessed.</div>
       </div>
@@ -272,13 +272,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
       <div class="cap">
         <div class="cap-icon">&#128337;</div>
-        <div class="cap-title">24/7 coverage</div>
-        <div class="cap-body">Sam takes cases nights, weekends, and holidays. After-hours cases are queued for review first thing the next business day. Urgent and emergency cases trigger immediate alerts.</div>
+        <div class="cap-title">After-hours coverage that builds your practice</div>
+        <div class="cap-body">Every after-hours call becomes a triaged case in your queue — not a missed opportunity. Patients get immediate acknowledgment, and your team gets a structured handoff at 9am. Need to intervene personally? You can review cases and message patients directly from your phone, anytime.</div>
+      </div>
+      <div class="cap">
+        <div class="cap-icon">&#128172;</div>
+        <div class="cap-title">Secure patient messaging</div>
+        <div class="cap-body">Message patients directly from the dashboard — whether it's your front desk during office hours or you personally at 11pm. All communication goes through a dedicated practice number, not personal phones. Two-way SMS threads are logged alongside the clinical note.</div>
       </div>
       <div class="cap">
         <div class="cap-icon">&#128200;</div>
         <div class="cap-title">Every concern, one platform</div>
-        <div class="cap-body">From dental emergencies to routine appointment requests. Sam handles the full spectrum — urgent triage, after-hours intake, general inquiries, insurance questions, and new patient onboarding.</div>
+        <div class="cap-body">From dental emergencies to routine appointment requests. Sam handles the full spectrum — urgent triage, after-hours intake, general inquiries, insurance questions, and new patient onboarding. Your front desk gets a head start on every case.</div>
       </div>
       <div class="cap">
         <div class="cap-icon">&#128274;</div>
@@ -290,9 +295,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="cap-title">Embeddable anywhere</div>
         <div class="cap-body">Drop-in integration block for your existing website, iframe widget for contact pages, standalone landing pages for ad campaigns, and QR codes for in-office intake. One platform, multiple entry points.</div>
       </div>
+      <div class="cap">
+        <div class="cap-icon">&#128202;</div>
+        <div class="cap-title">Operational dashboard for your team</div>
+        <div class="cap-body">Your office sees every case in a triage queue — severity, clinical flags, patient contact info, and the AI-generated note. Review, disposition, message the patient, and track outcomes. Your dentist reviews when ready; your admin handles the workflow.</div>
+      </div>
     </div>
   </div>
 </section>
+
+<!--
+  ============================================================
+  FUTURE: Platform Metrics Showcase
+  Add when sufficient data exists to be compelling.
+  Placement: between Capabilities and Onboarding — after showing
+  what the platform does, prove it works before asking them to sign up.
+
+  Suggested metrics to display:
+  - Total cases triaged (cumulative)
+  - Average triage time (currently ~3 min)
+  - After-hours case percentage (shows the value prop)
+  - Languages used (proves multilingual adoption)
+  - Patient satisfaction score (from survey data)
+  - Response time (Sam responds in X minutes)
+  - Conversion rate: cases → booked appointments
+
+  Design: hero-stat style cards (like the hero stats above) or
+  a single-line scrolling ticker. Keep it factual, no vanity metrics.
+  Update dynamically from Supabase public aggregate view if possible
+  (no PHI, just counts and averages).
+  ============================================================
+-->
 
 <!-- ONBOARDING -->
 <section class="onboard fade-up" id="contact">
