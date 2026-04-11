@@ -1176,6 +1176,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     function applyLanguage(lang) {
       currentLang = lang;
+      // Reset channel when switching languages
+      if (lang !== "en") preferredChannel = "sms";
+      else preferredChannel = "voice";
       var isRtl = RTL_LANGS.indexOf(lang) >= 0;
       document.documentElement.setAttribute("dir", isRtl ? "rtl" : "ltr");
       document.documentElement.setAttribute("lang", lang);
@@ -1186,12 +1189,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         btn.classList.toggle("active", btn.getAttribute("data-lang") === lang);
       });
 
-      // Hide multilingual stacked lines once a language is selected
+      // Text Sam button visibility
       var textBtn = document.getElementById("intake-text-btn");
       if (textBtn) textBtn.classList.toggle("hidden", lang !== "en");
-      // Reset preferred channel when switching languages
-      if (lang !== "en") preferredChannel = "sms";
-      else preferredChannel = "voice";
 
       // Welcome screen
       var heroKicker = document.getElementById("hero-kicker");
