@@ -65,9 +65,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     .lang-bar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 18px; }
     .hero .lang-bar { margin-top: 14px; margin-bottom: 14px; }
-    .hero-multilingual { display: flex; flex-direction: column; gap: 6px; margin-top: 14px; margin-bottom: 4px; }
-    .hero-lang-line { font-family: "DM Serif Display", serif; font-size: 18px; color: var(--text-primary); line-height: 1.6; font-weight: 400; }
-    .hero-lang-line em { font-style: italic; color: var(--cyan); }
+    .hero-typewriter { min-height: 28px; margin-top: 10px; margin-bottom: 6px; overflow: hidden; }
+    .hero-tw-text { font-family: "DM Serif Display", serif; font-size: 18px; color: var(--text-secondary); font-style: italic; transition: opacity 0.4s ease; }
+    .lang-chooser { font-size: 12px; font-weight: 600; color: var(--cyan-soft); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; transition: opacity 0.3s; }
     .hero-multilingual.hidden { display: none; }
     .hero-title-accent { font-family: "DM Serif Display", serif; font-style: italic; color: var(--cyan); }
     .hero-response { font-size: 13px; color: var(--cyan); font-weight: 600; letter-spacing: 0.03em; margin-top: 4px; margin-bottom: 8px; }
@@ -278,6 +278,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .ack input { accent-color: var(--cyan); margin-top: 2px; flex-shrink: 0; }
 
     .action-bar { display: flex; gap: 10px; align-items: center; justify-content: space-between; margin-top: 20px; flex-wrap: wrap; }
+    .action-bar-right { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .btn-text-sam { padding: 12px 20px; border-radius: var(--radius-md); background: transparent; border: 1px solid rgba(0,200,232,0.3); color: var(--cyan-soft); font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: "DM Sans", sans-serif; }
+    .btn-text-sam:hover { background: rgba(0,200,232,0.08); border-color: rgba(0,200,232,0.5); }
+    .btn-text-sam:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-text-sam.hidden { display: none; }
 
     .btn-primary, .btn-secondary { border-radius: var(--radius-sm); padding: 13px 18px; cursor: pointer; transition: opacity 0.2s, transform 0.1s; }
     .btn-primary { min-width: 220px; background: linear-gradient(135deg, #1a7fc4, #0097b2); color: #fff; border: none; font-size: 16px; font-weight: 700; letter-spacing: 0.01em; }
@@ -350,7 +355,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .form-top { flex-direction: column; }
       .step-pill { align-self: flex-start; }
       .action-bar { flex-direction: column-reverse; align-items: stretch; }
-      .action-bar .btn-primary, .action-bar .btn-secondary { width: 100%; }
+      .action-bar-right { flex-direction: column; }
+      .action-bar .btn-primary, .action-bar .btn-secondary, .action-bar .btn-text-sam { width: 100%; }
     }
 
     @media (max-width: 420px) {
@@ -409,16 +415,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="hero-copy-block">
           <div class="hero-kicker" id="hero-kicker">Martindale Dental &middot; Jackson Square</div>
           <div class="hero-title" id="hero-title">Are you having a dental concern?<br><span class="hero-title-accent">We can help.</span></div>
-          <div class="hero-multilingual" id="hero-multilingual">
-            <span class="hero-lang-line" lang="ar">هل لديك مشكلة في الأسنان؟ <em>نستطيع المساعدة.</em></span>
-            <span class="hero-lang-line" lang="hi">क्या आपको दांतों की समस्या है? <em>हम मदद कर सकते हैं।</em></span>
-            <span class="hero-lang-line" lang="pa">ਕੀ ਤੁਹਾਨੂੰ ਦੰਦਾਂ ਦੀ ਸਮੱਸਿਆ ਹੈ? <em>ਅਸੀਂ ਮਦਦ ਕਰ ਸਕਦੇ ਹਾਂ।</em></span>
-            <span class="hero-lang-line" lang="fr">Avez-vous un probleme dentaire? <em>Nous pouvons aider.</em></span>
-            <span class="hero-lang-line" lang="fa">آیا مشکل دندانی دارید؟ <em>ما می‌توانیم کمک کنیم.</em></span>
-            <span class="hero-lang-line" lang="so">Ma leedahay dhibaato ilko? <em>Waan ku caawin karnaa.</em></span>
-            <span class="hero-lang-line" lang="es">Tiene un problema dental? <em>Podemos ayudar.</em></span>
-            <span class="hero-lang-line" lang="zh">您有牙齿问题吗？<em>我们可以帮助您。</em></span>
+          <div class="hero-typewriter" id="hero-typewriter">
+            <span class="hero-tw-text" id="hero-tw-text"></span>
           </div>
+          <div class="lang-chooser" id="lang-chooser">Choose your language</div>
           <div class="lang-bar" id="lang-bar">
             <button class="lang-btn active" data-lang="en" type="button">English</button>
             <button class="lang-btn" data-lang="ar" type="button">العربية</button>
@@ -501,7 +501,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
           <div class="lf-section lf-final-cta">
             <div class="lf-title">Don't wait it out. Get assessed now.</div>
-            <div class="lf-body">Free. Private. Reviewed by a licensed Ontario dentist. Available 24/7 from your phone.</div>
+            <div class="lf-body">Free. Private. Our dental team follows up with you directly. Available 24/7 from your phone.</div>
             <div class="lf-micro-cta"><button class="hero-primary-btn lf-cta-btn" type="button" onclick="document.getElementById('start-assessment-btn').click()">Start assessment</button></div>
             <div class="warning-panel" style="margin-top:20px;">If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, seek emergency care immediately by calling 911.</div>
           </div>
@@ -663,7 +663,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <div class="action-bar">
         <button class="btn-secondary" id="back-to-welcome-btn" type="button">Back</button>
-        <button class="btn-primary" id="intake-submit-btn" type="button">Talk to Sam</button>
+        <div class="action-bar-right">
+          <button class="btn-text-sam" id="intake-text-btn" type="button">Text Sam instead</button>
+          <button class="btn-primary" id="intake-submit-btn" type="button">Talk to Sam</button>
+        </div>
       </div>
     </section>
 
@@ -718,6 +721,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     var currentLang = "en";
+    var preferredChannel = "voice"; // "voice" or "sms"
 
     var T = {
       en: {
@@ -1163,7 +1167,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     var RTL_LANGS = ["ar", "fa"];
 
-    function isSmsMode() { return currentLang !== "en"; }
+    function isSmsMode() { return currentLang !== "en" || preferredChannel === "sms"; }
 
     function t(key) {
       var lang = T[currentLang] || T.en;
@@ -1183,8 +1187,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       });
 
       // Hide multilingual stacked lines once a language is selected
-      var multiBlock = document.getElementById("hero-multilingual");
-      if (multiBlock) multiBlock.classList.toggle("hidden", lang !== "en");
+      var textBtn = document.getElementById("intake-text-btn");
+      if (textBtn) textBtn.classList.toggle("hidden", lang !== "en");
+      // Reset preferred channel when switching languages
+      if (lang !== "en") preferredChannel = "sms";
+      else preferredChannel = "voice";
 
       // Welcome screen
       var heroKicker = document.getElementById("hero-kicker");
@@ -1314,13 +1321,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       emergency: {
         title: "Dental emergency in Hamilton?",
         accent: "Help is here — 24/7.",
-        sub: "Tell us what's happening and get assessed by a licensed Ontario dentist. No waiting room. No phone hold. Start online now — it takes about 2 minutes.",
+        sub: "Tell us what's happening and describe your concern and our dental team will follow up. No waiting room. No phone hold. Start online now — it takes about 2 minutes.",
         context: "Located in Jackson Square, downtown Hamilton. Walk-ins welcome during office hours. After hours? Start here and a dentist will follow up first thing."
       },
       afterhours: {
         title: "It's after hours —",
         accent: "but we're still here.",
-        sub: "Our AI triage assistant Sam is available nights, weekends, and holidays. Describe your concern now, and a licensed Ontario dentist will review your case and follow up during the next available office hours.",
+        sub: "Our AI triage assistant Sam is available nights, weekends, and holidays. Describe your concern now, and our dental team will review your case and follow up during the next available office hours.",
         context: "No need to wait until Monday. No need to go to the ER for a dental issue. Start your assessment now and wake up with a plan."
       },
       toothache: {
@@ -1332,7 +1339,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       broken: {
         title: "Broken or knocked-out tooth?",
         accent: "Start here.",
-        sub: "Tell us what happened — a fall, a bite, an accident. Sam will walk you through a quick triage, and a licensed Ontario dentist will follow up with guidance and next steps.",
+        sub: "Tell us what happened — a fall, a bite, an accident. Sam will walk you through a quick triage, and our dental team will follow up with guidance and next steps.",
         context: "Time matters with dental trauma. Start your assessment now — even if it's after hours — so your dentist has the details first thing."
       },
       infection: {
@@ -1481,13 +1488,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     function setupIntakeSubmit() {
-      document.getElementById("intake-submit-btn").addEventListener("click", handleIntakeSubmit);
+      document.getElementById("intake-submit-btn").addEventListener("click", function() {
+        preferredChannel = "voice";
+        handleIntakeSubmit();
+      });
+      document.getElementById("intake-text-btn").addEventListener("click", function() {
+        preferredChannel = "sms";
+        handleIntakeSubmit();
+      });
     }
 
     async function handleIntakeSubmit() {
       var submitBtn = document.getElementById("intake-submit-btn");
+      var textBtn = document.getElementById("intake-text-btn");
       clearIntakeError();
       submitBtn.disabled = true;
+      if (textBtn) textBtn.disabled = true;
       submitBtn.textContent = "Saving...";
 
       try {
@@ -1527,6 +1543,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         showIntakeError(msg);
       } finally {
         submitBtn.disabled = false;
+        if (textBtn) textBtn.disabled = false;
         submitBtn.textContent = isSmsMode() ? t("btnSubmitSms") : t("btnSubmit");
       }
     }
@@ -1610,7 +1627,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         intake_source: getIntakeSource(),
         intake_version: "v2",
         intake_acknowledged_at: new Date().toISOString(),
-        patient_language: currentLang
+        patient_language: currentLang,
+        preferred_channel: preferredChannel
       };
     }
 
@@ -1802,6 +1820,39 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       errEl.textContent = "";
       errEl.style.display = "none";
     }
+
+    // ── Hero typewriter: cycles through language translations ──
+    (function() {
+      var twEl = document.getElementById("hero-tw-text");
+      var chooserEl = document.getElementById("lang-chooser");
+      if (!twEl) return;
+
+      var lines = [
+        { text: "\u0647\u0644 \u0644\u062f\u064a\u0643 \u0645\u0634\u0643\u0644\u0629 \u0641\u064a \u0627\u0644\u0623\u0633\u0646\u0627\u0646\u061f \u0646\u0633\u062a\u0637\u064a\u0639 \u0627\u0644\u0645\u0633\u0627\u0639\u062f\u0629.", chooser: "\u0627\u062e\u062a\u0631 \u0644\u063a\u062a\u0643" },
+        { text: "\u0915\u094d\u092f\u093e \u0906\u092a\u0915\u094b \u0926\u093e\u0902\u0924\u094b\u0902 \u0915\u0940 \u0938\u092e\u0938\u094d\u092f\u093e \u0939\u0948? \u0939\u092e \u092e\u0926\u0926 \u0915\u0930 \u0938\u0915\u0924\u0947 \u0939\u0948\u0902\u0964", chooser: "\u0905\u092a\u0928\u0940 \u092d\u093e\u0937\u093e \u091a\u0941\u0928\u0947\u0902" },
+        { text: "\u0a15\u0a40 \u0a24\u0a41\u0a39\u0a3e\u0a28\u0a42\u0a70 \u0a26\u0a70\u0a26\u0a3e\u0a02 \u0a26\u0a40 \u0a38\u0a2e\u0a71\u0a38\u0a3f\u0a06 \u0a39\u0a48? \u0a05\u0a38\u0a40\u0a02 \u0a2e\u0a26\u0a26 \u0a15\u0a30 \u0a38\u0a15\u0a26\u0a47 \u0a39\u0a3e\u0a02\u0964", chooser: "\u0a05\u0a2a\u0a23\u0a40 \u0a2d\u0a3e\u0a36\u0a3e \u0a1a\u0a41\u0a23\u0a4b" },
+        { text: "Avez-vous un probl\u00e8me dentaire? Nous pouvons aider.", chooser: "Choisissez votre langue" },
+        { text: "\u0622\u06cc\u0627 \u0645\u0634\u06a9\u0644 \u062f\u0646\u062f\u0627\u0646\u06cc \u062f\u0627\u0631\u06cc\u062f\u061f \u0645\u0627 \u0645\u06cc\u200c\u062a\u0648\u0627\u0646\u06cc\u0645 \u06a9\u0645\u06a9 \u06a9\u0646\u06cc\u0645.", chooser: "\u0632\u0628\u0627\u0646 \u062e\u0648\u062f \u0631\u0627 \u0627\u0646\u062a\u062e\u0627\u0628 \u06a9\u0646\u06cc\u062f" },
+        { text: "Ma leedahay dhibaato ilko? Waan ku caawin karnaa.", chooser: "Dooro luqaddaada" },
+        { text: "\u00bfTiene un problema dental? Podemos ayudar.", chooser: "Elija su idioma" },
+        { text: "\u60a8\u6709\u7259\u9f7f\u95ee\u9898\u5417\uff1f\u6211\u4eec\u53ef\u4ee5\u5e2e\u52a9\u60a8\u3002", chooser: "\u9009\u62e9\u60a8\u7684\u8bed\u8a00" }
+      ];
+
+      var idx = 0;
+      function cycle() {
+        twEl.style.opacity = "0";
+        if (chooserEl) chooserEl.style.opacity = "0";
+        setTimeout(function() {
+          twEl.textContent = lines[idx].text;
+          if (chooserEl) chooserEl.textContent = lines[idx].chooser;
+          twEl.style.opacity = "1";
+          if (chooserEl) chooserEl.style.opacity = "1";
+          idx = (idx + 1) % lines.length;
+        }, 400);
+      }
+      cycle();
+      setInterval(cycle, 3200);
+    })();
   </script>
 
 </body>
