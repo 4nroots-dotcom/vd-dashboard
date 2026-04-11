@@ -41,8 +41,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       --surface-3: rgba(255,255,255,0.05);
       --shadow-lg: 0 26px 70px rgba(0,0,0,0.34);
       --shadow-md: 0 14px 32px rgba(0,0,0,0.18);
-      --urgent: #e84545;
-      --emergency: #f0a500;
+      --critical: #e84545;
+      --urgent: #f0a500;
       --routine: #00c87a;
       --warning: #f0a500;
       --danger: #e84545;
@@ -143,15 +143,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .stack-list { display: flex; flex-direction: column; gap: 14px; }
     .stack-row-label { display: flex; justify-content: space-between; margin-bottom: 6px; gap: 10px; }
     .stack-name { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; }
+    .stack-name.critical { color: var(--critical); }
     .stack-name.urgent { color: var(--urgent); }
-    .stack-name.emergency { color: var(--emergency); }
     .stack-name.routine { color: var(--routine); }
     .stack-name.cyan { color: var(--cyan); }
     .stack-stats { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; color: var(--text-secondary); }
     .stack-track { height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }
     .stack-fill { height: 100%; border-radius: 4px; transition: width 0.7s cubic-bezier(0.4,0,0.2,1); }
-    .stack-fill.urgent { background: linear-gradient(90deg, #8b2020, #e84545); }
-    .stack-fill.emergency { background: linear-gradient(90deg, #8b6000, #f0a500); }
+    .stack-fill.critical { background: linear-gradient(90deg, #8b2020, #e84545); }
+    .stack-fill.urgent { background: linear-gradient(90deg, #8b6000, #f0a500); }
     .stack-fill.routine { background: linear-gradient(90deg, #007040, #00c87a); }
     .stack-fill.cyan { background: linear-gradient(90deg, #1a7fc4, #00c8e8); }
 
@@ -331,14 +331,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     function renderMetrics(cases, satData) {
+      // Backward compat: normalize old severity labels
+      cases.forEach(function(c) { if (c.severity === "emergency") c.severity = "urgent"; });
       var total = cases.length;
+      var critical = cases.filter(function(c) { return c.severity === "critical"; }).length;
       var urgent = cases.filter(function(c) { return c.severity === "urgent"; }).length;
-      var emergency = cases.filter(function(c) { return c.severity === "emergency"; }).length;
       var routine = cases.filter(function(c) { return c.severity === "routine"; }).length;
       var pendingReview = cases.filter(function(c) { return c.review_status !== "reviewed"; }).length;
       var clinicallyReviewed = cases.filter(function(c) { return !!c.reviewed_by; }).length;
       var clearedReviewed = cases.filter(function(c) { return c.review_status === "reviewed"; }).length;
-      var pendingUrgentEmergency = cases.filter(function(c) { return (c.severity === "urgent" || c.severity === "emergency") && !c.reviewed_by; }).length;
+      var pendingCriticalUrgent = cases.filter(function(c) { return (c.severity === "critical" || c.severity === "urgent") && !c.reviewed_by; }).length;
       var contacted = cases.filter(function(c) { return !!c.contacted_patient_at; }).length;
       var contactedAfterClinicalReview = cases.filter(function(c) { return !!c.contacted_patient_at && !!c.reviewed_by; }).length;
       var erRef = cases.filter(function(c) { return c.final_disposition === "referred_er"; }).length;
@@ -442,7 +444,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         hc("Total Calls", total, "all captured calls", "rgba(0,200,232,0.35)", "#e8f0fe") +
         hc("Usable Calls", usableCalls, p(usableCalls, total) + "% appear clinically usable", "rgba(0,200,122,0.35)", "#00c87a") +
         hc("Pending Review", pendingReview, "not yet clinically reviewed", pendingReview > 0 ? "rgba(240,165,0,0.4)" : "rgba(0,200,122,0.35)", pendingReview > 0 ? "#f0a500" : "#00c87a") +
-        hc("Pending Urgent / Emergency", pendingUrgentEmergency, "high-priority cases awaiting review", pendingUrgentEmergency > 0 ? "rgba(232,69,69,0.4)" : "rgba(0,200,122,0.35)", pendingUrgentEmergency > 0 ? "#e84545" : "#00c87a") +
+        hc("Pending Critical / Urgent", pendingCriticalUrgent, "high-priority cases awaiting review", pendingCriticalUrgent > 0 ? "rgba(232,69,69,0.4)" : "rgba(0,200,122,0.35)", pendingCriticalUrgent > 0 ? "#e84545" : "#00c87a") +
       '</div>';
 
       /* === SPEED === */
@@ -480,7 +482,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       /* Severity panel */
       html += '<div class="panel"><div class="panel-head"><div class="panel-title">Severity Distribution</div><div class="panel-subtle">' + total + ' call' + (total !== 1 ? 's' : '') + '</div></div><div class="panel-body"><div class="stack-list">' +
-        stackBar("urgent", "Urgent", urgent, total) + stackBar("emergency", "Emergency", emergency, total) + stackBar("routine", "Routine", routine, total) + stackBar("cyan", "Non-emergent inquiry", nonEmergent, total) + '</div>';
+        stackBar("critical", "Critical", critical, total) + stackBar("urgent", "Urgent", urgent, total) + stackBar("routine", "Routine", routine, total) + stackBar("cyan", "Non-emergent inquiry", nonEmergent, total) + '</div>';
 
       var tagKeys = Object.keys(tagCounts);
       if (tagKeys.length > 0) { html += '<div class="panel-divider"></div><div class="panel-sub-label">Triage Tag Distribution</div><div class="stack-list">'; tagKeys.sort(function(a, b) { return tagCounts[b] - tagCounts[a]; }).forEach(function(tag) { var tCount = tagCounts[tag]; var tPct = p(tCount, total); var tagLabel = TRIAGE_TAG_LABELS[tag] || formatTag(tag); html += '<div><div class="stack-row-label"><span class="stack-name cyan">' + escHtml(tagLabel) + '</span><span class="stack-stats">' + tCount + ' \u00B7 ' + tPct + '%</span></div><div class="stack-track"><div class="stack-fill cyan" style="width:' + tPct + '%"></div></div></div>'; }); html += '</div>'; }
