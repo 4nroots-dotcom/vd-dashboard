@@ -868,7 +868,8 @@ window.addEventListener('DOMContentLoaded',function(){
     } finally {
       btn.disabled = false;
       if (textBtn) textBtn.disabled = false;
-      btn.textContent = isSmsMode() ? t("btnSubmitSms") : t("btnSubmit");
+      var langSms = currentLang !== "en";
+      btn.textContent = langSms ? t("btnSubmitSms") : t("btnSubmit");
     }
   }
 
