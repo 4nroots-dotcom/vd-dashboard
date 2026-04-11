@@ -1544,7 +1544,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       } finally {
         submitBtn.disabled = false;
         if (textBtn) textBtn.disabled = false;
-        submitBtn.textContent = isSmsMode() ? t("btnSubmitSms") : t("btnSubmit");
+        // For English, submit button is always "Talk to Sam" (text option is separate button)
+        // For non-English, submit button shows SMS label (text button is hidden)
+        var langSms = currentLang !== "en";
+        submitBtn.textContent = langSms ? t("btnSubmitSms") : t("btnSubmit");
       }
     }
 
