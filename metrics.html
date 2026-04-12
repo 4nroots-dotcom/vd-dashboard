@@ -347,7 +347,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var rxIssued = cases.filter(function(c) { return c.prescription_issued === true; }).length;
 
       var reviewMinutes = cases.filter(function(c) { return c.created_at && c.reviewed_at && c.reviewed_by; }).map(function(c) { return (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000; }).filter(function(n) { return Number.isFinite(n) && n >= 0; });
-      var contactMinutes = cases.filter(function(c) { return c.created_at && c.contacted_patient_at; }).map(function(c) { return (new Date(c.contacted_patient_at) - new Date(c.created_at)) / 60000; }).filter(function(n) { return Number.isFinite(n) && n >= 0; });
+      var contactMinutes = cases.filter(function(c) { return c.created_at && c.contacted_patient_at && c.intake_source !== "in_office"; }).map(function(c) { return (new Date(c.contacted_patient_at) - new Date(c.created_at)) / 60000; }).filter(function(n) { return Number.isFinite(n) && n >= 0; });
       var avgTTR = reviewMinutes.length ? Math.round(reviewMinutes.reduce(function(a, b) { return a + b; }, 0) / reviewMinutes.length) : null;
       var avgTTC = contactMinutes.length ? Math.round(contactMinutes.reduce(function(a, b) { return a + b; }, 0) / contactMinutes.length) : null;
 
@@ -451,7 +451,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       html += '<div class="hero-grid">' +
         hc("Clinically Reviewed", clinicallyReviewed + " / " + total, p(clinicallyReviewed, total) + "% with reviewed_by present", "rgba(0,200,232,0.35)", "#00c8e8") +
         hc("Time to Review", fmtMin(avgRemoteTTR), "web and remote cases" + (remoteReviewMin.length ? " (" + remoteReviewMin.length + " cases)" : ""), "rgba(0,200,232,0.35)", "#00c8e8") +
-        hc("Avg Time to Contact", fmtMin(avgTTC), "created \u2192 contacted", "rgba(0,200,232,0.35)", "#00c8e8") +
+        hc("Avg Time to Contact", fmtMin(avgTTC), "web and remote cases only", "rgba(0,200,232,0.35)", "#00c8e8") +
       '</div>';
 
       /* === OUTCOMES === */
