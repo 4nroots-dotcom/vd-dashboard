@@ -124,7 +124,7 @@ window.addEventListener('DOMContentLoaded',function(){
 <div class="widget" id="widget-form">
   <div class="widget-header">
     <div class="widget-title" id="widget-title">Have a dental concern?<br><span class="widget-title-accent" id="widget-accent">Talk to Sam.</span></div>
-    <div class="widget-sub" id="widget-sub">Fill out this short form and Sam, our AI dental triage assistant, will follow up to assess your concern. Our dental team will follow up with you directly.</div>
+    <div class="widget-sub" id="widget-sub">Sam is our AI dental assistant. Whether it&#039;s a toothache, a broken tooth, or a question about your dental care &mdash; describe your concern and our dental team will follow up with you directly.</div>
     <div class="widget-free" id="widget-free">This service is free.</div>
     <div class="widget-badge" id="widget-badge">Sam responds in minutes &middot; Available 24/7</div>
   </div>
@@ -170,10 +170,10 @@ window.addEventListener('DOMContentLoaded',function(){
   </div>
 
   <div class="section">
-    <div class="section-title" id="sec-concern">Today's concern</div>
+    <div class="section-title" id="sec-concern">How can we help?</div>
     <div class="field">
-      <label for="chief-complaint" id="lbl-complaint">What's been bothering you?</label>
-      <textarea class="textarea" id="chief-complaint" placeholder="e.g. My back tooth has been throbbing for two days and is sensitive to cold"></textarea>
+      <label for="chief-complaint" id="lbl-complaint">How can we assist you today?</label>
+      <textarea class="textarea" id="chief-complaint" placeholder="e.g. Tooth pain for two days / I'd like to book a cleaning / New patient inquiry"></textarea>
     </div>
     <div class="field" style="margin-top:10px;">
       <label for="onset-bucket" id="lbl-onset">When did this start?</label>
@@ -302,14 +302,14 @@ window.addEventListener('DOMContentLoaded',function(){
   var T = {
     en: {
       widgetTitle: "Have a dental concern?", widgetAccent: "Talk to Sam.",
-      widgetSub: "Fill out this short form and Sam, our AI dental triage assistant, will follow up to assess your concern. Our dental team will follow up with you directly.",
+      widgetSub: "Sam is our AI dental assistant. Whether it&#039;s a toothache, a broken tooth, or a question about your dental care &mdash; describe your concern and our dental team will follow up with you directly.",
       widgetFree: "This service is free.", widgetBadge: "Sam responds in minutes \u00b7 Available 24/7",
       secAbout: "About you", lblName: "Full name", phName: "First and last name", lblDob: "Date of birth",
       lblPhone: "Phone number", phPhone: "10-digit number", phoneHelper: "Sam will call this number shortly after you submit.",
       phoneHelperSms: "Sam will text this number shortly after you submit.",
       lblCity: "City", phCity: "City", lblEmail: "Email address", emailOpt: "(optional)", phEmail: "For follow-up communications only",
-      secConcern: "Today's concern", lblComplaint: "What's been bothering you?",
-      phComplaint: "e.g. My back tooth has been throbbing for two days and is sensitive to cold",
+      secConcern: "How can we help?", lblComplaint: "How can we assist you today?",
+      phComplaint: "e.g. Tooth pain for two days / I'd like to book a cleaning / New patient inquiry",
       lblOnset: "When did this start?", optSelect: "Select one", optToday: "Today", optDays: "Within the last few days",
       optWeek: "About a week ago", optMore: "More than a week ago", optUnsure: "Not sure",
       lblRedflags: "Are any of these happening right now?",
@@ -346,7 +346,7 @@ window.addEventListener('DOMContentLoaded',function(){
       lblPhone: "رقم الهاتف", phPhone: "رقم من 10 أرقام", phoneHelper: "سيتصل بك سام على هذا الرقم.",
       phoneHelperSms: "سيرسل سام رسالة نصية إلى هذا الرقم.",
       lblCity: "المدينة", phCity: "المدينة", lblEmail: "البريد الإلكتروني", emailOpt: "(اختياري)", phEmail: "للمتابعة فقط",
-      secConcern: "مخاوفك اليوم", lblComplaint: "ما الذي يزعجك اليوم؟",
+      secConcern: "كيف يمكننا مساعدتك؟", lblComplaint: "كيف يمكننا مساعدتك اليوم؟",
       phComplaint: "مثال: ضرسي الخلفي يؤلمني منذ يومين وحساس للبرد",
       lblOnset: "متى بدأ هذا؟", optSelect: "اختر", optToday: "اليوم", optDays: "خلال الأيام القليلة الماضية",
       optWeek: "منذ حوالي أسبوع", optMore: "منذ أكثر من أسبوع", optUnsure: "غير متأكد",
@@ -383,7 +383,7 @@ window.addEventListener('DOMContentLoaded',function(){
       lblPhone: "फोन नंबर", phPhone: "10 अंकों का नंबर", phoneHelper: "सैम इस नंबर पर कॉल करेगा।",
       phoneHelperSms: "सैम इस नंबर पर मैसेज करेगा।",
       lblCity: "शहर", phCity: "शहर", lblEmail: "ईमेल पता", emailOpt: "(वैकल्पिक)", phEmail: "केवल फॉलो-अप के लिए",
-      secConcern: "आज की समस्या", lblComplaint: "आज आपको क्या परेशानी हो रही है?",
+      secConcern: "हम आपकी कैसे मदद कर सकते हैं?", lblComplaint: "आज हम आपकी कैसे मदद कर सकते हैं?",
       phComplaint: "उदा. मेरे पीछे के दांत में दो दिन से दर्द है",
       lblOnset: "यह कब शुरू हुआ?", optSelect: "चुनें", optToday: "आज", optDays: "पिछले कुछ दिनों में",
       optWeek: "लगभग एक हफ्ते पहले", optMore: "एक हफ्ते से अधिक पहले", optUnsure: "पता नहीं",
@@ -420,7 +420,7 @@ window.addEventListener('DOMContentLoaded',function(){
       lblPhone: "ਫੋਨ ਨੰਬਰ", phPhone: "10 ਅੰਕਾਂ ਦਾ ਨੰਬਰ", phoneHelper: "ਸੈਮ ਇਸ ਨੰਬਰ ਤੇ ਕਾਲ ਕਰੇਗਾ।",
       phoneHelperSms: "ਸੈਮ ਇਸ ਨੰਬਰ ਤੇ ਮੈਸੇਜ ਕਰੇਗਾ।",
       lblCity: "ਸ਼ਹਿਰ", phCity: "ਸ਼ਹਿਰ", lblEmail: "ਈਮੇਲ", emailOpt: "(ਵਿਕਲਪਿਕ)", phEmail: "ਸਿਰਫ਼ ਫਾਲੋ-ਅੱਪ ਲਈ",
-      secConcern: "ਅੱਜ ਦੀ ਸਮੱਸਿਆ", lblComplaint: "ਅੱਜ ਤੁਹਾਨੂੰ ਕੀ ਪਰੇਸ਼ਾਨੀ ਹੋ ਰਹੀ ਹੈ?",
+      secConcern: "ਅਸੀਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦੇ ਹਾਂ?", lblComplaint: "ਅੱਜ ਅਸੀਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦੇ ਹਾਂ?",
       phComplaint: "ਉਦਾ. ਮੇਰੇ ਪਿਛਲੇ ਦੰਦ ਵਿੱਚ ਦਰਦ ਹੈ",
       lblOnset: "ਇਹ ਕਦੋਂ ਸ਼ੁਰੂ ਹੋਇਆ?", optSelect: "ਚੁਣੋ", optToday: "ਅੱਜ", optDays: "ਪਿਛਲੇ ਕੁਝ ਦਿਨਾਂ ਵਿੱਚ",
       optWeek: "ਲਗਭਗ ਇੱਕ ਹਫ਼ਤਾ ਪਹਿਲਾਂ", optMore: "ਇੱਕ ਹਫ਼ਤੇ ਤੋਂ ਵੱਧ ਪਹਿਲਾਂ", optUnsure: "ਪੱਕਾ ਨਹੀਂ",
@@ -457,7 +457,7 @@ window.addEventListener('DOMContentLoaded',function(){
       lblPhone: "Numero de telephone", phPhone: "Numero a 10 chiffres", phoneHelper: "Sam appellera ce numero.",
       phoneHelperSms: "Sam enverra un message a ce numero.",
       lblCity: "Ville", phCity: "Ville", lblEmail: "Adresse courriel", emailOpt: "(facultatif)", phEmail: "Pour le suivi uniquement",
-      secConcern: "Probleme d'aujourd'hui", lblComplaint: "Qu'est-ce qui vous derange?",
+      secConcern: "Comment pouvons-nous vous aider?", lblComplaint: "Comment pouvons-nous vous aider?",
       phComplaint: "ex. Ma dent arriere me fait mal depuis deux jours",
       lblOnset: "Quand cela a-t-il commence?", optSelect: "Choisir", optToday: "Aujourd'hui", optDays: "Ces derniers jours",
       optWeek: "Il y a environ une semaine", optMore: "Il y a plus d'une semaine", optUnsure: "Pas certain",
@@ -494,7 +494,7 @@ window.addEventListener('DOMContentLoaded',function(){
       lblPhone: "شماره تلفن", phPhone: "شماره 10 رقمی", phoneHelper: "سام با این شماره تماس خواهد گرفت.",
       phoneHelperSms: "سام به این شماره پیام خواهد داد.",
       lblCity: "شهر", phCity: "شهر", lblEmail: "آدرس ایمیل", emailOpt: "(اختیاری)", phEmail: "فقط برای پیگیری",
-      secConcern: "مشکل امروز", lblComplaint: "امروز چه چیزی شما را اذیت می کند؟",
+      secConcern: "چگونه می‌توانیم کمک کنیم؟", lblComplaint: "امروز چگونه می‌توانیم کمک کنیم؟",
       phComplaint: "مثال: دندان عقبم دو روز است درد می کند",
       lblOnset: "این کی شروع شد؟", optSelect: "انتخاب کنید", optToday: "امروز", optDays: "چند روز گذشته",
       optWeek: "حدود یک هفته پیش", optMore: "بیش از یک هفته پیش", optUnsure: "مطمئن نیستم",
@@ -531,7 +531,7 @@ window.addEventListener('DOMContentLoaded',function(){
       lblPhone: "Lambarka taleefanka", phPhone: "Lambar 10 nambar ah", phoneHelper: "Sam ayaa wici doona lambarkaan.",
       phoneHelperSms: "Sam ayaa fariin u diri doona lambarkaan.",
       lblCity: "Magaalada", phCity: "Magaalada", lblEmail: "Ciwaanka iimaylka", emailOpt: "(ikhtiyaari)", phEmail: "Kaliya la socodsiinta",
-      secConcern: "Dhibaatada maanta", lblComplaint: "Maxaa ku dhibaya maanta?",
+      secConcern: "Sidee kugu caawin karnaa?", lblComplaint: "Sidee ku caawin karnaa maanta?",
       phComplaint: "Tusaale: Ilkahayga dambe ayaa xanuunaya",
       lblOnset: "Goorma ayay bilaabatay?", optSelect: "Dooro", optToday: "Maanta", optDays: "Dhowr maalmood",
       optWeek: "Toddobaad ka hor", optMore: "Ka badan toddobaad", optUnsure: "Lama hubo",
@@ -568,7 +568,7 @@ window.addEventListener('DOMContentLoaded',function(){
       lblPhone: "Numero de telefono", phPhone: "Numero de 10 digitos", phoneHelper: "Sam llamara a este numero.",
       phoneHelperSms: "Sam enviara un mensaje a este numero.",
       lblCity: "Ciudad", phCity: "Ciudad", lblEmail: "Correo electronico", emailOpt: "(opcional)", phEmail: "Solo para seguimiento",
-      secConcern: "Problema de hoy", lblComplaint: "Que le esta molestando?",
+      secConcern: "¿Cómo podemos ayudarle?", lblComplaint: "¿Cómo podemos ayudarle hoy?",
       phComplaint: "Ej. Mi muela trasera me ha estado doliendo por dos dias",
       lblOnset: "Cuando comenzo?", optSelect: "Seleccionar", optToday: "Hoy", optDays: "En los ultimos dias",
       optWeek: "Hace una semana", optMore: "Hace mas de una semana", optUnsure: "No estoy seguro",
@@ -605,7 +605,7 @@ window.addEventListener('DOMContentLoaded',function(){
       lblPhone: "电话号码", phPhone: "10位数号码", phoneHelper: "Sam将拨打此号码。",
       phoneHelperSms: "Sam将向此号码发送消息。",
       lblCity: "城市", phCity: "城市", lblEmail: "电子邮箱", emailOpt: "（可选）", phEmail: "仅用于后续联系",
-      secConcern: "今天的问题", lblComplaint: "今天什么在困扰您？",
+      secConcern: "我们如何帮助您？", lblComplaint: "今天我们如何帮助您？",
       phComplaint: "例如：我的后牙疼了两天，对冷敏感",
       lblOnset: "什么时候开始的？", optSelect: "请选择", optToday: "今天", optDays: "最近几天",
       optWeek: "大约一周前", optMore: "一周以上前", optUnsure: "不确定",
@@ -767,7 +767,7 @@ window.addEventListener('DOMContentLoaded',function(){
     var p = normalizePhone(getValue("patient-phone")); if (!p) return "Please enter your phone number.";
     if (!looksLikeNAPhone(p)) return "Please enter a valid 10-digit phone number.";
     if (!getValue("patient-city")) return "Please enter your city.";
-    var cc = getValue("chief-complaint"); if (!cc || cc.length < 3) return "Please describe what's been bothering you.";
+    var cc = getValue("chief-complaint"); if (!cc || cc.length < 3) return "Please describe how we can help you today.";
     if (!getValue("onset-bucket")) return "Please tell us when this started.";
     var rf = { a: isChecked("rf-breathing-swallowing"), b: isChecked("rf-uncontrolled-bleeding"), c: isChecked("rf-facial-swelling"), d: isChecked("rf-fever-unwell"), e: isChecked("rf-trauma"), f: isChecked("rf-avulsion"), g: isChecked("rf-none") };
     if (!atLeastOneTrue(rf)) return "Please select at least one option under current symptoms.";
