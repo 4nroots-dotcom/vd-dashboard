@@ -418,7 +418,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var remoteReviewMin = remoteCases.filter(function(c) { return c.created_at && c.reviewed_at && c.reviewed_by; }).map(function(c) { return (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000; }).filter(function(n) { return Number.isFinite(n) && n >= 0; });
       var inOfficeReviewMin = inOfficeCases.filter(function(c) { return c.created_at && c.reviewed_at && c.reviewed_by; }).map(function(c) { return (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000; }).filter(function(n) { return Number.isFinite(n) && n >= 0; });
       var avgRemoteTTR = remoteReviewMin.length ? Math.round(remoteReviewMin.reduce(function(a, b) { return a + b; }, 0) / remoteReviewMin.length) : null;
-      var avgInOfficeTTR = inOfficeReviewMin.length ? Math.round(inOfficeReviewMin.reduce(function(a, b) { return a + b; }, 0) / inOfficeReviewMin.length) : null;
 
       var dispoLabels = { booked: "Appointment booked", referred_er: "Referred to ER", rx_only: "Prescription only", declined: "Patient declined", no_response: "No response" };
       var contradictionFieldLabels = { fever: "Fever", swelling: "Swelling", trauma: "Trauma", bleeding: "Bleeding", uncontrolled_bleeding: "Uncontrolled bleeding", breathing_swallowing: "Airway / Swallowing", difficulty_breathing_or_swallowing: "Airway / Swallowing", feeling_unwell: "Feeling Unwell", immunocompromised: "Immunocompromised", pregnant: "Pregnancy", anticoagulant: "Blood Thinners", recent_extraction: "Recent extraction" };
@@ -451,8 +450,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       html += secHead("Speed");
       html += '<div class="hero-grid">' +
         hc("Clinically Reviewed", clinicallyReviewed + " / " + total, p(clinicallyReviewed, total) + "% with reviewed_by present", "rgba(0,200,232,0.35)", "#00c8e8") +
-        hc("Remote TTR", fmtMin(avgRemoteTTR), "excludes in-office cases" + (remoteReviewMin.length ? " (" + remoteReviewMin.length + " cases)" : ""), "rgba(0,200,232,0.35)", "#00c8e8") +
-        hc("In-Office TTR", fmtMin(avgInOfficeTTR), "in-office QR cases only" + (inOfficeReviewMin.length ? " (" + inOfficeReviewMin.length + " cases)" : ""), "rgba(0,200,232,0.35)", "#00c8e8") +
+        hc("Time to Review", fmtMin(avgRemoteTTR), "web and remote cases" + (remoteReviewMin.length ? " (" + remoteReviewMin.length + " cases)" : ""), "rgba(0,200,232,0.35)", "#00c8e8") +
         hc("Avg Time to Contact", fmtMin(avgTTC), "created \u2192 contacted", "rgba(0,200,232,0.35)", "#00c8e8") +
       '</div>';
 
