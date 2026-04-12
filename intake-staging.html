@@ -244,7 +244,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .section-title { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #c0d4f0; margin-bottom: 12px; }
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; overflow: hidden; }
     .field.full { grid-column: 1 / -1; }
     .field label { font-size: 12px; color: var(--text-secondary); font-weight: 600; }
     .helper { font-size: 12px; color: var(--text-muted); margin-top: -1px; }
@@ -259,7 +259,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       outline: none;
       transition: border-color 0.2s, background 0.2s;
     }
-    .input, .select { padding: 13px 14px; min-height: 48px; }
+    .input, .select { padding: 13px 14px; min-height: 48px; max-width: 100%; min-width: 0; }
+    input[type="date"] { -webkit-appearance: none; max-width: 100%; overflow: hidden; }
     .textarea { padding: 13px 14px; min-height: 96px; resize: vertical; }
     .input:focus, .select:focus, .textarea:focus { border-color: var(--border-active); background: rgba(255,255,255,0.07); }
     .input::placeholder, .textarea::placeholder { color: var(--text-muted); }
@@ -430,7 +431,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <button class="lang-btn" data-lang="es" type="button">Espa&ntilde;ol</button>
             <button class="lang-btn" data-lang="zh" type="button">中文</button>
           </div>
-          <div class="hero-sub" id="hero-sub">Tell us what is happening, and we'll help assess the situation and guide next steps.</div>
+          <div class="hero-sub" id="hero-sub">Whether it's a toothache, a broken tooth, or a question about your dental care &mdash; describe your concern and our dental team will follow up with you directly.</div>
           <div class="hero-cost">This service is available at no cost.</div>
           <div class="hero-response" id="hero-response">Sam responds in minutes &middot; Available 24/7</div>
           <div class="hero-cta-block">
@@ -456,7 +457,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="flow-block">
             <div class="flow-title">Next step: speak with Sam</div>
             <div class="flow-copy">
-              Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. Our dental team will follow up with you directly. After you submit, Sam will call the number you provide.
+              Sam is our AI dental assistant. Whether it's a dental concern or a general question, Sam will gather the details and our dental team will follow up with you directly. After you submit, Sam will call the number you provide.
             </div>
           </div>
         </div>
@@ -478,8 +479,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
 
           <div class="lf-section">
-            <div class="lf-title">Not sure if it counts as an emergency? Start here anyway.</div>
-            <div class="lf-body">Our triage service handles a wide range of dental concerns, including:</div>
+            <div class="lf-title">Not sure what to expect? Start here.</div>
+            <div class="lf-body">Sam can help with a wide range of dental concerns and general inquiries, including:</div>
             <div class="lf-conditions">
               <span class="lf-condition">Severe or persistent toothache</span>
               <span class="lf-condition">Broken, cracked, or chipped teeth</span>
@@ -489,9 +490,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <span class="lf-condition">Lost filling, crown, or restoration</span>
               <span class="lf-condition">Injury to the mouth, jaw, or teeth</span>
               <span class="lf-condition">Post-procedure pain or complications</span>
+              <span class="lf-condition">Appointment request</span>
+              <span class="lf-condition">New patient inquiry</span>
+              <span class="lf-condition">Cleaning or checkup</span>
+              <span class="lf-condition">Insurance question</span>
+              <span class="lf-condition">General concern</span>
             </div>
-            <div class="lf-body" style="margin-top:12px;">If you're not sure whether your situation qualifies, start the assessment anyway. That's exactly what the triage is for.</div>
-            <div class="lf-micro-cta"><button class="hero-primary-btn lf-cta-btn" type="button" onclick="document.getElementById('start-assessment-btn').click()">Start assessment</button><div class="lf-micro-sub">Describe your concern now. Sam will take it from there.</div></div>
+            <div class="lf-body" style="margin-top:12px;">Whether it's urgent or routine, start here and our team will take it from there.</div>
+            <div class="lf-micro-cta"><button class="hero-primary-btn lf-cta-btn" type="button" onclick="document.getElementById('start-assessment-btn').click()">Get started</button><div class="lf-micro-sub">Describe your concern or request. Sam will take it from there.</div></div>
           </div>
 
           <div class="lf-section">
@@ -519,7 +525,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="form-top">
         <div>
           <div class="form-title">Before we begin</div>
-          <div class="form-sub">Please share a few details so we can better understand your concern before connecting you to Sam.</div>
+          <div class="form-sub">Please share a few details so we can better understand your needs before connecting you to Sam.</div>
         </div>
         <div class="step-pill">Step 1 of 2</div>
       </div>
@@ -559,11 +565,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
 
       <div class="section">
-        <div class="section-title">Today's concern</div>
+        <div class="section-title">How can we help?</div>
 
         <div class="field">
-          <label for="chief-complaint">What's been bothering you today?</label>
-          <textarea class="textarea" id="chief-complaint" placeholder="e.g. My back tooth has been throbbing for two days and is sensitive to cold"></textarea>
+          <label for="chief-complaint">How can we assist you today?</label>
+          <textarea class="textarea" id="chief-complaint" placeholder="e.g. Tooth pain for two days, sensitive to cold / I'd like to book a cleaning / New patient inquiry"></textarea>
         </div>
 
         <div class="field" style="margin-top:14px;">
@@ -610,7 +616,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <div class="section">
         <div class="section-title">Relevant medical information</div>
-        <div class="helper" style="margin-bottom:10px;">Select any that apply.</div>
+        <div class="helper" id="med-helper" style="margin-bottom:10px;">Select any that apply.</div>
         <div class="check-group">
           <label class="choice"><input type="checkbox" id="mh-allergy-antibiotics" /><span>Allergy to antibiotics</span></label>
           <label class="choice"><input type="checkbox" id="mh-allergy-pain" /><span>Allergy to pain medication</span></label>
@@ -631,7 +637,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <div class="section">
         <div class="section-title">Coverage information (optional)</div>
-        <div class="helper" style="margin-bottom:10px;">This helps with follow-up planning only.</div>
+        <div class="helper" id="cov-helper" style="margin-bottom:10px;">This helps with follow-up planning only.</div>
         <div class="field">
           <label for="coverage-status">Coverage information</label>
           <select class="select" id="coverage-status">
@@ -691,7 +697,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
 
       <div class="handoff-copy" id="handoff-copy">
-        Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. Our dental team will follow up with you directly.
+        Sam is our AI dental assistant. Whether it's a dental concern or a general question, Sam will gather the details and our dental team will follow up with you directly.
       </div>
 
       <div class="handoff-panel">
@@ -727,7 +733,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       en: {
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
         heroTitle: "Are you having a dental concern?", heroAccent: "We can help.",
-        heroSub: "Tell us what is happening, and we'll help assess the situation and guide next steps.",
+        heroSub: "Whether it's a toothache, a broken tooth, or a question about your dental care — describe your concern and our dental team will follow up with you directly.",
         heroCost: "This service is available at no cost.", heroResponse: "Sam responds in minutes · Available 24/7",
         heroBtn: "Start assessment",
         trustSecure: "Secure and private",
@@ -736,12 +742,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         warningPanel: "If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, seek emergency care immediately by calling 911.",
         flowTitle: "Next step: speak with Sam",
         flowTitleSms: "Next step: text with Sam",
-        flowCopy: "Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. Our dental team will follow up with you directly. After you submit, Sam will call the number you provide.",
-        flowCopySms: "Sam is our AI dental triage assistant. Sam will text you in your language to assess your dental concern. Our dental team will follow up with you directly.",
+        flowCopy: "Sam is our AI dental assistant. Whether it's a dental concern or a general question, Sam will gather the details and our dental team will follow up with you directly. After you submit, Sam will call the number you provide.",
+        flowCopySms: "Sam is our AI dental assistant. Sam will text you in your language to understand your needs. Our dental team will follow up with you directly.",
         legalNote: "This service is provided by Martindale Dental at Jackson Square, powered by VirtualDentist.ai. It provides dental triage guidance and does not replace emergency medical care or an in-person dental examination.",
         legalDisclaimer: "This service is provided by Martindale Dental at Jackson Square, powered by VirtualDentist.ai. It provides dental triage guidance and does not replace emergency medical care or an in-person dental examination.", legalPrivacy: "Your information stays in Canada.",
         formTitle: "Before we begin",
-        formSub: "Please share a few details so we can better understand your concern before connecting you to Sam.",
+        formSub: "Please share a few details so we can better understand your needs before connecting you to Sam.",
         stepPill: "Step 1 of 2",
         sectionAbout: "About you",
         labelName: "Full name", placeholderName: "First and last name",
@@ -751,9 +757,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         phoneHelperSms: "Sam will text this number shortly after you submit.",
         labelCity: "City", placeholderCity: "City",
         labelEmail: "Email address", emailOptional: "(optional)", placeholderEmail: "For follow-up communications only",
-        sectionConcern: "Today's concern",
-        labelComplaint: "What's been bothering you today?",
-        placeholderComplaint: "e.g. My back tooth has been throbbing for two days and is sensitive to cold",
+        sectionConcern: "How can we help?",
+        labelComplaint: "How can we assist you today?",
+        placeholderComplaint: "e.g. Tooth pain for two days, sensitive to cold / I'd like to book a cleaning / New patient inquiry",
         labelOnset: "When did this start?",
         onsetSelect: "Select one", onsetToday: "Today", onsetDays: "Within the last few days", onsetWeek: "About a week ago", onsetMore: "More than a week ago", onsetUnsure: "Not sure",
         labelRedFlags: "Are any of these happening right now?",
@@ -773,7 +779,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         btnBack: "Back", btnSubmit: "Talk to Sam", btnSubmitSms: "Text Sam",
         handoffTitle: "Next step: answer Sam's call",
         handoffTitleSms: "Next step: check your text messages",
-        handoffCopy: "Sam is our AI dental triage assistant. Sam will ask a few guided questions to help assess your dental concern. Our dental team will follow up with you directly.",
+        handoffCopy: "Sam is our AI dental assistant. Whether it's a dental concern or a general question, Sam will gather the details and our dental team will follow up with you directly.",
         handoffCopySms: "Sam will text you shortly in your language. Please reply to Sam's messages. Our dental team will follow up with you directly.",
         handoffPanelTitle: "What happens now",
         handoffPanelCopyCall: "Your intake has been received and Sam will call the phone number you provided shortly.",
@@ -786,7 +792,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         expectTitleSms: "Sam is texting you now or shortly",
         expectCopy: "Please keep your phone nearby and answer the call when it comes through. The call will come from 1-833-959-3932.",
         expectCopySms: "Please keep your phone nearby and reply to Sam's text messages.",
-        valName: "Please enter your full name.", valNameShort: "Please enter a valid full name.", valDob: "Please enter your date of birth.", valDobInvalid: "Please enter a valid date of birth.", valDobFuture: "Date of birth cannot be in the future.", valPhone: "Please enter your phone number.", valPhoneInvalid: "Please enter a valid 10-digit phone number, or 11 digits starting with 1.", valCity: "Please enter your city.", valComplaint: "Please describe what's been bothering you today.", valComplaintShort: "Please provide a little more detail about your concern.", valOnset: "Please tell us when this started.", valRedFlags: "Please select at least one option under current symptoms, or choose 'None of the above.'", valMedical: "Please select at least one option under relevant medical information, or choose 'None of the above.'", valMedicalOther: "Please tell us more about the other important medical condition.", valConsent: "Please confirm the acknowledgement before continuing."
+        valName: "Please enter your full name.", valNameShort: "Please enter a valid full name.", valDob: "Please enter your date of birth.", valDobInvalid: "Please enter a valid date of birth.", valDobFuture: "Date of birth cannot be in the future.", valPhone: "Please enter your phone number.", valPhoneInvalid: "Please enter a valid 10-digit phone number, or 11 digits starting with 1.", valCity: "Please enter your city.", valComplaint: "Please describe how we can help you today.", valComplaintShort: "Please provide a little more detail about your concern.", valOnset: "Please tell us when this started.", valRedFlags: "Please select at least one option under current symptoms, or choose 'None of the above.'", valMedical: "Please select at least one option under relevant medical information, or choose 'None of the above.'", valMedicalOther: "Please tell us more about the other important medical condition.", valConsent: "Please confirm the acknowledgement before continuing."
       },
       ar: {
         heroKicker: "عيادة مارتنديل لطب الأسنان \u00b7 جاكسون سكوير",
@@ -815,8 +821,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         phoneHelperSms: "سيرسل سام رسالة نصية إلى هذا الرقم بعد الإرسال.",
         labelCity: "المدينة", placeholderCity: "المدينة",
         labelEmail: "البريد الإلكتروني", emailOptional: "(اختياري)", placeholderEmail: "للمتابعة فقط",
-        sectionConcern: "مخاوفك اليوم",
-        labelComplaint: "ما الذي يزعجك اليوم؟",
+        sectionConcern: "كيف يمكننا مساعدتك؟",
+        labelComplaint: "كيف يمكننا مساعدتك اليوم؟",
         placeholderComplaint: "مثال: ضرسي الخلفي يؤلمني منذ يومين وحساس للبرد",
         labelOnset: "متى بدأ هذا؟",
         onsetSelect: "اختر", onsetToday: "اليوم", onsetDays: "خلال الأيام القليلة الماضية", onsetWeek: "منذ حوالي أسبوع", onsetMore: "منذ أكثر من أسبوع", onsetUnsure: "غير متأكد",
@@ -876,8 +882,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         phoneHelperSms: "सबमिट करने के बाद सैम इस नंबर पर मैसेज करेगा।",
         labelCity: "शहर", placeholderCity: "शहर",
         labelEmail: "ईमेल पता", emailOptional: "(वैकल्पिक)", placeholderEmail: "केवल फॉलो-अप के लिए",
-        sectionConcern: "आज की समस्या",
-        labelComplaint: "आज आपको क्या परेशानी हो रही है?",
+        sectionConcern: "हम आपकी कैसे मदद कर सकते हैं?",
+        labelComplaint: "आज हम आपकी कैसे मदद कर सकते हैं?",
         placeholderComplaint: "उदा. मेरे पीछे के दांत में दो दिन से दर्द है और ठंडे से तकलीफ होती है",
         labelOnset: "यह कब शुरू हुआ?",
         onsetSelect: "चुनें", onsetToday: "आज", onsetDays: "पिछले कुछ दिनों में", onsetWeek: "लगभग एक हफ्ते पहले", onsetMore: "एक हफ्ते से अधिक पहले", onsetUnsure: "पता नहीं",
@@ -930,7 +936,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         sectionAbout: "ਤੁਹਾਡੇ ਬਾਰੇ", labelName: "ਪੂਰਾ ਨਾਮ", placeholderName: "ਪਹਿਲਾ ਅਤੇ ਆਖਰੀ ਨਾਮ", labelDob: "ਜਨਮ ਮਿਤੀ", labelPhone: "ਫੋਨ ਨੰਬਰ", placeholderPhone: "10 ਅੰਕਾਂ ਦਾ ਨੰਬਰ",
         phoneHelper: "ਸਬਮਿਟ ਕਰਨ ਤੋਂ ਬਾਅਦ ਸੈਮ ਇਸ ਨੰਬਰ ਤੇ ਕਾਲ ਕਰੇਗਾ।", phoneHelperSms: "ਸਬਮਿਟ ਕਰਨ ਤੋਂ ਬਾਅਦ ਸੈਮ ਇਸ ਨੰਬਰ ਤੇ ਮੈਸੇਜ ਕਰੇਗਾ।",
         labelCity: "ਸ਼ਹਿਰ", placeholderCity: "ਸ਼ਹਿਰ", labelEmail: "ਈਮੇਲ", emailOptional: "(ਵਿਕਲਪਿਕ)", placeholderEmail: "ਸਿਰਫ਼ ਫਾਲੋ-ਅੱਪ ਲਈ",
-        sectionConcern: "ਅੱਜ ਦੀ ਸਮੱਸਿਆ", labelComplaint: "ਅੱਜ ਤੁਹਾਨੂੰ ਕੀ ਪਰੇਸ਼ਾਨੀ ਹੋ ਰਹੀ ਹੈ?", placeholderComplaint: "ਉਦਾ. ਮੇਰੇ ਪਿਛਲੇ ਦੰਦ ਵਿੱਚ ਦੋ ਦਿਨਾਂ ਤੋਂ ਦਰਦ ਹੈ",
+        sectionConcern: "ਅਸੀਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦੇ ਹਾਂ?", labelComplaint: "ਅੱਜ ਅਸੀਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦੇ ਹਾਂ?", placeholderComplaint: "ਉਦਾ. ਮੇਰੇ ਪਿਛਲੇ ਦੰਦ ਵਿੱਚ ਦੋ ਦਿਨਾਂ ਤੋਂ ਦਰਦ ਹੈ",
         labelOnset: "ਇਹ ਕਦੋਂ ਸ਼ੁਰੂ ਹੋਇਆ?", onsetSelect: "ਚੁਣੋ", onsetToday: "ਅੱਜ", onsetDays: "ਪਿਛਲੇ ਕੁਝ ਦਿਨਾਂ ਵਿੱਚ", onsetWeek: "ਲਗਭਗ ਇੱਕ ਹਫ਼ਤਾ ਪਹਿਲਾਂ", onsetMore: "ਇੱਕ ਹਫ਼ਤੇ ਤੋਂ ਵੱਧ ਪਹਿਲਾਂ", onsetUnsure: "ਪੱਕਾ ਨਹੀਂ",
         labelRedFlags: "ਕੀ ਹੁਣ ਇਹਨਾਂ ਵਿੱਚੋਂ ਕੁਝ ਹੋ ਰਿਹਾ ਹੈ?",
         rfBreathing: "ਸਾਹ ਲੈਣ ਜਾਂ ਨਿਗਲਣ ਵਿੱਚ ਮੁਸ਼ਕਲ", rfBleeding: "ਬੰਦ ਨਾ ਹੋਣ ਵਾਲਾ ਖੂਨ", rfSwelling: "ਚਿਹਰੇ ਤੇ ਸੋਜ", rfFever: "ਬੁਖਾਰ ਜਾਂ ਬਿਮਾਰ ਮਹਿਸੂਸ", rfTrauma: "ਦੁਰਘਟਨਾ ਤੋਂ ਸੱਟ", rfAvulsion: "ਦੰਦ ਪੂਰੀ ਤਰ੍ਹਾਂ ਨਿਕਲ ਗਿਆ", rfNone: "ਇਹਨਾਂ ਵਿੱਚੋਂ ਕੋਈ ਨਹੀਂ",
@@ -973,7 +979,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         sectionAbout: "A propos de vous", labelName: "Nom complet", placeholderName: "Prenom et nom", labelDob: "Date de naissance", labelPhone: "Numero de telephone", placeholderPhone: "Numero a 10 chiffres",
         phoneHelper: "Sam appellera ce numero peu apres votre soumission.", phoneHelperSms: "Sam enverra un message a ce numero peu apres votre soumission.",
         labelCity: "Ville", placeholderCity: "Ville", labelEmail: "Adresse courriel", emailOptional: "(facultatif)", placeholderEmail: "Pour le suivi uniquement",
-        sectionConcern: "Probleme d'aujourd'hui", labelComplaint: "Qu'est-ce qui vous derange aujourd'hui?", placeholderComplaint: "ex. Ma dent arriere me fait mal depuis deux jours et est sensible au froid",
+        sectionConcern: "Comment pouvons-nous vous aider?", labelComplaint: "Comment pouvons-nous vous aider aujourd'hui?", placeholderComplaint: "ex. Ma dent arriere me fait mal depuis deux jours et est sensible au froid",
         labelOnset: "Quand cela a-t-il commence?", onsetSelect: "Choisir", onsetToday: "Aujourd'hui", onsetDays: "Ces derniers jours", onsetWeek: "Il y a environ une semaine", onsetMore: "Il y a plus d'une semaine", onsetUnsure: "Pas certain",
         labelRedFlags: "Est-ce que l'un de ces problemes se produit en ce moment?",
         rfBreathing: "Difficulte a respirer ou a avaler", rfBleeding: "Saignement incontrole", rfSwelling: "Gonflement facial", rfFever: "Fievre ou malaise", rfTrauma: "Blessure suite a un accident ou une chute", rfAvulsion: "Dent completement arrachee", rfNone: "Aucun de ces problemes",
@@ -1016,7 +1022,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         sectionAbout: "درباره شما", labelName: "نام کامل", placeholderName: "نام و نام خانوادگی", labelDob: "تاریخ تولد", labelPhone: "شماره تلفن", placeholderPhone: "شماره 10 رقمی",
         phoneHelper: "سام پس از ارسال با این شماره تماس خواهد گرفت.", phoneHelperSms: "سام پس از ارسال به این شماره پیام خواهد داد.",
         labelCity: "شهر", placeholderCity: "شهر", labelEmail: "آدرس ایمیل", emailOptional: "(اختیاری)", placeholderEmail: "فقط برای پیگیری",
-        sectionConcern: "مشکل امروز", labelComplaint: "امروز چه چیزی شما را اذیت می کند؟", placeholderComplaint: "مثال: دندان عقبم دو روز است درد می کند و به سرما حساس است",
+        sectionConcern: "چگونه می‌توانیم کمک کنیم؟", labelComplaint: "امروز چگونه می‌توانیم کمک کنیم؟", placeholderComplaint: "مثال: دندان عقبم دو روز است درد می کند و به سرما حساس است",
         labelOnset: "این کی شروع شد؟", onsetSelect: "انتخاب کنید", onsetToday: "امروز", onsetDays: "چند روز گذشته", onsetWeek: "حدود یک هفته پیش", onsetMore: "بیش از یک هفته پیش", onsetUnsure: "مطمئن نیستم",
         labelRedFlags: "آیا هم اکنون هر یک از این موارد رخ می دهد؟",
         rfBreathing: "مشکل در تنفس یا بلع", rfBleeding: "خونریزی غیرقابل کنترل", rfSwelling: "تورم صورت", rfFever: "تب یا احساس بیماری", rfTrauma: "آسیب ناشی از تصادف یا سقوط", rfAvulsion: "دندان کاملا کنده شده", rfNone: "هیچکدام از موارد بالا",
@@ -1057,7 +1063,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         sectionAbout: "Adiga ku saabsan", labelName: "Magaca oo buuxa", placeholderName: "Magaca hore iyo kan dambe", labelDob: "Taariikhda dhalashada", labelPhone: "Lambarka taleefanka", placeholderPhone: "Lambar 10 nambar ah",
         phoneHelper: "Sam ayaa wici doona lambarkaan ka dib markii aad dirto.", phoneHelperSms: "Sam ayaa fariin u diri doona lambarkaan ka dib markii aad dirto.",
         labelCity: "Magaalada", placeholderCity: "Magaalada", labelEmail: "Ciwaanka iimaylka", emailOptional: "(ikhtiyaari)", placeholderEmail: "Kaliya la socodsiinta",
-        sectionConcern: "Dhibaatada maanta", labelComplaint: "Maxaa ku dhibaya maanta?", placeholderComplaint: "Tusaale: Ilkahayga dambe ayaa xanuunaya laba maalmood iyo qaboobaha ayaa saameyn ku leh",
+        sectionConcern: "Sidee kugu caawin karnaa?", labelComplaint: "Sidee ku caawin karnaa maanta?", placeholderComplaint: "Tusaale: Ilkahayga dambe ayaa xanuunaya laba maalmood iyo qaboobaha ayaa saameyn ku leh",
         labelOnset: "Goorma ayay bilaabatay?", onsetSelect: "Dooro", onsetToday: "Maanta", onsetDays: "Dhowr maalmood ee la soo dhaafay", onsetWeek: "Qiyaastii toddobaad ka hor", onsetMore: "Ka badan toddobaad ka hor", onsetUnsure: "Lama hubo",
         labelRedFlags: "Ma dhacayaan kuwan hadda?",
         rfBreathing: "Dhibaato neefsasho ama liqid", rfBleeding: "Dhiig aan joogsan karin", rfSwelling: "Bararka wajiga", rfFever: "Qandho ama dareen xanuun", rfTrauma: "Dhaawac shil ama dhicis", rfAvulsion: "Ilko dhammaystiran oo soo baxday", rfNone: "Midkoodna ma ahan",
@@ -1097,7 +1103,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         sectionAbout: "Sobre usted", labelName: "Nombre completo", placeholderName: "Nombre y apellido", labelDob: "Fecha de nacimiento", labelPhone: "Numero de telefono", placeholderPhone: "Numero de 10 digitos",
         phoneHelper: "Sam llamara a este numero poco despues de enviar.", phoneHelperSms: "Sam enviara un mensaje a este numero poco despues de enviar.",
         labelCity: "Ciudad", placeholderCity: "Ciudad", labelEmail: "Correo electronico", emailOptional: "(opcional)", placeholderEmail: "Solo para seguimiento",
-        sectionConcern: "Problema de hoy", labelComplaint: "Que le esta molestando hoy?", placeholderComplaint: "Ej. Mi muela trasera me ha estado doliendo por dos dias y es sensible al frio",
+        sectionConcern: "¿Cómo podemos ayudarle?", labelComplaint: "¿Cómo podemos ayudarle hoy?", placeholderComplaint: "Ej. Mi muela trasera me ha estado doliendo por dos dias y es sensible al frio",
         labelOnset: "Cuando comenzo esto?", onsetSelect: "Seleccionar", onsetToday: "Hoy", onsetDays: "En los ultimos dias", onsetWeek: "Hace aproximadamente una semana", onsetMore: "Hace mas de una semana", onsetUnsure: "No estoy seguro",
         labelRedFlags: "Esta experimentando alguno de estos ahora?",
         rfBreathing: "Dificultad para respirar o tragar", rfBleeding: "Sangrado incontrolable", rfSwelling: "Hinchazon facial", rfFever: "Fiebre o malestar", rfTrauma: "Lesion por accidente o caida", rfAvulsion: "Diente completamente desprendido", rfNone: "Ninguno de los anteriores",
@@ -1138,7 +1144,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         sectionAbout: "关于您", labelName: "全名", placeholderName: "姓名", labelDob: "出生日期", labelPhone: "电话号码", placeholderPhone: "10位数号码",
         phoneHelper: "提交后Sam将拨打此号码。", phoneHelperSms: "提交后Sam将向此号码发送消息。",
         labelCity: "城市", placeholderCity: "城市", labelEmail: "电子邮箱", emailOptional: "（可选）", placeholderEmail: "仅用于后续联系",
-        sectionConcern: "今天的问题", labelComplaint: "今天什么在困扰您？", placeholderComplaint: "例如：我的后牙疼了两天，对冷敏感",
+        sectionConcern: "我们如何帮助您？", labelComplaint: "今天我们如何帮助您？", placeholderComplaint: "例如：我的后牙疼了两天，对冷敏感",
         labelOnset: "这是什么时候开始的？", onsetSelect: "请选择", onsetToday: "今天", onsetDays: "最近几天", onsetWeek: "大约一周前", onsetMore: "一周以上前", onsetUnsure: "不确定",
         labelRedFlags: "您现在是否有以下情况？",
         rfBreathing: "呼吸或吞咽困难", rfBleeding: "无法控制的出血", rfSwelling: "面部肿胀", rfFever: "发烧或感觉不适", rfTrauma: "事故或跌倒造成的伤害", rfAvulsion: "牙齿完全脱落", rfNone: "以上都没有",
@@ -1301,11 +1307,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       document.getElementById("intake-submit-btn").textContent = sms ? t("btnSubmitSms") : t("btnSubmit");
 
       // Medical/coverage helpers
-      var helpers = document.querySelectorAll(".helper");
-      helpers.forEach(function(h) {
-        if (h.textContent.indexOf("Select any") >= 0 || h.textContent === t("medicalHelper")) h.textContent = t("medicalHelper");
-        if (h.textContent.indexOf("follow-up planning") >= 0 || h.textContent === t("coverageHelper")) h.textContent = t("coverageHelper");
-      });
+      var medHelper = document.getElementById("med-helper");
+      var covHelper = document.getElementById("cov-helper");
+      if (medHelper) medHelper.textContent = t("medicalHelper");
+      if (covHelper) covHelper.textContent = t("coverageHelper");
     }
 
     // Language bar click handler
@@ -1597,7 +1602,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       if (!data.patientPhone) return "Please enter your phone number.";
       if (!looksLikeNorthAmericanPhone(data.patientPhone)) return "Please enter a valid 10-digit phone number, or 11 digits starting with 1.";
       if (!data.patientCity) return "Please enter your city.";
-      if (!data.chiefComplaint) return "Please describe what's been bothering you today.";
+      if (!data.chiefComplaint) return "Please describe how we can help you today.";
       if (data.chiefComplaint.length < 3) return "Please provide a little more detail about your concern.";
       if (!data.onsetBucket) return "Please tell us when this started.";
       if (!atLeastOneTrue(data.intakeRedFlags)) return "Please select at least one option under current symptoms, or choose 'None of the above.'";
