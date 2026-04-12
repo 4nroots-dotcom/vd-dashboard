@@ -1,447 +1,268 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-  <title>Martindale Dental &mdash; Your Feedback</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    :root {
-      --navy: #071323;
-      --cyan: #00c8e8;
-      --green: #71BB55;
-      --bg: #F0F4F8;
-      --surface: #FFFFFF;
-      --border: #E2E8F0;
-      --text-primary: #1A202C;
-      --text-secondary: #4A5568;
-      --text-muted: #718096;
-      --radius: 12px;
-      --shadow: 0 4px 20px rgba(0,0,0,0.10);
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    html, body {
-      min-height: 100%;
-      background: var(--bg);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text-primary);
-      line-height: 1.5;
-      padding: 24px 16px 48px;
-    }
-
-    .shell { max-width: 560px; margin: 0 auto; }
-
-    /* ---- HEADER ---- */
-    .header {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 28px;
-      text-align: center;
-    }
-    .header-logo { margin-bottom: 12px; }
-    .header-title { font-size: 22px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
-    .header-sub { font-size: 14px; color: var(--text-muted); }
-    .header-vd { font-size: 11px; font-weight: 600; color: var(--cyan); letter-spacing: 0.06em; margin-top: 6px; }
-
-    /* ---- CARD ---- */
-    .card { background: var(--surface); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px 24px; }
-    .card-title { font-size: 17px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
-    .card-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
-
-    /* ---- QUESTION ---- */
-    .question { margin-bottom: 28px; }
-    .question-label { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 12px; display: block; }
-
-    /* ---- STAR RATING ---- */
-    .star-row { display: flex; gap: 8px; }
-    .star-btn {
-      background: none;
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      width: 52px; height: 52px;
-      font-size: 22px;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: border-color 0.15s, background 0.15s, transform 0.1s;
-      color: var(--text-muted);
-      flex-shrink: 0;
-    }
-    .star-btn:hover { border-color: var(--cyan); transform: scale(1.06); }
-    .star-btn.selected { border-color: var(--navy); background: var(--navy); color: #fff; }
-    .star-labels { display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; color: var(--text-muted); }
-
-    /* ---- YES/SOMEWHAT/NO ---- */
-    .ysn-row { display: flex; gap: 10px; }
-    .ysn-btn {
-      flex: 1;
-      background: none;
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      padding: 12px 8px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      color: var(--text-muted);
-      transition: border-color 0.15s, background 0.15s, color 0.15s;
-      font-family: inherit;
-    }
-    .ysn-btn:hover { border-color: var(--cyan); color: var(--text-primary); }
-    .ysn-btn.selected { border-color: var(--navy); background: var(--navy); color: #fff; }
-
-    /* ---- TEXTAREA ---- */
-    .feedback-textarea {
-      width: 100%;
-      padding: 12px 14px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 14px;
-      font-family: inherit;
-      color: var(--text-primary);
-      resize: vertical;
-      min-height: 96px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .feedback-textarea:focus { border-color: var(--cyan); }
-    .feedback-textarea::placeholder { color: var(--text-muted); }
-
-    /* ---- DIVIDER ---- */
-    .divider { height: 1px; background: var(--border); margin: 24px 0; }
-
-    /* ---- SUBMIT ---- */
-    .submit-btn {
-      width: 100%;
-      padding: 14px;
-      background: var(--navy);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 24px;
-      transition: opacity 0.2s;
-    }
-    .submit-btn:hover { opacity: 0.88; }
-    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .submit-note { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 12px; line-height: 1.5; }
-
-    /* ---- STATES ---- */
-    .state { display: none; }
-    .state.active { display: block; }
-
-    /* ---- THANK YOU ---- */
-    .thankyou-icon {
-      width: 60px; height: 60px;
-      border-radius: 50%;
-      background: #EBF7E3;
-      border: 2px solid var(--green);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 28px;
-      margin: 0 auto 16px;
-    }
-    .thankyou-title { font-size: 22px; font-weight: 700; color: var(--navy); text-align: center; margin-bottom: 8px; }
-    .thankyou-body { font-size: 14px; color: var(--text-secondary); text-align: center; line-height: 1.65; }
-
-    .error-box {
-      background: #FFF5F5;
-      border: 1px solid #FC8181;
-      border-radius: 8px;
-      padding: 12px 14px;
-      color: #C53030;
-      font-size: 13px;
-      margin-top: 12px;
-      display: none;
-    }
-
-    @media (max-width: 400px) {
-      .star-btn { width: 44px; height: 44px; font-size: 18px; }
-      .card { padding: 20px 16px; }
-      .ysn-btn { padding: 10px 6px; font-size: 13px; }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Martindale Dental — Feedback</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  background: #f0f4f8;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 16px 60px;
+  color: #1a2b40;
+}
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.08);
+  max-width: 480px;
+  width: 100%;
+  overflow: hidden;
+}
+.card-header {
+  background: #1b4d2e;
+  padding: 20px 28px 0;
+  border-bottom: 4px solid #71bb55;
+}
+.card-header svg { display: block; height: 40px; width: auto; margin-bottom: 14px; }
+.practice-sub { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 0; padding-bottom: 14px; }
+.card-body { padding: 28px 28px 32px; }
+.survey-title { font-size: 20px; font-weight: 700; color: #071323; margin-bottom: 6px; }
+.survey-sub { font-size: 14px; color: #5a7090; margin-bottom: 28px; line-height: 1.6; }
+.q-block { margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #eef1f6; }
+.q-block:last-of-type { border-bottom: none; margin-bottom: 0; }
+.q-label { font-size: 14px; font-weight: 600; color: #1a2b40; margin-bottom: 12px; line-height: 1.4; }
+.stars { display: flex; gap: 8px; }
+.star {
+  width: 40px; height: 40px; cursor: pointer; border-radius: 8px;
+  border: 2px solid #d0dae8; background: #f7f9fc;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent; user-select: none;
+}
+.star.active { background: #1b4d2e; border-color: #1b4d2e; }
+.star-labels { display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; color: #7f96b8; }
+.radio-group { display: flex; flex-direction: column; gap: 8px; }
+.radio-opt {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; border: 2px solid #e4eaf4; border-radius: 10px;
+  cursor: pointer; transition: all 0.15s ease;
+  font-size: 14px; color: #1a2b40; font-weight: 500;
+  -webkit-tap-highlight-color: transparent; user-select: none;
+}
+.radio-opt:hover { border-color: #a0b4cc; background: #f7f9fc; }
+.radio-opt.active { border-color: #1b4d2e; background: #1b4d2e; color: #f5f9ff; }
+.radio-dot {
+  width: 18px; height: 18px; border-radius: 50%; border: 2px solid #a0b4cc;
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s ease;
+}
+.radio-opt.active .radio-dot { border-color: #71bb55; background: #71bb55; }
+.radio-dot::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #071323; opacity: 0; transition: opacity 0.15s; }
+.radio-opt.active .radio-dot::after { opacity: 1; }
+textarea {
+  width: 100%; border: 2px solid #e4eaf4; border-radius: 10px; padding: 12px 14px;
+  font-family: inherit; font-size: 14px; color: #1a2b40;
+  resize: vertical; min-height: 88px; outline: none; transition: border-color 0.15s; line-height: 1.6;
+}
+textarea:focus { border-color: #1b4d2e; }
+textarea::placeholder { color: #a0b4cc; }
+.submit-btn {
+  width: 100%; padding: 16px; background: #1b4d2e; color: #ffffff;
+  border: none; border-radius: 10px; font-family: inherit; font-size: 15px;
+  font-weight: 700; cursor: pointer; transition: background 0.15s; margin-top: 4px;
+}
+.submit-btn:hover { background: #2d6b3e; }
+.submit-btn:disabled { background: #a0b4cc; cursor: not-allowed; }
+.thankyou { display: none; text-align: center; padding: 48px 28px; }
+.thankyou-icon { font-size: 48px; margin-bottom: 16px; }
+.thankyou-title { font-size: 22px; font-weight: 700; color: #071323; margin-bottom: 8px; }
+.thankyou-sub { font-size: 14px; color: #5a7090; line-height: 1.65; }
+.error-msg {
+  display: none; background: #fff4f5; border: 1px solid #e05566;
+  border-radius: 8px; padding: 12px 16px; font-size: 13px; color: #c0202e;
+  margin-top: 12px; text-align: center;
+}
+</style>
 </head>
 <body>
-<div class="shell">
 
-  <!-- HEADER -->
-  <div class="header">
-    <div class="header-logo">
-      <svg xmlns="http://www.w3.org/2000/svg" style="height:48px;width:auto;display:block;" viewBox="70 36 454 300" shape-rendering="geometricPrecision" aria-label="Martindale Dental">
-        <path d="M 292 41 L 184 138 L 180 136 L 75 42 L 75 258 L 291 258 L 292 257 Z M 487 304 L 485 306 L 486 307 L 492 304 L 499 305 L 502 308 L 502 313 L 501 314 L 491 314 L 485 317 L 484 319 L 485 327 L 489 329 L 496 329 L 501 325 L 504 329 L 504 309 L 503 306 L 499 303 Z M 501 315 L 502 316 L 502 322 L 497 327 L 492 328 L 489 327 L 486 324 L 486 320 L 490 316 Z M 433 303 L 433 328 L 435 329 L 435 315 L 437 309 L 441 305 L 447 304 L 452 308 L 453 311 L 453 329 L 455 329 L 455 310 L 454 307 L 450 303 L 442 303 L 436 308 L 435 303 Z M 408 303 L 403 306 L 400 312 L 401 323 L 408 329 L 417 329 L 421 327 L 423 324 L 422 323 L 419 326 L 414 328 L 408 327 L 403 322 L 402 317 L 403 316 L 424 316 L 423 308 L 417 303 Z M 402 312 L 406 306 L 411 304 L 414 304 L 418 306 L 422 311 L 421 314 L 403 314 Z M 326 303 L 322 305 L 318 310 L 317 314 L 318 321 L 320 325 L 326 329 L 335 329 L 341 324 L 339 323 L 336 326 L 329 328 L 324 326 L 321 323 L 319 317 L 320 316 L 342 316 L 341 309 L 338 305 L 334 303 Z M 319 313 L 321 309 L 325 305 L 328 304 L 334 305 L 340 312 L 339 314 L 320 314 Z M 277 304 L 275 306 L 276 307 L 283 304 L 289 305 L 292 308 L 293 312 L 291 314 L 282 314 L 277 316 L 274 319 L 274 325 L 279 329 L 286 329 L 292 325 L 293 329 L 295 329 L 294 326 L 294 308 L 293 306 L 289 303 Z M 291 315 L 293 317 L 293 319 L 289 326 L 282 328 L 279 327 L 276 324 L 276 320 L 279 317 L 284 315 Z M 207 303 L 208 308 L 208 329 L 210 328 L 210 311 L 215 305 L 218 304 L 223 305 L 227 310 L 227 329 L 229 329 L 229 310 L 227 305 L 224 303 L 216 303 L 210 307 L 209 303 Z M 196 303 L 196 329 L 198 329 L 198 303 Z M 165 303 L 160 303 L 156 307 L 154 306 L 154 303 L 152 303 L 152 328 L 154 329 L 155 310 L 160 305 L 164 305 Z M 124 305 L 124 307 L 131 304 L 137 305 L 140 308 L 141 313 L 140 314 L 130 314 L 125 316 L 122 320 L 123 326 L 127 329 L 135 329 L 140 325 L 141 329 L 143 329 L 142 307 L 137 303 L 128 303 Z M 140 315 L 141 320 L 140 323 L 137 326 L 130 328 L 125 325 L 124 320 L 127 317 L 132 315 Z M 76 303 L 76 329 L 78 329 L 78 313 L 79 310 L 82 306 L 87 304 L 91 305 L 94 309 L 94 328 L 96 329 L 96 312 L 97 309 L 101 305 L 104 304 L 109 305 L 112 309 L 113 329 L 115 328 L 115 313 L 114 308 L 111 304 L 101 303 L 96 308 L 91 303 L 84 303 L 79 308 L 78 303 Z M 467 297 L 468 298 L 467 302 L 462 303 L 462 305 L 466 305 L 468 308 L 467 309 L 468 310 L 468 319 L 467 320 L 468 321 L 467 323 L 468 327 L 471 329 L 477 329 L 477 327 L 474 328 L 469 323 L 469 307 L 471 305 L 477 305 L 477 303 L 470 303 L 469 302 L 469 296 Z M 177 296 L 177 302 L 176 303 L 171 303 L 171 305 L 176 305 L 177 306 L 177 325 L 180 329 L 187 329 L 187 327 L 183 328 L 179 324 L 179 306 L 180 305 L 187 305 L 187 303 L 180 303 L 179 302 L 179 296 Z M 198 290 L 195 292 L 196 294 L 199 293 Z M 515 286 L 515 328 L 517 329 L 517 286 Z M 391 286 L 389 286 L 389 306 L 388 307 L 382 303 L 373 303 L 369 305 L 365 311 L 365 321 L 368 326 L 371 328 L 382 329 L 386 327 L 388 324 L 389 328 L 391 329 Z M 380 304 L 384 306 L 388 310 L 390 315 L 388 322 L 384 326 L 379 328 L 373 327 L 367 320 L 368 310 L 373 305 Z M 306 286 L 306 329 L 308 328 L 308 287 Z M 265 286 L 263 286 L 263 307 L 262 308 L 260 305 L 256 303 L 247 303 L 243 305 L 239 310 L 238 314 L 239 322 L 243 327 L 247 329 L 256 329 L 262 324 L 263 329 L 265 329 Z M 250 304 L 258 306 L 263 312 L 262 322 L 258 326 L 252 328 L 247 327 L 244 325 L 240 318 L 240 314 L 242 309 L 245 306 Z" fill="rgb(65,70,76)" fill-rule="evenodd"/>
-        <path d="M 336 41 L 359 43 L 386 50 L 402 57 L 421 70 L 436 87 L 445 105 L 448 114 L 451 130 L 452 157 L 451 158 L 451 168 L 450 169 L 449 179 L 444 195 L 435 212 L 418 230 L 403 240 L 378 250 L 350 256 L 331 257 L 516 257 L 516 41 Z M 75 41 L 77 43 L 74 41 L 74 257 L 74 42 Z" fill="rgb(113,187,85)" fill-rule="evenodd"/>
-      </svg>
-    </div>
-    <div class="header-title">How was your visit?</div>
-    <div class="header-sub">Martindale Dental &middot; Jackson Square</div>
-    <div class="header-vd">Powered by VirtualDentist.ai</div>
+<div class="card">
+  <div class="card-header">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="70 36 454 300" shape-rendering="geometricPrecision" aria-label="Martindale Dental">
+      <path d="M 292 41 L 184 138 L 180 136 L 75 42 L 75 258 L 291 258 L 292 257 Z M 487 304 L 485 306 L 486 307 L 492 304 L 499 305 L 502 308 L 502 313 L 501 314 L 491 314 L 485 317 L 484 319 L 485 327 L 489 329 L 496 329 L 501 325 L 504 329 L 504 309 L 503 306 L 499 303 Z M 501 315 L 502 316 L 502 322 L 497 327 L 492 328 L 489 327 L 486 324 L 486 320 L 490 316 Z M 433 303 L 433 328 L 435 329 L 435 315 L 437 309 L 441 305 L 447 304 L 452 308 L 453 311 L 453 329 L 455 329 L 455 310 L 454 307 L 450 303 L 442 303 L 436 308 L 435 303 Z M 408 303 L 403 306 L 400 312 L 401 323 L 408 329 L 417 329 L 421 327 L 423 324 L 422 323 L 419 326 L 414 328 L 408 327 L 403 322 L 402 317 L 403 316 L 424 316 L 423 308 L 417 303 Z M 402 312 L 406 306 L 411 304 L 414 304 L 418 306 L 422 311 L 421 314 L 403 314 Z M 326 303 L 322 305 L 318 310 L 317 314 L 318 321 L 320 325 L 326 329 L 335 329 L 341 324 L 339 323 L 336 326 L 329 328 L 324 326 L 321 323 L 319 317 L 320 316 L 342 316 L 341 309 L 338 305 L 334 303 Z M 319 313 L 321 309 L 325 305 L 328 304 L 334 305 L 340 312 L 339 314 L 320 314 Z M 277 304 L 275 306 L 276 307 L 283 304 L 289 305 L 292 308 L 293 312 L 291 314 L 282 314 L 277 316 L 274 319 L 274 325 L 279 329 L 286 329 L 292 325 L 293 329 L 295 329 L 294 326 L 294 308 L 293 306 L 289 303 Z M 291 315 L 293 317 L 293 319 L 289 326 L 282 328 L 279 327 L 276 324 L 276 320 L 279 317 L 284 315 Z M 207 303 L 208 308 L 208 329 L 210 328 L 210 311 L 215 305 L 218 304 L 223 305 L 227 310 L 227 329 L 229 329 L 229 310 L 227 305 L 224 303 L 216 303 L 210 307 L 209 303 Z M 196 303 L 196 329 L 198 329 L 198 303 Z M 165 303 L 160 303 L 156 307 L 154 306 L 154 303 L 152 303 L 152 328 L 154 329 L 155 310 L 160 305 L 164 305 Z M 124 305 L 124 307 L 131 304 L 137 305 L 140 308 L 141 313 L 140 314 L 130 314 L 125 316 L 122 320 L 123 326 L 127 329 L 135 329 L 140 325 L 141 329 L 143 329 L 142 307 L 137 303 L 128 303 Z M 140 315 L 141 320 L 140 323 L 137 326 L 130 328 L 125 325 L 124 320 L 127 317 L 132 315 Z M 76 303 L 76 329 L 78 329 L 78 313 L 79 310 L 82 306 L 87 304 L 91 305 L 94 309 L 94 328 L 96 329 L 96 312 L 97 309 L 101 305 L 104 304 L 109 305 L 112 309 L 113 329 L 115 328 L 115 313 L 114 308 L 111 304 L 101 303 L 96 308 L 91 303 L 84 303 L 79 308 L 78 303 Z M 467 297 L 468 298 L 467 302 L 462 303 L 462 305 L 466 305 L 468 308 L 467 309 L 468 310 L 468 319 L 467 320 L 468 321 L 467 323 L 468 327 L 471 329 L 477 329 L 477 327 L 474 328 L 469 323 L 469 307 L 471 305 L 477 305 L 477 303 L 470 303 L 469 302 L 469 296 Z M 177 296 L 177 302 L 176 303 L 171 303 L 171 305 L 176 305 L 177 306 L 177 325 L 180 329 L 187 329 L 187 327 L 183 328 L 179 324 L 179 306 L 180 305 L 187 305 L 187 303 L 180 303 L 179 302 L 179 296 Z M 198 290 L 195 292 L 196 294 L 199 293 Z M 515 286 L 515 328 L 517 329 L 517 286 Z M 391 286 L 389 286 L 389 306 L 388 307 L 382 303 L 373 303 L 369 305 L 365 311 L 365 321 L 368 326 L 371 328 L 382 329 L 386 327 L 388 324 L 389 328 L 391 329 Z M 380 304 L 384 306 L 388 310 L 390 315 L 388 322 L 384 326 L 379 328 L 373 327 L 367 320 L 368 310 L 373 305 Z M 306 286 L 306 329 L 308 328 L 308 287 Z M 265 286 L 263 286 L 263 307 L 262 308 L 260 305 L 256 303 L 247 303 L 243 305 L 239 310 L 238 314 L 239 322 L 243 327 L 247 329 L 256 329 L 262 324 L 263 329 L 265 329 Z M 250 304 L 258 306 L 263 312 L 262 322 L 258 326 L 252 328 L 247 327 L 244 325 L 240 318 L 240 314 L 242 309 L 245 306 Z" fill="rgb(255,255,255)" fill-rule="evenodd"/>
+      <path d="M 336 41 L 359 43 L 386 50 L 402 57 L 421 70 L 436 87 L 445 105 L 448 114 L 451 130 L 452 157 L 451 158 L 451 168 L 450 169 L 449 179 L 444 195 L 435 212 L 418 230 L 403 240 L 378 250 L 350 256 L 331 257 L 516 257 L 516 41 Z M 75 41 L 77 43 L 74 41 L 74 257 L 74 42 Z" fill="rgb(113,187,85)" fill-rule="evenodd"/>
+    </svg>
+    <div class="practice-sub">Jackson Square &middot; Hamilton, Ontario</div>
   </div>
 
-  <!-- LOADING STATE -->
-  <div id="state-loading" class="state active">
-    <div class="card" style="text-align:center;padding:40px 24px;color:var(--text-muted);font-size:14px;">
-      Loading your survey...
-    </div>
-  </div>
+  <div class="card-body" id="survey-form">
+    <div class="survey-title">How was your experience?</div>
+    <div class="survey-sub">Your feedback helps us improve care for everyone. Takes less than a minute.</div>
 
-  <!-- INVALID TOKEN STATE -->
-  <div id="state-invalid" class="state">
-    <div class="card" style="text-align:center;padding:40px 24px;">
-      <div style="font-size:32px;margin-bottom:12px;">&#x26A0;&#xFE0F;</div>
-      <div style="font-size:17px;font-weight:700;color:var(--navy);margin-bottom:8px;">Link not valid</div>
-      <div style="font-size:14px;color:var(--text-muted);line-height:1.65;">This survey link has expired or is not valid.<br>If you have questions, please contact the office directly.</div>
-    </div>
-  </div>
-
-  <!-- ALREADY SUBMITTED STATE -->
-  <div id="state-done" class="state">
-    <div class="card" style="text-align:center;padding:40px 24px;">
-      <div class="thankyou-icon">&#10003;</div>
-      <div class="thankyou-title">Already submitted</div>
-      <div class="thankyou-body">We already have your feedback. Thank you for taking the time.</div>
-    </div>
-  </div>
-
-  <!-- SURVEY FORM STATE -->
-  <div id="state-survey" class="state">
-    <div class="card">
-      <div class="card-title">Thank you for visiting us</div>
-      <div class="card-sub">Your feedback helps us improve. This takes about one minute.</div>
-
-      <!-- Q1: Overall satisfaction -->
-      <div class="question">
-        <label class="question-label">Overall, how satisfied were you with your visit today?</label>
-        <div class="star-row" id="stars-satisfaction">
-          <button class="star-btn" data-val="1" type="button">1</button>
-          <button class="star-btn" data-val="2" type="button">2</button>
-          <button class="star-btn" data-val="3" type="button">3</button>
-          <button class="star-btn" data-val="4" type="button">4</button>
-          <button class="star-btn" data-val="5" type="button">5</button>
-        </div>
-        <div class="star-labels"><span>Not satisfied</span><span>Very satisfied</span></div>
+    <!-- Q1: Overall satisfaction -->
+    <div class="q-block">
+      <div class="q-label">1. Overall, how satisfied were you with your experience at Martindale Dental?</div>
+      <div class="stars">
+        <div class="star" data-q="overall" data-v="1">&#9733;</div>
+        <div class="star" data-q="overall" data-v="2">&#9733;</div>
+        <div class="star" data-q="overall" data-v="3">&#9733;</div>
+        <div class="star" data-q="overall" data-v="4">&#9733;</div>
+        <div class="star" data-q="overall" data-v="5">&#9733;</div>
       </div>
+      <div class="star-labels"><span>Poor</span><span>Excellent</span></div>
+    </div>
 
-      <div class="divider"></div>
-
-      <!-- Q2: Sam satisfaction -->
-      <div class="question">
-        <label class="question-label">Before your appointment, you spoke with Sam, our AI triage assistant. How would you rate that experience?</label>
-        <div class="star-row" id="stars-sam">
-          <button class="star-btn" data-val="1" type="button">1</button>
-          <button class="star-btn" data-val="2" type="button">2</button>
-          <button class="star-btn" data-val="3" type="button">3</button>
-          <button class="star-btn" data-val="4" type="button">4</button>
-          <button class="star-btn" data-val="5" type="button">5</button>
-        </div>
-        <div class="star-labels"><span>Poor</span><span>Excellent</span></div>
+    <!-- Q2: Sam rating (sam_satisfaction_score) -->
+    <div class="q-block">
+      <div class="q-label">2. How helpful was Sam, our virtual dental assistant, in gathering your information?</div>
+      <div class="stars">
+        <div class="star" data-q="sam" data-v="1">&#9733;</div>
+        <div class="star" data-q="sam" data-v="2">&#9733;</div>
+        <div class="star" data-q="sam" data-v="3">&#9733;</div>
+        <div class="star" data-q="sam" data-v="4">&#9733;</div>
+        <div class="star" data-q="sam" data-v="5">&#9733;</div>
       </div>
+      <div class="star-labels"><span>Not helpful</span><span>Very helpful</span></div>
+    </div>
 
-      <div class="divider"></div>
-
-      <!-- Q3: Timely response -->
-      <div class="question">
-        <label class="question-label">After speaking with Sam, did you feel confident that the dental team responded in a timely fashion to address your dental concerns?</label>
-        <div class="ysn-row" id="ysn-timely">
-          <button class="ysn-btn" data-val="yes" type="button">Yes</button>
-          <button class="ysn-btn" data-val="somewhat" type="button">Somewhat</button>
-          <button class="ysn-btn" data-val="no" type="button">No</button>
+    <!-- Q3: Timely follow-up (timely_response: yes/somewhat/no) -->
+    <div class="q-block">
+      <div class="q-label">3. Did our dental team follow up with you in a timely way?</div>
+      <div class="radio-group">
+        <div class="radio-opt" data-q="followup" data-v="yes">
+          <div class="radio-dot"></div>Yes, promptly
+        </div>
+        <div class="radio-opt" data-q="followup" data-v="somewhat">
+          <div class="radio-dot"></div>Somewhat &mdash; there was a bit of a wait
+        </div>
+        <div class="radio-opt" data-q="followup" data-v="no">
+          <div class="radio-dot"></div>No &mdash; I&rsquo;m still waiting to hear back
         </div>
       </div>
-
-      <div class="divider"></div>
-
-      <!-- Q4: Return likelihood -->
-      <div class="question">
-        <label class="question-label">How likely are you to return to Martindale Dental for future care?</label>
-        <div class="star-row" id="stars-return">
-          <button class="star-btn" data-val="1" type="button">1</button>
-          <button class="star-btn" data-val="2" type="button">2</button>
-          <button class="star-btn" data-val="3" type="button">3</button>
-          <button class="star-btn" data-val="4" type="button">4</button>
-          <button class="star-btn" data-val="5" type="button">5</button>
-        </div>
-        <div class="star-labels"><span>Unlikely</span><span>Very likely</span></div>
-      </div>
-
-      <div class="divider"></div>
-
-      <!-- Q5: Open feedback -->
-      <div class="question">
-        <label class="question-label">Any other comments about your experience? <span style="font-weight:400;color:var(--text-muted);">(optional)</span></label>
-        <textarea class="feedback-textarea" id="feedback-text" placeholder="Your feedback here..."></textarea>
-      </div>
-
-      <div class="error-box" id="survey-error"></div>
-
-      <button class="submit-btn" id="submit-btn" type="button">Submit feedback</button>
-      <div class="submit-note">Your responses are private and used only to improve our service.</div>
     </div>
+
+    <!-- Q4: Return likelihood (return_likelihood) -->
+    <div class="q-block">
+      <div class="q-label">4. How likely are you to use this service again for a future dental concern?</div>
+      <div class="stars">
+        <div class="star" data-q="return" data-v="1">&#9733;</div>
+        <div class="star" data-q="return" data-v="2">&#9733;</div>
+        <div class="star" data-q="return" data-v="3">&#9733;</div>
+        <div class="star" data-q="return" data-v="4">&#9733;</div>
+        <div class="star" data-q="return" data-v="5">&#9733;</div>
+      </div>
+      <div class="star-labels"><span>Unlikely</span><span>Definitely</span></div>
+    </div>
+
+    <!-- Q5: Free text (survey_feedback) -->
+    <div class="q-block">
+      <div class="q-label">5. Anything else you&rsquo;d like to share? <span style="font-weight:400;color:#7f96b8;">(optional)</span></div>
+      <textarea id="q-freetext" placeholder="Your feedback is always read and appreciated."></textarea>
+    </div>
+
+    <button class="submit-btn" id="submit-btn" onclick="submitSurvey()">Submit feedback</button>
+    <div class="error-msg" id="error-msg">Something went wrong. Please try again.</div>
   </div>
 
-  <!-- THANK YOU STATE -->
-  <div id="state-thankyou" class="state">
-    <div class="card" style="text-align:center;padding:40px 24px;">
-      <div class="thankyou-icon">&#10003;</div>
-      <div class="thankyou-title">Thank you!</div>
-      <div class="thankyou-body">
-        Your feedback means a lot to us.<br>
-        We look forward to seeing you again at Martindale Dental.
-      </div>
-    </div>
+  <div class="thankyou" id="thankyou">
+    <div class="thankyou-icon">&#10003;</div>
+    <div class="thankyou-title">Thank you!</div>
+    <div class="thankyou-sub">Your feedback has been received.<br><br>Martindale Dental &mdash; Jackson Square, Hamilton</div>
   </div>
-
 </div>
 
 <script>
-  var SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
-  var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
-  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  var answers = { overall: null, sam: null, followup: null, return: null };
 
-  var satisfactionScore = null;
-  var samSatisfactionScore = null;
-  var timelyResponse = null;
-  var returnLikelihood = null;
-  var surveyToken = null;
-  var caseId = null;
-
-  function showState(id) {
-    ["state-loading","state-invalid","state-done","state-survey","state-thankyou"].forEach(function(s) {
-      document.getElementById(s).classList.remove("active");
-    });
-    document.getElementById(id).classList.add("active");
-  }
-
-  var params = new URLSearchParams(window.location.search);
-  surveyToken = params.get("token");
-
-  if (!surveyToken) {
-    showState("state-invalid");
-  } else {
-    loadSurvey();
-  }
-
-  async function loadSurvey() {
-    var result = await sb
-      .from("triage_cases")
-      .select("id, patient_name, survey_response, appointment_completed_at")
-      .eq("survey_token", surveyToken)
-      .maybeSingle();
-
-    if (result.error || !result.data) {
-      showState("state-invalid");
-      return;
-    }
-
-    var c = result.data;
-    caseId = c.id;
-
-    if (c.survey_response) {
-      showState("state-done");
-      return;
-    }
-
-    showState("state-survey");
-  }
-
-  // Star rating setup
-  function setupStars(groupId, onSelect) {
-    var btns = document.querySelectorAll("#" + groupId + " .star-btn");
-    btns.forEach(function(btn) {
-      btn.addEventListener("click", function() {
-        var val = parseInt(btn.getAttribute("data-val"));
-        onSelect(val);
-        btns.forEach(function(b) {
-          b.classList.toggle("selected", parseInt(b.getAttribute("data-val")) === val);
-        });
+  document.querySelectorAll('.star').forEach(function(star) {
+    star.addEventListener('click', function() {
+      var q = this.getAttribute('data-q');
+      var v = parseInt(this.getAttribute('data-v'));
+      answers[q] = v;
+      document.querySelectorAll('[data-q="' + q + '"]').forEach(function(s) {
+        if (parseInt(s.getAttribute('data-v')) <= v) s.classList.add('active');
+        else s.classList.remove('active');
       });
     });
-  }
-
-  // Yes/Somewhat/No setup
-  function setupYSN(groupId, onSelect) {
-    var btns = document.querySelectorAll("#" + groupId + " .ysn-btn");
-    btns.forEach(function(btn) {
-      btn.addEventListener("click", function() {
-        var val = btn.getAttribute("data-val");
-        onSelect(val);
-        btns.forEach(function(b) {
-          b.classList.toggle("selected", b.getAttribute("data-val") === val);
-        });
-      });
-    });
-  }
-
-  setupStars("stars-satisfaction", function(v) { satisfactionScore = v; });
-  setupStars("stars-sam", function(v) { samSatisfactionScore = v; });
-  setupYSN("ysn-timely", function(v) { timelyResponse = v; });
-  setupStars("stars-return", function(v) { returnLikelihood = v; });
-
-  // Submit
-  document.getElementById("submit-btn").addEventListener("click", async function() {
-    var errEl = document.getElementById("survey-error");
-    errEl.style.display = "none";
-
-    if (!satisfactionScore) {
-      errEl.textContent = "Please rate your overall satisfaction before submitting.";
-      errEl.style.display = "block";
-      return;
-    }
-    if (!samSatisfactionScore) {
-      errEl.textContent = "Please rate your experience with Sam before submitting.";
-      errEl.style.display = "block";
-      return;
-    }
-    if (!timelyResponse) {
-      errEl.textContent = "Please answer the question about timely response before submitting.";
-      errEl.style.display = "block";
-      return;
-    }
-    if (!returnLikelihood) {
-      errEl.textContent = "Please rate your likelihood to return before submitting.";
-      errEl.style.display = "block";
-      return;
-    }
-
-    var btn = document.getElementById("submit-btn");
-    btn.disabled = true;
-    btn.textContent = "Submitting...";
-
-    var feedback = document.getElementById("feedback-text").value.trim() || null;
-    var response = {
-      satisfaction_score: satisfactionScore,
-      sam_satisfaction_score: samSatisfactionScore,
-      timely_response: timelyResponse,
-      return_likelihood: returnLikelihood,
-      feedback: feedback,
-      submitted_at: new Date().toISOString()
-    };
-
-    var result = await sb
-      .from("triage_cases")
-      .update({
-        satisfaction_score: satisfactionScore,
-        sam_satisfaction_score: samSatisfactionScore,
-        timely_response: timelyResponse,
-        return_likelihood: returnLikelihood,
-        survey_feedback: feedback,
-        survey_response: response
-      })
-      .eq("id", caseId)
-      .eq("survey_token", surveyToken);
-
-    if (result.error) {
-      errEl.textContent = "Unable to submit your feedback right now. Please try again.";
-      errEl.style.display = "block";
-      btn.disabled = false;
-      btn.textContent = "Submit feedback";
-      return;
-    }
-
-    showState("state-thankyou");
   });
+
+  document.querySelectorAll('.radio-opt').forEach(function(opt) {
+    opt.addEventListener('click', function() {
+      var q = this.getAttribute('data-q');
+      answers[q] = this.getAttribute('data-v');
+      document.querySelectorAll('[data-q="' + q + '"]').forEach(function(o) { o.classList.remove('active'); });
+      this.classList.add('active');
+    });
+  });
+
+  function getToken() {
+    return new URLSearchParams(window.location.search).get('token') || '';
+  }
+
+  async function submitSurvey() {
+    var btn = document.getElementById('submit-btn');
+    var errEl = document.getElementById('error-msg');
+    errEl.style.display = 'none';
+
+    if (!answers.overall) {
+      errEl.textContent = 'Please rate your overall experience (question 1).';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    var token = getToken();
+    var supabaseUrl = 'https://zjwnqryeefegqfmamaqd.supabase.co';
+    var anonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM3MjA2OTUsImV4cCI6MjA1OTI5NjY5NX0.Qqf9oHkk9ZOhGl8PZo_lxMzSFYoovST5a1MJiDcDjvE';
+
+    try {
+      // Update triage_cases row matching the survey_token
+      // Columns: satisfaction_score, sam_satisfaction_score, timely_response, return_likelihood, survey_feedback
+      var updatePayload = {
+        satisfaction_score: answers.overall,
+        sam_satisfaction_score: answers.sam,
+        timely_response: answers.followup,
+        return_likelihood: answers.return,
+        survey_feedback: document.getElementById('q-freetext').value.trim() || null
+      };
+
+      var resp = await fetch(
+        supabaseUrl + '/rest/v1/triage_cases?survey_token=eq.' + encodeURIComponent(token),
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': anonKey,
+            'Authorization': 'Bearer ' + anonKey,
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify(updatePayload)
+        }
+      );
+
+      if (!resp.ok) throw new Error('Response ' + resp.status);
+
+      document.getElementById('survey-form').style.display = 'none';
+      document.getElementById('thankyou').style.display = 'block';
+
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = 'Submit feedback';
+      errEl.textContent = 'Something went wrong. Please try again.';
+      errEl.style.display = 'block';
+    }
+  }
 </script>
+
 </body>
 </html>
