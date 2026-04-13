@@ -39,6 +39,14 @@ window.addEventListener('DOMContentLoaded',function(){
       --radius: 10px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    /* Reset Elementor form field overrides inside widget */
+    .widget input, .widget textarea, .widget select,
+    .widget input[type="text"], .widget input[type="email"],
+    .widget input[type="tel"], .widget input[type="date"] {
+      background-color: #ffffff !important;
+      border: 1px solid var(--border) !important;
+      box-shadow: none !important;
+    }
     html, body { background: var(--bg); color: var(--text-dark); font-family: "DM Sans", -apple-system, sans-serif; line-height: 1.5; font-size: 14px; }
     body { padding: 16px; }
 
@@ -62,11 +70,22 @@ window.addEventListener('DOMContentLoaded',function(){
     .section { margin-top: 18px; }
     .section-title { font-size: 13px; font-weight: 700; color: var(--text-dark); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
     .field { margin-bottom: 12px; }
-    .field > label { display: block; font-size: 12px; font-weight: 600; color: var(--text-mid); margin-bottom: 3px; }
-    .input, .textarea, .select { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px; color: var(--text-dark); background: var(--bg); transition: border-color 0.15s; font-family: "DM Sans", sans-serif; }
-    .input:focus, .textarea:focus, .select:focus { outline: none; border-color: var(--border-active); box-shadow: 0 0 0 2px rgba(0,131,143,0.1); }
-    .textarea { min-height: 70px; resize: vertical; }
-    .select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a5568' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+    .widget .field > label { display: block !important; font-size: 12px !important; font-weight: 600 !important; color: var(--text-mid) !important; margin-bottom: 3px !important; }
+    .widget .input, .widget .textarea, .widget .select,
+    .widget input.input, .widget textarea.textarea, .widget select.select {
+      width: 100% !important; padding: 10px 12px !important; border: 1px solid var(--border) !important;
+      border-radius: var(--radius) !important; font-size: 14px !important; color: var(--text-dark) !important;
+      background: var(--bg) !important; transition: border-color 0.15s; font-family: "DM Sans", sans-serif !important;
+      box-shadow: none !important; outline: none !important; -webkit-appearance: none; height: auto !important;
+      min-height: 0 !important; line-height: 1.5 !important; margin: 0 !important;
+    }
+    .widget .input:focus, .widget .textarea:focus, .widget .select:focus,
+    .widget input.input:focus, .widget textarea.textarea:focus, .widget select.select:focus {
+      outline: none !important; border-color: var(--border-active) !important;
+      box-shadow: 0 0 0 2px rgba(0,131,143,0.1) !important;
+    }
+    .widget .textarea, .widget textarea.textarea { min-height: 70px !important; resize: vertical; }
+    .widget .select, .widget select.select { appearance: none !important; -webkit-appearance: none !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a5568' d='M6 8L1 3h10z'/%3E%3C/svg%3E") !important; background-repeat: no-repeat !important; background-position: right 12px center !important; padding-right: 32px !important; }
     .helper { font-size: 11px; color: var(--text-light); margin-top: 3px; }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .full { grid-column: 1 / -1; }
@@ -302,7 +321,7 @@ window.addEventListener('DOMContentLoaded',function(){
   var T = {
     en: {
       widgetTitle: "Have a dental concern?", widgetAccent: "Talk to Sam.",
-      widgetSub: "Sam is our AI dental assistant. Whether it&#039;s a toothache, a broken tooth, or a question about your dental care &mdash; describe your concern and our dental team will follow up with you directly.",
+      widgetSub: "Sam is our AI dental assistant. Whether it's a toothache, a broken tooth, or a question about your dental care — describe your concern and our dental team will follow up with you directly.",
       widgetFree: "This service is free.", widgetBadge: "Sam responds in minutes \u00b7 Available 24/7",
       secAbout: "About you", lblName: "Full name", phName: "First and last name", lblDob: "Date of birth",
       lblPhone: "Phone number", phPhone: "10-digit number", phoneHelper: "Sam will call this number shortly after you submit.",
