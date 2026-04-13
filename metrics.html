@@ -311,7 +311,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       try {
         // Main cases query (period-filtered)
         var query = sb.from("triage_cases")
-          .select("id, created_at, severity, extraction_source, review_status, reviewed_at, reviewed_by, contacted_patient_at, final_disposition, prescription_issued, duration_seconds, structured_output, triage_tag, contradictions, revenue_generated, subsequent_appointment_booked, satisfaction_score, return_likelihood, survey_feedback, appointment_completed_at, patient_language, intake_source, has_sms_continuation, sms_structured_output")
+          .select("id, created_at, severity, extraction_source, review_status, reviewed_at, reviewed_by, contacted_patient_at, final_disposition, prescription_issued, duration_seconds, structured_output, triage_tag, contradictions, revenue_generated, subsequent_appointment_booked, satisfaction_score, return_likelihood, survey_feedback, appointment_completed_at, patient_language, intake_source, preferred_channel, has_sms_continuation, sms_structured_output")
           .order("created_at", { ascending: true });
         if (currentPeriod > 0) { var since = new Date(); since.setDate(since.getDate() - currentPeriod); query = query.gte("created_at", since.toISOString()); }
         var result = await query;
@@ -399,6 +399,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       // ── NEW: Intake source distribution ──
       var srcCounts = {}; cases.forEach(function(c) { var src = c.intake_source || "unknown"; srcCounts[src] = (srcCounts[src] || 0) + 1; });
+      var chanCounts = {}; cases.forEach(function(c) { if (c.preferred_channel) { chanCounts[c.preferred_channel] = (chanCounts[c.preferred_channel] || 0) + 1; } });
       var srcLabels = { web_form:"Website", in_office:"In-office QR", widget:"Widget", widget_contact:"Contact page widget", widget_jackson:"Jackson Sq widget", jackson_block:"Jackson Sq page", jackson_header:"Jackson header CTA", jackson_sam:"Jackson Sam CTA", jackson_how:"Jackson how-it-works", jackson_clinic:"Jackson clinic CTA", jackson_final:"Jackson final CTA", jackson_lang:"Jackson language pill", lp_emergency:"LP Emergency", lp_afterhours:"LP After-hours", lp_toothache:"LP Toothache", lp_broken:"LP Broken tooth", lp_infection:"LP Infection", lp_virtual:"LP Virtual" };
 
       // ── NEW: Non-emergent rate ──
@@ -515,6 +516,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       html += '<div class="panel-divider"></div><div class="panel-sub-label">Intake Source</div><div class="mini-list">';
       srcKeys.forEach(function(src) { var label = srcLabels[src] || src; html += '<div class="mini-row"><span class="mini-row-label">' + escHtml(label) + '</span><span class="mini-row-val cyan">' + srcCounts[src] + ' (' + p(srcCounts[src], total) + '%)</span></div>'; });
       html += '</div>';
+
+      var chanKeys = Object.keys(chanCounts).sort(function(a, b) { return chanCounts[b] - chanCounts[a]; });
+      if (chanKeys.length > 0) {
+        html += '<div class="panel-divider"></div><div class="panel-sub-label">Preferred Channel</div><div class="mini-list">';
+        var chanLabels = { voice: "Voice (call Sam)", sms: "SMS (text Sam)" };
+        chanKeys.forEach(function(ch) { html += '<div class="mini-row"><span class="mini-row-label">' + escHtml(chanLabels[ch] || ch) + '</span><span class="mini-row-val cyan">' + chanCounts[ch] + ' (' + p(chanCounts[ch], total) + '%)</span></div>'; });
+        html += '</div>';
+      }
 
       if (smsSubmissions > 0) {
         html += '<div class="panel-divider"></div><div class="panel-sub-label">SMS Extraction</div><div class="mini-list">' +
