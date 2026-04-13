@@ -16,7 +16,6 @@ window.addEventListener('DOMContentLoaded',function(){
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>Martindale Dental — Talk to Sam</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <meta name="format-detection" content="telephone=no">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -39,7 +38,7 @@ window.addEventListener('DOMContentLoaded',function(){
       --radius: 10px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    /* Reset Elementor form field overrides inside widget */
+    /* Reset CMS/Elementor form field overrides inside widget */
     .widget input, .widget textarea, .widget select,
     .widget input[type="text"], .widget input[type="email"],
     .widget input[type="tel"], .widget input[type="date"] {
@@ -90,6 +89,29 @@ window.addEventListener('DOMContentLoaded',function(){
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .full { grid-column: 1 / -1; }
     @media (max-width: 480px) { .grid-2 { grid-template-columns: 1fr; } }
+    @media (min-width: 481px) and (max-width: 1366px) {
+      .widget { max-width: 90%; }
+      .widget { font-size: 16px; }
+      .widget-title { font-size: 28px; }
+      .widget-sub { font-size: 15px; }
+      .widget-free { font-size: 14px; }
+      .widget-badge { font-size: 13px; }
+      .section-title { font-size: 15px; }
+      .widget .field > label { font-size: 14px !important; }
+      .widget .input, .widget .textarea, .widget .select,
+      .widget input.input, .widget textarea.textarea, .widget select.select {
+        font-size: 16px !important; padding: 12px 14px !important;
+      }
+      .helper, .phone-helper { font-size: 13px; }
+      .choice { font-size: 15px; }
+      .ack { font-size: 13px; }
+      .pre-submit-note { font-size: 13px; }
+      .warning-note { font-size: 13px; }
+      .btn-primary { font-size: 16px; padding: 14px 32px; }
+      .handoff-title { font-size: 24px; }
+      .handoff-copy { font-size: 15px; }
+      .handoff-number { font-size: 22px; }
+    }
 
     /* Checkboxes */
     .check-group { display: flex; flex-direction: column; gap: 0; }
@@ -307,12 +329,24 @@ window.addEventListener('DOMContentLoaded',function(){
 </div>
 
 <script>
+  (function(){
+    var s=document.createElement('script');
+    s.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+    s.onload=function(){
+      window._sb=window.supabase.createClient(
+        "https://zjwnqryeefegqfmamaqd.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI"
+      );
+    };
+    document.head.appendChild(s);
+  })();
+</script>
+<script>
   var SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
   var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
   var INTAKE_TRIGGER_URL = SUPABASE_URL + "/functions/v1/intake-trigger";
   var INTAKE_SECRET = "af0ca85c19cd7dbd62ba2d03bf7e0cda6dc04f84048d3b8f";
 
-  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   var currentLang = "en";
   var widgetPreferredChannel = "voice";
   var RTL_LANGS = ["ar", "fa"];
@@ -321,7 +355,7 @@ window.addEventListener('DOMContentLoaded',function(){
   var T = {
     en: {
       widgetTitle: "Have a dental concern?", widgetAccent: "Talk to Sam.",
-      widgetSub: "Sam is our AI dental assistant. Whether it's a toothache, a broken tooth, or a question about your dental care — describe your concern and our dental team will follow up with you directly.",
+      widgetSub: "Sam is our AI dental assistant. Whether it&#039;s a toothache, a broken tooth, or a question about your dental care &mdash; describe your concern and our dental team will follow up with you directly.",
       widgetFree: "This service is free.", widgetBadge: "Sam responds in minutes \u00b7 Available 24/7",
       secAbout: "About you", lblName: "Full name", phName: "First and last name", lblDob: "Date of birth",
       lblPhone: "Phone number", phPhone: "10-digit number", phoneHelper: "Sam will call this number shortly after you submit.",
