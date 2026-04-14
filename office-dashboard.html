@@ -938,11 +938,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     showApp();
     loadCases();
-    setInterval(function() {
-      if (document.getElementById("app").classList.contains("visible")) {
-        loadCases();
-      }
-    }, 60000);
   }
 
   function showAuth() {
@@ -970,12 +965,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     if (res.data && res.data.session) {
       showApp();
       loadCases();
-      // Poll for new cases every 60 seconds while logged in
-      setInterval(function() {
-        if (document.getElementById("app").classList.contains("visible")) {
-          loadCases();
-        }
-      }, 60000);
     }
   });
 
@@ -1130,7 +1119,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     var result = await sb
       .from("triage_cases")
-      .select("id, patient_name, patient_phone, patient_dob, patient_city, patient_email, chief_complaint, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at, revenue_generated, sms_transcript, sms_structured_output, has_sms_continuation, sms_received_at, intake_medical_flags, clinical_note, patient_language, extraction_source")
+      .select("id, patient_name, patient_name_english, patient_phone, patient_dob, patient_city, patient_email, chief_complaint, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at, revenue_generated, sms_transcript, sms_structured_output, has_sms_continuation, sms_received_at, intake_medical_flags, clinical_note, patient_language, extraction_source")
       .order("created_at", { ascending: currentSortAsc });
 
     if (result.error) {
@@ -1140,6 +1129,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     currentCases = result.data || [];
+    currentCases.forEach(function(c) { if (c.patient_name_english && c.patient_name_english !== c.patient_name) c.patient_name = c.patient_name_english + " (" + c.patient_name + ")"; });
     applySearchFilter();
   }
 
