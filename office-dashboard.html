@@ -938,6 +938,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     showApp();
     loadCases();
+    setInterval(function() {
+      if (document.getElementById("app").classList.contains("visible")) {
+        loadCases();
+      }
+    }, 60000);
   }
 
   function showAuth() {
@@ -965,6 +970,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     if (res.data && res.data.session) {
       showApp();
       loadCases();
+      // Poll for new cases every 60 seconds while logged in
+      setInterval(function() {
+        if (document.getElementById("app").classList.contains("visible")) {
+          loadCases();
+        }
+      }, 60000);
     }
   });
 
