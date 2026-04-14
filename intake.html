@@ -1613,9 +1613,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     function getIntakeSource() {
-      if (variantSrc) return variantSrc;
       var params = new URLSearchParams(window.location.search);
-      return params.get("src") === "office" ? "in_office" : "web_form";
+      var src = params.get("src") || "";
+      // Any office-origin source (office, office_poster_multilingual, etc.) maps to in_office
+      if (src.indexOf("office") !== -1) return "in_office";
+      if (variantSrc) return variantSrc;
+      return "web_form";
     }
 
     function buildIntakePayload(data) {
