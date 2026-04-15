@@ -46,8 +46,9 @@ window.addEventListener('DOMContentLoaded',function(){
       border: 1px solid var(--border) !important;
       box-shadow: none !important;
     }
-    html, body { background: var(--bg) !important; color: var(--text-dark); font-family: "DM Sans", -apple-system, sans-serif; line-height: 1.5; font-size: 14px; color-scheme: light; }
-    body { padding: 16px; background: #ffffff; }
+    html, body { background: var(--bg) !important; color: var(--text-dark); font-family: "DM Sans", -apple-system, sans-serif; line-height: 1.5; font-size: 14px; color-scheme: light; overflow-x: hidden !important; }
+    html { height: auto !important; overflow-y: auto !important; }
+    body { padding: 16px; background: #ffffff; min-height: 0 !important; height: auto !important; }
 
     .widget { max-width: 640px; margin: 0 auto; }
 
