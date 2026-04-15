@@ -165,8 +165,8 @@ window.addEventListener('DOMContentLoaded',function(){
 
 <div class="widget" id="widget-form">
   <div class="widget-header">
-    <div class="widget-title" id="widget-title">Have a dental concern?<br><span class="widget-title-accent" id="widget-accent">Talk to Sam.</span></div>
-    <div class="widget-sub" id="widget-sub">Sam is our AI dental assistant. Whether it&#039;s a toothache, a broken tooth, or a question about your dental care &mdash; describe your concern and our dental team will follow up with you directly.</div>
+    <div class="widget-title" id="widget-title">How can Martindale Dental<br><span class="widget-title-accent" id="widget-accent">help you?</span></div>
+    <div class="widget-sub" id="widget-sub">Whether it's a cleaning, a dental emergency, or just a question &mdash; describe what you need and our team will follow up with you directly.</div>
     <div class="widget-free" id="widget-free">This service is free.</div>
     <div class="widget-badge" id="widget-badge">Sam responds in minutes &middot; Available 24/7</div>
   </div>
@@ -214,10 +214,10 @@ window.addEventListener('DOMContentLoaded',function(){
   <div class="section">
     <div class="section-title" id="sec-concern">How can we help?</div>
     <div class="field">
-      <label for="chief-complaint" id="lbl-complaint">How can we assist you today?</label>
-      <textarea class="textarea" id="chief-complaint" placeholder="e.g. Tooth pain for two days / I'd like to book a cleaning / New patient inquiry"></textarea>
+      <label for="chief-complaint" id="lbl-complaint">Tell us what you need</label>
+      <textarea class="textarea" id="chief-complaint" placeholder="e.g. I'd like to book a cleaning / My tooth broke after a fall / I have a question about insurance"></textarea>
     </div>
-    <div class="field" style="margin-top:10px;">
+    <div class="field" style="margin-top:10px;" id="onset-wrapper">
       <label for="onset-bucket" id="lbl-onset">When did this start?</label>
       <select class="select" id="onset-bucket">
         <option value="">Select one</option>
@@ -356,15 +356,15 @@ window.addEventListener('DOMContentLoaded',function(){
   // ── Translations (all 9 languages) ────────────────────────────
   var T = {
     en: {
-      widgetTitle: "Have a dental concern?", widgetAccent: "Talk to Sam.",
-      widgetSub: "Sam is our AI dental assistant. Whether it&#039;s a toothache, a broken tooth, or a question about your dental care &mdash; describe your concern and our dental team will follow up with you directly.",
+      widgetTitle: "How can Martindale Dental", widgetAccent: "help you?",
+      widgetSub: "Whether it's a cleaning, a dental emergency, or just a question \u2014 describe what you need and our team will follow up with you directly.",
       widgetFree: "This service is free.", widgetBadge: "Sam responds in minutes \u00b7 Available 24/7",
       secAbout: "About you", lblName: "Full name", phName: "First and last name", lblDob: "Date of birth",
       lblPhone: "Phone number", phPhone: "10-digit number", phoneHelper: "Sam will call this number shortly after you submit.",
       phoneHelperSms: "Sam will text this number shortly after you submit.",
       lblCity: "City", phCity: "City", lblEmail: "Email address", emailOpt: "(optional)", phEmail: "For follow-up communications only",
-      secConcern: "How can we help?", lblComplaint: "How can we assist you today?",
-      phComplaint: "e.g. Tooth pain for two days / I'd like to book a cleaning / New patient inquiry",
+      secConcern: "How can we help?", lblComplaint: "Tell us what you need",
+      phComplaint: "e.g. I'd like to book a cleaning / My tooth broke after a fall / I have a question about insurance",
       lblOnset: "When did this start?", optSelect: "Select one", optToday: "Today", optDays: "Within the last few days",
       optWeek: "About a week ago", optMore: "More than a week ago", optUnsure: "Not sure", optNA: "Not applicable",
       lblRedflags: "Are any of these happening right now?",
@@ -799,6 +799,25 @@ window.addEventListener('DOMContentLoaded',function(){
   function toggleAvulsion() { document.getElementById("avulsion-time-wrapper").style.display = document.getElementById("rf-avulsion").checked ? "block" : "none"; }
   function toggleMhOther() { document.getElementById("mh-other-wrapper").style.display = document.getElementById("mh-other").checked ? "block" : "none"; }
 
+  // Conditional onset: show when complaint mentions symptoms, hide for general inquiries
+  var SYMPTOM_KEYWORDS = /pain|hurt|ache|aching|sore|swell|swollen|swelling|broke|broken|crack|cracked|bleed|bleeding|knock|loose|sensitive|sensitivity|infect|fever|throb|sharp|numb|pus|drain|abscess|trauma|fall|impact|hit|injury|chip|chipped|extract|pulled|filling|crown|emergency/i;
+  var onsetWrapper = document.getElementById("onset-wrapper");
+  var onsetSelect = document.getElementById("onset-bucket");
+  var ccTextarea = document.getElementById("chief-complaint");
+
+  function updateOnsetVisibility() {
+    var text = ccTextarea.value.trim();
+    if (text.length > 2 && SYMPTOM_KEYWORDS.test(text)) {
+      onsetWrapper.style.display = "block";
+      if (onsetSelect.value === "not_applicable") onsetSelect.value = "";
+    } else {
+      onsetWrapper.style.display = "none";
+      onsetSelect.value = "not_applicable";
+    }
+  }
+  ccTextarea.addEventListener("input", updateOnsetVisibility);
+  updateOnsetVisibility();
+
   // Phone formatting
   var phoneInput = document.getElementById("patient-phone");
   phoneInput.addEventListener("input", function() {
@@ -823,7 +842,7 @@ window.addEventListener('DOMContentLoaded',function(){
     if (!looksLikeNAPhone(p)) return "Please enter a valid 10-digit phone number.";
     if (!getValue("patient-city")) return "Please enter your city.";
     var cc = getValue("chief-complaint"); if (!cc || cc.length < 3) return "Please describe how we can help you today.";
-    if (!getValue("onset-bucket")) return "Please tell us when this started.";
+    if (onsetWrapper.style.display !== "none" && !getValue("onset-bucket")) return "Please tell us when this started.";
     var rf = { a: isChecked("rf-breathing-swallowing"), b: isChecked("rf-uncontrolled-bleeding"), c: isChecked("rf-facial-swelling"), d: isChecked("rf-fever-unwell"), e: isChecked("rf-trauma"), f: isChecked("rf-avulsion"), g: isChecked("rf-none") };
     if (!atLeastOneTrue(rf)) return "Please select at least one option under current symptoms.";
     var mh = { a: isChecked("mh-allergy-antibiotics"), b: isChecked("mh-allergy-pain"), c: isChecked("mh-blood-thinners"), d: isChecked("mh-diabetes"), e: isChecked("mh-pregnancy"), f: isChecked("mh-immunocompromised"), g: isChecked("mh-other"), h: isChecked("mh-none") };
