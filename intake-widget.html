@@ -166,7 +166,7 @@ window.addEventListener('DOMContentLoaded',function(){
 <div class="widget" id="widget-form">
   <div class="widget-header">
     <div class="widget-title" id="widget-title">How can Martindale Dental<br><span class="widget-title-accent" id="widget-accent">help you?</span></div>
-    <div class="widget-sub" id="widget-sub">Whether it's a cleaning, a dental emergency, or just a question &mdash; describe what you need and our team will follow up with you directly.</div>
+    <div class="widget-sub" id="widget-sub">Whether it's a cleaning, a dental emergency, an appointment request, or just a question &mdash; describe what you need and our team will follow up with you directly.</div>
     <div class="widget-free" id="widget-free">This service is free.</div>
     <div class="widget-badge" id="widget-badge">Sam responds in minutes &middot; Available 24/7</div>
   </div>
@@ -197,7 +197,7 @@ window.addEventListener('DOMContentLoaded',function(){
       <div class="field">
         <label for="patient-phone" id="lbl-phone">Phone number</label>
         <input class="input" id="patient-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="10-digit number" />
-        <div class="helper phone-helper" id="phone-helper">Sam will call this number shortly after you submit.</div>
+        <div class="helper phone-helper" id="phone-helper">Sam will call or text this number shortly after you submit.</div>
       </div>
       <div class="field">
         <label for="patient-city" id="lbl-city">City</label>
@@ -297,7 +297,7 @@ window.addEventListener('DOMContentLoaded',function(){
   </div>
 
   <div class="pre-submit-note" id="pre-submit-note">
-    After you submit, Sam will call the phone number you provided to continue your assessment. The call will come from <span class="plain-phone">1-833-959-3932</span>.
+    After you submit, Sam will call or text the phone number you provided to continue your assessment. If Sam calls, it will come from <span class="plain-phone">1-833-959-3932</span>.
   </div>
 
   <div class="warning-note" id="warning-note">
@@ -324,7 +324,7 @@ window.addEventListener('DOMContentLoaded',function(){
 <div class="widget handoff" id="widget-handoff">
   <div class="handoff-icon">&#x2713;</div>
   <div class="handoff-title" id="handoff-title">Next step: answer Sam's call</div>
-  <div class="handoff-copy" id="handoff-copy">Sam will call you shortly to continue your assessment. Our dental team will follow up with you directly.</div>
+  <div class="handoff-copy" id="handoff-copy">Sam will call or text you shortly to continue your assessment. Our dental team will follow up with you directly.</div>
   <div class="handoff-number" id="handoff-number">1-833-959-3932</div>
   <div class="handoff-sub" id="handoff-sub">Save this number so you recognize Sam's call.</div>
   <div class="powered-by" style="margin-top:24px;">Triage powered by <a href="https://virtualdentist.ai" target="_blank">VirtualDentist.ai</a></div>
@@ -357,10 +357,10 @@ window.addEventListener('DOMContentLoaded',function(){
   var T = {
     en: {
       widgetTitle: "How can Martindale Dental", widgetAccent: "help you?",
-      widgetSub: "Whether it's a cleaning, a dental emergency, or just a question \u2014 describe what you need and our team will follow up with you directly.",
+      widgetSub: "Whether it's a cleaning, a dental emergency, an appointment request, or just a question \u2014 describe what you need and our team will follow up with you directly.",
       widgetFree: "This service is free.", widgetBadge: "Sam responds in minutes \u00b7 Available 24/7",
       secAbout: "About you", lblName: "Full name", phName: "First and last name", lblDob: "Date of birth",
-      lblPhone: "Phone number", phPhone: "10-digit number", phoneHelper: "Sam will call this number shortly after you submit.",
+      lblPhone: "Phone number", phPhone: "10-digit number", phoneHelper: "Sam will call or text this number shortly after you submit.",
       phoneHelperSms: "Sam will text this number shortly after you submit.",
       lblCity: "City", phCity: "City", lblEmail: "Email address", emailOpt: "(optional)", phEmail: "For follow-up communications only",
       secConcern: "How can we help?", lblComplaint: "Tell us what you need",
@@ -382,27 +382,27 @@ window.addEventListener('DOMContentLoaded',function(){
       secCoverage: "Coverage information (optional)", covHelper: "This helps with follow-up planning only.",
       lblCoverage: "Coverage information", covPrivate: "Private dental insurance", covCdcp: "CDCP", covOdsp: "ODSP",
       covOw: "OW", covNone: "No dental coverage", covPrefer: "Prefer not to say",
-      preNote: "After you submit, Sam will call the phone number you provided to continue your assessment. The call will come from",
+      preNote: "After you submit, Sam will call or text the phone number you provided to continue your assessment. If Sam calls, it will come from",
       preNoteSms: "After you submit, Sam will text the phone number you provided to continue your assessment in your language.",
       warning: "If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, seek emergency care immediately by calling 911.",
       consent: "By continuing, you understand that you will communicate with Sam — by phone call or text message — an AI dental triage assistant provided by VirtualDentist.ai on behalf of Martindale Dental, and that this service does not replace emergency or in-person dental care.",
       consentSms: "By continuing, you understand that you will exchange text messages with Sam, an AI dental triage assistant provided by VirtualDentist.ai on behalf of Martindale Dental, and that this service does not replace emergency or in-person dental care.",
       btnSubmit: "Talk to Sam", btnSubmitSms: "Text Sam",
       handoffTitle: "Next step: answer Sam's call", handoffTitleSms: "Next step: check your text messages",
-      handoffCopy: "Sam will call you shortly to continue your assessment. Our dental team will follow up with you directly.",
+      handoffCopy: "Sam will call or text you shortly to continue your assessment. Our dental team will follow up with you directly.",
       handoffCopySms: "Sam will text you shortly in your language. Please reply to Sam's messages. Our dental team will follow up with you directly.",
       handoffSub: "Save this number so you recognize Sam's call.", handoffSubSms: "Save this number so you recognize Sam's message."
     },
     ar: {
-      widgetTitle: "هل لديك مشكلة في الأسنان؟", widgetAccent: "تحدث مع سام.",
-      widgetSub: "املأ هذا النموذج القصير وسيتواصل سام معك لتقييم حالتك. سيتواصل فريق طب الأسنان لدينا معك مباشرة.",
+      widgetTitle: "كيف يمكن لـ Martindale Dental", widgetAccent: "مساعدتك؟",
+      widgetSub: "سواء كان تنظيف أسنان، حالة طوارئ، أو مجرد سؤال — أخبرنا بما تحتاجه وسيتواصل فريقنا معك مباشرة.",
       widgetFree: "هذه الخدمة مجانية.", widgetBadge: "سام يرد في دقائق · متاح على مدار الساعة",
       secAbout: "معلوماتك", lblName: "الاسم الكامل", phName: "الاسم الأول والأخير", lblDob: "تاريخ الميلاد",
       lblPhone: "رقم الهاتف", phPhone: "رقم من 10 أرقام", phoneHelper: "سيتصل بك سام على هذا الرقم.",
       phoneHelperSms: "سيرسل سام رسالة نصية إلى هذا الرقم.",
       lblCity: "المدينة", phCity: "المدينة", lblEmail: "البريد الإلكتروني", emailOpt: "(اختياري)", phEmail: "للمتابعة فقط",
-      secConcern: "كيف يمكننا مساعدتك؟", lblComplaint: "كيف يمكننا مساعدتك اليوم؟",
-      phComplaint: "مثال: ضرسي الخلفي يؤلمني منذ يومين وحساس للبرد",
+      secConcern: "كيف يمكننا مساعدتك؟", lblComplaint: "أخبرنا بما تحتاجه",
+      phComplaint: "مثال: أريد حجز تنظيف / كُسر سني بعد سقوط / لدي سؤال عن التأمين",
       lblOnset: "متى بدأ هذا؟", optSelect: "اختر", optToday: "اليوم", optDays: "خلال الأيام القليلة الماضية",
       optWeek: "منذ حوالي أسبوع", optMore: "منذ أكثر من أسبوع", optUnsure: "غير متأكد", optNA: "لا ينطبق",
       lblRedflags: "هل يحدث أي من هذا الآن؟",
@@ -431,15 +431,15 @@ window.addEventListener('DOMContentLoaded',function(){
       handoffSub: "احفظ هذا الرقم لتتعرف على رسالة سام.", handoffSubSms: "احفظ هذا الرقم لتتعرف على رسالة سام."
     },
     hi: {
-      widgetTitle: "क्या आपको दांतों की समस्या है?", widgetAccent: "सैम से बात करें।",
-      widgetSub: "यह छोटा फॉर्म भरें और सैम आपकी समस्या का आकलन करने के लिए संपर्क करेगा।",
+      widgetTitle: "Martindale Dental आपकी कैसे", widgetAccent: "मदद कर सकते हैं?",
+      widgetSub: "चाहे सफ़ाई हो, दांतों की इमरजेंसी हो, या कोई सवाल हो — बताएं आपको क्या चाहिए और हमारी टीम सीधे आपसे संपर्क करेगी।",
       widgetFree: "यह सेवा निःशुल्क है।", widgetBadge: "सैम मिनटों में जवाब देता है · 24/7 उपलब्ध",
       secAbout: "आपके बारे में", lblName: "पूरा नाम", phName: "पहला और अंतिम नाम", lblDob: "जन्म तिथि",
       lblPhone: "फोन नंबर", phPhone: "10 अंकों का नंबर", phoneHelper: "सैम इस नंबर पर कॉल करेगा।",
       phoneHelperSms: "सैम इस नंबर पर मैसेज करेगा।",
       lblCity: "शहर", phCity: "शहर", lblEmail: "ईमेल पता", emailOpt: "(वैकल्पिक)", phEmail: "केवल फॉलो-अप के लिए",
-      secConcern: "हम आपकी कैसे मदद कर सकते हैं?", lblComplaint: "आज हम आपकी कैसे मदद कर सकते हैं?",
-      phComplaint: "उदा. मेरे पीछे के दांत में दो दिन से दर्द है",
+      secConcern: "हम आपकी कैसे मदद कर सकते हैं?", lblComplaint: "हमें बताएं आपको क्या चाहिए",
+      phComplaint: "उदा. मैं सफ़ाई बुक करना चाहता हूं / गिरने से मेरा दांत टूट गया / मेरा बीमा के बारे में सवाल है",
       lblOnset: "यह कब शुरू हुआ?", optSelect: "चुनें", optToday: "आज", optDays: "पिछले कुछ दिनों में",
       optWeek: "लगभग एक हफ्ते पहले", optMore: "एक हफ्ते से अधिक पहले", optUnsure: "पता नहीं", optNA: "लागू नहीं",
       lblRedflags: "क्या अभी इनमें से कुछ हो रहा है?",
@@ -468,15 +468,15 @@ window.addEventListener('DOMContentLoaded',function(){
       handoffSub: "इस नंबर को सेव करें।", handoffSubSms: "इस नंबर को सेव करें।"
     },
     pa: {
-      widgetTitle: "ਕੀ ਤੁਹਾਨੂੰ ਦੰਦਾਂ ਦੀ ਸਮੱਸਿਆ ਹੈ?", widgetAccent: "ਸੈਮ ਨਾਲ ਗੱਲ ਕਰੋ।",
-      widgetSub: "ਇਹ ਛੋਟਾ ਫਾਰਮ ਭਰੋ ਅਤੇ ਸੈਮ ਤੁਹਾਡੀ ਸਮੱਸਿਆ ਦਾ ਮੁਲਾਂਕਣ ਕਰਨ ਲਈ ਸੰਪਰਕ ਕਰੇਗਾ।",
+      widgetTitle: "Martindale Dental ਤੁਹਾਡੀ ਕਿਵੇਂ", widgetAccent: "ਮਦਦ ਕਰ ਸਕਦੇ ਹਨ?",
+      widgetSub: "ਭਾਵੇਂ ਸਫ਼ਾਈ ਹੋਵੇ, ਦੰਦਾਂ ਦੀ ਐਮਰਜੈਂਸੀ ਹੋਵੇ, ਜਾਂ ਕੋਈ ਸਵਾਲ ਹੋਵੇ — ਦੱਸੋ ਤੁਹਾਨੂੰ ਕੀ ਚਾਹੀਦਾ ਹੈ ਅਤੇ ਸਾਡੀ ਟੀਮ ਸਿੱਧੇ ਤੁਹਾਡੇ ਨਾਲ ਸੰਪਰਕ ਕਰੇਗੀ।",
       widgetFree: "ਇਹ ਸੇਵਾ ਮੁਫ਼ਤ ਹੈ।", widgetBadge: "ਸੈਮ ਮਿੰਟਾਂ ਵਿੱਚ ਜਵਾਬ ਦਿੰਦਾ ਹੈ · 24/7 ਉਪਲਬਧ",
       secAbout: "ਤੁਹਾਡੇ ਬਾਰੇ", lblName: "ਪੂਰਾ ਨਾਮ", phName: "ਪਹਿਲਾ ਅਤੇ ਆਖਰੀ ਨਾਮ", lblDob: "ਜਨਮ ਮਿਤੀ",
       lblPhone: "ਫੋਨ ਨੰਬਰ", phPhone: "10 ਅੰਕਾਂ ਦਾ ਨੰਬਰ", phoneHelper: "ਸੈਮ ਇਸ ਨੰਬਰ ਤੇ ਕਾਲ ਕਰੇਗਾ।",
       phoneHelperSms: "ਸੈਮ ਇਸ ਨੰਬਰ ਤੇ ਮੈਸੇਜ ਕਰੇਗਾ।",
       lblCity: "ਸ਼ਹਿਰ", phCity: "ਸ਼ਹਿਰ", lblEmail: "ਈਮੇਲ", emailOpt: "(ਵਿਕਲਪਿਕ)", phEmail: "ਸਿਰਫ਼ ਫਾਲੋ-ਅੱਪ ਲਈ",
-      secConcern: "ਅਸੀਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦੇ ਹਾਂ?", lblComplaint: "ਅੱਜ ਅਸੀਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦੇ ਹਾਂ?",
-      phComplaint: "ਉਦਾ. ਮੇਰੇ ਪਿਛਲੇ ਦੰਦ ਵਿੱਚ ਦਰਦ ਹੈ",
+      secConcern: "ਅਸੀਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦੇ ਹਾਂ?", lblComplaint: "ਸਾਨੂੰ ਦੱਸੋ ਤੁਹਾਨੂੰ ਕੀ ਚਾਹੀਦਾ ਹੈ",
+      phComplaint: "ਉਦਾ. ਮੈਂ ਸਫ਼ਾਈ ਬੁੱਕ ਕਰਨਾ ਚਾਹੁੰਦਾ ਹਾਂ / ਡਿੱਗਣ ਨਾਲ ਮੇਰਾ ਦੰਦ ਟੁੱਟ ਗਿਆ / ਬੀਮੇ ਬਾਰੇ ਸਵਾਲ ਹੈ",
       lblOnset: "ਇਹ ਕਦੋਂ ਸ਼ੁਰੂ ਹੋਇਆ?", optSelect: "ਚੁਣੋ", optToday: "ਅੱਜ", optDays: "ਪਿਛਲੇ ਕੁਝ ਦਿਨਾਂ ਵਿੱਚ",
       optWeek: "ਲਗਭਗ ਇੱਕ ਹਫ਼ਤਾ ਪਹਿਲਾਂ", optMore: "ਇੱਕ ਹਫ਼ਤੇ ਤੋਂ ਵੱਧ ਪਹਿਲਾਂ", optUnsure: "ਪੱਕਾ ਨਹੀਂ", optNA: "ਲਾਗੂ ਨਹੀਂ",
       lblRedflags: "ਕੀ ਹੁਣ ਇਹਨਾਂ ਵਿੱਚੋਂ ਕੁਝ ਹੋ ਰਿਹਾ ਹੈ?",
@@ -505,15 +505,15 @@ window.addEventListener('DOMContentLoaded',function(){
       handoffSub: "ਇਸ ਨੰਬਰ ਨੂੰ ਸੇਵ ਕਰੋ।", handoffSubSms: "ਇਸ ਨੰਬਰ ਨੂੰ ਸੇਵ ਕਰੋ।"
     },
     fr: {
-      widgetTitle: "Avez-vous un probleme dentaire?", widgetAccent: "Parlez a Sam.",
-      widgetSub: "Remplissez ce court formulaire et Sam, notre assistant de triage dentaire IA, vous contactera.",
+      widgetTitle: "Comment Martindale Dental peut", widgetAccent: "vous aider?",
+      widgetSub: "Que ce soit pour un nettoyage, une urgence dentaire ou une simple question \u2014 d\u00e9crivez ce dont vous avez besoin et notre \u00e9quipe vous contactera directement.",
       widgetFree: "Ce service est gratuit.", widgetBadge: "Sam repond en quelques minutes · Disponible 24/7",
       secAbout: "A propos de vous", lblName: "Nom complet", phName: "Prenom et nom", lblDob: "Date de naissance",
       lblPhone: "Numero de telephone", phPhone: "Numero a 10 chiffres", phoneHelper: "Sam appellera ce numero.",
       phoneHelperSms: "Sam enverra un message a ce numero.",
       lblCity: "Ville", phCity: "Ville", lblEmail: "Adresse courriel", emailOpt: "(facultatif)", phEmail: "Pour le suivi uniquement",
-      secConcern: "Comment pouvons-nous vous aider?", lblComplaint: "Comment pouvons-nous vous aider?",
-      phComplaint: "ex. Ma dent arriere me fait mal depuis deux jours",
+      secConcern: "Comment pouvons-nous vous aider?", lblComplaint: "Dites-nous ce dont vous avez besoin",
+      phComplaint: "ex. Je voudrais r\u00e9server un nettoyage / Ma dent s'est cass\u00e9e apr\u00e8s une chute / J'ai une question sur l'assurance",
       lblOnset: "Quand cela a-t-il commence?", optSelect: "Choisir", optToday: "Aujourd'hui", optDays: "Ces derniers jours",
       optWeek: "Il y a environ une semaine", optMore: "Il y a plus d'une semaine", optUnsure: "Pas certain", optNA: "Sans objet",
       lblRedflags: "Est-ce que l'un de ces problemes se produit maintenant?",
@@ -542,15 +542,15 @@ window.addEventListener('DOMContentLoaded',function(){
       handoffSub: "Enregistrez ce numero.", handoffSubSms: "Enregistrez ce numero."
     },
     fa: {
-      widgetTitle: "آیا مشکل دندانی دارید؟", widgetAccent: "با سام صحبت کنید.",
-      widgetSub: "این فرم کوتاه را پر کنید و سام برای ارزیابی مشکل شما تماس خواهد گرفت.",
+      widgetTitle: "Martindale Dental چگونه می‌تواند", widgetAccent: "به شما کمک کند؟",
+      widgetSub: "چه نظافت دندان باشد، چه فوریت دندانپزشکی، یا فقط یک سوال — بگویید چه نیاز دارید و تیم ما مستقیماً با شما تماس خواهد گرفت.",
       widgetFree: "این خدمات رایگان است.", widgetBadge: "سام در عرض چند دقیقه پاسخ می دهد · 24/7",
       secAbout: "درباره شما", lblName: "نام کامل", phName: "نام و نام خانوادگی", lblDob: "تاریخ تولد",
       lblPhone: "شماره تلفن", phPhone: "شماره 10 رقمی", phoneHelper: "سام با این شماره تماس خواهد گرفت.",
       phoneHelperSms: "سام به این شماره پیام خواهد داد.",
       lblCity: "شهر", phCity: "شهر", lblEmail: "آدرس ایمیل", emailOpt: "(اختیاری)", phEmail: "فقط برای پیگیری",
-      secConcern: "چگونه می‌توانیم کمک کنیم؟", lblComplaint: "امروز چگونه می‌توانیم کمک کنیم؟",
-      phComplaint: "مثال: دندان عقبم دو روز است درد می کند",
+      secConcern: "چگونه می‌توانیم کمک کنیم؟", lblComplaint: "به ما بگویید چه نیاز دارید",
+      phComplaint: "مثال: می‌خواهم نوبت تمیز کردن رزرو کنم / دندانم بعد از افتادن شکست / سوالی درباره بیمه دارم",
       lblOnset: "این کی شروع شد؟", optSelect: "انتخاب کنید", optToday: "امروز", optDays: "چند روز گذشته",
       optWeek: "حدود یک هفته پیش", optMore: "بیش از یک هفته پیش", optUnsure: "مطمئن نیستم", optNA: "قابل اجرا نیست",
       lblRedflags: "آیا هم اکنون هر یک از این موارد رخ می دهد؟",
@@ -579,15 +579,15 @@ window.addEventListener('DOMContentLoaded',function(){
       handoffSub: "این شماره را ذخیره کنید.", handoffSubSms: "این شماره را ذخیره کنید."
     },
     so: {
-      widgetTitle: "Ma leedahay dhibaato ilko?", widgetAccent: "La hadal Sam.",
-      widgetSub: "Buuxi foomkan gaaban, Sam ayaana kula soo xiriiri doona si uu u qiimeeyo dhibaatadaada.",
+      widgetTitle: "Sidee Martindale Dental", widgetAccent: "kugu caawin karaa?",
+      widgetSub: "Ha ahaato nadiifinta ilkaha, xaalad degdeg ah, ama su'aal — noo sheeg waxa aad u baahan tahay, kooxdayadana si toos ah ayay kuula soo xiriiri doontaa.",
       widgetFree: "Adeeggan waa bilaash.", widgetBadge: "Sam wuu ku jawaabi doonaa daqiiqado · 24/7",
       secAbout: "Adiga ku saabsan", lblName: "Magaca oo buuxa", phName: "Magaca hore iyo kan dambe", lblDob: "Taariikhda dhalashada",
       lblPhone: "Lambarka taleefanka", phPhone: "Lambar 10 nambar ah", phoneHelper: "Sam ayaa wici doona lambarkaan.",
       phoneHelperSms: "Sam ayaa fariin u diri doona lambarkaan.",
       lblCity: "Magaalada", phCity: "Magaalada", lblEmail: "Ciwaanka iimaylka", emailOpt: "(ikhtiyaari)", phEmail: "Kaliya la socodsiinta",
-      secConcern: "Sidee kugu caawin karnaa?", lblComplaint: "Sidee ku caawin karnaa maanta?",
-      phComplaint: "Tusaale: Ilkahayga dambe ayaa xanuunaya",
+      secConcern: "Sidee kugu caawin karnaa?", lblComplaint: "Noo sheeg waxa aad u baahan tahay",
+      phComplaint: "Tusaale: Waxaan rabaa inaan ballansado nadiifinta / Ilkahaygu wuu jabay markii aan dhacay / Su'aal ayaan ka qabaa caymiska",
       lblOnset: "Goorma ayay bilaabatay?", optSelect: "Dooro", optToday: "Maanta", optDays: "Dhowr maalmood",
       optWeek: "Toddobaad ka hor", optMore: "Ka badan toddobaad", optUnsure: "Lama hubo", optNA: "Ma khuseyso",
       lblRedflags: "Ma dhacayaan kuwan hadda?",
@@ -616,15 +616,15 @@ window.addEventListener('DOMContentLoaded',function(){
       handoffSub: "Kaydi lambarkaan.", handoffSubSms: "Kaydi lambarkaan."
     },
     es: {
-      widgetTitle: "Tiene un problema dental?", widgetAccent: "Hable con Sam.",
-      widgetSub: "Complete este breve formulario y Sam, nuestro asistente de triaje dental con IA, se comunicara con usted.",
+      widgetTitle: "\u00bfC\u00f3mo puede Martindale Dental", widgetAccent: "ayudarle?",
+      widgetSub: "Ya sea una limpieza, una emergencia dental o solo una pregunta \u2014 describa lo que necesita y nuestro equipo se comunicar\u00e1 directamente con usted.",
       widgetFree: "Este servicio es gratuito.", widgetBadge: "Sam responde en minutos · Disponible 24/7",
       secAbout: "Sobre usted", lblName: "Nombre completo", phName: "Nombre y apellido", lblDob: "Fecha de nacimiento",
       lblPhone: "Numero de telefono", phPhone: "Numero de 10 digitos", phoneHelper: "Sam llamara a este numero.",
       phoneHelperSms: "Sam enviara un mensaje a este numero.",
       lblCity: "Ciudad", phCity: "Ciudad", lblEmail: "Correo electronico", emailOpt: "(opcional)", phEmail: "Solo para seguimiento",
-      secConcern: "¿Cómo podemos ayudarle?", lblComplaint: "¿Cómo podemos ayudarle hoy?",
-      phComplaint: "Ej. Mi muela trasera me ha estado doliendo por dos dias",
+      secConcern: "\u00bfC\u00f3mo podemos ayudarle?", lblComplaint: "D\u00edganos lo que necesita",
+      phComplaint: "Ej. Quiero reservar una limpieza / Mi diente se rompi\u00f3 tras una ca\u00edda / Tengo una pregunta sobre el seguro",
       lblOnset: "Cuando comenzo?", optSelect: "Seleccionar", optToday: "Hoy", optDays: "En los ultimos dias",
       optWeek: "Hace una semana", optMore: "Hace mas de una semana", optUnsure: "No estoy seguro", optNA: "No aplica",
       lblRedflags: "Esta experimentando alguno de estos ahora?",
@@ -653,15 +653,15 @@ window.addEventListener('DOMContentLoaded',function(){
       handoffSub: "Guarde este numero.", handoffSubSms: "Guarde este numero."
     },
     zh: {
-      widgetTitle: "您有牙齿问题吗？", widgetAccent: "与Sam交谈。",
-      widgetSub: "填写此简短表格，Sam将跟进评估您的问题。",
+      widgetTitle: "Martindale Dental 如何", widgetAccent: "帮助您？",
+      widgetSub: "无论是洗牙、牙科急诊还是咨询 — 告诉我们您需要什么，我们的团队将直接与您联系。",
       widgetFree: "此服务免费。", widgetBadge: "Sam几分钟内回复 · 全天候服务",
       secAbout: "关于您", lblName: "全名", phName: "姓名", lblDob: "出生日期",
       lblPhone: "电话号码", phPhone: "10位数号码", phoneHelper: "Sam将拨打此号码。",
       phoneHelperSms: "Sam将向此号码发送消息。",
       lblCity: "城市", phCity: "城市", lblEmail: "电子邮箱", emailOpt: "（可选）", phEmail: "仅用于后续联系",
-      secConcern: "我们如何帮助您？", lblComplaint: "今天我们如何帮助您？",
-      phComplaint: "例如：我的后牙疼了两天，对冷敏感",
+      secConcern: "我们如何帮助您？", lblComplaint: "告诉我们您需要什么",
+      phComplaint: "例如：我想预约洗牙 / 摔倒后牙齿断了 / 我有关于保险的问题",
       lblOnset: "什么时候开始的？", optSelect: "请选择", optToday: "今天", optDays: "最近几天",
       optWeek: "大约一周前", optMore: "一周以上前", optUnsure: "不确定", optNA: "不适用",
       lblRedflags: "您现在是否有以下情况？",
