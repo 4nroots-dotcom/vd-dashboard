@@ -938,6 +938,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     showApp();
     loadCases();
+    setInterval(loadCases, 90000);
+    document.addEventListener("visibilitychange", function() { if (!document.hidden) loadCases(); });
   }
 
   function showAuth() {
