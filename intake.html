@@ -415,7 +415,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="hero-inner">
         <div class="hero-copy-block">
           <div class="hero-kicker" id="hero-kicker">Martindale Dental &middot; Jackson Square</div>
-          <div class="hero-title" id="hero-title">Are you having a dental concern?<br><span class="hero-title-accent">We can help.</span></div>
+          <div class="hero-title" id="hero-title">How can Martindale Dental<br><span class="hero-title-accent">help you?</span></div>
           <div class="hero-typewriter" id="hero-typewriter">
             <span class="hero-tw-text" id="hero-tw-text"></span>
           </div>
@@ -431,7 +431,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <button class="lang-btn" data-lang="es" type="button">Espa&ntilde;ol</button>
             <button class="lang-btn" data-lang="zh" type="button">中文</button>
           </div>
-          <div class="hero-sub" id="hero-sub">Whether it's a toothache, a broken tooth, or a question about your dental care &mdash; describe your concern and our dental team will follow up with you directly.</div>
+          <div class="hero-sub" id="hero-sub">Whether it's a cleaning, a dental emergency, or just a question &mdash; describe what you need and our team will follow up with you directly.</div>
           <div class="hero-cost">This service is available at no cost.</div>
           <div class="hero-response" id="hero-response">Sam responds in minutes &middot; Available 24/7</div>
           <div class="hero-cta-block">
@@ -568,11 +568,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="section-title">How can we help?</div>
 
         <div class="field">
-          <label for="chief-complaint">How can we assist you today?</label>
-          <textarea class="textarea" id="chief-complaint" placeholder="e.g. Tooth pain for two days, sensitive to cold / I'd like to book a cleaning / New patient inquiry"></textarea>
+          <label for="chief-complaint">Tell us what you need</label>
+          <textarea class="textarea" id="chief-complaint" placeholder="e.g. I'd like to book a cleaning / My tooth broke after a fall / I have a question about insurance"></textarea>
         </div>
 
-        <div class="field" style="margin-top:14px;">
+        <div class="field" style="margin-top:14px;" id="onset-wrapper">
           <label for="onset-bucket">When did this start?</label>
           <select class="select" id="onset-bucket">
             <option value="">Select one</option>
@@ -733,8 +733,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     var T = {
       en: {
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
-        heroTitle: "Are you having a dental concern?", heroAccent: "We can help.",
-        heroSub: "Whether it's a toothache, a broken tooth, or a question about your dental care — describe your concern and our dental team will follow up with you directly.",
+        heroTitle: "How can Martindale Dental", heroAccent: "help you?",
+        heroSub: "Whether it's a cleaning, a dental emergency, or just a question \u2014 describe what you need and our team will follow up with you directly.",
         heroCost: "This service is available at no cost.", heroResponse: "Sam responds in minutes · Available 24/7",
         heroBtn: "Start assessment",
         trustSecure: "Secure and private",
@@ -759,8 +759,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelCity: "City", placeholderCity: "City",
         labelEmail: "Email address", emailOptional: "(optional)", placeholderEmail: "For follow-up communications only",
         sectionConcern: "How can we help?",
-        labelComplaint: "How can we assist you today?",
-        placeholderComplaint: "e.g. Tooth pain for two days, sensitive to cold / I'd like to book a cleaning / New patient inquiry",
+        labelComplaint: "Tell us what you need",
+        placeholderComplaint: "e.g. I'd like to book a cleaning / My tooth broke after a fall / I have a question about insurance",
         labelOnset: "When did this start?",
         onsetSelect: "Select one", onsetToday: "Today", onsetDays: "Within the last few days", onsetWeek: "About a week ago", onsetMore: "More than a week ago", onsetUnsure: "Not sure", onsetNA: "Not applicable",
         labelRedFlags: "Are any of these happening right now?",
@@ -1485,6 +1485,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       else { wrapper.style.display = "none"; document.getElementById("avulsion-time").value = ""; }
     }
 
+    // Conditional onset: show when complaint mentions symptoms, hide for general inquiries
+    // Word boundary \b at start prevents false positives (e.g. "hit" inside "whitening")
+    // Compound phrases handle "fell out", "came out", "came off" etc.
+    var SYMPTOM_KEYWORDS = /\b(pain|painful|hurt|ache|aching|sore|tender|throb|sharp|burn|sting|discomfort|uncomfortable|swell|swollen|puffy|inflam|bump|lump|broke|broken|crack|fractur|shatter|split|snap|chip|bleed|blood|bled|knock|loose|wobbly|wiggly|shift|moved|moving|sensitive|hot|cold|infect|fever|abscess|pus|drain|trauma|fall|fell|impact|hit|struck|punch|accident|collision|injur|numb|tingl|extract|pull|remov|filling|crown|cap|wisdom|cavity|decay|rotten|emergency|urgent|gum)|fell.out|came.out|came.off|broke.off|knocked.out|lost.{0,6}(tooth|teeth|filling|crown|cap)/i;
+    var onsetWrapper = document.getElementById("onset-wrapper");
+    var onsetSelect = document.getElementById("onset-bucket");
+    var ccTextarea = document.getElementById("chief-complaint");
+
+    function updateOnsetVisibility() {
+      var text = ccTextarea.value.trim();
+      if (text.length > 2 && SYMPTOM_KEYWORDS.test(text)) {
+        onsetWrapper.style.display = "block";
+        if (onsetSelect.value === "not_applicable") onsetSelect.value = "";
+      } else {
+        onsetWrapper.style.display = "none";
+        onsetSelect.value = "not_applicable";
+      }
+    }
+    ccTextarea.addEventListener("input", updateOnsetVisibility);
+    updateOnsetVisibility();
+
     function setupPhoneFormatting() {
       var phoneInput = document.getElementById("patient-phone");
       phoneInput.addEventListener("input", function() {
@@ -1605,7 +1626,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       if (!data.patientCity) return "Please enter your city.";
       if (!data.chiefComplaint) return "Please describe how we can help you today.";
       if (data.chiefComplaint.length < 3) return "Please provide a little more detail about your concern.";
-      if (!data.onsetBucket) return "Please tell us when this started.";
+      if (onsetWrapper.style.display !== "none" && !data.onsetBucket) return "Please tell us when this started.";
       if (!atLeastOneTrue(data.intakeRedFlags)) return "Please select at least one option under current symptoms, or choose 'None of the above.'";
       if (!atLeastOneTrue(data.intakeMedicalFlags)) return "Please select at least one option under relevant medical information, or choose 'None of the above.'";
       if (data.intakeMedicalFlags.other_important_medical_condition && !data.intakeMedicalFlags.other_medical_detail) return "Please tell us more about the other important medical condition.";
