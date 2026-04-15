@@ -907,6 +907,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   var searchQuery = "";
   var sourceFilter = "all"; // all, office, web, nonemergent
 
+  // ---- ACCESS CONTROL ----
+  async function checkOfficeAccess(email) {
+    try {
+      var res = await sb.from("allowed_reviewers").select("can_access_office_dashboard").eq("email", (email || "").toLowerCase().trim()).maybeSingle();
+      return res.data && res.data.can_access_office_dashboard === true;
+    } catch (e) { console.error("Access check failed:", e); return false; }
+  }
+
   // ---- AUTH ----
   document.getElementById("login-btn").addEventListener("click", handleLogin);
   document.getElementById("login-password").addEventListener("keydown", function(e) {
@@ -930,6 +938,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     if (result.error) {
       errEl.textContent = "Incorrect email or password. Please try again.";
+      errEl.style.display = "block";
+      btn.disabled = false;
+      btn.textContent = "Sign in";
+      return;
+    }
+
+    if (!(await checkOfficeAccess(result.data.user.email))) {
+      await sb.auth.signOut();
+      errEl.textContent = "This account does not have access to the office dashboard.";
       errEl.style.display = "block";
       btn.disabled = false;
       btn.textContent = "Sign in";
@@ -963,8 +980,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }
 
   // Check existing session on load
-  sb.auth.getSession().then(function(res) {
+  sb.auth.getSession().then(async function(res) {
     if (res.data && res.data.session) {
+      if (!(await checkOfficeAccess(res.data.session.user.email))) {
+        await sb.auth.signOut();
+        return;
+      }
       showApp();
       loadCases();
     }
