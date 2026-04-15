@@ -800,7 +800,9 @@ window.addEventListener('DOMContentLoaded',function(){
   function toggleMhOther() { document.getElementById("mh-other-wrapper").style.display = document.getElementById("mh-other").checked ? "block" : "none"; }
 
   // Conditional onset: show when complaint mentions symptoms, hide for general inquiries
-  var SYMPTOM_KEYWORDS = /pain|hurt|ache|aching|sore|swell|swollen|swelling|broke|broken|crack|cracked|bleed|bleeding|knock|loose|sensitive|sensitivity|infect|fever|throb|sharp|numb|pus|drain|abscess|trauma|fall|impact|hit|injury|chip|chipped|extract|pulled|filling|crown|emergency/i;
+  // Word boundary \b at start prevents false positives (e.g. "hit" inside "whitening")
+  // Compound phrases handle "fell out", "came out", "came off" etc.
+  var SYMPTOM_KEYWORDS = /\b(pain|painful|hurt|ache|aching|sore|tender|throb|sharp|burn|sting|discomfort|uncomfortable|swell|swollen|puffy|inflam|bump|lump|broke|broken|crack|fractur|shatter|split|snap|chip|bleed|blood|bled|knock|loose|wobbly|wiggly|shift|moved|moving|sensitive|hot|cold|infect|fever|abscess|pus|drain|trauma|fall|fell|impact|hit|struck|punch|accident|collision|injur|numb|tingl|extract|pull|remov|filling|crown|cap|wisdom|cavity|decay|rotten|emergency|urgent|gum)|fell.out|came.out|came.off|broke.off|knocked.out|lost.{0,6}(tooth|teeth|filling|crown|cap)/i;
   var onsetWrapper = document.getElementById("onset-wrapper");
   var onsetSelect = document.getElementById("onset-bucket");
   var ccTextarea = document.getElementById("chief-complaint");
