@@ -581,6 +581,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <option value="about_a_week">About a week ago</option>
             <option value="more_than_a_week">More than a week ago</option>
             <option value="not_sure">Not sure</option>
+            <option value="not_applicable">Not applicable</option>
           </select>
         </div>
 
@@ -761,7 +762,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelComplaint: "How can we assist you today?",
         placeholderComplaint: "e.g. Tooth pain for two days, sensitive to cold / I'd like to book a cleaning / New patient inquiry",
         labelOnset: "When did this start?",
-        onsetSelect: "Select one", onsetToday: "Today", onsetDays: "Within the last few days", onsetWeek: "About a week ago", onsetMore: "More than a week ago", onsetUnsure: "Not sure",
+        onsetSelect: "Select one", onsetToday: "Today", onsetDays: "Within the last few days", onsetWeek: "About a week ago", onsetMore: "More than a week ago", onsetUnsure: "Not sure", onsetNA: "Not applicable",
         labelRedFlags: "Are any of these happening right now?",
         rfBreathing: "Trouble breathing or swallowing", rfBleeding: "Uncontrolled bleeding", rfSwelling: "Facial swelling", rfFever: "Fever or feeling unwell", rfTrauma: "Injury from an accident, fall, or impact", rfAvulsion: "Tooth completely knocked out", rfNone: "None of the above",
         labelAvulsionTime: "How long ago did the tooth come out?", avulsionHelper: "This helps the dentist assess the urgency.",
@@ -825,7 +826,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelComplaint: "كيف يمكننا مساعدتك اليوم؟",
         placeholderComplaint: "مثال: ضرسي الخلفي يؤلمني منذ يومين وحساس للبرد",
         labelOnset: "متى بدأ هذا؟",
-        onsetSelect: "اختر", onsetToday: "اليوم", onsetDays: "خلال الأيام القليلة الماضية", onsetWeek: "منذ حوالي أسبوع", onsetMore: "منذ أكثر من أسبوع", onsetUnsure: "غير متأكد",
+        onsetSelect: "اختر", onsetToday: "اليوم", onsetDays: "خلال الأيام القليلة الماضية", onsetWeek: "منذ حوالي أسبوع", onsetMore: "منذ أكثر من أسبوع", onsetUnsure: "غير متأكد", onsetNA: "لا ينطبق",
         labelRedFlags: "هل يحدث أي من هذا الآن؟",
         rfBreathing: "صعوبة في التنفس أو البلع", rfBleeding: "نزيف لا يتوقف", rfSwelling: "تورم في الوجه", rfFever: "حمى أو شعور بالمرض", rfTrauma: "إصابة من حادث أو سقوط", rfAvulsion: "سن خرج بالكامل", rfNone: "لا شيء مما سبق",
         labelAvulsionTime: "منذ متى خرج السن؟", avulsionHelper: "هذا يساعد طبيب الأسنان في تقييم الحالة.",
@@ -886,7 +887,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelComplaint: "आज हम आपकी कैसे मदद कर सकते हैं?",
         placeholderComplaint: "उदा. मेरे पीछे के दांत में दो दिन से दर्द है और ठंडे से तकलीफ होती है",
         labelOnset: "यह कब शुरू हुआ?",
-        onsetSelect: "चुनें", onsetToday: "आज", onsetDays: "पिछले कुछ दिनों में", onsetWeek: "लगभग एक हफ्ते पहले", onsetMore: "एक हफ्ते से अधिक पहले", onsetUnsure: "पता नहीं",
+        onsetSelect: "चुनें", onsetToday: "आज", onsetDays: "पिछले कुछ दिनों में", onsetWeek: "लगभग एक हफ्ते पहले", onsetMore: "एक हफ्ते से अधिक पहले", onsetUnsure: "पता नहीं", onsetNA: "लागू नहीं",
         labelRedFlags: "क्या अभी इनमें से कुछ हो रहा है?",
         rfBreathing: "सांस लेने या निगलने में कठिनाई", rfBleeding: "रुकने वाला नहीं खून बहना", rfSwelling: "चेहरे पर सूजन", rfFever: "बुखार या अस्वस्थ महसूस करना", rfTrauma: "दुर्घटना या गिरने से चोट", rfAvulsion: "दांत पूरी तरह से निकल गया", rfNone: "इनमें से कोई नहीं",
         labelAvulsionTime: "दांत कब निकला?", avulsionHelper: "इससे दंत चिकित्सक को तात्कालिकता का आकलन करने में मदद मिलती है।",
@@ -937,7 +938,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         phoneHelper: "ਸਬਮਿਟ ਕਰਨ ਤੋਂ ਬਾਅਦ ਸੈਮ ਇਸ ਨੰਬਰ ਤੇ ਕਾਲ ਕਰੇਗਾ।", phoneHelperSms: "ਸਬਮਿਟ ਕਰਨ ਤੋਂ ਬਾਅਦ ਸੈਮ ਇਸ ਨੰਬਰ ਤੇ ਮੈਸੇਜ ਕਰੇਗਾ।",
         labelCity: "ਸ਼ਹਿਰ", placeholderCity: "ਸ਼ਹਿਰ", labelEmail: "ਈਮੇਲ", emailOptional: "(ਵਿਕਲਪਿਕ)", placeholderEmail: "ਸਿਰਫ਼ ਫਾਲੋ-ਅੱਪ ਲਈ",
         sectionConcern: "ਅਸੀਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦੇ ਹਾਂ?", labelComplaint: "ਅੱਜ ਅਸੀਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦੇ ਹਾਂ?", placeholderComplaint: "ਉਦਾ. ਮੇਰੇ ਪਿਛਲੇ ਦੰਦ ਵਿੱਚ ਦੋ ਦਿਨਾਂ ਤੋਂ ਦਰਦ ਹੈ",
-        labelOnset: "ਇਹ ਕਦੋਂ ਸ਼ੁਰੂ ਹੋਇਆ?", onsetSelect: "ਚੁਣੋ", onsetToday: "ਅੱਜ", onsetDays: "ਪਿਛਲੇ ਕੁਝ ਦਿਨਾਂ ਵਿੱਚ", onsetWeek: "ਲਗਭਗ ਇੱਕ ਹਫ਼ਤਾ ਪਹਿਲਾਂ", onsetMore: "ਇੱਕ ਹਫ਼ਤੇ ਤੋਂ ਵੱਧ ਪਹਿਲਾਂ", onsetUnsure: "ਪੱਕਾ ਨਹੀਂ",
+        labelOnset: "ਇਹ ਕਦੋਂ ਸ਼ੁਰੂ ਹੋਇਆ?", onsetSelect: "ਚੁਣੋ", onsetToday: "ਅੱਜ", onsetDays: "ਪਿਛਲੇ ਕੁਝ ਦਿਨਾਂ ਵਿੱਚ", onsetWeek: "ਲਗਭਗ ਇੱਕ ਹਫ਼ਤਾ ਪਹਿਲਾਂ", onsetMore: "ਇੱਕ ਹਫ਼ਤੇ ਤੋਂ ਵੱਧ ਪਹਿਲਾਂ", onsetUnsure: "ਪੱਕਾ ਨਹੀਂ", onsetNA: "ਲਾਗੂ ਨਹੀਂ",
         labelRedFlags: "ਕੀ ਹੁਣ ਇਹਨਾਂ ਵਿੱਚੋਂ ਕੁਝ ਹੋ ਰਿਹਾ ਹੈ?",
         rfBreathing: "ਸਾਹ ਲੈਣ ਜਾਂ ਨਿਗਲਣ ਵਿੱਚ ਮੁਸ਼ਕਲ", rfBleeding: "ਬੰਦ ਨਾ ਹੋਣ ਵਾਲਾ ਖੂਨ", rfSwelling: "ਚਿਹਰੇ ਤੇ ਸੋਜ", rfFever: "ਬੁਖਾਰ ਜਾਂ ਬਿਮਾਰ ਮਹਿਸੂਸ", rfTrauma: "ਦੁਰਘਟਨਾ ਤੋਂ ਸੱਟ", rfAvulsion: "ਦੰਦ ਪੂਰੀ ਤਰ੍ਹਾਂ ਨਿਕਲ ਗਿਆ", rfNone: "ਇਹਨਾਂ ਵਿੱਚੋਂ ਕੋਈ ਨਹੀਂ",
         labelAvulsionTime: "ਦੰਦ ਕਦੋਂ ਨਿਕਲਿਆ?", avulsionHelper: "ਇਹ ਡਾਕਟਰ ਨੂੰ ਜ਼ਰੂਰੀਤਾ ਦਾ ਮੁਲਾਂਕਣ ਕਰਨ ਵਿੱਚ ਮਦਦ ਕਰਦਾ ਹੈ।",
@@ -980,7 +981,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         phoneHelper: "Sam appellera ce numero peu apres votre soumission.", phoneHelperSms: "Sam enverra un message a ce numero peu apres votre soumission.",
         labelCity: "Ville", placeholderCity: "Ville", labelEmail: "Adresse courriel", emailOptional: "(facultatif)", placeholderEmail: "Pour le suivi uniquement",
         sectionConcern: "Comment pouvons-nous vous aider?", labelComplaint: "Comment pouvons-nous vous aider aujourd'hui?", placeholderComplaint: "ex. Ma dent arriere me fait mal depuis deux jours et est sensible au froid",
-        labelOnset: "Quand cela a-t-il commence?", onsetSelect: "Choisir", onsetToday: "Aujourd'hui", onsetDays: "Ces derniers jours", onsetWeek: "Il y a environ une semaine", onsetMore: "Il y a plus d'une semaine", onsetUnsure: "Pas certain",
+        labelOnset: "Quand cela a-t-il commence?", onsetSelect: "Choisir", onsetToday: "Aujourd'hui", onsetDays: "Ces derniers jours", onsetWeek: "Il y a environ une semaine", onsetMore: "Il y a plus d'une semaine", onsetUnsure: "Pas certain", onsetNA: "Sans objet",
         labelRedFlags: "Est-ce que l'un de ces problemes se produit en ce moment?",
         rfBreathing: "Difficulte a respirer ou a avaler", rfBleeding: "Saignement incontrole", rfSwelling: "Gonflement facial", rfFever: "Fievre ou malaise", rfTrauma: "Blessure suite a un accident ou une chute", rfAvulsion: "Dent completement arrachee", rfNone: "Aucun de ces problemes",
         labelAvulsionTime: "Il y a combien de temps que la dent est sortie?", avulsionHelper: "Cela aide le dentiste a evaluer l'urgence.",
@@ -1023,7 +1024,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         phoneHelper: "سام پس از ارسال با این شماره تماس خواهد گرفت.", phoneHelperSms: "سام پس از ارسال به این شماره پیام خواهد داد.",
         labelCity: "شهر", placeholderCity: "شهر", labelEmail: "آدرس ایمیل", emailOptional: "(اختیاری)", placeholderEmail: "فقط برای پیگیری",
         sectionConcern: "چگونه می‌توانیم کمک کنیم؟", labelComplaint: "امروز چگونه می‌توانیم کمک کنیم؟", placeholderComplaint: "مثال: دندان عقبم دو روز است درد می کند و به سرما حساس است",
-        labelOnset: "این کی شروع شد؟", onsetSelect: "انتخاب کنید", onsetToday: "امروز", onsetDays: "چند روز گذشته", onsetWeek: "حدود یک هفته پیش", onsetMore: "بیش از یک هفته پیش", onsetUnsure: "مطمئن نیستم",
+        labelOnset: "این کی شروع شد؟", onsetSelect: "انتخاب کنید", onsetToday: "امروز", onsetDays: "چند روز گذشته", onsetWeek: "حدود یک هفته پیش", onsetMore: "بیش از یک هفته پیش", onsetUnsure: "مطمئن نیستم", onsetNA: "قابل اجرا نیست",
         labelRedFlags: "آیا هم اکنون هر یک از این موارد رخ می دهد؟",
         rfBreathing: "مشکل در تنفس یا بلع", rfBleeding: "خونریزی غیرقابل کنترل", rfSwelling: "تورم صورت", rfFever: "تب یا احساس بیماری", rfTrauma: "آسیب ناشی از تصادف یا سقوط", rfAvulsion: "دندان کاملا کنده شده", rfNone: "هیچکدام از موارد بالا",
         labelAvulsionTime: "چه مدت پیش دندان کنده شد؟", avulsionHelper: "این به دندانپزشک کمک می کند فوریت را ارزیابی کند.",
@@ -1064,7 +1065,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         phoneHelper: "Sam ayaa wici doona lambarkaan ka dib markii aad dirto.", phoneHelperSms: "Sam ayaa fariin u diri doona lambarkaan ka dib markii aad dirto.",
         labelCity: "Magaalada", placeholderCity: "Magaalada", labelEmail: "Ciwaanka iimaylka", emailOptional: "(ikhtiyaari)", placeholderEmail: "Kaliya la socodsiinta",
         sectionConcern: "Sidee kugu caawin karnaa?", labelComplaint: "Sidee ku caawin karnaa maanta?", placeholderComplaint: "Tusaale: Ilkahayga dambe ayaa xanuunaya laba maalmood iyo qaboobaha ayaa saameyn ku leh",
-        labelOnset: "Goorma ayay bilaabatay?", onsetSelect: "Dooro", onsetToday: "Maanta", onsetDays: "Dhowr maalmood ee la soo dhaafay", onsetWeek: "Qiyaastii toddobaad ka hor", onsetMore: "Ka badan toddobaad ka hor", onsetUnsure: "Lama hubo",
+        labelOnset: "Goorma ayay bilaabatay?", onsetSelect: "Dooro", onsetToday: "Maanta", onsetDays: "Dhowr maalmood ee la soo dhaafay", onsetWeek: "Qiyaastii toddobaad ka hor", onsetMore: "Ka badan toddobaad ka hor", onsetUnsure: "Lama hubo", onsetNA: "Ma khuseyso",
         labelRedFlags: "Ma dhacayaan kuwan hadda?",
         rfBreathing: "Dhibaato neefsasho ama liqid", rfBleeding: "Dhiig aan joogsan karin", rfSwelling: "Bararka wajiga", rfFever: "Qandho ama dareen xanuun", rfTrauma: "Dhaawac shil ama dhicis", rfAvulsion: "Ilko dhammaystiran oo soo baxday", rfNone: "Midkoodna ma ahan",
         labelAvulsionTime: "Goorma buu ilkuhu soo baxay?", avulsionHelper: "Tani waxay caawisaa dhakhtarka inuu qiimeeyo degdegga.",
@@ -1104,7 +1105,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         phoneHelper: "Sam llamara a este numero poco despues de enviar.", phoneHelperSms: "Sam enviara un mensaje a este numero poco despues de enviar.",
         labelCity: "Ciudad", placeholderCity: "Ciudad", labelEmail: "Correo electronico", emailOptional: "(opcional)", placeholderEmail: "Solo para seguimiento",
         sectionConcern: "¿Cómo podemos ayudarle?", labelComplaint: "¿Cómo podemos ayudarle hoy?", placeholderComplaint: "Ej. Mi muela trasera me ha estado doliendo por dos dias y es sensible al frio",
-        labelOnset: "Cuando comenzo esto?", onsetSelect: "Seleccionar", onsetToday: "Hoy", onsetDays: "En los ultimos dias", onsetWeek: "Hace aproximadamente una semana", onsetMore: "Hace mas de una semana", onsetUnsure: "No estoy seguro",
+        labelOnset: "Cuando comenzo esto?", onsetSelect: "Seleccionar", onsetToday: "Hoy", onsetDays: "En los ultimos dias", onsetWeek: "Hace aproximadamente una semana", onsetMore: "Hace mas de una semana", onsetUnsure: "No estoy seguro", onsetNA: "No aplica",
         labelRedFlags: "Esta experimentando alguno de estos ahora?",
         rfBreathing: "Dificultad para respirar o tragar", rfBleeding: "Sangrado incontrolable", rfSwelling: "Hinchazon facial", rfFever: "Fiebre o malestar", rfTrauma: "Lesion por accidente o caida", rfAvulsion: "Diente completamente desprendido", rfNone: "Ninguno de los anteriores",
         labelAvulsionTime: "Hace cuanto se salio el diente?", avulsionHelper: "Esto ayuda al dentista a evaluar la urgencia.",
@@ -1145,7 +1146,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         phoneHelper: "提交后Sam将拨打此号码。", phoneHelperSms: "提交后Sam将向此号码发送消息。",
         labelCity: "城市", placeholderCity: "城市", labelEmail: "电子邮箱", emailOptional: "（可选）", placeholderEmail: "仅用于后续联系",
         sectionConcern: "我们如何帮助您？", labelComplaint: "今天我们如何帮助您？", placeholderComplaint: "例如：我的后牙疼了两天，对冷敏感",
-        labelOnset: "这是什么时候开始的？", onsetSelect: "请选择", onsetToday: "今天", onsetDays: "最近几天", onsetWeek: "大约一周前", onsetMore: "一周以上前", onsetUnsure: "不确定",
+        labelOnset: "这是什么时候开始的？", onsetSelect: "请选择", onsetToday: "今天", onsetDays: "最近几天", onsetWeek: "大约一周前", onsetMore: "一周以上前", onsetUnsure: "不确定", onsetNA: "不适用",
         labelRedFlags: "您现在是否有以下情况？",
         rfBreathing: "呼吸或吞咽困难", rfBleeding: "无法控制的出血", rfSwelling: "面部肿胀", rfFever: "发烧或感觉不适", rfTrauma: "事故或跌倒造成的伤害", rfAvulsion: "牙齿完全脱落", rfNone: "以上都没有",
         labelAvulsionTime: "牙齿脱落多久了？", avulsionHelper: "这有助于牙医评估紧急程度。",
@@ -1265,7 +1266,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       setLabel("chief-complaint", "labelComplaint"); setPlaceholder("chief-complaint", "placeholderComplaint");
       setLabel("onset-bucket", "labelOnset");
       var onset = document.getElementById("onset-bucket");
-      if (onset) { onset.options[0].text = t("onsetSelect"); onset.options[1].text = t("onsetToday"); onset.options[2].text = t("onsetDays"); onset.options[3].text = t("onsetWeek"); onset.options[4].text = t("onsetMore"); onset.options[5].text = t("onsetUnsure"); }
+      if (onset) { onset.options[0].text = t("onsetSelect"); onset.options[1].text = t("onsetToday"); onset.options[2].text = t("onsetDays"); onset.options[3].text = t("onsetWeek"); onset.options[4].text = t("onsetMore"); onset.options[5].text = t("onsetUnsure"); if (onset.options[6]) onset.options[6].text = t("onsetNA"); }
 
       // Red flags
       var rfLabel = document.querySelector(".check-group")?.parentElement?.querySelector("label:not(.choice)");
@@ -1613,9 +1614,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     function getIntakeSource() {
-      if (variantSrc) return variantSrc;
       var params = new URLSearchParams(window.location.search);
-      return params.get("src") === "office" ? "in_office" : "web_form";
+      var src = params.get("src") || "";
+      // Any office-origin source (office, office_poster_multilingual, etc.) maps to in_office
+      if (src.indexOf("office") !== -1) return "in_office";
+      if (variantSrc) return variantSrc;
+      return "web_form";
     }
 
     function buildIntakePayload(data) {
