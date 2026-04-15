@@ -225,6 +225,7 @@ window.addEventListener('DOMContentLoaded',function(){
         <option value="about_a_week">About a week ago</option>
         <option value="more_than_a_week">More than a week ago</option>
         <option value="not_sure">Not sure</option>
+        <option value="not_applicable">Not applicable</option>
       </select>
     </div>
     <div class="field" style="margin-top:10px;">
@@ -364,7 +365,7 @@ window.addEventListener('DOMContentLoaded',function(){
       secConcern: "How can we help?", lblComplaint: "How can we assist you today?",
       phComplaint: "e.g. Tooth pain for two days / I'd like to book a cleaning / New patient inquiry",
       lblOnset: "When did this start?", optSelect: "Select one", optToday: "Today", optDays: "Within the last few days",
-      optWeek: "About a week ago", optMore: "More than a week ago", optUnsure: "Not sure",
+      optWeek: "About a week ago", optMore: "More than a week ago", optUnsure: "Not sure", optNA: "Not applicable",
       lblRedflags: "Are any of these happening right now?",
       rfBreathing: "Trouble breathing or swallowing", rfBleeding: "Uncontrolled bleeding", rfSwelling: "Facial swelling",
       rfFever: "Fever or feeling unwell", rfTrauma: "Injury from an accident, fall, or impact",
@@ -402,7 +403,7 @@ window.addEventListener('DOMContentLoaded',function(){
       secConcern: "كيف يمكننا مساعدتك؟", lblComplaint: "كيف يمكننا مساعدتك اليوم؟",
       phComplaint: "مثال: ضرسي الخلفي يؤلمني منذ يومين وحساس للبرد",
       lblOnset: "متى بدأ هذا؟", optSelect: "اختر", optToday: "اليوم", optDays: "خلال الأيام القليلة الماضية",
-      optWeek: "منذ حوالي أسبوع", optMore: "منذ أكثر من أسبوع", optUnsure: "غير متأكد",
+      optWeek: "منذ حوالي أسبوع", optMore: "منذ أكثر من أسبوع", optUnsure: "غير متأكد", optNA: "لا ينطبق",
       lblRedflags: "هل يحدث أي من هذا الآن؟",
       rfBreathing: "صعوبة في التنفس أو البلع", rfBleeding: "نزيف لا يتوقف", rfSwelling: "تورم في الوجه",
       rfFever: "حمى أو شعور بالمرض", rfTrauma: "إصابة من حادث أو سقوط",
@@ -439,7 +440,7 @@ window.addEventListener('DOMContentLoaded',function(){
       secConcern: "हम आपकी कैसे मदद कर सकते हैं?", lblComplaint: "आज हम आपकी कैसे मदद कर सकते हैं?",
       phComplaint: "उदा. मेरे पीछे के दांत में दो दिन से दर्द है",
       lblOnset: "यह कब शुरू हुआ?", optSelect: "चुनें", optToday: "आज", optDays: "पिछले कुछ दिनों में",
-      optWeek: "लगभग एक हफ्ते पहले", optMore: "एक हफ्ते से अधिक पहले", optUnsure: "पता नहीं",
+      optWeek: "लगभग एक हफ्ते पहले", optMore: "एक हफ्ते से अधिक पहले", optUnsure: "पता नहीं", optNA: "लागू नहीं",
       lblRedflags: "क्या अभी इनमें से कुछ हो रहा है?",
       rfBreathing: "सांस लेने या निगलने में कठिनाई", rfBleeding: "रुकने वाला नहीं खून बहना", rfSwelling: "चेहरे पर सूजन",
       rfFever: "बुखार या अस्वस्थ महसूस करना", rfTrauma: "दुर्घटना या गिरने से चोट",
@@ -476,7 +477,7 @@ window.addEventListener('DOMContentLoaded',function(){
       secConcern: "ਅਸੀਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦੇ ਹਾਂ?", lblComplaint: "ਅੱਜ ਅਸੀਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦੇ ਹਾਂ?",
       phComplaint: "ਉਦਾ. ਮੇਰੇ ਪਿਛਲੇ ਦੰਦ ਵਿੱਚ ਦਰਦ ਹੈ",
       lblOnset: "ਇਹ ਕਦੋਂ ਸ਼ੁਰੂ ਹੋਇਆ?", optSelect: "ਚੁਣੋ", optToday: "ਅੱਜ", optDays: "ਪਿਛਲੇ ਕੁਝ ਦਿਨਾਂ ਵਿੱਚ",
-      optWeek: "ਲਗਭਗ ਇੱਕ ਹਫ਼ਤਾ ਪਹਿਲਾਂ", optMore: "ਇੱਕ ਹਫ਼ਤੇ ਤੋਂ ਵੱਧ ਪਹਿਲਾਂ", optUnsure: "ਪੱਕਾ ਨਹੀਂ",
+      optWeek: "ਲਗਭਗ ਇੱਕ ਹਫ਼ਤਾ ਪਹਿਲਾਂ", optMore: "ਇੱਕ ਹਫ਼ਤੇ ਤੋਂ ਵੱਧ ਪਹਿਲਾਂ", optUnsure: "ਪੱਕਾ ਨਹੀਂ", optNA: "ਲਾਗੂ ਨਹੀਂ",
       lblRedflags: "ਕੀ ਹੁਣ ਇਹਨਾਂ ਵਿੱਚੋਂ ਕੁਝ ਹੋ ਰਿਹਾ ਹੈ?",
       rfBreathing: "ਸਾਹ ਲੈਣ ਜਾਂ ਨਿਗਲਣ ਵਿੱਚ ਮੁਸ਼ਕਲ", rfBleeding: "ਬੰਦ ਨਾ ਹੋਣ ਵਾਲਾ ਖੂਨ", rfSwelling: "ਚਿਹਰੇ ਤੇ ਸੋਜ",
       rfFever: "ਬੁਖਾਰ ਜਾਂ ਬਿਮਾਰ ਮਹਿਸੂਸ", rfTrauma: "ਦੁਰਘਟਨਾ ਤੋਂ ਸੱਟ",
@@ -513,7 +514,7 @@ window.addEventListener('DOMContentLoaded',function(){
       secConcern: "Comment pouvons-nous vous aider?", lblComplaint: "Comment pouvons-nous vous aider?",
       phComplaint: "ex. Ma dent arriere me fait mal depuis deux jours",
       lblOnset: "Quand cela a-t-il commence?", optSelect: "Choisir", optToday: "Aujourd'hui", optDays: "Ces derniers jours",
-      optWeek: "Il y a environ une semaine", optMore: "Il y a plus d'une semaine", optUnsure: "Pas certain",
+      optWeek: "Il y a environ une semaine", optMore: "Il y a plus d'une semaine", optUnsure: "Pas certain", optNA: "Sans objet",
       lblRedflags: "Est-ce que l'un de ces problemes se produit maintenant?",
       rfBreathing: "Difficulte a respirer ou a avaler", rfBleeding: "Saignement incontrole", rfSwelling: "Gonflement facial",
       rfFever: "Fievre ou malaise", rfTrauma: "Blessure suite a un accident ou une chute",
@@ -550,7 +551,7 @@ window.addEventListener('DOMContentLoaded',function(){
       secConcern: "چگونه می‌توانیم کمک کنیم؟", lblComplaint: "امروز چگونه می‌توانیم کمک کنیم؟",
       phComplaint: "مثال: دندان عقبم دو روز است درد می کند",
       lblOnset: "این کی شروع شد؟", optSelect: "انتخاب کنید", optToday: "امروز", optDays: "چند روز گذشته",
-      optWeek: "حدود یک هفته پیش", optMore: "بیش از یک هفته پیش", optUnsure: "مطمئن نیستم",
+      optWeek: "حدود یک هفته پیش", optMore: "بیش از یک هفته پیش", optUnsure: "مطمئن نیستم", optNA: "قابل اجرا نیست",
       lblRedflags: "آیا هم اکنون هر یک از این موارد رخ می دهد؟",
       rfBreathing: "مشکل در تنفس یا بلع", rfBleeding: "خونریزی غیرقابل کنترل", rfSwelling: "تورم صورت",
       rfFever: "تب یا احساس بیماری", rfTrauma: "آسیب ناشی از تصادف یا سقوط",
@@ -587,7 +588,7 @@ window.addEventListener('DOMContentLoaded',function(){
       secConcern: "Sidee kugu caawin karnaa?", lblComplaint: "Sidee ku caawin karnaa maanta?",
       phComplaint: "Tusaale: Ilkahayga dambe ayaa xanuunaya",
       lblOnset: "Goorma ayay bilaabatay?", optSelect: "Dooro", optToday: "Maanta", optDays: "Dhowr maalmood",
-      optWeek: "Toddobaad ka hor", optMore: "Ka badan toddobaad", optUnsure: "Lama hubo",
+      optWeek: "Toddobaad ka hor", optMore: "Ka badan toddobaad", optUnsure: "Lama hubo", optNA: "Ma khuseyso",
       lblRedflags: "Ma dhacayaan kuwan hadda?",
       rfBreathing: "Dhibaato neefsasho ama liqid", rfBleeding: "Dhiig aan joogsan karin", rfSwelling: "Bararka wajiga",
       rfFever: "Qandho ama dareen xanuun", rfTrauma: "Dhaawac shil ama dhicis",
@@ -624,7 +625,7 @@ window.addEventListener('DOMContentLoaded',function(){
       secConcern: "¿Cómo podemos ayudarle?", lblComplaint: "¿Cómo podemos ayudarle hoy?",
       phComplaint: "Ej. Mi muela trasera me ha estado doliendo por dos dias",
       lblOnset: "Cuando comenzo?", optSelect: "Seleccionar", optToday: "Hoy", optDays: "En los ultimos dias",
-      optWeek: "Hace una semana", optMore: "Hace mas de una semana", optUnsure: "No estoy seguro",
+      optWeek: "Hace una semana", optMore: "Hace mas de una semana", optUnsure: "No estoy seguro", optNA: "No aplica",
       lblRedflags: "Esta experimentando alguno de estos ahora?",
       rfBreathing: "Dificultad para respirar o tragar", rfBleeding: "Sangrado incontrolable", rfSwelling: "Hinchazon facial",
       rfFever: "Fiebre o malestar", rfTrauma: "Lesion por accidente o caida",
@@ -661,7 +662,7 @@ window.addEventListener('DOMContentLoaded',function(){
       secConcern: "我们如何帮助您？", lblComplaint: "今天我们如何帮助您？",
       phComplaint: "例如：我的后牙疼了两天，对冷敏感",
       lblOnset: "什么时候开始的？", optSelect: "请选择", optToday: "今天", optDays: "最近几天",
-      optWeek: "大约一周前", optMore: "一周以上前", optUnsure: "不确定",
+      optWeek: "大约一周前", optMore: "一周以上前", optUnsure: "不确定", optNA: "不适用",
       lblRedflags: "您现在是否有以下情况？",
       rfBreathing: "呼吸或吞咽困难", rfBleeding: "无法控制的出血", rfSwelling: "面部肿胀",
       rfFever: "发烧或感觉不适", rfTrauma: "事故或跌倒造成的伤害",
@@ -735,7 +736,7 @@ window.addEventListener('DOMContentLoaded',function(){
 
     var onset = document.getElementById("onset-bucket");
     onset.options[0].text = t("optSelect"); onset.options[1].text = t("optToday"); onset.options[2].text = t("optDays");
-    onset.options[3].text = t("optWeek"); onset.options[4].text = t("optMore"); onset.options[5].text = t("optUnsure");
+    onset.options[3].text = t("optWeek"); onset.options[4].text = t("optMore"); onset.options[5].text = t("optUnsure"); if (onset.options[6]) onset.options[6].text = t("optNA");
 
     document.getElementById("lbl-redflags").textContent = t("lblRedflags");
     document.getElementById("sp-rf-breathing").textContent = t("rfBreathing");
