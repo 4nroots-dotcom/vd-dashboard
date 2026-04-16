@@ -263,7 +263,24 @@ window.addEventListener('DOMContentLoaded',function(){
     <div class="helper" id="med-helper" style="margin-bottom:8px;">Select any that apply.</div>
     <div class="check-group">
       <label class="choice"><input type="checkbox" id="mh-allergy-antibiotics" /><span id="sp-mh-antibiotics">Allergy to antibiotics</span></label>
+    </div>
+    <div class="conditional-field" id="mh-allergy-antibiotics-wrapper">
+      <div class="field">
+        <label for="mh-allergy-antibiotics-detail" id="lbl-mh-allergy-antibiotics-detail">Which antibiotic(s)?</label>
+        <input class="textarea" id="mh-allergy-antibiotics-detail" placeholder="e.g., penicillin, amoxicillin, clindamycin" />
+      </div>
+    </div>
+    <div class="check-group">
       <label class="choice"><input type="checkbox" id="mh-allergy-pain" /><span id="sp-mh-pain">Allergy to pain medication</span></label>
+    </div>
+    <div class="conditional-field" id="mh-allergy-pain-wrapper">
+      <div class="field">
+        <label for="mh-allergy-pain-detail" id="lbl-mh-allergy-pain-detail">Which pain medication(s)?</label>
+        <input class="textarea" id="mh-allergy-pain-detail" placeholder="e.g., ibuprofen, codeine, morphine" />
+      </div>
+    </div>
+    <div class="check-group">
+      <label class="choice"><input type="checkbox" id="mh-allergy-latex" /><span id="sp-mh-latex">Allergy to latex</span></label>
       <label class="choice"><input type="checkbox" id="mh-blood-thinners" /><span id="sp-mh-blood">Blood thinners</span></label>
       <label class="choice"><input type="checkbox" id="mh-diabetes" /><span id="sp-mh-diabetes">Diabetes</span></label>
       <label class="choice"><input type="checkbox" id="mh-pregnancy" /><span id="sp-mh-pregnancy">Pregnancy</span></label>
@@ -375,7 +392,9 @@ window.addEventListener('DOMContentLoaded',function(){
       avUnder5: "Just now (under 5 minutes)", av5to15: "5 to 15 minutes ago", av15to30: "15 to 30 minutes ago",
       av30to60: "30 to 60 minutes ago", avOver60: "More than 60 minutes ago",
       secMedical: "Relevant medical information", medHelper: "Select any that apply.",
-      mhAntibiotics: "Allergy to antibiotics", mhPain: "Allergy to pain medication", mhBlood: "Blood thinners",
+      mhAntibiotics: "Allergy to antibiotics", mhPain: "Allergy to pain medication", mhLatex: "Allergy to latex", mhBlood: "Blood thinners",
+      mhAntibioticsLabel: "Which antibiotic(s)?", mhAntibioticsPlaceholder: "e.g., penicillin, amoxicillin, clindamycin",
+      mhPainLabel: "Which pain medication(s)?", mhPainPlaceholder: "e.g., ibuprofen, codeine, morphine",
       mhDiabetes: "Diabetes", mhPregnancy: "Pregnancy", mhImmuno: "Immunocompromised",
       mhOther: "Other important medical condition", mhNone: "None of the above",
       mhOtherLabel: "Please tell us more", mhOtherPh: "Anything important we should know",
@@ -413,7 +432,9 @@ window.addEventListener('DOMContentLoaded',function(){
       avUnder5: "الآن (أقل من 5 دقائق)", av5to15: "من 5 إلى 15 دقيقة", av15to30: "من 15 إلى 30 دقيقة",
       av30to60: "من 30 إلى 60 دقيقة", avOver60: "أكثر من 60 دقيقة",
       secMedical: "معلومات طبية", medHelper: "اختر كل ما ينطبق.",
-      mhAntibiotics: "حساسية من المضادات الحيوية", mhPain: "حساسية من مسكنات الألم", mhBlood: "أدوية مميعة للدم",
+      mhAntibiotics: "حساسية من المضادات الحيوية", mhPain: "حساسية من مسكنات الألم", mhLatex: "حساسية من اللاتكس", mhBlood: "أدوية مميعة للدم",
+      mhAntibioticsLabel: "أي مضاد حيوي؟", mhAntibioticsPlaceholder: "مثال: البنسلين، أموكسيسيلين، كليندامايسين",
+      mhPainLabel: "أي مسكن ألم؟", mhPainPlaceholder: "مثال: إيبوبروفين، كودايين، مورفين",
       mhDiabetes: "السكري", mhPregnancy: "الحمل", mhImmuno: "ضعف المناعة",
       mhOther: "حالة طبية مهمة أخرى", mhNone: "لا شيء مما سبق",
       mhOtherLabel: "يرجى إخبارنا بالمزيد", mhOtherPh: "أي شيء مهم يجب أن نعرفه",
@@ -450,7 +471,9 @@ window.addEventListener('DOMContentLoaded',function(){
       avUnder5: "अभी (5 मिनट से कम)", av5to15: "5 से 15 मिनट पहले", av15to30: "15 से 30 मिनट पहले",
       av30to60: "30 से 60 मिनट पहले", avOver60: "60 मिनट से अधिक पहले",
       secMedical: "संबंधित चिकित्सा जानकारी", medHelper: "जो भी लागू हो चुनें।",
-      mhAntibiotics: "एंटीबायोटिक से एलर्जी", mhPain: "दर्द की दवा से एलर्जी", mhBlood: "रक्त पतला करने की दवा",
+      mhAntibiotics: "एंटीबायोटिक से एलर्जी", mhPain: "दर्द की दवा से एलर्जी", mhLatex: "लेटेक्स से एलर्जी", mhBlood: "रक्त पतला करने की दवा",
+      mhAntibioticsLabel: "कौन सा एंटीबायोटिक?", mhAntibioticsPlaceholder: "जैसे: पेनिसिलिन, एमोक्सिसिलिन, क्लिंडामाइसिन",
+      mhPainLabel: "कौन सी दर्द की दवा?", mhPainPlaceholder: "जैसे: आइबूप्रोफेन, कोडीन, मॉर्फिन",
       mhDiabetes: "मधुमेह", mhPregnancy: "गर्भावस्था", mhImmuno: "कमज़ोर प्रतिरक्षा",
       mhOther: "अन्य महत्वपूर्ण चिकित्सा स्थिति", mhNone: "इनमें से कोई नहीं",
       mhOtherLabel: "कृपया और बताएं", mhOtherPh: "कुछ भी महत्वपूर्ण",
@@ -487,7 +510,9 @@ window.addEventListener('DOMContentLoaded',function(){
       avUnder5: "ਹੁਣੇ (5 ਮਿੰਟ ਤੋਂ ਘੱਟ)", av5to15: "5 ਤੋਂ 15 ਮਿੰਟ ਪਹਿਲਾਂ", av15to30: "15 ਤੋਂ 30 ਮਿੰਟ ਪਹਿਲਾਂ",
       av30to60: "30 ਤੋਂ 60 ਮਿੰਟ ਪਹਿਲਾਂ", avOver60: "60 ਮਿੰਟ ਤੋਂ ਵੱਧ",
       secMedical: "ਸੰਬੰਧਿਤ ਡਾਕਟਰੀ ਜਾਣਕਾਰੀ", medHelper: "ਜੋ ਵੀ ਲਾਗੂ ਹੋਵੇ ਚੁਣੋ।",
-      mhAntibiotics: "ਐਂਟੀਬਾਇਓਟਿਕ ਤੋਂ ਐਲਰਜੀ", mhPain: "ਦਰਦ ਦੀ ਦਵਾਈ ਤੋਂ ਐਲਰਜੀ", mhBlood: "ਖੂਨ ਪਤਲਾ ਕਰਨ ਦੀ ਦਵਾਈ",
+      mhAntibiotics: "ਐਂਟੀਬਾਇਓਟਿਕ ਤੋਂ ਐਲਰਜੀ", mhPain: "ਦਰਦ ਦੀ ਦਵਾਈ ਤੋਂ ਐਲਰਜੀ", mhLatex: "ਲੈਟੈਕਸ ਤੋਂ ਐਲਰਜੀ", mhBlood: "ਖੂਨ ਪਤਲਾ ਕਰਨ ਦੀ ਦਵਾਈ",
+      mhAntibioticsLabel: "ਕਿਹੜਾ ਐਂਟੀਬਾਇਓਟਿਕ?", mhAntibioticsPlaceholder: "ਜਿਵੇਂ: ਪੈਨਿਸਿਲਿਨ, ਐਮੋਕਸੀਸਿਲਿਨ, ਕਲਿੰਡਾਮਾਈਸਿਨ",
+      mhPainLabel: "ਕਿਹੜੀ ਦਰਦ ਦੀ ਦਵਾਈ?", mhPainPlaceholder: "ਜਿਵੇਂ: ਆਈਬੂਪ੍ਰੋਫੇਨ, ਕੋਡੀਨ, ਮੋਰਫਿਨ",
       mhDiabetes: "ਸ਼ੂਗਰ", mhPregnancy: "ਗਰਭ ਅਵਸਥਾ", mhImmuno: "ਕਮਜ਼ੋਰ ਇਮਿਊਨ ਸਿਸਟਮ",
       mhOther: "ਹੋਰ ਮਹੱਤਵਪੂਰਨ ਡਾਕਟਰੀ ਸਥਿਤੀ", mhNone: "ਇਹਨਾਂ ਵਿੱਚੋਂ ਕੋਈ ਨਹੀਂ",
       mhOtherLabel: "ਕਿਰਪਾ ਕਰਕੇ ਹੋਰ ਦੱਸੋ", mhOtherPh: "ਕੁਝ ਵੀ ਮਹੱਤਵਪੂਰਨ",
@@ -524,7 +549,9 @@ window.addEventListener('DOMContentLoaded',function(){
       avUnder5: "A l'instant (moins de 5 min)", av5to15: "Il y a 5 a 15 min", av15to30: "Il y a 15 a 30 min",
       av30to60: "Il y a 30 a 60 min", avOver60: "Il y a plus de 60 min",
       secMedical: "Informations medicales", medHelper: "Selectionnez tout ce qui s'applique.",
-      mhAntibiotics: "Allergie aux antibiotiques", mhPain: "Allergie aux analgesiques", mhBlood: "Anticoagulants",
+      mhAntibiotics: "Allergie aux antibiotiques", mhPain: "Allergie aux analgesiques", mhLatex: "Allergie au latex", mhBlood: "Anticoagulants",
+      mhAntibioticsLabel: "Quel(s) antibiotique(s)?", mhAntibioticsPlaceholder: "par exemple penicilline, amoxicilline, clindamycine",
+      mhPainLabel: "Quel(s) analgesique(s)?", mhPainPlaceholder: "par exemple ibuprofene, codeine, morphine",
       mhDiabetes: "Diabete", mhPregnancy: "Grossesse", mhImmuno: "Immunodeprime",
       mhOther: "Autre condition medicale importante", mhNone: "Aucun de ces problemes",
       mhOtherLabel: "Veuillez nous en dire plus", mhOtherPh: "Tout ce qui est important",
@@ -561,7 +588,9 @@ window.addEventListener('DOMContentLoaded',function(){
       avUnder5: "همین الان (کمتر از 5 دقیقه)", av5to15: "5 تا 15 دقیقه پیش", av15to30: "15 تا 30 دقیقه پیش",
       av30to60: "30 تا 60 دقیقه پیش", avOver60: "بیش از 60 دقیقه",
       secMedical: "اطلاعات پزشکی", medHelper: "هر کدام که صدق می کند انتخاب کنید.",
-      mhAntibiotics: "حساسیت به آنتی بیوتیک", mhPain: "حساسیت به مسکن", mhBlood: "داروهای رقیق کننده خون",
+      mhAntibiotics: "حساسیت به آنتی بیوتیک", mhPain: "حساسیت به مسکن", mhLatex: "حساسیت به لاتکس", mhBlood: "داروهای رقیق کننده خون",
+      mhAntibioticsLabel: "کدام آنتی بیوتیک؟", mhAntibioticsPlaceholder: "مثال: پنی سیلین، آموکسی سیلین، کلیندامایسین",
+      mhPainLabel: "کدام مسکن؟", mhPainPlaceholder: "مثال: ایبوپروفن، کدئین، مورفین",
       mhDiabetes: "دیابت", mhPregnancy: "بارداری", mhImmuno: "ضعف ایمنی",
       mhOther: "وضعیت پزشکی مهم دیگر", mhNone: "هیچکدام",
       mhOtherLabel: "لطفا بیشتر توضیح دهید", mhOtherPh: "هر چیز مهمی",
@@ -598,7 +627,9 @@ window.addEventListener('DOMContentLoaded',function(){
       avUnder5: "Hadda (ka yar 5 daqiiqo)", av5to15: "5-15 daqiiqo ka hor", av15to30: "15-30 daqiiqo ka hor",
       av30to60: "30-60 daqiiqo ka hor", avOver60: "Ka badan 60 daqiiqo",
       secMedical: "Macluumaadka caafimaadka", medHelper: "Dooro dhammaan kuwa khuseeya.",
-      mhAntibiotics: "Xasaasiyadda antibiyootiga", mhPain: "Xasaasiyadda daawada xanuunka", mhBlood: "Daawada dhiiga jilicisa",
+      mhAntibiotics: "Xasaasiyadda antibiyootiga", mhPain: "Xasaasiyadda daawada xanuunka", mhLatex: "Xasaasiyadda laatekis", mhBlood: "Daawada dhiiga jilicisa",
+      mhAntibioticsLabel: "Antibiyootigee?", mhAntibioticsPlaceholder: "tusaale: benisilin, amoksisilin, klindamaaysin",
+      mhPainLabel: "Daawadee xanuunka?", mhPainPlaceholder: "tusaale: aybuubroofeen, kodeeyin, moorfiin",
       mhDiabetes: "Sonkorowga", mhPregnancy: "Uurka", mhImmuno: "Difaaca jirka oo daciif ah",
       mhOther: "Xaalad caafimaad oo muhiim ah", mhNone: "Midkoodna ma ahan",
       mhOtherLabel: "Fadlan noo sheeg wax badan", mhOtherPh: "Wax muhiim ah",
@@ -635,7 +666,9 @@ window.addEventListener('DOMContentLoaded',function(){
       avUnder5: "Ahora mismo (menos de 5 min)", av5to15: "Hace 5-15 min", av15to30: "Hace 15-30 min",
       av30to60: "Hace 30-60 min", avOver60: "Mas de 60 min",
       secMedical: "Informacion medica", medHelper: "Seleccione todo lo que aplique.",
-      mhAntibiotics: "Alergia a antibioticos", mhPain: "Alergia a analgesicos", mhBlood: "Anticoagulantes",
+      mhAntibiotics: "Alergia a antibioticos", mhPain: "Alergia a analgesicos", mhLatex: "Alergia al latex", mhBlood: "Anticoagulantes",
+      mhAntibioticsLabel: "Cual(es) antibiotico(s)?", mhAntibioticsPlaceholder: "por ejemplo penicilina, amoxicilina, clindamicina",
+      mhPainLabel: "Cual(es) analgesico(s)?", mhPainPlaceholder: "por ejemplo ibuprofeno, codeina, morfina",
       mhDiabetes: "Diabetes", mhPregnancy: "Embarazo", mhImmuno: "Inmunocomprometido",
       mhOther: "Otra condicion medica importante", mhNone: "Ninguno de los anteriores",
       mhOtherLabel: "Por favor diganos mas", mhOtherPh: "Cualquier cosa importante",
@@ -672,7 +705,9 @@ window.addEventListener('DOMContentLoaded',function(){
       avUnder5: "刚刚（不到5分钟）", av5to15: "5-15分钟前", av15to30: "15-30分钟前",
       av30to60: "30-60分钟前", avOver60: "超过60分钟",
       secMedical: "相关医疗信息", medHelper: "选择所有适用项。",
-      mhAntibiotics: "抗生素过敏", mhPain: "止痛药过敏", mhBlood: "血液稀释剂",
+      mhAntibiotics: "抗生素过敏", mhPain: "止痛药过敏", mhLatex: "乳胶过敏", mhBlood: "血液稀释剂",
+      mhAntibioticsLabel: "哪种抗生素?", mhAntibioticsPlaceholder: "例如 青霉素、阿莫西林、克林霉素",
+      mhPainLabel: "哪种止痛药?", mhPainPlaceholder: "例如 布洛芬、可待因、吗啡",
       mhDiabetes: "糖尿病", mhPregnancy: "怀孕", mhImmuno: "免疫力低下",
       mhOther: "其他重要医疗状况", mhNone: "以上都没有",
       mhOtherLabel: "请告诉我们更多", mhOtherPh: "任何重要信息",
@@ -750,12 +785,21 @@ window.addEventListener('DOMContentLoaded',function(){
 
     document.getElementById("sp-mh-antibiotics").textContent = t("mhAntibiotics");
     document.getElementById("sp-mh-pain").textContent = t("mhPain");
+    document.getElementById("sp-mh-latex").textContent = t("mhLatex");
     document.getElementById("sp-mh-blood").textContent = t("mhBlood");
     document.getElementById("sp-mh-diabetes").textContent = t("mhDiabetes");
     document.getElementById("sp-mh-pregnancy").textContent = t("mhPregnancy");
     document.getElementById("sp-mh-immuno").textContent = t("mhImmuno");
     document.getElementById("sp-mh-other").textContent = t("mhOther");
     document.getElementById("sp-mh-none").textContent = t("mhNone");
+    var labAb = document.getElementById("lbl-mh-allergy-antibiotics-detail");
+    if (labAb) labAb.textContent = t("mhAntibioticsLabel");
+    var inpAb = document.getElementById("mh-allergy-antibiotics-detail");
+    if (inpAb) inpAb.placeholder = t("mhAntibioticsPlaceholder");
+    var labPn = document.getElementById("lbl-mh-allergy-pain-detail");
+    if (labPn) labPn.textContent = t("mhPainLabel");
+    var inpPn = document.getElementById("mh-allergy-pain-detail");
+    if (inpPn) inpPn.placeholder = t("mhPainPlaceholder");
     document.getElementById("med-helper").textContent = t("medHelper");
     document.getElementById("cov-helper").textContent = t("covHelper");
     document.getElementById("lbl-coverage").textContent = t("lblCoverage");
@@ -792,12 +836,14 @@ window.addEventListener('DOMContentLoaded',function(){
   rfIds.forEach(function(id) { document.getElementById(id).addEventListener("change", function() { if (this.checked) rfNone.checked = false; toggleAvulsion(); }); });
 
   var mhNone = document.getElementById("mh-none");
-  var mhIds = ["mh-allergy-antibiotics","mh-allergy-pain","mh-blood-thinners","mh-diabetes","mh-pregnancy","mh-immunocompromised","mh-other"];
-  mhNone.addEventListener("change", function() { if (mhNone.checked) { mhIds.forEach(function(id) { document.getElementById(id).checked = false; }); toggleMhOther(); } });
-  mhIds.forEach(function(id) { document.getElementById(id).addEventListener("change", function() { if (this.checked) mhNone.checked = false; toggleMhOther(); }); });
+  var mhIds = ["mh-allergy-antibiotics","mh-allergy-pain","mh-allergy-latex","mh-blood-thinners","mh-diabetes","mh-pregnancy","mh-immunocompromised","mh-other"];
+  mhNone.addEventListener("change", function() { if (mhNone.checked) { mhIds.forEach(function(id) { document.getElementById(id).checked = false; }); document.getElementById("mh-allergy-antibiotics-detail").value = ""; document.getElementById("mh-allergy-pain-detail").value = ""; document.getElementById("mh-other-detail").value = ""; toggleMhOther(); toggleMhAllergyAntibiotics(); toggleMhAllergyPain(); } });
+  mhIds.forEach(function(id) { document.getElementById(id).addEventListener("change", function() { if (this.checked) mhNone.checked = false; toggleMhOther(); toggleMhAllergyAntibiotics(); toggleMhAllergyPain(); }); });
 
   function toggleAvulsion() { document.getElementById("avulsion-time-wrapper").style.display = document.getElementById("rf-avulsion").checked ? "block" : "none"; }
   function toggleMhOther() { document.getElementById("mh-other-wrapper").style.display = document.getElementById("mh-other").checked ? "block" : "none"; }
+  function toggleMhAllergyAntibiotics() { var w = document.getElementById("mh-allergy-antibiotics-wrapper"); var d = document.getElementById("mh-allergy-antibiotics-detail"); if (document.getElementById("mh-allergy-antibiotics").checked) { w.style.display = "block"; } else { w.style.display = "none"; d.value = ""; } }
+  function toggleMhAllergyPain() { var w = document.getElementById("mh-allergy-pain-wrapper"); var d = document.getElementById("mh-allergy-pain-detail"); if (document.getElementById("mh-allergy-pain").checked) { w.style.display = "block"; } else { w.style.display = "none"; d.value = ""; } }
 
   // Conditional onset: show when complaint mentions symptoms, hide for general inquiries
   // Word boundary \b at start prevents false positives (e.g. "hit" inside "whitening")
@@ -847,7 +893,7 @@ window.addEventListener('DOMContentLoaded',function(){
     if (onsetWrapper.style.display !== "none" && !getValue("onset-bucket")) return "Please tell us when this started.";
     var rf = { a: isChecked("rf-breathing-swallowing"), b: isChecked("rf-uncontrolled-bleeding"), c: isChecked("rf-facial-swelling"), d: isChecked("rf-fever-unwell"), e: isChecked("rf-trauma"), f: isChecked("rf-avulsion"), g: isChecked("rf-none") };
     if (!atLeastOneTrue(rf)) return "Please select at least one option under current symptoms.";
-    var mh = { a: isChecked("mh-allergy-antibiotics"), b: isChecked("mh-allergy-pain"), c: isChecked("mh-blood-thinners"), d: isChecked("mh-diabetes"), e: isChecked("mh-pregnancy"), f: isChecked("mh-immunocompromised"), g: isChecked("mh-other"), h: isChecked("mh-none") };
+    var mh = { a: isChecked("mh-allergy-antibiotics"), b: isChecked("mh-allergy-pain"), c: isChecked("mh-allergy-latex"), d: isChecked("mh-blood-thinners"), e: isChecked("mh-diabetes"), f: isChecked("mh-pregnancy"), g: isChecked("mh-immunocompromised"), h: isChecked("mh-other"), i: isChecked("mh-none") };
     if (!atLeastOneTrue(mh)) return "Please select at least one option under medical information.";
     if (isChecked("mh-other") && !getValue("mh-other-detail")) return "Please tell us more about the other medical condition.";
     if (!isChecked("intake-acknowledge")) return "Please confirm the acknowledgement.";
@@ -892,7 +938,10 @@ window.addEventListener('DOMContentLoaded',function(){
         },
         intake_medical_flags: {
           allergy_antibiotics: isChecked("mh-allergy-antibiotics"),
+          allergy_antibiotics_detail: getOptionalValue("mh-allergy-antibiotics-detail"),
           allergy_pain_medication: isChecked("mh-allergy-pain"),
+          allergy_pain_medication_detail: getOptionalValue("mh-allergy-pain-detail"),
+          allergy_latex: isChecked("mh-allergy-latex"),
           blood_thinners: isChecked("mh-blood-thinners"),
           diabetes: isChecked("mh-diabetes"),
           pregnancy: isChecked("mh-pregnancy"),
