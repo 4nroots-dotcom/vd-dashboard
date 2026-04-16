@@ -907,14 +907,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   var searchQuery = "";
   var sourceFilter = "all"; // all, office, web, nonemergent
 
-  // ---- ACCESS CONTROL ----
-  async function checkOfficeAccess(email) {
-    try {
-      var res = await sb.from("allowed_reviewers").select("can_access_office_dashboard").eq("email", (email || "").toLowerCase().trim()).maybeSingle();
-      return res.data && res.data.can_access_office_dashboard === true;
-    } catch (e) { console.error("Access check failed:", e); return false; }
-  }
-
   // ---- AUTH ----
   document.getElementById("login-btn").addEventListener("click", handleLogin);
   document.getElementById("login-password").addEventListener("keydown", function(e) {
@@ -938,15 +930,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     if (result.error) {
       errEl.textContent = "Incorrect email or password. Please try again.";
-      errEl.style.display = "block";
-      btn.disabled = false;
-      btn.textContent = "Sign in";
-      return;
-    }
-
-    if (!(await checkOfficeAccess(result.data.user.email))) {
-      await sb.auth.signOut();
-      errEl.textContent = "This account does not have access to the office dashboard.";
       errEl.style.display = "block";
       btn.disabled = false;
       btn.textContent = "Sign in";
@@ -980,12 +963,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }
 
   // Check existing session on load
-  sb.auth.getSession().then(async function(res) {
+  sb.auth.getSession().then(function(res) {
     if (res.data && res.data.session) {
-      if (!(await checkOfficeAccess(res.data.session.user.email))) {
-        await sb.auth.signOut();
-        return;
-      }
       showApp();
       loadCases();
     }
@@ -1375,13 +1354,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     if (typeof obj !== "object") return "No relevant medical history reported";
     if (obj.none_of_the_above === true) return "No relevant medical history reported";
     var labels = { allergy_penicillin: "Allergy to penicillin / amoxicillin", allergy_other_antibiotics: "Allergy to other antibiotics", allergy_antibiotics: "Allergy to antibiotics", allergy_pain_medication: "Allergy to pain medication", allergy_latex: "Allergy to latex", blood_thinners: "Blood thinners", bisphosphonate_use: "Bisphosphonate medication", diabetes: "Diabetes", pregnancy: "Pregnancy", immunocompromised: "Immunocompromised", dental_anxiety_syncope_risk: "History of fainting / dental anxiety", other_important_medical_condition: "Other important medical condition" };
+    var detailKeys = { allergy_antibiotics: "allergy_antibiotics_detail", allergy_pain_medication: "allergy_pain_medication_detail", other_important_medical_condition: "other_medical_detail" };
     var items = [];
     Object.entries(obj).forEach(function(entry) {
       var key = entry[0]; var value = entry[1];
-      if (key === "none_of_the_above" || key === "other_medical_detail") return;
+      if (key === "none_of_the_above" || key === "other_medical_detail" || key === "allergy_antibiotics_detail" || key === "allergy_pain_medication_detail") return;
       if (value !== true) return;
-      if (key === "other_important_medical_condition") { items.push(obj.other_medical_detail ? "Other: " + obj.other_medical_detail : "Other important medical condition"); return; }
-      items.push(labels[key] || key);
+      var label = labels[key] || key;
+      var detailKey = detailKeys[key];
+      if (detailKey && obj[detailKey]) { items.push(label + ": " + obj[detailKey]); return; }
+      items.push(label);
     });
     return items.length ? items.join(", ") : "No relevant medical history reported";
   }
