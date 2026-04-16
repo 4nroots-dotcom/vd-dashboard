@@ -263,7 +263,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="toolbar-right">
         <span class="last-updated" id="last-updated"></span>
         <button class="refresh-btn" id="refresh-btn" type="button" title="Refresh">&#8635;</button>
-        <a class="back-link" href="dashboard.html">&larr; Dashboard</a>
+        <a class="back-link" href="ddsdashboard.html">&larr; Dashboard</a>
       </div>
     </div>
 
@@ -309,9 +309,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var btn = document.getElementById("refresh-btn");
       btn.classList.add("spinning");
       try {
-        // Main cases query (period-filtered)
+        // Main cases query (period-filtered, excludes non-emergent inquiries)
         var query = sb.from("triage_cases")
           .select("id, created_at, severity, extraction_source, review_status, reviewed_at, reviewed_by, contacted_patient_at, final_disposition, prescription_issued, duration_seconds, structured_output, triage_tag, contradictions, revenue_generated, subsequent_appointment_booked, satisfaction_score, return_likelihood, survey_feedback, appointment_completed_at, patient_language, intake_source, preferred_channel, has_sms_continuation, sms_structured_output")
+          .neq("triage_tag", "non_emergent_inquiry")
           .order("created_at", { ascending: true });
         if (currentPeriod > 0) { var since = new Date(); since.setDate(since.getDate() - currentPeriod); query = query.gte("created_at", since.toISOString()); }
         var result = await query;
@@ -331,8 +332,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     function renderMetrics(cases, satData) {
-      // Backward compat: normalize old severity labels
-      cases.forEach(function(c) { if (c.severity === "emergency") c.severity = "urgent"; });
       var total = cases.length;
       var critical = cases.filter(function(c) { return c.severity === "critical"; }).length;
       var urgent = cases.filter(function(c) { return c.severity === "urgent"; }).length;
@@ -346,7 +345,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var erRef = cases.filter(function(c) { return c.final_disposition === "referred_er"; }).length;
       var rxIssued = cases.filter(function(c) { return c.prescription_issued === true; }).length;
 
-      var reviewMinutes = cases.filter(function(c) { return c.created_at && c.reviewed_at && c.reviewed_by; }).map(function(c) { return (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000; }).filter(function(n) { return Number.isFinite(n) && n >= 0; });
+      // Time-to-review calculation: excludes outliers >24h (staff workflow delays,
+      // technical issues, and test artifacts rather than real review latency).
+      // Outlier count tracked separately for transparency.
+      var reviewMinutesAll = cases.filter(function(c) { return c.created_at && c.reviewed_at && c.reviewed_by; }).map(function(c) { return (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000; }).filter(function(n) { return Number.isFinite(n) && n >= 0; });
+      var reviewMinutes = reviewMinutesAll.filter(function(n) { return n <= 1440; });
+      var reviewOutliers = reviewMinutesAll.filter(function(n) { return n > 1440; }).length;
       var contactMinutes = cases.filter(function(c) { return c.created_at && c.contacted_patient_at && c.intake_source !== "in_office"; }).map(function(c) { return (new Date(c.contacted_patient_at) - new Date(c.created_at)) / 60000; }).filter(function(n) { return Number.isFinite(n) && n >= 0; });
       var avgTTR = reviewMinutes.length ? Math.round(reviewMinutes.reduce(function(a, b) { return a + b; }, 0) / reviewMinutes.length) : null;
       var avgTTC = contactMinutes.length ? Math.round(contactMinutes.reduce(function(a, b) { return a + b; }, 0) / contactMinutes.length) : null;
@@ -370,7 +374,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var tagCounts = {}; cases.forEach(function(c) { var tag = c.triage_tag || "untagged"; tagCounts[tag] = (tagCounts[tag] || 0) + 1; });
 
       var reviewerCounts = {}; var reviewerTTR = {};
-      cases.forEach(function(c) { if (!c.reviewed_by) return; var name = resolveReviewerName(c.reviewed_by); reviewerCounts[name] = (reviewerCounts[name] || 0) + 1; if (c.created_at && c.reviewed_at) { var mins = (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000; if (Number.isFinite(mins) && mins >= 0) { if (!reviewerTTR[name]) reviewerTTR[name] = []; reviewerTTR[name].push(mins); } } });
+      cases.forEach(function(c) { if (!c.reviewed_by) return; var name = resolveReviewerName(c.reviewed_by); reviewerCounts[name] = (reviewerCounts[name] || 0) + 1; if (c.created_at && c.reviewed_at) { var mins = (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000; if (Number.isFinite(mins) && mins >= 0 && mins <= 1440) { if (!reviewerTTR[name]) reviewerTTR[name] = []; reviewerTTR[name].push(mins); } } });
 
       var revenueCases = cases.filter(function(c) { return typeof c.revenue_generated === "number" && c.revenue_generated > 0; });
       var totalRevenue = revenueCases.reduce(function(sum, c) { return sum + c.revenue_generated; }, 0);
@@ -416,8 +420,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       // ── FIX: TTR split (remote vs in-office) ──
       var remoteCases = cases.filter(function(c) { return c.intake_source !== "in_office"; });
       var inOfficeCases = cases.filter(function(c) { return c.intake_source === "in_office"; });
-      var remoteReviewMin = remoteCases.filter(function(c) { return c.created_at && c.reviewed_at && c.reviewed_by; }).map(function(c) { return (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000; }).filter(function(n) { return Number.isFinite(n) && n >= 0; });
-      var inOfficeReviewMin = inOfficeCases.filter(function(c) { return c.created_at && c.reviewed_at && c.reviewed_by; }).map(function(c) { return (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000; }).filter(function(n) { return Number.isFinite(n) && n >= 0; });
+      var remoteReviewMin = remoteCases.filter(function(c) { return c.created_at && c.reviewed_at && c.reviewed_by; }).map(function(c) { return (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000; }).filter(function(n) { return Number.isFinite(n) && n >= 0 && n <= 1440; });
+      var inOfficeReviewMin = inOfficeCases.filter(function(c) { return c.created_at && c.reviewed_at && c.reviewed_by; }).map(function(c) { return (new Date(c.reviewed_at) - new Date(c.created_at)) / 60000; }).filter(function(n) { return Number.isFinite(n) && n >= 0 && n <= 1440; });
       var avgRemoteTTR = remoteReviewMin.length ? Math.round(remoteReviewMin.reduce(function(a, b) { return a + b; }, 0) / remoteReviewMin.length) : null;
 
       var dispoLabels = { booked: "Appointment booked", referred_er: "Referred to ER", rx_only: "Prescription only", declined: "Patient declined", no_response: "No response" };
@@ -441,7 +445,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       /* === OPERATIONS === */
       html += secHead("Operations");
       html += '<div class="hero-grid">' +
-        hc("Total Calls", total, "all captured calls", "rgba(0,200,232,0.35)", "#e8f0fe") +
+        hc("Total Calls", total, "clinical cases (excludes non-emergent inquiries)", "rgba(0,200,232,0.35)", "#e8f0fe") +
         hc("Usable Calls", usableCalls, p(usableCalls, total) + "% appear clinically usable", "rgba(0,200,122,0.35)", "#00c87a") +
         hc("Pending Review", pendingReview, "not yet clinically reviewed", pendingReview > 0 ? "rgba(240,165,0,0.4)" : "rgba(0,200,122,0.35)", pendingReview > 0 ? "#f0a500" : "#00c87a") +
         hc("Pending Critical / Urgent", pendingCriticalUrgent, "high-priority cases awaiting review", pendingCriticalUrgent > 0 ? "rgba(232,69,69,0.4)" : "rgba(0,200,122,0.35)", pendingCriticalUrgent > 0 ? "#e84545" : "#00c87a") +
@@ -451,7 +455,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       html += secHead("Speed");
       html += '<div class="hero-grid">' +
         hc("Clinically Reviewed", clinicallyReviewed + " / " + total, p(clinicallyReviewed, total) + "% with reviewed_by present", "rgba(0,200,232,0.35)", "#00c8e8") +
-        hc("Time to Review", fmtMin(avgRemoteTTR), "web and remote cases" + (remoteReviewMin.length ? " (" + remoteReviewMin.length + " cases)" : ""), "rgba(0,200,232,0.35)", "#00c8e8") +
+        hc("Time to Review", fmtMin(avgRemoteTTR), "web and remote cases" + (remoteReviewMin.length ? " (" + remoteReviewMin.length + " cases" + (reviewOutliers > 0 ? ", " + reviewOutliers + " excluded >24h" : "") + ")" : ""), "rgba(0,200,232,0.35)", "#00c8e8") +
         hc("Avg Time to Contact", fmtMin(avgTTC), "web and remote cases only", "rgba(0,200,232,0.35)", "#00c8e8") +
       '</div>';
 
