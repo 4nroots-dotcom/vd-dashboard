@@ -620,7 +620,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="helper" id="med-helper" style="margin-bottom:10px;">Select any that apply.</div>
         <div class="check-group">
           <label class="choice"><input type="checkbox" id="mh-allergy-antibiotics" /><span>Allergy to antibiotics</span></label>
+        </div>
+        <div class="conditional-field" id="mh-allergy-antibiotics-wrapper">
+          <div class="field">
+            <label for="mh-allergy-antibiotics-detail">Which antibiotic(s)?</label>
+            <input class="textarea" id="mh-allergy-antibiotics-detail" placeholder="e.g., penicillin, amoxicillin, clindamycin" />
+          </div>
+        </div>
+        <div class="check-group">
           <label class="choice"><input type="checkbox" id="mh-allergy-pain" /><span>Allergy to pain medication</span></label>
+        </div>
+        <div class="conditional-field" id="mh-allergy-pain-wrapper">
+          <div class="field">
+            <label for="mh-allergy-pain-detail">Which pain medication(s)?</label>
+            <input class="textarea" id="mh-allergy-pain-detail" placeholder="e.g., ibuprofen, codeine, morphine" />
+          </div>
+        </div>
+        <div class="check-group">
+          <label class="choice"><input type="checkbox" id="mh-allergy-latex" /><span>Allergy to latex</span></label>
           <label class="choice"><input type="checkbox" id="mh-blood-thinners" /><span>Blood thinners</span></label>
           <label class="choice"><input type="checkbox" id="mh-diabetes" /><span>Diabetes</span></label>
           <label class="choice"><input type="checkbox" id="mh-pregnancy" /><span>Pregnancy</span></label>
@@ -767,8 +784,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelAvulsionTime: "How long ago did the tooth come out?", avulsionHelper: "This helps the dentist assess the urgency.",
         avUnder5: "Just now (under 5 minutes)", av5to15: "5 to 15 minutes ago", av15to30: "15 to 30 minutes ago", av30to60: "30 to 60 minutes ago", avOver60: "More than 60 minutes ago",
         sectionMedical: "Relevant medical information", medicalHelper: "Select any that apply.",
-        mhAllergyAntibiotics: "Allergy to antibiotics", mhAllergyPain: "Allergy to pain medication", mhBloodThinners: "Blood thinners", mhDiabetes: "Diabetes", mhPregnancy: "Pregnancy", mhImmuno: "Immunocompromised", mhOther: "Other important medical condition", mhNone: "None of the above",
+        mhAllergyAntibiotics: "Allergy to antibiotics", mhAllergyPain: "Allergy to pain medication", mhAllergyLatex: "Allergy to latex", mhBloodThinners: "Blood thinners", mhDiabetes: "Diabetes", mhPregnancy: "Pregnancy", mhImmuno: "Immunocompromised", mhOther: "Other important medical condition", mhNone: "None of the above",
         mhOtherLabel: "Please tell us more", mhOtherPlaceholder: "Anything important we should know",
+        mhAllergyAntibioticsLabel: "Which antibiotic(s)?", mhAllergyAntibioticsPlaceholder: "e.g., penicillin, amoxicillin, clindamycin",
+        mhAllergyPainLabel: "Which pain medication(s)?", mhAllergyPainPlaceholder: "e.g., ibuprofen, codeine, morphine",
         sectionCoverage: "Coverage information (optional)", coverageHelper: "This helps with follow-up planning only.",
         labelCoverage: "Coverage information",
         covSelect: "Select one", covPrivate: "Private dental insurance", covCdcp: "CDCP", covOdsp: "ODSP", covOw: "OW", covNone: "No dental coverage", covPrefer: "Prefer not to say",
@@ -831,8 +850,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelAvulsionTime: "منذ متى خرج السن؟", avulsionHelper: "هذا يساعد طبيب الأسنان في تقييم الحالة.",
         avUnder5: "الآن (أقل من 5 دقائق)", av5to15: "من 5 إلى 15 دقيقة", av15to30: "من 15 إلى 30 دقيقة", av30to60: "من 30 إلى 60 دقيقة", avOver60: "أكثر من 60 دقيقة",
         sectionMedical: "معلومات طبية ذات صلة", medicalHelper: "اختر كل ما ينطبق.",
-        mhAllergyAntibiotics: "حساسية من المضادات الحيوية", mhAllergyPain: "حساسية من مسكنات الألم", mhBloodThinners: "أدوية مميعة للدم", mhDiabetes: "السكري", mhPregnancy: "الحمل", mhImmuno: "ضعف المناعة", mhOther: "حالة طبية مهمة أخرى", mhNone: "لا شيء مما سبق",
+        mhAllergyAntibiotics: "حساسية من المضادات الحيوية", mhAllergyPain: "حساسية من مسكنات الألم", mhAllergyLatex: "حساسية من اللاتكس", mhBloodThinners: "أدوية مميعة للدم", mhDiabetes: "السكري", mhPregnancy: "الحمل", mhImmuno: "ضعف المناعة", mhOther: "حالة طبية مهمة أخرى", mhNone: "لا شيء مما سبق",
         mhOtherLabel: "يرجى إخبارنا بالمزيد", mhOtherPlaceholder: "أي شيء مهم يجب أن نعرفه",
+        mhAllergyAntibioticsLabel: "أي مضاد حيوي؟", mhAllergyAntibioticsPlaceholder: "مثال: البنسلين، أموكسيسيلين، كليندامايسين",
+        mhAllergyPainLabel: "أي مسكن ألم؟", mhAllergyPainPlaceholder: "مثال: إيبوبروفين، كودايين، مورفين",
         sectionCoverage: "معلومات التغطية (اختياري)", coverageHelper: "هذا يساعد في التخطيط للمتابعة فقط.",
         labelCoverage: "معلومات التغطية",
         covSelect: "اختر", covPrivate: "تأمين أسنان خاص", covCdcp: "CDCP", covOdsp: "ODSP", covOw: "OW", covNone: "لا يوجد تغطية", covPrefer: "أفضل عدم الإجابة",
@@ -892,8 +913,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelAvulsionTime: "दांत कब निकला?", avulsionHelper: "इससे दंत चिकित्सक को तात्कालिकता का आकलन करने में मदद मिलती है।",
         avUnder5: "अभी (5 मिनट से कम)", av5to15: "5 से 15 मिनट पहले", av15to30: "15 से 30 मिनट पहले", av30to60: "30 से 60 मिनट पहले", avOver60: "60 मिनट से अधिक पहले",
         sectionMedical: "संबंधित चिकित्सा जानकारी", medicalHelper: "जो भी लागू हो चुनें।",
-        mhAllergyAntibiotics: "एंटीबायोटिक से एलर्जी", mhAllergyPain: "दर्द की दवा से एलर्जी", mhBloodThinners: "रक्त पतला करने की दवा", mhDiabetes: "मधुमेह", mhPregnancy: "गर्भावस्था", mhImmuno: "कमज़ोर प्रतिरक्षा", mhOther: "अन्य महत्वपूर्ण चिकित्सा स्थिति", mhNone: "इनमें से कोई नहीं",
+        mhAllergyAntibiotics: "एंटीबायोटिक से एलर्जी", mhAllergyPain: "दर्द की दवा से एलर्जी", mhAllergyLatex: "लेटेक्स से एलर्जी", mhBloodThinners: "रक्त पतला करने की दवा", mhDiabetes: "मधुमेह", mhPregnancy: "गर्भावस्था", mhImmuno: "कमज़ोर प्रतिरक्षा", mhOther: "अन्य महत्वपूर्ण चिकित्सा स्थिति", mhNone: "इनमें से कोई नहीं",
         mhOtherLabel: "कृपया और बताएं", mhOtherPlaceholder: "कुछ भी महत्वपूर्ण जो हमें पता होना चाहिए",
+        mhAllergyAntibioticsLabel: "कौन सा एंटीबायोटिक?", mhAllergyAntibioticsPlaceholder: "जैसे: पेनिसिलिन, एमोक्सिसिलिन, क्लिंडामाइसिन",
+        mhAllergyPainLabel: "कौन सी दर्द की दवा?", mhAllergyPainPlaceholder: "जैसे: आइबूप्रोफेन, कोडीन, मॉर्फिन",
         sectionCoverage: "कवरेज जानकारी (वैकल्पिक)", coverageHelper: "यह केवल फॉलो-अप योजना में मदद करता है।",
         labelCoverage: "कवरेज जानकारी",
         covSelect: "चुनें", covPrivate: "निजी डेंटल इंश्योरेंस", covCdcp: "CDCP", covOdsp: "ODSP", covOw: "OW", covNone: "कोई डेंटल कवरेज नहीं", covPrefer: "बताना नहीं चाहता",
@@ -943,8 +966,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelAvulsionTime: "ਦੰਦ ਕਦੋਂ ਨਿਕਲਿਆ?", avulsionHelper: "ਇਹ ਡਾਕਟਰ ਨੂੰ ਜ਼ਰੂਰੀਤਾ ਦਾ ਮੁਲਾਂਕਣ ਕਰਨ ਵਿੱਚ ਮਦਦ ਕਰਦਾ ਹੈ।",
         avUnder5: "ਹੁਣੇ (5 ਮਿੰਟ ਤੋਂ ਘੱਟ)", av5to15: "5 ਤੋਂ 15 ਮਿੰਟ ਪਹਿਲਾਂ", av15to30: "15 ਤੋਂ 30 ਮਿੰਟ ਪਹਿਲਾਂ", av30to60: "30 ਤੋਂ 60 ਮਿੰਟ ਪਹਿਲਾਂ", avOver60: "60 ਮਿੰਟ ਤੋਂ ਵੱਧ",
         sectionMedical: "ਸੰਬੰਧਿਤ ਡਾਕਟਰੀ ਜਾਣਕਾਰੀ", medicalHelper: "ਜੋ ਵੀ ਲਾਗੂ ਹੋਵੇ ਚੁਣੋ।",
-        mhAllergyAntibiotics: "ਐਂਟੀਬਾਇਓਟਿਕ ਤੋਂ ਐਲਰਜੀ", mhAllergyPain: "ਦਰਦ ਦੀ ਦਵਾਈ ਤੋਂ ਐਲਰਜੀ", mhBloodThinners: "ਖੂਨ ਪਤਲਾ ਕਰਨ ਦੀ ਦਵਾਈ", mhDiabetes: "ਸ਼ੂਗਰ", mhPregnancy: "ਗਰਭ ਅਵਸਥਾ", mhImmuno: "ਕਮਜ਼ੋਰ ਇਮਿਊਨ ਸਿਸਟਮ", mhOther: "ਹੋਰ ਮਹੱਤਵਪੂਰਨ ਡਾਕਟਰੀ ਸਥਿਤੀ", mhNone: "ਇਹਨਾਂ ਵਿੱਚੋਂ ਕੋਈ ਨਹੀਂ",
+        mhAllergyAntibiotics: "ਐਂਟੀਬਾਇਓਟਿਕ ਤੋਂ ਐਲਰਜੀ", mhAllergyPain: "ਦਰਦ ਦੀ ਦਵਾਈ ਤੋਂ ਐਲਰਜੀ", mhAllergyLatex: "ਲੈਟੈਕਸ ਤੋਂ ਐਲਰਜੀ", mhBloodThinners: "ਖੂਨ ਪਤਲਾ ਕਰਨ ਦੀ ਦਵਾਈ", mhDiabetes: "ਸ਼ੂਗਰ", mhPregnancy: "ਗਰਭ ਅਵਸਥਾ", mhImmuno: "ਕਮਜ਼ੋਰ ਇਮਿਊਨ ਸਿਸਟਮ", mhOther: "ਹੋਰ ਮਹੱਤਵਪੂਰਨ ਡਾਕਟਰੀ ਸਥਿਤੀ", mhNone: "ਇਹਨਾਂ ਵਿੱਚੋਂ ਕੋਈ ਨਹੀਂ",
         mhOtherLabel: "ਕਿਰਪਾ ਕਰਕੇ ਹੋਰ ਦੱਸੋ", mhOtherPlaceholder: "ਕੁਝ ਵੀ ਮਹੱਤਵਪੂਰਨ",
+        mhAllergyAntibioticsLabel: "ਕਿਹੜਾ ਐਂਟੀਬਾਇਓਟਿਕ?", mhAllergyAntibioticsPlaceholder: "ਜਿਵੇਂ: ਪੈਨਿਸਿਲਿਨ, ਐਮੋਕਸੀਸਿਲਿਨ, ਕਲਿੰਡਾਮਾਈਸਿਨ",
+        mhAllergyPainLabel: "ਕਿਹੜੀ ਦਰਦ ਦੀ ਦਵਾਈ?", mhAllergyPainPlaceholder: "ਜਿਵੇਂ: ਆਈਬੂਪ੍ਰੋਫੇਨ, ਕੋਡੀਨ, ਮੋਰਫਿਨ",
         sectionCoverage: "ਕਵਰੇਜ ਜਾਣਕਾਰੀ (ਵਿਕਲਪਿਕ)", coverageHelper: "ਇਹ ਸਿਰਫ਼ ਫਾਲੋ-ਅੱਪ ਯੋਜਨਾ ਲਈ ਹੈ।",
         labelCoverage: "ਕਵਰੇਜ ਜਾਣਕਾਰੀ",
         covSelect: "ਚੁਣੋ", covPrivate: "ਨਿੱਜੀ ਡੈਂਟਲ ਬੀਮਾ", covCdcp: "CDCP", covOdsp: "ODSP", covOw: "OW", covNone: "ਕੋਈ ਡੈਂਟਲ ਕਵਰੇਜ ਨਹੀਂ", covPrefer: "ਦੱਸਣਾ ਨਹੀਂ ਚਾਹੁੰਦੇ",
@@ -986,8 +1011,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelAvulsionTime: "Il y a combien de temps que la dent est sortie?", avulsionHelper: "Cela aide le dentiste a evaluer l'urgence.",
         avUnder5: "A l'instant (moins de 5 minutes)", av5to15: "Il y a 5 a 15 minutes", av15to30: "Il y a 15 a 30 minutes", av30to60: "Il y a 30 a 60 minutes", avOver60: "Il y a plus de 60 minutes",
         sectionMedical: "Informations medicales pertinentes", medicalHelper: "Selectionnez tout ce qui s'applique.",
-        mhAllergyAntibiotics: "Allergie aux antibiotiques", mhAllergyPain: "Allergie aux analgesiques", mhBloodThinners: "Anticoagulants", mhDiabetes: "Diabete", mhPregnancy: "Grossesse", mhImmuno: "Immunodeprime", mhOther: "Autre condition medicale importante", mhNone: "Aucun de ces problemes",
+        mhAllergyAntibiotics: "Allergie aux antibiotiques", mhAllergyPain: "Allergie aux analgesiques", mhAllergyLatex: "Allergie au latex", mhBloodThinners: "Anticoagulants", mhDiabetes: "Diabete", mhPregnancy: "Grossesse", mhImmuno: "Immunodeprime", mhOther: "Autre condition medicale importante", mhNone: "Aucun de ces problemes",
         mhOtherLabel: "Veuillez nous en dire plus", mhOtherPlaceholder: "Tout ce qui est important a savoir",
+        mhAllergyAntibioticsLabel: "Quel(s) antibiotique(s)?", mhAllergyAntibioticsPlaceholder: "par exemple penicilline, amoxicilline, clindamycine",
+        mhAllergyPainLabel: "Quel(s) analgesique(s)?", mhAllergyPainPlaceholder: "par exemple ibuprofene, codeine, morphine",
         sectionCoverage: "Information sur la couverture (facultatif)", coverageHelper: "Cela aide uniquement a la planification du suivi.",
         labelCoverage: "Information sur la couverture",
         covSelect: "Choisir", covPrivate: "Assurance dentaire privee", covCdcp: "CDCP", covOdsp: "POSPH", covOw: "OW", covNone: "Pas de couverture dentaire", covPrefer: "Prefere ne pas repondre",
@@ -1029,8 +1056,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelAvulsionTime: "چه مدت پیش دندان کنده شد؟", avulsionHelper: "این به دندانپزشک کمک می کند فوریت را ارزیابی کند.",
         avUnder5: "همین الان (کمتر از 5 دقیقه)", av5to15: "5 تا 15 دقیقه پیش", av15to30: "15 تا 30 دقیقه پیش", av30to60: "30 تا 60 دقیقه پیش", avOver60: "بیش از 60 دقیقه",
         sectionMedical: "اطلاعات پزشکی مرتبط", medicalHelper: "هر کدام که صدق می کند را انتخاب کنید.",
-        mhAllergyAntibiotics: "حساسیت به آنتی بیوتیک", mhAllergyPain: "حساسیت به مسکن", mhBloodThinners: "داروهای رقیق کننده خون", mhDiabetes: "دیابت", mhPregnancy: "بارداری", mhImmuno: "ضعف ایمنی", mhOther: "وضعیت پزشکی مهم دیگر", mhNone: "هیچکدام از موارد بالا",
+        mhAllergyAntibiotics: "حساسیت به آنتی بیوتیک", mhAllergyPain: "حساسیت به مسکن", mhAllergyLatex: "حساسیت به لاتکس", mhBloodThinners: "داروهای رقیق کننده خون", mhDiabetes: "دیابت", mhPregnancy: "بارداری", mhImmuno: "ضعف ایمنی", mhOther: "وضعیت پزشکی مهم دیگر", mhNone: "هیچکدام از موارد بالا",
         mhOtherLabel: "لطفا بیشتر توضیح دهید", mhOtherPlaceholder: "هر چیز مهمی که باید بدانیم",
+        mhAllergyAntibioticsLabel: "کدام آنتی بیوتیک؟", mhAllergyAntibioticsPlaceholder: "مثال: پنی سیلین، آموکسی سیلین، کلیندامایسین",
+        mhAllergyPainLabel: "کدام مسکن؟", mhAllergyPainPlaceholder: "مثال: ایبوپروفن، کدئین، مورفین",
         sectionCoverage: "اطلاعات پوشش (اختیاری)", coverageHelper: "این فقط برای برنامه ریزی پیگیری کمک می کند.",
         labelCoverage: "اطلاعات پوشش",
         covSelect: "انتخاب کنید", covPrivate: "بیمه دندانپزشکی خصوصی", covCdcp: "CDCP", covOdsp: "ODSP", covOw: "OW", covNone: "بدون پوشش دندانپزشکی", covPrefer: "ترجیح می دهم پاسخ ندهم",
@@ -1070,8 +1099,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelAvulsionTime: "Goorma buu ilkuhu soo baxay?", avulsionHelper: "Tani waxay caawisaa dhakhtarka inuu qiimeeyo degdegga.",
         avUnder5: "Hadda (ka yar 5 daqiiqo)", av5to15: "5 ilaa 15 daqiiqo ka hor", av15to30: "15 ilaa 30 daqiiqo ka hor", av30to60: "30 ilaa 60 daqiiqo ka hor", avOver60: "Ka badan 60 daqiiqo",
         sectionMedical: "Macluumaadka caafimaadka", medicalHelper: "Dooro dhammaan kuwa khuseeya.",
-        mhAllergyAntibiotics: "Xasaasiyadda antibiyootiga", mhAllergyPain: "Xasaasiyadda daawada xanuunka", mhBloodThinners: "Daawada dhiiga jilicisa", mhDiabetes: "Sonkorowga", mhPregnancy: "Uurka", mhImmuno: "Difaaca jirka oo daciif ah", mhOther: "Xaalad caafimaad oo muhiim ah", mhNone: "Midkoodna ma ahan",
+        mhAllergyAntibiotics: "Xasaasiyadda antibiyootiga", mhAllergyPain: "Xasaasiyadda daawada xanuunka", mhAllergyLatex: "Xasaasiyadda laatekis", mhBloodThinners: "Daawada dhiiga jilicisa", mhDiabetes: "Sonkorowga", mhPregnancy: "Uurka", mhImmuno: "Difaaca jirka oo daciif ah", mhOther: "Xaalad caafimaad oo muhiim ah", mhNone: "Midkoodna ma ahan",
         mhOtherLabel: "Fadlan noo sheeg wax badan", mhOtherPlaceholder: "Wax muhiim ah oo aan ogaan lahayn",
+        mhAllergyAntibioticsLabel: "Antibiyootigee?", mhAllergyAntibioticsPlaceholder: "tusaale: benisilin, amoksisilin, klindamaaysin",
+        mhAllergyPainLabel: "Daawadee xanuunka?", mhAllergyPainPlaceholder: "tusaale: aybuubroofeen, kodeeyin, moorfiin",
         sectionCoverage: "Macluumaadka caymiska (ikhtiyaari)", coverageHelper: "Tani kaliya ayay caawisaa qorshaynta la socodsiinta.",
         labelCoverage: "Macluumaadka caymiska",
         covSelect: "Dooro", covPrivate: "Caymis ilko gaar ah", covCdcp: "CDCP", covOdsp: "ODSP", covOw: "OW", covNone: "Caymis ilko ma laha", covPrefer: "Doorbidayo inaan ka jawaabo",
@@ -1110,8 +1141,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelAvulsionTime: "Hace cuanto se salio el diente?", avulsionHelper: "Esto ayuda al dentista a evaluar la urgencia.",
         avUnder5: "Ahora mismo (menos de 5 minutos)", av5to15: "Hace 5 a 15 minutos", av15to30: "Hace 15 a 30 minutos", av30to60: "Hace 30 a 60 minutos", avOver60: "Mas de 60 minutos",
         sectionMedical: "Informacion medica relevante", medicalHelper: "Seleccione todo lo que aplique.",
-        mhAllergyAntibiotics: "Alergia a antibioticos", mhAllergyPain: "Alergia a analgesicos", mhBloodThinners: "Anticoagulantes", mhDiabetes: "Diabetes", mhPregnancy: "Embarazo", mhImmuno: "Inmunocomprometido", mhOther: "Otra condicion medica importante", mhNone: "Ninguno de los anteriores",
+        mhAllergyAntibiotics: "Alergia a antibioticos", mhAllergyPain: "Alergia a analgesicos", mhAllergyLatex: "Alergia al latex", mhBloodThinners: "Anticoagulantes", mhDiabetes: "Diabetes", mhPregnancy: "Embarazo", mhImmuno: "Inmunocomprometido", mhOther: "Otra condicion medica importante", mhNone: "Ninguno de los anteriores",
         mhOtherLabel: "Por favor diganos mas", mhOtherPlaceholder: "Cualquier cosa importante que debamos saber",
+        mhAllergyAntibioticsLabel: "Cual(es) antibiotico(s)?", mhAllergyAntibioticsPlaceholder: "por ejemplo penicilina, amoxicilina, clindamicina",
+        mhAllergyPainLabel: "Cual(es) analgesico(s)?", mhAllergyPainPlaceholder: "por ejemplo ibuprofeno, codeina, morfina",
         sectionCoverage: "Informacion de cobertura (opcional)", coverageHelper: "Esto solo ayuda con la planificacion del seguimiento.",
         labelCoverage: "Informacion de cobertura",
         covSelect: "Seleccionar", covPrivate: "Seguro dental privado", covCdcp: "CDCP", covOdsp: "ODSP", covOw: "OW", covNone: "Sin cobertura dental", covPrefer: "Prefiero no decir",
@@ -1151,8 +1184,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelAvulsionTime: "牙齿脱落多久了？", avulsionHelper: "这有助于牙医评估紧急程度。",
         avUnder5: "刚刚（不到5分钟）", av5to15: "5到15分钟前", av15to30: "15到30分钟前", av30to60: "30到60分钟前", avOver60: "超过60分钟",
         sectionMedical: "相关医疗信息", medicalHelper: "选择所有适用项。",
-        mhAllergyAntibiotics: "抗生素过敏", mhAllergyPain: "止痛药过敏", mhBloodThinners: "血液稀释剂", mhDiabetes: "糖尿病", mhPregnancy: "怀孕", mhImmuno: "免疫力低下", mhOther: "其他重要医疗状况", mhNone: "以上都没有",
+        mhAllergyAntibiotics: "抗生素过敏", mhAllergyPain: "止痛药过敏", mhAllergyLatex: "乳胶过敏", mhBloodThinners: "血液稀释剂", mhDiabetes: "糖尿病", mhPregnancy: "怀孕", mhImmuno: "免疫力低下", mhOther: "其他重要医疗状况", mhNone: "以上都没有",
         mhOtherLabel: "请告诉我们更多", mhOtherPlaceholder: "任何我们应该知道的重要信息",
+        mhAllergyAntibioticsLabel: "哪种抗生素?", mhAllergyAntibioticsPlaceholder: "例如 青霉素、阿莫西林、克林霉素",
+        mhAllergyPainLabel: "哪种止痛药?", mhAllergyPainPlaceholder: "例如 布洛芬、可待因、吗啡",
         sectionCoverage: "保险信息（可选）", coverageHelper: "这仅用于帮助后续计划。",
         labelCoverage: "保险信息",
         covSelect: "请选择", covPrivate: "私人牙科保险", covCdcp: "CDCP", covOdsp: "ODSP", covOw: "OW", covNone: "没有牙科保险", covPrefer: "不想回答",
@@ -1279,9 +1314,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       if (avTime) { avTime.options[0].text = t("onsetSelect"); avTime.options[1].text = t("avUnder5"); avTime.options[2].text = t("av5to15"); avTime.options[3].text = t("av15to30"); avTime.options[4].text = t("av30to60"); avTime.options[5].text = t("avOver60"); if (avTime.options[6]) avTime.options[6].text = t("onsetUnsure"); }
 
       // Medical flags
-      var mhMap = [["mh-allergy-antibiotics","mhAllergyAntibiotics"],["mh-allergy-pain","mhAllergyPain"],["mh-blood-thinners","mhBloodThinners"],["mh-diabetes","mhDiabetes"],["mh-pregnancy","mhPregnancy"],["mh-immunocompromised","mhImmuno"],["mh-other","mhOther"],["mh-none","mhNone"]];
+      var mhMap = [["mh-allergy-antibiotics","mhAllergyAntibiotics"],["mh-allergy-pain","mhAllergyPain"],["mh-allergy-latex","mhAllergyLatex"],["mh-blood-thinners","mhBloodThinners"],["mh-diabetes","mhDiabetes"],["mh-pregnancy","mhPregnancy"],["mh-immunocompromised","mhImmuno"],["mh-other","mhOther"],["mh-none","mhNone"]];
       mhMap.forEach(function(pair) { var cb = document.getElementById(pair[0]); if (cb && cb.parentElement) { var sp = cb.parentElement.querySelector("span"); if (sp) sp.textContent = t(pair[1]); }});
       setLabel("mh-other-detail", "mhOtherLabel"); setPlaceholder("mh-other-detail", "mhOtherPlaceholder");
+      setLabel("mh-allergy-antibiotics-detail", "mhAllergyAntibioticsLabel"); setPlaceholder("mh-allergy-antibiotics-detail", "mhAllergyAntibioticsPlaceholder");
+      setLabel("mh-allergy-pain-detail", "mhAllergyPainLabel"); setPlaceholder("mh-allergy-pain-detail", "mhAllergyPainPlaceholder");
 
       // Coverage
       setLabel("coverage-status", "labelCoverage");
@@ -1428,7 +1465,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       ];
       var medicalNone = document.getElementById("mh-none");
       var medicalIds = [
-        "mh-allergy-antibiotics", "mh-allergy-pain", "mh-blood-thinners",
+        "mh-allergy-antibiotics", "mh-allergy-pain", "mh-allergy-latex", "mh-blood-thinners",
         "mh-diabetes", "mh-pregnancy", "mh-immunocompromised", "mh-other"
       ];
       var mhOther = document.getElementById("mh-other");
@@ -1452,7 +1489,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         if (medicalNone.checked) {
           medicalIds.forEach(function(id) { var el = document.getElementById(id); if (el) el.checked = false; });
           document.getElementById("mh-other-detail").value = "";
+          document.getElementById("mh-allergy-antibiotics-detail").value = "";
+          document.getElementById("mh-allergy-pain-detail").value = "";
           toggleOtherMedicalDetail();
+          toggleAllergyAntibioticsDetail();
+          toggleAllergyPainDetail();
         }
       });
 
@@ -1461,11 +1502,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         el.addEventListener("change", function() {
           if (el.checked) medicalNone.checked = false;
           toggleOtherMedicalDetail();
+          toggleAllergyAntibioticsDetail();
+          toggleAllergyPainDetail();
         });
       });
 
       mhOther.addEventListener("change", toggleOtherMedicalDetail);
+      var mhAllergyAb = document.getElementById("mh-allergy-antibiotics");
+      if (mhAllergyAb) mhAllergyAb.addEventListener("change", toggleAllergyAntibioticsDetail);
+      var mhAllergyPain = document.getElementById("mh-allergy-pain");
+      if (mhAllergyPain) mhAllergyPain.addEventListener("change", toggleAllergyPainDetail);
       toggleOtherMedicalDetail();
+      toggleAllergyAntibioticsDetail();
+      toggleAllergyPainDetail();
       toggleAvulsionTime();
     }
 
@@ -1474,6 +1523,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var wrapper = document.getElementById("mh-other-wrapper");
       var detail = document.getElementById("mh-other-detail");
       if (mhOther.checked) { wrapper.style.display = "block"; }
+      else { wrapper.style.display = "none"; detail.value = ""; }
+    }
+
+    function toggleAllergyAntibioticsDetail() {
+      var cb = document.getElementById("mh-allergy-antibiotics");
+      var wrapper = document.getElementById("mh-allergy-antibiotics-wrapper");
+      var detail = document.getElementById("mh-allergy-antibiotics-detail");
+      if (cb.checked) { wrapper.style.display = "block"; }
+      else { wrapper.style.display = "none"; detail.value = ""; }
+    }
+
+    function toggleAllergyPainDetail() {
+      var cb = document.getElementById("mh-allergy-pain");
+      var wrapper = document.getElementById("mh-allergy-pain-wrapper");
+      var detail = document.getElementById("mh-allergy-pain-detail");
+      if (cb.checked) { wrapper.style.display = "block"; }
       else { wrapper.style.display = "none"; detail.value = ""; }
     }
 
@@ -1602,7 +1667,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         },
         intakeMedicalFlags: {
           allergy_antibiotics: isChecked("mh-allergy-antibiotics"),
+          allergy_antibiotics_detail: getOptionalValue("mh-allergy-antibiotics-detail"),
           allergy_pain_medication: isChecked("mh-allergy-pain"),
+          allergy_pain_medication_detail: getOptionalValue("mh-allergy-pain-detail"),
+          allergy_latex: isChecked("mh-allergy-latex"),
           blood_thinners: isChecked("mh-blood-thinners"),
           diabetes: isChecked("mh-diabetes"),
           pregnancy: isChecked("mh-pregnancy"),
@@ -1753,7 +1821,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           rfNone: isChecked("rf-none"),
           avulsionTime: getValue("avulsion-time"),
           mhAllergyAntibiotics: isChecked("mh-allergy-antibiotics"),
+          mhAllergyAntibioticsDetail: getValue("mh-allergy-antibiotics-detail"),
           mhAllergyPain: isChecked("mh-allergy-pain"),
+          mhAllergyPainDetail: getValue("mh-allergy-pain-detail"),
+          mhAllergyLatex: isChecked("mh-allergy-latex"),
           mhBloodThinners: isChecked("mh-blood-thinners"),
           mhDiabetes: isChecked("mh-diabetes"),
           mhPregnancy: isChecked("mh-pregnancy"),
@@ -1788,7 +1859,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         setCheck("rf-none", s.rfNone);
         setVal("avulsion-time", s.avulsionTime);
         setCheck("mh-allergy-antibiotics", s.mhAllergyAntibiotics);
+        setVal("mh-allergy-antibiotics-detail", s.mhAllergyAntibioticsDetail);
         setCheck("mh-allergy-pain", s.mhAllergyPain);
+        setVal("mh-allergy-pain-detail", s.mhAllergyPainDetail);
+        setCheck("mh-allergy-latex", s.mhAllergyLatex);
         setCheck("mh-blood-thinners", s.mhBloodThinners);
         setCheck("mh-diabetes", s.mhDiabetes);
         setCheck("mh-pregnancy", s.mhPregnancy);
@@ -1798,6 +1872,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         setCheck("mh-none", s.mhNone);
         setCheck("intake-acknowledge", s.acknowledged);
         toggleOtherMedicalDetail();
+        toggleAllergyAntibioticsDetail();
+        toggleAllergyPainDetail();
         toggleAvulsionTime();
       } catch (e) { /* corrupt state */ }
     }
