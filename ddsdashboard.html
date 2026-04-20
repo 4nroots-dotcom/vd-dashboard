@@ -887,6 +887,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             (sx.chief_complaint ? '<div class="sms-extraction-row"><span class="sms-extraction-key">Chief complaint</span><span class="sms-extraction-val">' + escHtml(String(sx.chief_complaint)) + '</span></div>' : '') +
             (sx.clinical_summary ? '<div class="sms-extraction-row"><span class="sms-extraction-key">Clinical summary</span><span class="sms-extraction-val">' + escHtml(String(sx.clinical_summary)) + '</span></div>' : '') +
             (sx.pain_score != null ? '<div class="sms-extraction-row"><span class="sms-extraction-key">Pain score</span><span class="sms-extraction-val">' + escHtml(String(sx.pain_score)) + '/10</span></div>' : '') +
+            (sx.pain_quality ? '<div class="sms-extraction-row"><span class="sms-extraction-key">Pain quality</span><span class="sms-extraction-val">' + escHtml(String(sx.pain_quality)) + '</span></div>' : '') +
+            (sx.pain_pattern ? '<div class="sms-extraction-row"><span class="sms-extraction-key">Pain pattern</span><span class="sms-extraction-val">' + escHtml(String(sx.pain_pattern)) + '</span></div>' : '') +
+            (sx.pain_progression ? '<div class="sms-extraction-row"><span class="sms-extraction-key">Progression</span><span class="sms-extraction-val">' + escHtml(String(sx.pain_progression)) + '</span></div>' : '') +
+            (sx.cold_sensitivity != null ? '<div class="sms-extraction-row"><span class="sms-extraction-key">Cold sensitivity</span><span class="sms-extraction-val">' + (sx.cold_sensitivity ? 'Yes' : 'No') + '</span></div>' : '') +
             (sx.triage_suggestion ? '<div class="sms-extraction-row"><span class="sms-extraction-key">Suggested severity</span><span class="sms-extraction-val">' + escHtml(String(sx.triage_suggestion)) + '</span></div>' : '') +
             (sx.extraction_note ? '<div class="sms-extraction-row"><span class="sms-extraction-key">Note</span><span class="sms-extraction-val">' + escHtml(String(sx.extraction_note)) + '</span></div>' : '') +
             '</div>';
@@ -962,6 +966,33 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         '<div class="action-band"><div class="action-row">' + actionRowHtml + '</div><div class="save-status" id="save-status"></div><div id="detail-ownership-inline" class="detail-ownership-indicator" style="display:none;"></div></div></div>' +
 
         '<div class="detail-section"><div class="section-header"><span class="section-title">Clinical Flags</span></div><div class="flags-grid">' + flags.map(function(f) { return '<div class="flag-item"><div class="flag-dot ' + (f.val === true ? "present" : "absent") + '"></div><span' + (f.val === true ? ' style="color:#e8f0fe"' : '') + '>' + escHtml(f.label) + '</span></div>'; }).join("") + '</div></div>' +
+
+        (function() {
+          // ── Pain Characterization ──
+          // Renders only when at least one field is populated. On a
+          // voice case where these weren't extracted, the whole section
+          // hides — that itself is a passive signal for voice gap
+          // observability.
+          var pq = so.pain_quality || c.pain_quality;
+          var pp = so.pain_pattern || c.pain_pattern;
+          var pg = so.pain_progression || c.pain_progression;
+          var csField = so.cold_sensitivity != null ? so.cold_sensitivity : c.cold_sensitivity;
+          var hasAny = pq || pp || pg || csField != null;
+          if (!hasAny) return "";
+          function fmtEnum(v) { return v ? escHtml(String(v)) : '<span style="color:#6a80a0">Not captured</span>'; }
+          function fmtBool(v) {
+            if (v === true) return '<span style="color:#e8f0fe">Yes</span>';
+            if (v === false) return '<span style="color:#a8bdd8">No</span>';
+            return '<span style="color:#6a80a0">Not captured</span>';
+          }
+          return '<div class="detail-section"><div class="section-header"><span class="section-title">Pain Characterization</span></div>' +
+            '<div class="summary-grid" style="grid-template-columns:1fr 1fr;">' +
+              '<div class="summary-item"><div class="summary-label">Quality</div><div class="summary-value">' + fmtEnum(pq) + '</div></div>' +
+              '<div class="summary-item"><div class="summary-label">Pattern</div><div class="summary-value">' + fmtEnum(pp) + '</div></div>' +
+              '<div class="summary-item"><div class="summary-label">Progression</div><div class="summary-value">' + fmtEnum(pg) + '</div></div>' +
+              '<div class="summary-item"><div class="summary-label">Cold Sensitivity</div><div class="summary-value">' + fmtBool(csField) + '</div></div>' +
+            '</div></div>';
+        })() +
 
         '<div class="detail-section"><div class="section-header"><span class="section-title">AI Clinical Note</span><span class="note-lock-badge">Draft \u00B7 Read Only</span></div><div class="section-body"><div class="clinical-note-text">' + escHtml((function(){ var age = calcAge(c.patient_dob); var note = c.clinical_note || "No clinical note generated."; var hasAge = /^\d{1,3}-year-old patient/.test(note); return (age && !hasAge) ? age + "-year-old patient.\n\n" + note : note; })()) + '</div></div></div>' +
 
