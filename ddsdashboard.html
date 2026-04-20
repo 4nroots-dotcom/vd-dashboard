@@ -449,6 +449,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .sms-modal-recipient { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
     .sms-modal-close { background: none; border: none; color: var(--text-muted); font-size: 20px; cursor: pointer; padding: 0; line-height: 1; }
     .sms-modal-close:hover { color: var(--text-primary); }
+    .sms-ownership-banner { padding: 10px 12px; border-radius: 8px; font-size: 12px; line-height: 1.45; }
+    .sms-ownership-banner.same-role { background: rgba(0,200,232,0.06); border: 1px solid rgba(0,200,232,0.2); color: var(--text-secondary); }
+    .sms-ownership-banner.cross-role { background: rgba(240,165,0,0.08); border: 1px solid rgba(240,165,0,0.35); color: #f0a500; }
+    .sms-ownership-banner.no-session { background: rgba(107,131,159,0.08); border: 1px solid rgba(107,131,159,0.2); color: var(--text-muted); }
+    .sms-ownership-banner strong { font-weight: 700; }
+
+    .detail-ownership-indicator { font-size: 11px; color: var(--text-muted); padding: 6px 12px; background: rgba(255,255,255,0.02); border-top: 1px solid var(--border); }
+    .detail-ownership-indicator .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+    .detail-ownership-indicator .dot.dentist { background: #00c8e8; }
+    .detail-ownership-indicator .dot.office { background: #f0a500; }
+    .detail-ownership-indicator .dot.none { background: var(--text-muted); opacity: 0.5; }
     .sms-templates { display: flex; flex-direction: column; gap: 6px; }
     .sms-template-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
     .sms-template-btn { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 7px; color: var(--text-secondary); font-size: 12px; padding: 8px 12px; text-align: left; cursor: pointer; transition: border-color 0.15s, color 0.15s; line-height: 1.45; }
@@ -656,6 +667,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
         <button class="sms-modal-close" id="sms-modal-close" type="button" aria-label="Close">&times;</button>
       </div>
+      <div id="sms-ownership-banner" class="sms-ownership-banner" style="display:none;"></div>
       <div class="sms-templates">
         <div class="sms-template-label">Quick templates</div>
         <button class="sms-template-btn" data-template="reassurance" type="button">After-hours reassurance — case reviewed, follow-up coming</button>
@@ -766,6 +778,33 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     async function openCase(id) { selectedCaseId = id; document.querySelectorAll(".case-card").forEach(function(el) { el.classList.remove("active"); }); var cardEl = document.getElementById("card-" + CSS.escape(id)); if (cardEl) cardEl.classList.add("active"); document.getElementById("detail-panel").innerHTML = '<div class="loading-state"><span class="loading-dots">Loading</span></div>'; if (isMobile) { document.getElementById("detail-column").style.display = "flex"; } syncModes(); updateControlsDisabledState(); var c = allCases.find(function(x) { return x.id === id; }); if (!c) { var result = await sb.from("triage_cases").select("*").eq("id", id).single(); if (result.error) { console.error("Open case error:", result.error); showToast("Failed to load case"); return; } c = result.data; } if (!c) return; currentCase = c; var auditRows = []; try { var auditResult = await sb.from("audit_log").select("user_name, action, created_at").eq("case_id", id).order("created_at", { ascending: false }).limit(50); if (auditResult.data) auditRows = auditResult.data; } catch (e) { console.error("Audit log fetch error:", e); } var smsRows = []; try { var smsResult = await sb.from("sms_log").select("direction, sent_at, sender_name, message_body, status").eq("case_id", id).order("sent_at", { ascending: true }).limit(100); if (smsResult.data) smsRows = smsResult.data; } catch (e) { console.error("SMS log fetch error:", e); } renderDetail(c, auditRows, smsRows); logCaseView(c.id);
       if (smsRefreshInterval) clearInterval(smsRefreshInterval);
       smsRefreshInterval = setInterval(function() { if (selectedCaseId) refreshSMSThread(selectedCaseId); }, 30000);
+      // Populate the ownership indicator asynchronously so the main
+      // detail pane renders immediately.
+      try {
+        var ownership = await fetchActiveOwnership(c.patient_phone);
+        if (selectedCaseId === id) {
+          renderDetailOwnershipInline(ownership);
+        }
+      } catch (e) { console.error("ownership fetch error", e); }
+    }
+
+    // Render the subtle ownership indicator inside the open case's
+    // detail action band. Always shows something (dentist / office /
+    // no active session) for consistency.
+    function renderDetailOwnershipInline(ownership) {
+      var el = document.getElementById("detail-ownership-inline");
+      if (!el) return;
+      var CURRENT_USER_ROLE = "dentist";
+      if (!ownership) {
+        el.innerHTML = '<span class="dot none"></span>No active conversation';
+        el.style.display = "block";
+        return;
+      }
+      var when = formatRelativeTime(ownership.last_message_at);
+      var roleLabel = ownership.role === "dentist" ? "Dentist" : (ownership.role === "office" ? "Office" : escHtml(ownership.role));
+      var selfNote = ownership.role === CURRENT_USER_ROLE ? " (you)" : "";
+      el.innerHTML = '<span class="dot ' + escAttr(ownership.role) + '"></span>Owned by <strong>' + escHtml(roleLabel) + '</strong>' + selfNote + ' \u00B7 last activity by ' + escHtml(ownership.display_name) + ', ' + when;
+      el.style.display = "block";
     }
 
     function renderDetail(c, auditRows, smsRows) {
@@ -920,7 +959,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         '<div class="soft-warning" id="decision-soft-warning"></div><div class="decision-note">' + (isReviewed ? "This case is locked as reviewed. You can still export the clinical record below." : "A final disposition is required before marking reviewed. Save Draft if you are not ready to finalize.") + '</div></div></div></div>' +
 
-        '<div class="action-band"><div class="action-row">' + actionRowHtml + '</div><div class="save-status" id="save-status"></div></div></div>' +
+        '<div class="action-band"><div class="action-row">' + actionRowHtml + '</div><div class="save-status" id="save-status"></div><div id="detail-ownership-inline" class="detail-ownership-indicator" style="display:none;"></div></div></div>' +
 
         '<div class="detail-section"><div class="section-header"><span class="section-title">Clinical Flags</span></div><div class="flags-grid">' + flags.map(function(f) { return '<div class="flag-item"><div class="flag-dot ' + (f.val === true ? "present" : "absent") + '"></div><span' + (f.val === true ? ' style="color:#e8f0fe"' : '') + '>' + escHtml(f.label) + '</span></div>'; }).join("") + '</div></div>' +
 
@@ -1098,21 +1137,93 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     var smsModalCase = null;
 
-    function openSMSModal(c) {
+    // Fetch active session ownership for a patient phone.
+    // Returns { role, display_name, last_message_at, session_id } or null.
+    async function fetchActiveOwnership(patientPhone) {
+      if (!patientPhone) return null;
+      var nowIso = new Date().toISOString();
+      var result = await sb.from("dentist_sessions")
+        .select("id, owner_role, sender_type, dentist_name, last_message_at, locked_until")
+        .eq("patient_phone", patientPhone)
+        .gte("locked_until", nowIso)
+        .order("last_message_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (result.error || !result.data) return null;
+      var d = result.data;
+      var role = d.owner_role || d.sender_type || null;
+      if (!role) return null;
+      return {
+        role: role,
+        display_name: d.dentist_name || role,
+        last_message_at: d.last_message_at,
+        session_id: d.id
+      };
+    }
+
+    function formatRelativeTime(iso) {
+      if (!iso) return "";
+      var then = new Date(iso).getTime();
+      var diffMin = Math.floor((Date.now() - then) / 60000);
+      if (diffMin < 1) return "just now";
+      if (diffMin < 60) return diffMin + " min ago";
+      var diffHr = Math.floor(diffMin / 60);
+      if (diffHr < 24) return diffHr + "h ago";
+      var diffD = Math.floor(diffHr / 24);
+      return diffD + "d ago";
+    }
+
+    // Render ownership banner inside the SMS modal.
+    // CURRENT_USER_ROLE on this dashboard is always "dentist".
+    function renderOwnershipBanner(ownership) {
+      var banner = document.getElementById("sms-ownership-banner");
+      if (!banner) return;
+      var CURRENT_USER_ROLE = "dentist";
+      if (!ownership) {
+        banner.className = "sms-ownership-banner no-session";
+        banner.innerHTML = "No active conversation. Sending will start a new one owned by you (dentist).";
+        banner.style.display = "block";
+        return;
+      }
+      var when = formatRelativeTime(ownership.last_message_at);
+      var name = escHtml(ownership.display_name);
+      if (ownership.role === CURRENT_USER_ROLE) {
+        banner.className = "sms-ownership-banner same-role";
+        banner.innerHTML = "Owned by <strong>Dentist</strong> \u00B7 last activity by " + name + ", " + when + ".";
+      } else {
+        banner.className = "sms-ownership-banner cross-role";
+        banner.innerHTML = "\u26A0 This conversation is currently owned by <strong>" + (ownership.role === "office" ? "Office" : escHtml(ownership.role)) + "</strong> (" + name + ", " + when + "). Sending will take over the reply path and the office's session will expire.";
+      }
+      banner.style.display = "block";
+    }
+
+    async function openSMSModal(c) {
       smsModalCase = c;
       var overlay = document.getElementById("sms-modal-overlay");
       var recipientEl = document.getElementById("sms-modal-recipient");
       var textarea = document.getElementById("sms-textarea");
       var statusEl = document.getElementById("sms-send-status");
       var sendBtn = document.getElementById("sms-send-btn");
+      var banner = document.getElementById("sms-ownership-banner");
       recipientEl.textContent = (c.patient_name || "Patient") + " \u00B7 " + formatPhone(c.patient_phone);
       textarea.value = "";
       statusEl.textContent = "";
       statusEl.className = "sms-send-status";
+      if (banner) { banner.style.display = "none"; banner.innerHTML = ""; }
       updateSMSCharCounter();
       if (sendBtn) { sendBtn.disabled = true; sendBtn.textContent = "Send message"; }
       overlay.classList.add("open");
       textarea.focus();
+
+      // Fetch and render ownership indicator asynchronously so the modal
+      // appears instantly; banner fills in ~100ms later.
+      try {
+        var ownership = await fetchActiveOwnership(c.patient_phone);
+        // Only render if the same case is still open (user might have closed/switched)
+        if (smsModalCase && smsModalCase.id === c.id) {
+          renderOwnershipBanner(ownership);
+        }
+      } catch (e) { console.error("ownership fetch error", e); }
     }
 
     function closeSMSModal() {
