@@ -1593,6 +1593,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         if (sx.chief_complaint) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Chief complaint</span><span class=\"sms-extraction-val\">" + esc(String(sx.chief_complaint)) + "</span></div>";
         if (sx.clinical_summary) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Clinical summary</span><span class=\"sms-extraction-val\">" + esc(String(sx.clinical_summary)) + "</span></div>";
         if (sx.pain_score != null) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Pain score</span><span class=\"sms-extraction-val\">" + esc(String(sx.pain_score)) + "/10</span></div>";
+        if (sx.pain_quality) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Pain quality</span><span class=\"sms-extraction-val\">" + esc(String(sx.pain_quality)) + "</span></div>";
+        if (sx.pain_pattern) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Pain pattern</span><span class=\"sms-extraction-val\">" + esc(String(sx.pain_pattern)) + "</span></div>";
+        if (sx.pain_progression) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Progression</span><span class=\"sms-extraction-val\">" + esc(String(sx.pain_progression)) + "</span></div>";
+        if (sx.cold_sensitivity != null) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Cold sensitivity</span><span class=\"sms-extraction-val\">" + (sx.cold_sensitivity ? "Yes" : "No") + "</span></div>";
         smsInner += "</div>";
       }
       smsInner += "<div data-sms-thread=\"1\">";
@@ -1641,6 +1645,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       if (so.pain_pattern) pl += " (" + so.pain_pattern + ")";
       lines.push(esc(pl) + ".");
     }
+    if (so.pain_progression) {
+      var progPhrase = so.pain_progression === "worsening" ? "Pain has been worsening." :
+                       so.pain_progression === "improving" ? "Pain has been improving." :
+                       so.pain_progression === "stable" ? "Pain has been stable." :
+                       "Pain progression: " + so.pain_progression + ".";
+      lines.push(esc(progPhrase));
+    }
 
     if (so.trauma) lines.push("Dental trauma reported" + (so.trauma_mechanism ? "; mechanism: " + esc(so.trauma_mechanism) : "") + ".");
     if (so.tooth_structure_loss) lines.push("Tooth structure loss reported (broken tooth, lost filling, or lost crown).");
@@ -1648,7 +1659,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     if (so.caries_involved) lines.push("Existing caries or decay reported at affected tooth.");
     if (so.pulp_exposure) lines.push("Pulp exposure reported.");
     if (so.percussion_sensitivity) lines.push("Pain worsens with biting or percussion.");
-    if (so.cold_pain_lingers_over_10_seconds) lines.push("Cold sensitivity present; pain lingers after stimulus removed.");
+    // Cold sensitivity: distinguish the three meaningful states.
+    // - cold_sensitivity=TRUE + cold_pain_lingers=TRUE: irreversible pulpitis pattern
+    // - cold_sensitivity=TRUE + cold_pain_lingers=FALSE: reversible pulpitis / hypersensitivity
+    // - cold_pain_lingers=TRUE alone (legacy): pulpitis
+    if (so.cold_pain_lingers_over_10_seconds) {
+      lines.push("Cold sensitivity present; pain lingers after stimulus removed (suggestive of irreversible pulpitis).");
+    } else if (so.cold_sensitivity === true) {
+      lines.push("Cold sensitivity present; pain does not linger (consistent with reversible pulpitis or dentin hypersensitivity).");
+    }
     if (so.heat_sensitivity) lines.push("Heat sensitivity present.");
     if (so.nocturnal_pain) lines.push("Nocturnal pain reported.");
     if (so.bad_taste_or_drainage) lines.push("Bad taste or drainage noted.");
