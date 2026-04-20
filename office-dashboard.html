@@ -896,13 +896,29 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   var selectedCaseId = null;
   var smsRefreshInterval = null;
   var OFFICE_PHONE = null;
+  var OFFICE_USER_EMAIL = null;
+  var OFFICE_DISPLAY_NAME = null;
 
-  // Look up office phone by logged-in user email for session routing
+  // Look up office phone + display_name by logged-in user email for session routing.
+  // Phone may be null for shared role logins (e.g., jacksonsquare@martindaledental.com) —
+  // that's fine, session ownership is by role, not phone.
   sb.auth.onAuthStateChange(function(event, session) {
     if (session && session.user && session.user.email) {
-      sb.from("allowed_reviewers").select("phone").eq("email", session.user.email).maybeSingle().then(function(r) {
-        if (r.data && r.data.phone) OFFICE_PHONE = r.data.phone;
-      });
+      OFFICE_USER_EMAIL = session.user.email;
+      sb.from("allowed_reviewers")
+        .select("phone, display_name")
+        .eq("email", session.user.email)
+        .maybeSingle()
+        .then(function(r) {
+          if (r.data) {
+            if (r.data.phone) OFFICE_PHONE = r.data.phone;
+            if (r.data.display_name) OFFICE_DISPLAY_NAME = r.data.display_name;
+          }
+        });
+    } else {
+      OFFICE_USER_EMAIL = null;
+      OFFICE_DISPLAY_NAME = null;
+      OFFICE_PHONE = null;
     }
   });
   var currentSortAsc = false; // newest first by default
@@ -1816,8 +1832,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           case_id:      smsModalCase.id,
           to_phone:     smsModalCase.patient_phone,
           message_body: msg,
-          sender_name:  "Office Staff",
-          sender_email: "",
+          sender_name:  OFFICE_DISPLAY_NAME || "Office Staff",
+          sender_email: OFFICE_USER_EMAIL || "",
           sender_type:  "office",
           sender_phone: OFFICE_PHONE
         })
