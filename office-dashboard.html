@@ -358,6 +358,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .badge-routine { background: var(--routine-bg); color: var(--routine); border: 1px solid var(--routine-border); }
     .badge-pending { background: var(--pending-bg); color: var(--text-muted); border: 1px solid var(--pending-border); }
 
+    @keyframes esc-pulse-office { 0%, 100% { opacity: 1; } 50% { opacity: 0.65; } }
+
     .case-empty {
       padding: 32px 16px;
       text-align: center;
@@ -1121,7 +1123,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     var result = await sb
       .from("triage_cases")
-      .select("id, patient_name, patient_name_english, patient_phone, patient_dob, patient_city, patient_city_english, patient_email, chief_complaint, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at, revenue_generated, sms_transcript, sms_structured_output, has_sms_continuation, sms_received_at, intake_medical_flags, clinical_note, patient_language, extraction_source, source")
+      .select("id, patient_name, patient_name_english, patient_phone, patient_dob, patient_city, patient_city_english, patient_email, chief_complaint, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at, revenue_generated, sms_transcript, sms_structured_output, has_sms_continuation, sms_received_at, intake_medical_flags, clinical_note, patient_language, extraction_source, source, post_triage_escalation, post_triage_last_message_at")
       .order("created_at", { ascending: currentSortAsc });
 
     if (result.error) {
@@ -1170,6 +1172,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   function renderCaseList(cases) {
     if (!cases) cases = currentCases;
+    // Float post-triage-escalated cases to the top regardless of current
+    // sort order. These are patients who sent a follow-up message after
+    // triage completed containing worsening/emergency language — the
+    // office team must see them first.
+    cases = cases.slice().sort(function(a, b) {
+      var aEsc = a.post_triage_escalation === true ? 0 : 1;
+      var bEsc = b.post_triage_escalation === true ? 0 : 1;
+      if (aEsc !== bEsc) return aEsc - bEsc;
+      return 0;  // preserve original order (DB query handles created_at direction)
+    });
     var n = cases.length;
     var total = currentCases.length;
     document.getElementById("list-count").textContent =
@@ -1230,11 +1242,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         ? "<span style=\"display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:1px 6px;border-radius:999px;background:#faf5ff;color:#6b46c1;border:1px solid #b794f4;margin-left:4px;\">" + langLabels[langCode] + "</span>"
         : "";
 
+      var escalated = c.post_triage_escalation === true;
+      var escalationPip = escalated
+        ? "<span style=\"display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:1px 6px;border-radius:999px;background:rgba(229,62,62,0.12);color:#c53030;border:1px solid rgba(229,62,62,0.4);margin-left:4px;animation:esc-pulse-office 2s ease-in-out infinite;\" title=\"Patient sent a follow-up message with worsening language after triage\">&#9888;&#65039; ESCALATION</span>"
+        : "";
+      if (escalated) {
+        item.style.borderLeft = "4px solid #c53030";
+        item.style.background = "rgba(229,62,62,0.04)";
+      }
+
       item.innerHTML =
         "<div class=\"case-item-time\">" + esc(date) + " &middot; " + esc(time) + completed + "</div>" +
         "<div class=\"case-item-name\">" + esc(name) + "</div>" +
         "<div class=\"case-item-complaint\">" + esc(complaint) + "</div>" +
-        "<span class=\"badge " + badgeCls + "\">" + badgeTxt + "</span>" + sourcePip + nonDentalPip + channelPip + langPip;
+        "<span class=\"badge " + badgeCls + "\">" + badgeTxt + "</span>" + escalationPip + sourcePip + nonDentalPip + channelPip + langPip;
 
       item.addEventListener("click", function() { selectCase(c.id); });
       el.appendChild(item);
@@ -1379,6 +1400,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     var card = document.createElement("div");
     card.className = "note-card";
     card.id = "printable-note";
+
+    // Post-triage escalation banner (shown above all other content if flagged)
+    if (c.post_triage_escalation === true) {
+      var escBanner = document.createElement("div");
+      escBanner.style.cssText = "margin:16px;padding:14px 16px;border-radius:10px;background:rgba(229,62,62,0.08);border:1px solid rgba(229,62,62,0.4);display:flex;align-items:flex-start;gap:10px;";
+      var escTime = c.post_triage_last_message_at
+        ? new Date(c.post_triage_last_message_at).toLocaleString("en-CA", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })
+        : "";
+      escBanner.innerHTML =
+        "<div style=\"font-size:18px;line-height:1;\">\u26A0\uFE0F</div>" +
+        "<div style=\"flex:1;\">" +
+          "<div style=\"font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#c53030;margin-bottom:4px;\">Post-Triage Escalation</div>" +
+          "<div style=\"font-size:13px;color:#2d3748;line-height:1.5;\">This patient sent a follow-up message after triage completed, with language suggesting their condition may be worsening. See the conversation log below for the specific message." +
+          (escTime ? " <span style=\"color:#718096;\">(" + esc(escTime) + ")</span>" : "") +
+          "</div>" +
+        "</div>";
+      card.appendChild(escBanner);
+    }
 
     // Print header (hidden on screen)
     var ph = document.createElement("div");
