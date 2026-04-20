@@ -460,6 +460,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .sms-modal-title { font-size: 15px; font-weight: 700; color: #0f2044; }
     .sms-modal-recipient { font-size: 12px; color: #5a7090; margin-top: 2px; }
     .sms-modal-close { background: none; border: none; color: #aaa; font-size: 22px; cursor: pointer; padding: 0; line-height: 1; }
+
+    .sms-ownership-banner { padding: 10px 12px; border-radius: 8px; font-size: 12px; line-height: 1.45; }
+    .sms-ownership-banner.same-role { background: #f0f7fb; border: 1px solid #cbdce8; color: #5a7090; }
+    .sms-ownership-banner.cross-role { background: #fff8e6; border: 1px solid #f0c774; color: #8a5a1a; }
+    .sms-ownership-banner.no-session { background: #f4f6f9; border: 1px solid #dde2e9; color: #6b7a90; }
+    .sms-ownership-banner strong { font-weight: 700; }
+
+    .detail-ownership-indicator { font-size: 11px; color: #6b7a90; padding: 6px 12px; background: #f7f9fc; border-top: 1px solid #e4e9ef; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; }
+    .detail-ownership-indicator .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+    .detail-ownership-indicator .dot.dentist { background: #2b6cb0; }
+    .detail-ownership-indicator .dot.office { background: #b7791f; }
+    .detail-ownership-indicator .dot.none { background: #a0aec0; }
     .sms-template-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #8a9cb8; }
     .sms-template-btn { background: #f4f7fb; border: 1px solid #d0dae8; border-radius: 7px; color: #3a5070; font-size: 12px; padding: 8px 12px; text-align: left; cursor: pointer; width: 100%; line-height: 1.45; transition: border-color 0.15s, background 0.15s; }
     .sms-template-btn:hover { border-color: #00a8c4; background: #e6f8fc; }
@@ -838,6 +850,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
       </div>
 
+      <div id="detail-ownership-inline" class="detail-ownership-indicator" style="display:none;"></div>
+
       <div class="revenue-bar" id="revenue-bar" style="display:none;">
         <span class="revenue-bar-label">Revenue</span>
         <span style="font-size:13px;color:var(--text-muted);font-weight:600;">$</span>
@@ -867,6 +881,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
       <button class="sms-modal-close" id="sms-modal-close" type="button" aria-label="Close">&times;</button>
     </div>
+    <div id="sms-ownership-banner" class="sms-ownership-banner" style="display:none;"></div>
     <div class="sms-templates">
       <div class="sms-template-label">Quick templates</div>
       <button class="sms-template-btn" data-template="received" type="button">Case received — dentist reviewing</button>
@@ -1287,6 +1302,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       el.classList.toggle("active", el.getAttribute("data-id") === id);
     });
 
+    // Hide ownership indicator until we've fetched the new case's session
+    var ownEl = document.getElementById("detail-ownership-inline");
+    if (ownEl) { ownEl.style.display = "none"; ownEl.innerHTML = ""; }
+
     var toolbar = document.getElementById("note-toolbar");
     toolbar.style.display = "flex";
     document.getElementById("note-patient-name").textContent = c.patient_name || "Unknown";
@@ -1372,6 +1391,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     // Message Patient button
     var msgBtn = document.getElementById("msg-patient-btn");
     if (msgBtn) { msgBtn.onclick = function() { openSMSModal(c); }; }
+
+    // Populate ownership indicator asynchronously.
+    (async function() {
+      try {
+        var ownership = await fetchActiveOwnership(c.patient_phone);
+        if (selectedCaseId === c.id) {
+          renderDetailOwnershipInline(ownership);
+        }
+      } catch (e) { console.error("ownership fetch error", e); }
+    })();
 
     // Mobile: switch to note view
     document.querySelector(".body").classList.add("case-open");
@@ -1780,21 +1809,107 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     return p;
   }
 
-  function openSMSModal(c) {
+  // ── Session ownership helpers ──────────────────────────────────────
+  // These mirror the dentist dashboard. CURRENT_USER_ROLE is "office"
+  // on this dashboard.
+  async function fetchActiveOwnership(patientPhone) {
+    if (!patientPhone) return null;
+    var nowIso = new Date().toISOString();
+    var result = await sb.from("dentist_sessions")
+      .select("id, owner_role, sender_type, dentist_name, last_message_at, locked_until")
+      .eq("patient_phone", patientPhone)
+      .gte("locked_until", nowIso)
+      .order("last_message_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (result.error || !result.data) return null;
+    var d = result.data;
+    var role = d.owner_role || d.sender_type || null;
+    if (!role) return null;
+    return {
+      role: role,
+      display_name: d.dentist_name || role,
+      last_message_at: d.last_message_at,
+      session_id: d.id
+    };
+  }
+
+  function formatRelativeTime(iso) {
+    if (!iso) return "";
+    var then = new Date(iso).getTime();
+    var diffMin = Math.floor((Date.now() - then) / 60000);
+    if (diffMin < 1) return "just now";
+    if (diffMin < 60) return diffMin + " min ago";
+    var diffHr = Math.floor(diffMin / 60);
+    if (diffHr < 24) return diffHr + "h ago";
+    var diffD = Math.floor(diffHr / 24);
+    return diffD + "d ago";
+  }
+
+  function renderOwnershipBanner(ownership) {
+    var banner = document.getElementById("sms-ownership-banner");
+    if (!banner) return;
+    var CURRENT_USER_ROLE = "office";
+    if (!ownership) {
+      banner.className = "sms-ownership-banner no-session";
+      banner.innerHTML = "No active conversation. Sending will start a new one owned by the office.";
+      banner.style.display = "block";
+      return;
+    }
+    var when = formatRelativeTime(ownership.last_message_at);
+    var name = esc(ownership.display_name);
+    if (ownership.role === CURRENT_USER_ROLE) {
+      banner.className = "sms-ownership-banner same-role";
+      banner.innerHTML = "Owned by <strong>Office</strong> \u00B7 last activity by " + name + ", " + when + ".";
+    } else {
+      var otherRole = ownership.role === "dentist" ? "Dentist" : esc(ownership.role);
+      banner.className = "sms-ownership-banner cross-role";
+      banner.innerHTML = "\u26A0 This conversation is currently owned by <strong>" + otherRole + "</strong> (" + name + ", " + when + "). Sending will take over the reply path and their session will expire.";
+    }
+    banner.style.display = "block";
+  }
+
+  function renderDetailOwnershipInline(ownership) {
+    var el = document.getElementById("detail-ownership-inline");
+    if (!el) return;
+    var CURRENT_USER_ROLE = "office";
+    if (!ownership) {
+      el.innerHTML = '<span class="dot none"></span>No active conversation';
+      el.style.display = "block";
+      return;
+    }
+    var when = formatRelativeTime(ownership.last_message_at);
+    var roleLabel = ownership.role === "dentist" ? "Dentist" : (ownership.role === "office" ? "Office" : esc(ownership.role));
+    var selfNote = ownership.role === CURRENT_USER_ROLE ? " (you)" : "";
+    el.innerHTML = '<span class="dot ' + esc(ownership.role) + '"></span>Owned by <strong>' + esc(roleLabel) + '</strong>' + selfNote + ' \u00B7 last activity by ' + esc(ownership.display_name) + ', ' + when;
+    el.style.display = "block";
+  }
+
+  async function openSMSModal(c) {
     smsModalCase = c;
     var overlay   = document.getElementById("sms-modal-overlay");
     var recipient = document.getElementById("sms-modal-recipient");
     var textarea  = document.getElementById("sms-textarea");
     var statusEl  = document.getElementById("sms-send-status");
     var sendBtn   = document.getElementById("sms-send-btn");
+    var banner    = document.getElementById("sms-ownership-banner");
     recipient.textContent = (c.patient_name || "Patient") + " \u00B7 " + formatPhone(c.patient_phone);
     textarea.value = "";
     statusEl.textContent = "";
     statusEl.className = "sms-send-status";
     if (sendBtn) { sendBtn.disabled = true; sendBtn.textContent = "Send message"; }
+    if (banner) { banner.style.display = "none"; banner.innerHTML = ""; }
     updateSMSCharCounter();
     overlay.classList.add("open");
     textarea.focus();
+
+    // Fetch and render ownership banner asynchronously.
+    try {
+      var ownership = await fetchActiveOwnership(c.patient_phone);
+      if (smsModalCase && smsModalCase.id === c.id) {
+        renderOwnershipBanner(ownership);
+      }
+    } catch (e) { console.error("ownership fetch error", e); }
   }
 
   function closeSMSModal() {
