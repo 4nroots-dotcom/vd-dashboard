@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Observations · VirtualDentist</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --navy-0: #0a1224;
+    --navy-1: #0f1a33;
+    --navy-2: #16223f;
+    --border: rgba(255,255,255,0.08);
+    --border-active: rgba(255,255,255,0.18);
+    --surface-hover: rgba(255,255,255,0.03);
+    --text-primary: #e8edf5;
+    --text-secondary: #a8b4c8;
+    --text-muted: #6b839f;
+    --cyan: #00c8e8;
+    --critical: #e84545;
+    --urgent: #f0a500;
+    --routine: #00c87a;
+    --good: #00c87a;
+    --ok: #00c8e8;
+    --warn: #f0a500;
+    --bad: #e84545;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--navy-0);
+    color: var(--text-primary);
+    font-family: 'Iowan Old Style', 'Palatino', Georgia, serif;
+    font-size: 14px;
+    line-height: 1.55;
+    min-height: 100vh;
+  }
+  .app {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 28px 80px;
+  }
+  header.page-head {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 20px;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .brand {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    font-style: italic;
+  }
+  .meta {
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: right;
+  }
+  .meta button {
+    background: rgba(0,200,232,0.08);
+    border: 1px solid rgba(0,200,232,0.25);
+    color: var(--cyan);
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .meta button:hover { background: rgba(0,200,232,0.16); border-color: rgba(0,200,232,0.45); }
+  .meta button:disabled { opacity: 0.5; cursor: default; }
+
+  .intro {
+    font-size: 13px;
+    color: var(--text-secondary);
+    max-width: 720px;
+    margin-bottom: 40px;
+    line-height: 1.65;
+  }
+  .intro em { color: var(--text-primary); font-style: italic; }
+
+  .observation {
+    margin-bottom: 40px;
+    padding: 24px 26px;
+    background: var(--navy-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    position: relative;
+  }
+  .observation.status-good   { border-left: 3px solid var(--good); }
+  .observation.status-warn   { border-left: 3px solid var(--warn); }
+  .observation.status-bad    { border-left: 3px solid var(--bad); }
+  .observation.status-unknown { border-left: 3px solid var(--border-active); }
+
+  .obs-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .obs-title {
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    font-style: italic;
+  }
+  .obs-status {
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .obs-status.good     { background: rgba(0,200,122,0.1); color: var(--good); border: 1px solid rgba(0,200,122,0.3); }
+  .obs-status.warn     { background: rgba(240,165,0,0.1); color: var(--warn); border: 1px solid rgba(240,165,0,0.3); }
+  .obs-status.bad      { background: rgba(232,69,69,0.12); color: var(--bad); border: 1px solid rgba(232,69,69,0.35); }
+  .obs-status.unknown  { background: rgba(255,255,255,0.04); color: var(--text-muted); border: 1px solid var(--border); }
+  .obs-status.loading  { background: rgba(0,200,232,0.06); color: var(--cyan); border: 1px solid rgba(0,200,232,0.2); }
+
+  .obs-explainer {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 18px;
+    line-height: 1.6;
+  }
+
+  .obs-data {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .metric {
+    background: var(--navy-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .metric-label {
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .metric-value {
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+  .metric-value.danger { color: var(--bad); }
+  .metric-value.warn { color: var(--warn); }
+  .metric-value.good { color: var(--good); }
+  .metric-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    font-family: ui-monospace, monospace;
+  }
+
+  .obs-action {
+    font-size: 12px;
+    color: var(--text-secondary);
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 6px;
+    border-left: 2px solid var(--border-active);
+    margin-top: 14px;
+  }
+  .obs-action strong { color: var(--text-primary); font-weight: 700; }
+
+  details.obs-detail {
+    margin-top: 14px;
+    font-size: 12px;
+  }
+  details.obs-detail summary {
+    cursor: pointer;
+    color: var(--text-muted);
+    font-family: ui-monospace, monospace;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 10px;
+    padding: 4px 0;
+  }
+  details.obs-detail summary:hover { color: var(--cyan); }
+  details.obs-detail[open] summary { color: var(--cyan); }
+
+  .obs-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 12px;
+    font-family: ui-monospace, monospace;
+  }
+  .obs-table th, .obs-table td {
+    text-align: left;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .obs-table th {
+    color: var(--text-muted);
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .obs-table tr:last-child td { border-bottom: none; }
+
+  .auth-wrap {
+    max-width: 380px;
+    margin: 80px auto;
+    padding: 32px;
+    background: var(--navy-1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .auth-title { font-size: 18px; font-weight: 500; margin-bottom: 18px; font-style: italic; }
+  .auth-wrap input {
+    width: 100%;
+    background: var(--navy-2);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+  .auth-wrap input:focus { outline: none; border-color: var(--cyan); }
+  .auth-wrap button {
+    width: 100%;
+    background: var(--cyan);
+    color: var(--navy-0);
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .auth-error { color: var(--bad); font-size: 12px; margin-top: 8px; min-height: 16px; }
+
+  .loading-text {
+    color: var(--text-muted);
+    font-style: italic;
+    font-size: 13px;
+  }
+
+  .footnote {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 11px;
+    font-family: ui-monospace, monospace;
+    line-height: 1.7;
+  }
+  .footnote strong { color: var(--text-secondary); }
+</style>
+</head>
+<body>
+
+<div id="auth-screen" style="display:none;">
+  <div class="auth-wrap">
+    <div class="auth-title">Observations · Secure Access</div>
+    <input type="email" id="auth-email" placeholder="Email" autocomplete="email" />
+    <input type="password" id="auth-password" placeholder="Password" autocomplete="current-password" />
+    <button id="auth-btn" type="button">Sign In</button>
+    <div class="auth-error" id="auth-error"></div>
+  </div>
+</div>
+
+<div class="app" id="app" style="display:none;">
+  <header class="page-head">
+    <div>
+      <div class="brand">VirtualDentist · Weekly Review</div>
+      <h1>Observations</h1>
+    </div>
+    <div class="meta">
+      <span id="last-loaded">—</span>
+      <button id="refresh-btn" type="button">Refresh</button>
+      <button id="signout-btn" type="button">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="intro">
+    A weekly review of the <em>observations-dependent decisions</em> built into the
+    VirtualDentist system. Each section shows the current signal, what it means, and
+    what to do if the numbers are trending the wrong way. The aim is to close loose
+    ends with data rather than remember them — review this page once a week and
+    take action on anything marked <strong style="color:var(--warn)">WARN</strong>
+    or <strong style="color:var(--bad)">BAD</strong>.
+  </div>
+
+  <!-- Sections rendered by JS -->
+  <div id="observations"></div>
+
+  <div class="footnote">
+    <strong>Adding a new observation:</strong> when a new observation-dependent
+    decision is introduced (e.g., "did the regen drift fix work?"), add a section
+    to this page. The pattern is: <em>explainer</em> → <em>query</em> → <em>status
+    calculation</em> → <em>suggested action</em>. The cost of one more observation
+    should stay near zero.
+    <br/><br/>
+    <strong>Loose-end principle:</strong> any observation whose signal is
+    <em>WARN</em> or <em>BAD</em> for more than 14 days without resolution
+    indicates that either the prompt-only fix isn't working, or the decision
+    has been forgotten. Both are signals to revisit.
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let currentUser = null;
+
+  function esc(s) {
+    if (s === null || s === undefined) return "";
+    return String(s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+
+  // ─── AUTH ────────────────────────────────────────────────────────
+  function showAuth() {
+    document.getElementById("auth-screen").style.display = "block";
+    document.getElementById("app").style.display = "none";
+  }
+  function showApp(user) {
+    currentUser = user;
+    document.getElementById("auth-screen").style.display = "none";
+    document.getElementById("app").style.display = "block";
+    loadAllObservations();
+  }
+
+  document.getElementById("auth-btn").addEventListener("click", handleLogin);
+  document.getElementById("auth-password").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") handleLogin();
+  });
+  document.getElementById("signout-btn").addEventListener("click", () => {
+    sb.auth.signOut().then(() => showAuth());
+  });
+  document.getElementById("refresh-btn").addEventListener("click", loadAllObservations);
+
+  async function handleLogin() {
+    const email = document.getElementById("auth-email").value.trim();
+    const password = document.getElementById("auth-password").value;
+    const btn = document.getElementById("auth-btn");
+    const errEl = document.getElementById("auth-error");
+    errEl.textContent = "";
+    if (!email || !password) { errEl.textContent = "Enter both email and password."; return; }
+    btn.disabled = true; btn.textContent = "Signing in...";
+    try {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) { errEl.textContent = error.message || "Sign-in failed."; return; }
+      if (!data?.user) { errEl.textContent = "Sign-in returned no user."; return; }
+      // Check access via allowed_reviewers — same pattern as main dashboards
+      const { data: reviewer } = await sb.from("allowed_reviewers")
+        .select("can_access_dentist_dashboard")
+        .eq("email", data.user.email)
+        .maybeSingle();
+      if (!reviewer?.can_access_dentist_dashboard) {
+        await sb.auth.signOut();
+        errEl.textContent = "This account does not have access.";
+        return;
+      }
+      showApp(data.user);
+    } catch (e) {
+      errEl.textContent = e.message || "Unexpected error.";
+    } finally {
+      btn.disabled = false; btn.textContent = "Sign In";
+    }
+  }
+
+  sb.auth.getSession().then(({ data }) => {
+    if (data.session?.user) showApp(data.session.user);
+    else showAuth();
+  });
+
+  // ─── OBSERVATIONS REGISTRY ───────────────────────────────────────
+  // Each observation is a self-contained object with:
+  //   - key: unique identifier
+  //   - title: human-readable section title
+  //   - explainer: what this observation measures and why
+  //   - run: async function returning { status, metrics, action, detail }
+  //     * status: 'good' | 'warn' | 'bad' | 'unknown'
+  //     * metrics: array of { label, value, sub?, tone? }
+  //     * action: brief sentence on what to do if status is not good
+  //     * detail: optional HTML for expandable detail section
+  //
+  // To add a new observation: append to this array. No other code changes.
+  const OBSERVATIONS = [
+    {
+      key: "voice_compliance_audit",
+      title: "Voice Compliance Audit",
+      explainer:
+        "Tracks Sam asking about fields already captured on the intake form (onset, immunocompromised, pregnancy, blood thinners, safety screen, chief complaint). Violations are deterministic and logged by rapid-processor. Open rows that stay unresolved for 14+ days indicate either that prompt fixes aren't sticking or the decision has been forgotten.",
+      action:
+        "If WARN or BAD: query the voice_compliance_audit_summary view, review the top violation types, and decide for each whether a prompt fix or the voice gate build is warranted. Tag each row's resolution_status when handled.",
+      async run() {
+        const { data, error } = await sb
+          .from("voice_compliance_audit_summary")
+          .select("*");
+        if (error) return { status: "unknown", metrics: [{ label: "Error", value: error.message.slice(0, 40) }] };
+
+        const rows = data || [];
+        const totalOpen = rows.reduce((s, r) => s + (r.open_count || 0), 0);
+        const totalAll = rows.reduce((s, r) => s + (r.total_count || 0), 0);
+
+        // Stale check
+        const { count: staleCount } = await sb
+          .from("voice_compliance_audit")
+          .select("id", { count: "exact", head: true })
+          .in("resolution_status", ["open", "escalated_to_gate_build"])
+          .lt("created_at", new Date(Date.now() - 14 * 864e5).toISOString());
+
+        let status = "good";
+        if (staleCount > 0) status = "bad";
+        else if (totalOpen > 5) status = "warn";
+        else if (totalAll === 0) status = "unknown";  // not enough data
+
+        const metrics = [
+          { label: "Open violations", value: totalOpen, tone: totalOpen > 5 ? "warn" : (totalOpen > 0 ? "" : "good") },
+          { label: "Stale (>14 days)", value: staleCount || 0, tone: (staleCount || 0) > 0 ? "danger" : "good" },
+          { label: "Total logged", value: totalAll },
+          { label: "Violation types", value: rows.length },
+        ];
+
+        let detail = "";
+        if (rows.length > 0) {
+          detail = '<table class="obs-table"><thead><tr><th>Type</th><th>Open</th><th>Resolved</th><th>Wont Fix</th><th>Escalated</th><th>Last Seen</th></tr></thead><tbody>';
+          for (const r of rows) {
+            const last = r.last_seen_at ? new Date(r.last_seen_at).toLocaleDateString() : "—";
+            detail += `<tr><td>${esc(r.violation_type)}</td><td>${r.open_count || 0}</td><td>${r.resolved_count || 0}</td><td>${r.wont_fix_count || 0}</td><td>${r.escalated_count || 0}</td><td>${esc(last)}</td></tr>`;
+          }
+          detail += "</tbody></table>";
+        } else {
+          detail = '<div class="loading-text">No violations logged yet — either Sam is compliant, or no voice calls have run through rapid-processor since the audit was deployed.</div>';
+        }
+
+        return { status, metrics, detail };
+      },
+    },
+
+    {
+      key: "voice_fallback_conversion",
+      title: "Voice → SMS Fallback Conversion",
+      explainer:
+        "When a voice call cuts off mid-triage, the system sends a recovery SMS so the patient can complete triage by text. This measures whether patients engage with that recovery. Low reply rate means patients are being lost despite the fallback firing.",
+      action:
+        "If BAD (<30% reply rate over 10+ fallbacks): the recovery SMS isn't working — consider building the in-call SMS handoff trigger (Vapi tool call). If WARN (30–60%): prompt edit landed but could be stronger. GOOD (>60%): fix working.",
+      async run() {
+        // Fallbacks sent in last 30 days
+        const since = new Date(Date.now() - 30 * 864e5).toISOString();
+        const { data: fallbackCases, error } = await sb
+          .from("triage_cases")
+          .select("id, sms_fallback_sent_at, patient_phone")
+          .not("sms_fallback_sent_at", "is", null)
+          .gte("sms_fallback_sent_at", since);
+        if (error) return { status: "unknown", metrics: [{ label: "Error", value: error.message.slice(0, 40) }] };
+
+        const total = (fallbackCases || []).length;
+        if (total === 0) {
+          return {
+            status: "unknown",
+            metrics: [
+              { label: "Fallbacks (30d)", value: 0 },
+              { label: "Reply rate", value: "—" },
+            ],
+            detail: '<div class="loading-text">No fallback events in the last 30 days.</div>',
+          };
+        }
+
+        // For each fallback case, check whether there's an inbound sms_log after the fallback sent
+        const caseIds = fallbackCases.map(c => c.id);
+        const { data: replies } = await sb
+          .from("sms_log")
+          .select("case_id, created_at")
+          .in("case_id", caseIds)
+          .eq("direction", "inbound");
+
+        const repliedCaseIds = new Set();
+        for (const c of fallbackCases) {
+          const fbTime = new Date(c.sms_fallback_sent_at).getTime();
+          const hasReply = (replies || []).some(r =>
+            r.case_id === c.id && new Date(r.created_at).getTime() > fbTime
+          );
+          if (hasReply) repliedCaseIds.add(c.id);
+        }
+
+        const replied = repliedCaseIds.size;
+        const rate = total > 0 ? (replied / total) : 0;
+
+        let status = "unknown";
+        if (total < 5) status = "unknown";       // not enough data
+        else if (rate >= 0.6) status = "good";
+        else if (rate >= 0.3) status = "warn";
+        else status = "bad";
+
+        return {
+          status,
+          metrics: [
+            { label: "Fallbacks (30d)", value: total },
+            { label: "Replied", value: replied, tone: rate >= 0.6 ? "good" : (rate >= 0.3 ? "warn" : "danger") },
+            { label: "Reply rate", value: Math.round(rate * 100) + "%", tone: rate >= 0.6 ? "good" : (rate >= 0.3 ? "warn" : "danger") },
+          ],
+        };
+      },
+    },
+
+    {
+      key: "post_triage_escalations",
+      title: "Post-Triage Escalations",
+      explainer:
+        "When a patient sends a follow-up SMS after triage closes with escalation language ('unbearable', 'worse', 'swelling spreading'), the system flags it and fires dual-channel alerts. This shows active escalations and whether they're being reviewed promptly.",
+      action:
+        "If WARN: one or more escalations have been active for >2 hours without review. Open the dentist dashboard and respond. If BAD: >6 hours. Review process broken.",
+      async run() {
+        const { data, error } = await sb
+          .from("triage_cases")
+          .select("id, patient_name, post_triage_last_message_at, post_triage_escalation_alerted_at, reviewed_at")
+          .eq("post_triage_escalation", true)
+          .order("post_triage_last_message_at", { ascending: false });
+        if (error) return { status: "unknown", metrics: [{ label: "Error", value: error.message.slice(0, 40) }] };
+
+        const all = data || [];
+        const activeUnreviewed = all.filter(r => !r.reviewed_at);
+        const now = Date.now();
+        const stale2h = activeUnreviewed.filter(r => {
+          const t = r.post_triage_last_message_at ? new Date(r.post_triage_last_message_at).getTime() : now;
+          return (now - t) > 2 * 3600 * 1000;
+        });
+        const stale6h = activeUnreviewed.filter(r => {
+          const t = r.post_triage_last_message_at ? new Date(r.post_triage_last_message_at).getTime() : now;
+          return (now - t) > 6 * 3600 * 1000;
+        });
+
+        let status = "good";
+        if (stale6h.length > 0) status = "bad";
+        else if (stale2h.length > 0) status = "warn";
+        else if (activeUnreviewed.length > 0) status = "ok";
+
+        return {
+          status: status === "ok" ? "good" : status,
+          metrics: [
+            { label: "Total escalations", value: all.length },
+            { label: "Active (unreviewed)", value: activeUnreviewed.length, tone: activeUnreviewed.length > 0 ? "warn" : "good" },
+            { label: "Stale >2h", value: stale2h.length, tone: stale2h.length > 0 ? "warn" : "good" },
+            { label: "Stale >6h", value: stale6h.length, tone: stale6h.length > 0 ? "danger" : "good" },
+          ],
+        };
+      },
+    },
+
+    {
+      key: "cases_stuck_in_queue",
+      title: "Cases Stuck In Queue",
+      explainer:
+        "Cases with review_status='new' that have been sitting for more than 24 hours without review. Most should be handled within hours — anything older indicates a gap in the review workflow or a case that fell off the radar.",
+      action:
+        "If WARN (>3 stale): the queue isn't being worked consistently. If BAD (>10 stale): real operational gap. Walk the queue with Afaf and identify why specific cases are sitting.",
+      async run() {
+        const cutoff24h = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
+        const cutoff72h = new Date(Date.now() - 72 * 3600 * 1000).toISOString();
+
+        const { count: stale24, error: err1 } = await sb
+          .from("triage_cases")
+          .select("id", { count: "exact", head: true })
+          .eq("review_status", "new")
+          .lt("created_at", cutoff24h);
+        if (err1) return { status: "unknown", metrics: [{ label: "Error", value: err1.message.slice(0, 40) }] };
+
+        const { count: stale72 } = await sb
+          .from("triage_cases")
+          .select("id", { count: "exact", head: true })
+          .eq("review_status", "new")
+          .lt("created_at", cutoff72h);
+
+        let status = "good";
+        if ((stale24 || 0) > 10) status = "bad";
+        else if ((stale24 || 0) > 3) status = "warn";
+
+        return {
+          status,
+          metrics: [
+            { label: "Stale >24h", value: stale24 || 0, tone: (stale24 || 0) > 3 ? "warn" : "good" },
+            { label: "Stale >72h", value: stale72 || 0, tone: (stale72 || 0) > 0 ? "danger" : "good" },
+          ],
+        };
+      },
+    },
+
+    {
+      key: "extract_sms_errors",
+      title: "SMS Extraction Error Rate",
+      explainer:
+        "Cases where extract-sms failed to produce a clinical record (review_status='sms_extract_error'). These are cases that triaged but whose structured data couldn't be built — they land in the queue with a raw transcript but no severity. Non-zero counts indicate OpenAI errors, schema drift, or new extraction bugs.",
+      action:
+        "If WARN (any errors in last 7d): inspect each case's transcript and error to see if it's a real bug. If BAD (>5 in 7d): systemic issue — pause deploys until investigated.",
+      async run() {
+        const since = new Date(Date.now() - 7 * 864e5).toISOString();
+        const { count, error } = await sb
+          .from("triage_cases")
+          .select("id", { count: "exact", head: true })
+          .eq("review_status", "sms_extract_error")
+          .gte("created_at", since);
+        if (error) return { status: "unknown", metrics: [{ label: "Error", value: error.message.slice(0, 40) }] };
+
+        let status = "good";
+        if ((count || 0) > 5) status = "bad";
+        else if ((count || 0) > 0) status = "warn";
+
+        return {
+          status,
+          metrics: [
+            { label: "Errors (7d)", value: count || 0, tone: (count || 0) > 5 ? "danger" : ((count || 0) > 0 ? "warn" : "good") },
+          ],
+        };
+      },
+    },
+
+    {
+      key: "ttr_metric",
+      title: "Time to Dentist Review (TTR)",
+      explainer:
+        "[Not yet built] Distribution of time from triage completion (severity set, extraction done) to dentist acknowledgment (reviewed_at). Measures the operational responsiveness layer — the part of the product 123Dentist and DSOs will ask about.",
+      action:
+        "Build the triage_completed_at column and wire it into rapid-processor + extract-sms + office-dashboard. Then this section gets real data.",
+      async run() {
+        // Placeholder — returns unknown until triage_completed_at exists
+        return {
+          status: "unknown",
+          metrics: [
+            { label: "Status", value: "Not built" },
+          ],
+          detail: '<div class="loading-text">TTR metric requires adding <code>triage_completed_at</code> column. On the pinned list as item #5.</div>',
+        };
+      },
+    },
+  ];
+
+  // ─── RENDERING ───────────────────────────────────────────────────
+  function renderObservation(obs, result) {
+    const metricsHtml = (result.metrics || []).map(m => `
+      <div class="metric">
+        <div class="metric-label">${esc(m.label)}</div>
+        <div class="metric-value ${m.tone || ""}">${esc(m.value)}</div>
+        ${m.sub ? `<div class="metric-sub">${esc(m.sub)}</div>` : ""}
+      </div>
+    `).join("");
+    return `
+      <div class="observation status-${result.status}" id="obs-${obs.key}">
+        <div class="obs-head">
+          <div class="obs-title">${esc(obs.title)}</div>
+          <div class="obs-status ${result.status}">${result.status.toUpperCase()}</div>
+        </div>
+        <div class="obs-explainer">${obs.explainer}</div>
+        <div class="obs-data">${metricsHtml}</div>
+        ${result.detail ? `<details class="obs-detail"><summary>Detail</summary>${result.detail}</details>` : ""}
+        <div class="obs-action"><strong>Action:</strong> ${obs.action}</div>
+      </div>
+    `;
+  }
+
+  function renderLoading(obs) {
+    return `
+      <div class="observation status-unknown" id="obs-${obs.key}">
+        <div class="obs-head">
+          <div class="obs-title">${esc(obs.title)}</div>
+          <div class="obs-status loading">Loading…</div>
+        </div>
+        <div class="obs-explainer">${obs.explainer}</div>
+      </div>
+    `;
+  }
+
+  async function loadAllObservations() {
+    const container = document.getElementById("observations");
+    // Render all as loading first
+    container.innerHTML = OBSERVATIONS.map(renderLoading).join("");
+
+    // Run each in parallel
+    const results = await Promise.all(OBSERVATIONS.map(async (obs) => {
+      try {
+        const r = await obs.run();
+        return { obs, result: r };
+      } catch (e) {
+        return { obs, result: { status: "unknown", metrics: [{ label: "Error", value: String(e).slice(0, 40) }] } };
+      }
+    }));
+
+    // Sort: bad → warn → unknown → good (most important first)
+    const order = { bad: 0, warn: 1, unknown: 2, good: 3 };
+    results.sort((a, b) => (order[a.result.status] ?? 9) - (order[b.result.status] ?? 9));
+
+    container.innerHTML = results.map(({ obs, result }) => renderObservation(obs, result)).join("");
+
+    document.getElementById("last-loaded").textContent =
+      "Loaded " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  }
+</script>
+
+</body>
+</html>
