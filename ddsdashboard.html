@@ -968,11 +968,78 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         '<div class="detail-section"><div class="section-header"><span class="section-title">Clinical Flags</span></div><div class="flags-grid">' + flags.map(function(f) { return '<div class="flag-item"><div class="flag-dot ' + (f.val === true ? "present" : "absent") + '"></div><span' + (f.val === true ? ' style="color:#e8f0fe"' : '') + '>' + escHtml(f.label) + '</span></div>'; }).join("") + '</div></div>' +
 
         (function() {
-          // ── Pain Characterization ──
-          // Renders only when at least one field is populated. On a
-          // voice case where these weren't extracted, the whole section
-          // hides — that itself is a passive signal for voice gap
-          // observability.
+          // ── Clinical Context (Track-Aware) ──
+          // The panel adapts to the case type:
+          //
+          //  TRACK A (tooth pain, no swelling): Pain Characterization
+          //    - Quality, Pattern, Progression, Cold Sensitivity
+          //    - Pulpal-origin diagnostic signals
+          //
+          //  TRACK B (swelling-primary): Swelling Context
+          //    - Swelling Trajectory (worsening yes/no/not captured)
+          //    - Swelling Duration / Onset
+          //    - Deep-Space Signs (trismus/dysphagia/voice/tongue composite)
+          //    - Pain character fields are not asked on Track B by design
+          //      (swelling trajectory + deep-space signs are the urgency
+          //      signals; pain quality is not diagnostic for infection
+          //      disposition). Showing Track A fields on a Track B case
+          //      created false "Not captured" signals that looked like
+          //      data bugs. The panel now reflects the actual clinical
+          //      relevance for each presentation type.
+          //
+          //  TRACK C (soft tissue / appliance): Panel hidden
+          //    - No track-specific clinical context field set yet;
+          //      existing Clinical Flags + AI note suffice.
+          //
+          //  UNKNOWN / EMPTY: Panel hidden.
+
+          var isTrackB = so.swelling_present === true;
+          var isTrackC = so.soft_tissue_concern === true && !isTrackB;
+
+          if (isTrackB) {
+            // Track B: Swelling Context
+            var sw = so.swelling_worsening;
+            var swellingDuration = so.onset || c.onset || c.onset_bucket || null;
+
+            var deepSpaceSigns = [];
+            if (so.trismus === true) deepSpaceSigns.push("trismus");
+            if (so.dysphagia === true) deepSpaceSigns.push("dysphagia");
+            if (so.voice_changes === true) deepSpaceSigns.push("voice changes");
+            if (so.tongue_elevation === true) deepSpaceSigns.push("tongue elevation");
+
+            function fmtTrajectory(v) {
+              if (v === true) return '<span style="color:#f0a500;font-weight:600">Worsening</span>';
+              if (v === false) return '<span style="color:#00c87a">Stable or improving</span>';
+              return '<span style="color:#6a80a0">Not captured</span>';
+            }
+            function fmtDur(v) {
+              return v ? escHtml(formatTag(String(v))) : '<span style="color:#6a80a0">Not captured</span>';
+            }
+            function fmtDeepSpace(arr) {
+              if (arr.length === 0) {
+                // Distinguish "asked, all negative" from "some fields null"
+                var anyAsked = so.trismus != null || so.dysphagia != null ||
+                               so.voice_changes != null || so.tongue_elevation != null;
+                if (anyAsked) return '<span style="color:#00c87a">None reported</span>';
+                return '<span style="color:#6a80a0">Not captured</span>';
+              }
+              return '<span style="color:#e84545;font-weight:600">' + escHtml(arr.join(", ")) + '</span>';
+            }
+
+            return '<div class="detail-section"><div class="section-header"><span class="section-title">Swelling Context</span></div>' +
+              '<div class="summary-grid" style="grid-template-columns:1fr 1fr;">' +
+                '<div class="summary-item"><div class="summary-label">Swelling Trajectory</div><div class="summary-value">' + fmtTrajectory(sw) + '</div></div>' +
+                '<div class="summary-item"><div class="summary-label">Duration / Onset</div><div class="summary-value">' + fmtDur(swellingDuration) + '</div></div>' +
+                '<div class="summary-item" style="grid-column:1/-1"><div class="summary-label">Deep-Space Signs</div><div class="summary-value">' + fmtDeepSpace(deepSpaceSigns) + '</div></div>' +
+              '</div></div>';
+          }
+
+          if (isTrackC) {
+            // Track C: hide panel — no track-specific clinical context yet
+            return "";
+          }
+
+          // Track A (default): Pain Characterization
           var pq = so.pain_quality || c.pain_quality;
           var pp = so.pain_pattern || c.pain_pattern;
           var pg = so.pain_progression || c.pain_progression;
