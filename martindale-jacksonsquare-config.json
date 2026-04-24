@@ -2,7 +2,7 @@
   "practice_id": "martindale-jacksonsquare",
   "practice_name": "Martindale Dental",
   "practice_location": "Jackson Square, Hamilton",
-  "config_version": "1.1",
+  "config_version": "1.2",
   "last_updated": "2026-04-24",
 
   "bot": {
@@ -101,10 +101,15 @@
   },
 
   "handoff": {
-    "clinical_handoff_message": "Let me bring up a quick form so our clinical team gets the details they need. Once you submit, Sam will follow up by text.",
-    "appointment_handoff_message": "I'll pass this along to our team and they'll call you back during office hours. Is there anything else I can help with?",
-    "deflect_handoff_message": "Our team handles this individually. Can I grab your name and phone number so they can follow up with the specifics?",
-    "unresolved_fallback_message": "I want to make sure you get the right answer. Can I pass this along to our team? If you share your name and phone number they'll follow up.",
+    "clinical_handoff_message": "Let me bring up a quick form so our team gets what they need to help you. Once you submit, Sam will follow up by text.",
+    "empathy_fallback": "I'm sorry to hear that.",
+    "appointment_ask_message": "We'd be happy to help you with that! Is there a preferred day or time that works for you? Please share your name and phone number (or email if you prefer), and our office team will reach out to you to confirm.",
+    "appointment_confirm_body": "I've passed your request to our office team — they'll reach out to confirm the details. Is there anything else I can help with?",
+    "deflect_ask_message": "Our team would be happy to walk you through that individually. Can I grab your name and phone number (or email if you prefer)? They'll reach out with the specifics.",
+    "deflect_confirm_body": "Our team will be in touch with the specifics. Is there anything else I can help with?",
+    "partial_name_followup": "Thanks! And what name should I put on the message for our team?",
+    "partial_phone_followup_body": "And what's the best phone number or email to reach you at?",
+    "unresolved_fallback_message": "I want to make sure you get the right answer. Would it be okay if our team reached out? Please share your name and phone number (or email), and they'll follow up.",
     "prefill_fields": ["patient_name", "patient_phone", "patient_email", "patient_city", "chief_complaint_raw"]
   },
 
