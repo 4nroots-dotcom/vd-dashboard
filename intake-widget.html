@@ -848,7 +848,10 @@ window.addEventListener('DOMContentLoaded',function(){
   // Conditional onset: show when complaint mentions symptoms, hide for general inquiries
   // Word boundary \b at start prevents false positives (e.g. "hit" inside "whitening")
   // Compound phrases handle "fell out", "came out", "came off" etc.
-  var SYMPTOM_KEYWORDS = /\b(pain|painful|hurt|ache|aching|sore|tender|throb|sharp|burn|sting|discomfort|uncomfortable|swell|swollen|puffy|inflam|bump|lump|broke|broken|crack|fractur|shatter|split|snap|chip|bleed|blood|bled|knock|loose|wobbly|wiggly|shift|moved|moving|sensitive|hot|cold|infect|fever|abscess|pus|drain|trauma|fall|fell|impact|hit|struck|punch|accident|collision|injur|numb|tingl|extract|pull|remov|filling|crown|cap|wisdom|cavity|decay|rotten|emergency|urgent|gum)|fell.out|came.out|came.off|broke.off|knocked.out|lost.{0,6}(tooth|teeth|filling|crown|cap)/i;
+  // Compound symptom words (toothache, toothpain, etc.) added explicitly because
+  // \bache does not match inside "toothache" — continuous letters mean no word
+  // boundary between "tooth" and "ache."
+  var SYMPTOM_KEYWORDS = /\b(pain|painful|hurt|ache|aching|sore|tender|throb|sharp|burn|sting|discomfort|uncomfortable|swell|swollen|puffy|inflam|bump|lump|broke|broken|crack|fractur|shatter|split|snap|chip|bleed|blood|bled|knock|loose|wobbly|wiggly|shift|moved|moving|sensitive|hot|cold|infect|fever|abscess|pus|drain|trauma|fall|fell|impact|hit|struck|punch|accident|collision|injur|numb|tingl|extract|pull|remov|filling|crown|cap|wisdom|cavity|decay|rotten|emergency|urgent|gum|toothache|toothaches|toothpain|gumache|earache|jawache|headache|migraine)|fell.out|came.out|came.off|broke.off|knocked.out|lost.{0,6}(tooth|teeth|filling|crown|cap)/i;
   var onsetWrapper = document.getElementById("onset-wrapper");
   var onsetSelect = document.getElementById("onset-bucket");
   var ccTextarea = document.getElementById("chief-complaint");
