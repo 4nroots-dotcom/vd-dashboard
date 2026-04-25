@@ -6,6 +6,7 @@
   "last_updated": "2026-04-25",
 
   "supported_languages": ["en", "fr", "es", "ar", "zh", "pa", "hi", "fa", "so"],
+  "available_languages": ["en"],
   "default_language": "en",
   "language_display_names": {
     "en": "English",
