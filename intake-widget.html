@@ -297,6 +297,15 @@ window.addEventListener('DOMContentLoaded',function(){
   </div>
 
   <div class="section">
+    <div class="section-title" id="sec-current-meds">Current medications</div>
+    <div class="helper" id="cur-meds-helper" style="margin-bottom:8px;">List anything you take regularly. Optional.</div>
+    <div class="field">
+      <label for="current-medications" id="lbl-current-medications">Current medications</label>
+      <textarea class="textarea" id="current-medications" placeholder="Prescription, over-the-counter, supplements, herbal — include dose if known"></textarea>
+    </div>
+  </div>
+
+  <div class="section">
     <div class="section-title" id="sec-coverage">Coverage information (optional)</div>
     <div class="helper" id="cov-helper" style="margin-bottom:8px;">This helps with follow-up planning only.</div>
     <div class="field">
@@ -392,6 +401,8 @@ window.addEventListener('DOMContentLoaded',function(){
       avUnder5: "Just now (under 5 minutes)", av5to15: "5 to 15 minutes ago", av15to30: "15 to 30 minutes ago",
       av30to60: "30 to 60 minutes ago", avOver60: "More than 60 minutes ago",
       secMedical: "Relevant medical information", medHelper: "Select any that apply.",
+      secCurrentMeds: "Current medications", curMedsHelper: "List anything you take regularly. Optional.",
+      curMedsLabel: "Current medications", curMedsPlaceholder: "Prescription, over-the-counter, supplements, herbal — include dose if known",
       mhAntibiotics: "Allergy to antibiotics", mhPain: "Allergy to pain medication", mhLatex: "Allergy to latex", mhBlood: "Blood thinners",
       mhAntibioticsLabel: "Which antibiotic(s)?", mhAntibioticsPlaceholder: "e.g., penicillin, amoxicillin, clindamycin",
       mhPainLabel: "Which pain medication(s)?", mhPainPlaceholder: "e.g., ibuprofen, codeine, morphine",
@@ -432,6 +443,8 @@ window.addEventListener('DOMContentLoaded',function(){
       avUnder5: "الآن (أقل من 5 دقائق)", av5to15: "من 5 إلى 15 دقيقة", av15to30: "من 15 إلى 30 دقيقة",
       av30to60: "من 30 إلى 60 دقيقة", avOver60: "أكثر من 60 دقيقة",
       secMedical: "معلومات طبية", medHelper: "اختر كل ما ينطبق.",
+      secCurrentMeds: "الأدوية الحالية", curMedsHelper: "اذكر أي شيء تتناوله بانتظام. اختياري.",
+      curMedsLabel: "الأدوية الحالية", curMedsPlaceholder: "وصفة طبية، بدون وصفة، مكملات، أعشاب — اذكر الجرعة إن أمكن",
       mhAntibiotics: "حساسية من المضادات الحيوية", mhPain: "حساسية من مسكنات الألم", mhLatex: "حساسية من اللاتكس", mhBlood: "أدوية مميعة للدم",
       mhAntibioticsLabel: "أي مضاد حيوي؟", mhAntibioticsPlaceholder: "مثال: البنسلين، أموكسيسيلين، كليندامايسين",
       mhPainLabel: "أي مسكن ألم؟", mhPainPlaceholder: "مثال: إيبوبروفين، كودايين، مورفين",
@@ -471,6 +484,8 @@ window.addEventListener('DOMContentLoaded',function(){
       avUnder5: "अभी (5 मिनट से कम)", av5to15: "5 से 15 मिनट पहले", av15to30: "15 से 30 मिनट पहले",
       av30to60: "30 से 60 मिनट पहले", avOver60: "60 मिनट से अधिक पहले",
       secMedical: "संबंधित चिकित्सा जानकारी", medHelper: "जो भी लागू हो चुनें।",
+      secCurrentMeds: "वर्तमान दवाएं", curMedsHelper: "जो भी आप नियमित रूप से लेते हैं उसे लिखें। वैकल्पिक।",
+      curMedsLabel: "वर्तमान दवाएं", curMedsPlaceholder: "नुस्खा, बिना नुस्खे की, सप्लीमेंट, हर्बल — खुराक मालूम हो तो शामिल करें",
       mhAntibiotics: "एंटीबायोटिक से एलर्जी", mhPain: "दर्द की दवा से एलर्जी", mhLatex: "लेटेक्स से एलर्जी", mhBlood: "रक्त पतला करने की दवा",
       mhAntibioticsLabel: "कौन सा एंटीबायोटिक?", mhAntibioticsPlaceholder: "जैसे: पेनिसिलिन, एमोक्सिसिलिन, क्लिंडामाइसिन",
       mhPainLabel: "कौन सी दर्द की दवा?", mhPainPlaceholder: "जैसे: आइबूप्रोफेन, कोडीन, मॉर्फिन",
@@ -510,6 +525,8 @@ window.addEventListener('DOMContentLoaded',function(){
       avUnder5: "ਹੁਣੇ (5 ਮਿੰਟ ਤੋਂ ਘੱਟ)", av5to15: "5 ਤੋਂ 15 ਮਿੰਟ ਪਹਿਲਾਂ", av15to30: "15 ਤੋਂ 30 ਮਿੰਟ ਪਹਿਲਾਂ",
       av30to60: "30 ਤੋਂ 60 ਮਿੰਟ ਪਹਿਲਾਂ", avOver60: "60 ਮਿੰਟ ਤੋਂ ਵੱਧ",
       secMedical: "ਸੰਬੰਧਿਤ ਡਾਕਟਰੀ ਜਾਣਕਾਰੀ", medHelper: "ਜੋ ਵੀ ਲਾਗੂ ਹੋਵੇ ਚੁਣੋ।",
+      secCurrentMeds: "ਮੌਜੂਦਾ ਦਵਾਈਆਂ", curMedsHelper: "ਜੋ ਵੀ ਤੁਸੀਂ ਨਿਯਮਿਤ ਤੌਰ 'ਤੇ ਲੈਂਦੇ ਹੋ ਉਹ ਲਿਖੋ। ਵਿਕਲਪਿਕ।",
+      curMedsLabel: "ਮੌਜੂਦਾ ਦਵਾਈਆਂ", curMedsPlaceholder: "ਨੁਸਖਾ, ਬਿਨਾਂ ਨੁਸਖੇ, ਸਪਲੀਮੈਂਟ, ਜੜੀ-ਬੂਟੀਆਂ — ਜੇ ਖੁਰਾਕ ਪਤਾ ਹੈ ਤਾਂ ਸ਼ਾਮਲ ਕਰੋ",
       mhAntibiotics: "ਐਂਟੀਬਾਇਓਟਿਕ ਤੋਂ ਐਲਰਜੀ", mhPain: "ਦਰਦ ਦੀ ਦਵਾਈ ਤੋਂ ਐਲਰਜੀ", mhLatex: "ਲੈਟੈਕਸ ਤੋਂ ਐਲਰਜੀ", mhBlood: "ਖੂਨ ਪਤਲਾ ਕਰਨ ਦੀ ਦਵਾਈ",
       mhAntibioticsLabel: "ਕਿਹੜਾ ਐਂਟੀਬਾਇਓਟਿਕ?", mhAntibioticsPlaceholder: "ਜਿਵੇਂ: ਪੈਨਿਸਿਲਿਨ, ਐਮੋਕਸੀਸਿਲਿਨ, ਕਲਿੰਡਾਮਾਈਸਿਨ",
       mhPainLabel: "ਕਿਹੜੀ ਦਰਦ ਦੀ ਦਵਾਈ?", mhPainPlaceholder: "ਜਿਵੇਂ: ਆਈਬੂਪ੍ਰੋਫੇਨ, ਕੋਡੀਨ, ਮੋਰਫਿਨ",
@@ -549,6 +566,8 @@ window.addEventListener('DOMContentLoaded',function(){
       avUnder5: "A l'instant (moins de 5 min)", av5to15: "Il y a 5 a 15 min", av15to30: "Il y a 15 a 30 min",
       av30to60: "Il y a 30 a 60 min", avOver60: "Il y a plus de 60 min",
       secMedical: "Informations medicales", medHelper: "Selectionnez tout ce qui s'applique.",
+      secCurrentMeds: "Medicaments actuels", curMedsHelper: "Indiquez tout ce que vous prenez regulierement. Facultatif.",
+      curMedsLabel: "Medicaments actuels", curMedsPlaceholder: "Sur ordonnance, en vente libre, supplements, plantes — incluez la dose si connue",
       mhAntibiotics: "Allergie aux antibiotiques", mhPain: "Allergie aux analgesiques", mhLatex: "Allergie au latex", mhBlood: "Anticoagulants",
       mhAntibioticsLabel: "Quel(s) antibiotique(s)?", mhAntibioticsPlaceholder: "par exemple penicilline, amoxicilline, clindamycine",
       mhPainLabel: "Quel(s) analgesique(s)?", mhPainPlaceholder: "par exemple ibuprofene, codeine, morphine",
@@ -588,6 +607,8 @@ window.addEventListener('DOMContentLoaded',function(){
       avUnder5: "همین الان (کمتر از 5 دقیقه)", av5to15: "5 تا 15 دقیقه پیش", av15to30: "15 تا 30 دقیقه پیش",
       av30to60: "30 تا 60 دقیقه پیش", avOver60: "بیش از 60 دقیقه",
       secMedical: "اطلاعات پزشکی", medHelper: "هر کدام که صدق می کند انتخاب کنید.",
+      secCurrentMeds: "داروهای فعلی", curMedsHelper: "هر چیزی که به طور منظم مصرف می کنید را ذکر کنید. اختیاری.",
+      curMedsLabel: "داروهای فعلی", curMedsPlaceholder: "نسخه ای، بدون نسخه، مکمل ها، گیاهی — در صورت اطلاع، دوز را ذکر کنید",
       mhAntibiotics: "حساسیت به آنتی بیوتیک", mhPain: "حساسیت به مسکن", mhLatex: "حساسیت به لاتکس", mhBlood: "داروهای رقیق کننده خون",
       mhAntibioticsLabel: "کدام آنتی بیوتیک؟", mhAntibioticsPlaceholder: "مثال: پنی سیلین، آموکسی سیلین، کلیندامایسین",
       mhPainLabel: "کدام مسکن؟", mhPainPlaceholder: "مثال: ایبوپروفن، کدئین، مورفین",
@@ -627,6 +648,8 @@ window.addEventListener('DOMContentLoaded',function(){
       avUnder5: "Hadda (ka yar 5 daqiiqo)", av5to15: "5-15 daqiiqo ka hor", av15to30: "15-30 daqiiqo ka hor",
       av30to60: "30-60 daqiiqo ka hor", avOver60: "Ka badan 60 daqiiqo",
       secMedical: "Macluumaadka caafimaadka", medHelper: "Dooro dhammaan kuwa khuseeya.",
+      secCurrentMeds: "Daawooyinka aad hadda qaadaneysid", curMedsHelper: "Liis garee waxa aad si joogto ah u qaadato. Ikhtiyaari ah.",
+      curMedsLabel: "Daawooyinka aad hadda qaadaneysid", curMedsPlaceholder: "Daawooyin la qoray, kuwo aan la qorin, dheeraad, geedo — qor xaddiga haddaad ogtahay",
       mhAntibiotics: "Xasaasiyadda antibiyootiga", mhPain: "Xasaasiyadda daawada xanuunka", mhLatex: "Xasaasiyadda laatekis", mhBlood: "Daawada dhiiga jilicisa",
       mhAntibioticsLabel: "Antibiyootigee?", mhAntibioticsPlaceholder: "tusaale: benisilin, amoksisilin, klindamaaysin",
       mhPainLabel: "Daawadee xanuunka?", mhPainPlaceholder: "tusaale: aybuubroofeen, kodeeyin, moorfiin",
@@ -666,6 +689,8 @@ window.addEventListener('DOMContentLoaded',function(){
       avUnder5: "Ahora mismo (menos de 5 min)", av5to15: "Hace 5-15 min", av15to30: "Hace 15-30 min",
       av30to60: "Hace 30-60 min", avOver60: "Mas de 60 min",
       secMedical: "Informacion medica", medHelper: "Seleccione todo lo que aplique.",
+      secCurrentMeds: "Medicamentos actuales", curMedsHelper: "Liste lo que toma regularmente. Opcional.",
+      curMedsLabel: "Medicamentos actuales", curMedsPlaceholder: "Recetados, sin receta, suplementos, herbales — incluya la dosis si la sabe",
       mhAntibiotics: "Alergia a antibioticos", mhPain: "Alergia a analgesicos", mhLatex: "Alergia al latex", mhBlood: "Anticoagulantes",
       mhAntibioticsLabel: "Cual(es) antibiotico(s)?", mhAntibioticsPlaceholder: "por ejemplo penicilina, amoxicilina, clindamicina",
       mhPainLabel: "Cual(es) analgesico(s)?", mhPainPlaceholder: "por ejemplo ibuprofeno, codeina, morfina",
@@ -705,6 +730,8 @@ window.addEventListener('DOMContentLoaded',function(){
       avUnder5: "刚刚（不到5分钟）", av5to15: "5-15分钟前", av15to30: "15-30分钟前",
       av30to60: "30-60分钟前", avOver60: "超过60分钟",
       secMedical: "相关医疗信息", medHelper: "选择所有适用项。",
+      secCurrentMeds: "目前服用的药物", curMedsHelper: "列出您定期服用的任何药物。可选。",
+      curMedsLabel: "目前服用的药物", curMedsPlaceholder: "处方药、非处方药、补品、草药 — 如知道剂量请注明",
       mhAntibiotics: "抗生素过敏", mhPain: "止痛药过敏", mhLatex: "乳胶过敏", mhBlood: "血液稀释剂",
       mhAntibioticsLabel: "哪种抗生素?", mhAntibioticsPlaceholder: "例如 青霉素、阿莫西林、克林霉素",
       mhPainLabel: "哪种止痛药?", mhPainPlaceholder: "例如 布洛芬、可待因、吗啡",
@@ -753,6 +780,8 @@ window.addEventListener('DOMContentLoaded',function(){
     document.getElementById("sec-about").textContent = t("secAbout");
     document.getElementById("sec-concern").textContent = t("secConcern");
     document.getElementById("sec-medical").textContent = t("secMedical");
+    var secCurMeds = document.getElementById("sec-current-meds");
+    if (secCurMeds) secCurMeds.textContent = t("secCurrentMeds");
     document.getElementById("sec-coverage").textContent = t("secCoverage");
 
     // Field labels
@@ -801,6 +830,12 @@ window.addEventListener('DOMContentLoaded',function(){
     var inpPn = document.getElementById("mh-allergy-pain-detail");
     if (inpPn) inpPn.placeholder = t("mhPainPlaceholder");
     document.getElementById("med-helper").textContent = t("medHelper");
+    var curMedsHelper = document.getElementById("cur-meds-helper");
+    if (curMedsHelper) curMedsHelper.textContent = t("curMedsHelper");
+    var lblCurMeds = document.getElementById("lbl-current-medications");
+    if (lblCurMeds) lblCurMeds.textContent = t("curMedsLabel");
+    var inpCurMeds = document.getElementById("current-medications");
+    if (inpCurMeds) inpCurMeds.placeholder = t("curMedsPlaceholder");
     document.getElementById("cov-helper").textContent = t("covHelper");
     document.getElementById("lbl-coverage").textContent = t("lblCoverage");
 
@@ -848,10 +883,7 @@ window.addEventListener('DOMContentLoaded',function(){
   // Conditional onset: show when complaint mentions symptoms, hide for general inquiries
   // Word boundary \b at start prevents false positives (e.g. "hit" inside "whitening")
   // Compound phrases handle "fell out", "came out", "came off" etc.
-  // Compound symptom words (toothache, toothpain, etc.) added explicitly because
-  // \bache does not match inside "toothache" — continuous letters mean no word
-  // boundary between "tooth" and "ache."
-  var SYMPTOM_KEYWORDS = /\b(pain|painful|hurt|ache|aching|sore|tender|throb|sharp|burn|sting|discomfort|uncomfortable|swell|swollen|puffy|inflam|bump|lump|broke|broken|crack|fractur|shatter|split|snap|chip|bleed|blood|bled|knock|loose|wobbly|wiggly|shift|moved|moving|sensitive|hot|cold|infect|fever|abscess|pus|drain|trauma|fall|fell|impact|hit|struck|punch|accident|collision|injur|numb|tingl|extract|pull|remov|filling|crown|cap|wisdom|cavity|decay|rotten|emergency|urgent|gum|toothache|toothaches|toothpain|gumache|earache|jawache|headache|migraine)|fell.out|came.out|came.off|broke.off|knocked.out|lost.{0,6}(tooth|teeth|filling|crown|cap)/i;
+  var SYMPTOM_KEYWORDS = /\b(pain|painful|hurt|ache|aching|sore|tender|throb|sharp|burn|sting|discomfort|uncomfortable|swell|swollen|puffy|inflam|bump|lump|broke|broken|crack|fractur|shatter|split|snap|chip|bleed|blood|bled|knock|loose|wobbly|wiggly|shift|moved|moving|sensitive|hot|cold|infect|fever|abscess|pus|drain|trauma|fall|fell|impact|hit|struck|punch|accident|collision|injur|numb|tingl|extract|pull|remov|filling|crown|cap|wisdom|cavity|decay|rotten|emergency|urgent|gum)|fell.out|came.out|came.off|broke.off|knocked.out|lost.{0,6}(tooth|teeth|filling|crown|cap)/i;
   var onsetWrapper = document.getElementById("onset-wrapper");
   var onsetSelect = document.getElementById("onset-bucket");
   var ccTextarea = document.getElementById("chief-complaint");
@@ -955,6 +987,7 @@ window.addEventListener('DOMContentLoaded',function(){
         },
         avulsion_time_bucket: isChecked("rf-avulsion") ? getOptionalValue("avulsion-time") : null,
         patient_email: getOptionalValue("patient-email"),
+        current_medications: getOptionalValue("current-medications"),
         intake_source: getIntakeSource(),
         intake_version: "widget-v1",
         intake_acknowledged_at: new Date().toISOString(),
