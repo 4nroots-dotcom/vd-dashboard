@@ -50,10 +50,20 @@
       "appointment", "appt", "appointment request", "book", "booking", "schedule", "reschedule",
       "cleaning", "checkup", "check-up", "check up", "exam",
       "new patient", "consult", "consultation", "first visit",
-      "whitening", "filling", "crown", "root canal", "extraction",
+      "whitening", "filling", "fillings", "crown", "crowns", "root canal", "extraction",
       "braces", "invisalign", "orthodontics", "retainer",
+      "implant", "implants", "dental implant", "dental implants",
+      "denture", "dentures", "partial denture",
+      "veneer", "veneers", "dental veneers",
+      "bonding", "dental bonding",
+      "bridge", "bridges", "dental bridge",
+      "mouth guard", "mouthguard", "night guard", "nightguard",
+      "sealant", "sealants",
+      "inlay", "onlay",
+      "gum treatment", "periodontal",
       "see a dentist", "see the dentist", "make an appointment", "see someone",
-      "available", "availability", "opening", "slot"
+      "available", "availability", "opening", "slot",
+      "interested in", "looking into", "thinking about", "considering"
     ],
     "deflect_keywords": [
       "insurance", "coverage", "covered", "claim", "claims", "policy",
@@ -78,12 +88,12 @@
   },
 
   "handoff": {
-    "clinical_handoff_message": "Let me bring up a quick form to gather a few important details for our team. Once you submit, Sam will continue the conversation with you by text.",
+    "clinical_handoff_message": "Let me bring up a quick form to gather a few important details for our team. Once you submit, Sam will follow up with you to complete the assessment — you can pick voice or text on the form.",
     "empathy_fallback": "I'm sorry to hear that.",
     "appointment_empathy_fallback": "Happy to help with that.",
     "appointment_time_ask_message": "What day and time work for you?",
     "appointment_time_ack_template": "Got it — {time}.",
-    "appointment_contact_ask_message": "And what's your name and a contact number — unless you'd rather call us directly?",
+    "appointment_contact_ask_message": "And what's your name and a phone number we can reach you at?",
     "appointment_confirm_body": "I've passed your request to our office team — they'll reach out to confirm the details. Is there anything else I can help with?",
     "deflect_ask_message": "Our team would be happy to walk you through that individually. If you could please share your name and contact information, they'll reach out with the specifics.",
     "deflect_confirm_body": "Our team will be in touch with the specifics. Is there anything else I can help with?",
