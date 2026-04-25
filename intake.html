@@ -654,6 +654,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
 
       <div class="section">
+        <div class="section-title">Current medications</div>
+        <div class="helper" id="cur-meds-helper" style="margin-bottom:10px;">List anything you take regularly. Optional.</div>
+        <div class="field">
+          <label for="current-medications">Current medications</label>
+          <textarea class="textarea" id="current-medications" placeholder="Prescription, over-the-counter, supplements, herbal — include dose if known"></textarea>
+        </div>
+      </div>
+
+      <div class="section">
         <div class="section-title">Coverage information (optional)</div>
         <div class="helper" id="cov-helper" style="margin-bottom:10px;">This helps with follow-up planning only.</div>
         <div class="field">
@@ -784,6 +793,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelAvulsionTime: "How long ago did the tooth come out?", avulsionHelper: "This helps the dentist assess the urgency.",
         avUnder5: "Just now (under 5 minutes)", av5to15: "5 to 15 minutes ago", av15to30: "15 to 30 minutes ago", av30to60: "30 to 60 minutes ago", avOver60: "More than 60 minutes ago",
         sectionMedical: "Relevant medical information", medicalHelper: "Select any that apply.",
+        sectionCurrentMeds: "Current medications", currentMedsHelper: "List anything you take regularly. Optional.",
+        currentMedsLabel: "Current medications", currentMedsPlaceholder: "Prescription, over-the-counter, supplements, herbal — include dose if known",
         mhAllergyAntibiotics: "Allergy to antibiotics", mhAllergyPain: "Allergy to pain medication", mhAllergyLatex: "Allergy to latex", mhBloodThinners: "Blood thinners", mhDiabetes: "Diabetes", mhPregnancy: "Pregnancy", mhImmuno: "Immunocompromised", mhOther: "Other important medical condition", mhNone: "None of the above",
         mhOtherLabel: "Please tell us more", mhOtherPlaceholder: "Anything important we should know",
         mhAllergyAntibioticsLabel: "Which antibiotic(s)?", mhAllergyAntibioticsPlaceholder: "e.g., penicillin, amoxicillin, clindamycin",
@@ -850,6 +861,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelAvulsionTime: "منذ متى خرج السن؟", avulsionHelper: "هذا يساعد طبيب الأسنان في تقييم الحالة.",
         avUnder5: "الآن (أقل من 5 دقائق)", av5to15: "من 5 إلى 15 دقيقة", av15to30: "من 15 إلى 30 دقيقة", av30to60: "من 30 إلى 60 دقيقة", avOver60: "أكثر من 60 دقيقة",
         sectionMedical: "معلومات طبية ذات صلة", medicalHelper: "اختر كل ما ينطبق.",
+        sectionCurrentMeds: "الأدوية الحالية", currentMedsHelper: "اذكر أي شيء تتناوله بانتظام. اختياري.",
+        currentMedsLabel: "الأدوية الحالية", currentMedsPlaceholder: "وصفة طبية، بدون وصفة، مكملات، أعشاب — اذكر الجرعة إن أمكن",
         mhAllergyAntibiotics: "حساسية من المضادات الحيوية", mhAllergyPain: "حساسية من مسكنات الألم", mhAllergyLatex: "حساسية من اللاتكس", mhBloodThinners: "أدوية مميعة للدم", mhDiabetes: "السكري", mhPregnancy: "الحمل", mhImmuno: "ضعف المناعة", mhOther: "حالة طبية مهمة أخرى", mhNone: "لا شيء مما سبق",
         mhOtherLabel: "يرجى إخبارنا بالمزيد", mhOtherPlaceholder: "أي شيء مهم يجب أن نعرفه",
         mhAllergyAntibioticsLabel: "أي مضاد حيوي؟", mhAllergyAntibioticsPlaceholder: "مثال: البنسلين، أموكسيسيلين، كليندامايسين",
@@ -913,6 +926,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelAvulsionTime: "दांत कब निकला?", avulsionHelper: "इससे दंत चिकित्सक को तात्कालिकता का आकलन करने में मदद मिलती है।",
         avUnder5: "अभी (5 मिनट से कम)", av5to15: "5 से 15 मिनट पहले", av15to30: "15 से 30 मिनट पहले", av30to60: "30 से 60 मिनट पहले", avOver60: "60 मिनट से अधिक पहले",
         sectionMedical: "संबंधित चिकित्सा जानकारी", medicalHelper: "जो भी लागू हो चुनें।",
+        sectionCurrentMeds: "वर्तमान दवाएं", currentMedsHelper: "जो भी आप नियमित रूप से लेते हैं उसे लिखें। वैकल्पिक।",
+        currentMedsLabel: "वर्तमान दवाएं", currentMedsPlaceholder: "नुस्खा, बिना नुस्खे की, सप्लीमेंट, हर्बल — खुराक मालूम हो तो शामिल करें",
         mhAllergyAntibiotics: "एंटीबायोटिक से एलर्जी", mhAllergyPain: "दर्द की दवा से एलर्जी", mhAllergyLatex: "लेटेक्स से एलर्जी", mhBloodThinners: "रक्त पतला करने की दवा", mhDiabetes: "मधुमेह", mhPregnancy: "गर्भावस्था", mhImmuno: "कमज़ोर प्रतिरक्षा", mhOther: "अन्य महत्वपूर्ण चिकित्सा स्थिति", mhNone: "इनमें से कोई नहीं",
         mhOtherLabel: "कृपया और बताएं", mhOtherPlaceholder: "कुछ भी महत्वपूर्ण जो हमें पता होना चाहिए",
         mhAllergyAntibioticsLabel: "कौन सा एंटीबायोटिक?", mhAllergyAntibioticsPlaceholder: "जैसे: पेनिसिलिन, एमोक्सिसिलिन, क्लिंडामाइसिन",
@@ -966,6 +981,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelAvulsionTime: "ਦੰਦ ਕਦੋਂ ਨਿਕਲਿਆ?", avulsionHelper: "ਇਹ ਡਾਕਟਰ ਨੂੰ ਜ਼ਰੂਰੀਤਾ ਦਾ ਮੁਲਾਂਕਣ ਕਰਨ ਵਿੱਚ ਮਦਦ ਕਰਦਾ ਹੈ।",
         avUnder5: "ਹੁਣੇ (5 ਮਿੰਟ ਤੋਂ ਘੱਟ)", av5to15: "5 ਤੋਂ 15 ਮਿੰਟ ਪਹਿਲਾਂ", av15to30: "15 ਤੋਂ 30 ਮਿੰਟ ਪਹਿਲਾਂ", av30to60: "30 ਤੋਂ 60 ਮਿੰਟ ਪਹਿਲਾਂ", avOver60: "60 ਮਿੰਟ ਤੋਂ ਵੱਧ",
         sectionMedical: "ਸੰਬੰਧਿਤ ਡਾਕਟਰੀ ਜਾਣਕਾਰੀ", medicalHelper: "ਜੋ ਵੀ ਲਾਗੂ ਹੋਵੇ ਚੁਣੋ।",
+        sectionCurrentMeds: "ਮੌਜੂਦਾ ਦਵਾਈਆਂ", currentMedsHelper: "ਜੋ ਵੀ ਤੁਸੀਂ ਨਿਯਮਿਤ ਤੌਰ 'ਤੇ ਲੈਂਦੇ ਹੋ ਉਹ ਲਿਖੋ। ਵਿਕਲਪਿਕ।",
+        currentMedsLabel: "ਮੌਜੂਦਾ ਦਵਾਈਆਂ", currentMedsPlaceholder: "ਨੁਸਖਾ, ਬਿਨਾਂ ਨੁਸਖੇ, ਸਪਲੀਮੈਂਟ, ਜੜੀ-ਬੂਟੀਆਂ — ਜੇ ਖੁਰਾਕ ਪਤਾ ਹੈ ਤਾਂ ਸ਼ਾਮਲ ਕਰੋ",
         mhAllergyAntibiotics: "ਐਂਟੀਬਾਇਓਟਿਕ ਤੋਂ ਐਲਰਜੀ", mhAllergyPain: "ਦਰਦ ਦੀ ਦਵਾਈ ਤੋਂ ਐਲਰਜੀ", mhAllergyLatex: "ਲੈਟੈਕਸ ਤੋਂ ਐਲਰਜੀ", mhBloodThinners: "ਖੂਨ ਪਤਲਾ ਕਰਨ ਦੀ ਦਵਾਈ", mhDiabetes: "ਸ਼ੂਗਰ", mhPregnancy: "ਗਰਭ ਅਵਸਥਾ", mhImmuno: "ਕਮਜ਼ੋਰ ਇਮਿਊਨ ਸਿਸਟਮ", mhOther: "ਹੋਰ ਮਹੱਤਵਪੂਰਨ ਡਾਕਟਰੀ ਸਥਿਤੀ", mhNone: "ਇਹਨਾਂ ਵਿੱਚੋਂ ਕੋਈ ਨਹੀਂ",
         mhOtherLabel: "ਕਿਰਪਾ ਕਰਕੇ ਹੋਰ ਦੱਸੋ", mhOtherPlaceholder: "ਕੁਝ ਵੀ ਮਹੱਤਵਪੂਰਨ",
         mhAllergyAntibioticsLabel: "ਕਿਹੜਾ ਐਂਟੀਬਾਇਓਟਿਕ?", mhAllergyAntibioticsPlaceholder: "ਜਿਵੇਂ: ਪੈਨਿਸਿਲਿਨ, ਐਮੋਕਸੀਸਿਲਿਨ, ਕਲਿੰਡਾਮਾਈਸਿਨ",
@@ -1011,6 +1028,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelAvulsionTime: "Il y a combien de temps que la dent est sortie?", avulsionHelper: "Cela aide le dentiste a evaluer l'urgence.",
         avUnder5: "A l'instant (moins de 5 minutes)", av5to15: "Il y a 5 a 15 minutes", av15to30: "Il y a 15 a 30 minutes", av30to60: "Il y a 30 a 60 minutes", avOver60: "Il y a plus de 60 minutes",
         sectionMedical: "Informations medicales pertinentes", medicalHelper: "Selectionnez tout ce qui s'applique.",
+        sectionCurrentMeds: "Medicaments actuels", currentMedsHelper: "Indiquez tout ce que vous prenez regulierement. Facultatif.",
+        currentMedsLabel: "Medicaments actuels", currentMedsPlaceholder: "Sur ordonnance, en vente libre, supplements, plantes — incluez la dose si connue",
         mhAllergyAntibiotics: "Allergie aux antibiotiques", mhAllergyPain: "Allergie aux analgesiques", mhAllergyLatex: "Allergie au latex", mhBloodThinners: "Anticoagulants", mhDiabetes: "Diabete", mhPregnancy: "Grossesse", mhImmuno: "Immunodeprime", mhOther: "Autre condition medicale importante", mhNone: "Aucun de ces problemes",
         mhOtherLabel: "Veuillez nous en dire plus", mhOtherPlaceholder: "Tout ce qui est important a savoir",
         mhAllergyAntibioticsLabel: "Quel(s) antibiotique(s)?", mhAllergyAntibioticsPlaceholder: "par exemple penicilline, amoxicilline, clindamycine",
@@ -1056,6 +1075,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelAvulsionTime: "چه مدت پیش دندان کنده شد؟", avulsionHelper: "این به دندانپزشک کمک می کند فوریت را ارزیابی کند.",
         avUnder5: "همین الان (کمتر از 5 دقیقه)", av5to15: "5 تا 15 دقیقه پیش", av15to30: "15 تا 30 دقیقه پیش", av30to60: "30 تا 60 دقیقه پیش", avOver60: "بیش از 60 دقیقه",
         sectionMedical: "اطلاعات پزشکی مرتبط", medicalHelper: "هر کدام که صدق می کند را انتخاب کنید.",
+        sectionCurrentMeds: "داروهای فعلی", currentMedsHelper: "هر چیزی که به طور منظم مصرف می کنید را ذکر کنید. اختیاری.",
+        currentMedsLabel: "داروهای فعلی", currentMedsPlaceholder: "نسخه ای، بدون نسخه، مکمل ها، گیاهی — در صورت اطلاع، دوز را ذکر کنید",
         mhAllergyAntibiotics: "حساسیت به آنتی بیوتیک", mhAllergyPain: "حساسیت به مسکن", mhAllergyLatex: "حساسیت به لاتکس", mhBloodThinners: "داروهای رقیق کننده خون", mhDiabetes: "دیابت", mhPregnancy: "بارداری", mhImmuno: "ضعف ایمنی", mhOther: "وضعیت پزشکی مهم دیگر", mhNone: "هیچکدام از موارد بالا",
         mhOtherLabel: "لطفا بیشتر توضیح دهید", mhOtherPlaceholder: "هر چیز مهمی که باید بدانیم",
         mhAllergyAntibioticsLabel: "کدام آنتی بیوتیک؟", mhAllergyAntibioticsPlaceholder: "مثال: پنی سیلین، آموکسی سیلین، کلیندامایسین",
@@ -1099,6 +1120,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelAvulsionTime: "Goorma buu ilkuhu soo baxay?", avulsionHelper: "Tani waxay caawisaa dhakhtarka inuu qiimeeyo degdegga.",
         avUnder5: "Hadda (ka yar 5 daqiiqo)", av5to15: "5 ilaa 15 daqiiqo ka hor", av15to30: "15 ilaa 30 daqiiqo ka hor", av30to60: "30 ilaa 60 daqiiqo ka hor", avOver60: "Ka badan 60 daqiiqo",
         sectionMedical: "Macluumaadka caafimaadka", medicalHelper: "Dooro dhammaan kuwa khuseeya.",
+        sectionCurrentMeds: "Daawooyinka aad hadda qaadaneysid", currentMedsHelper: "Liis garee waxa aad si joogto ah u qaadato. Ikhtiyaari ah.",
+        currentMedsLabel: "Daawooyinka aad hadda qaadaneysid", currentMedsPlaceholder: "Daawooyin la qoray, kuwo aan la qorin, dheeraad, geedo — qor xaddiga haddaad ogtahay",
         mhAllergyAntibiotics: "Xasaasiyadda antibiyootiga", mhAllergyPain: "Xasaasiyadda daawada xanuunka", mhAllergyLatex: "Xasaasiyadda laatekis", mhBloodThinners: "Daawada dhiiga jilicisa", mhDiabetes: "Sonkorowga", mhPregnancy: "Uurka", mhImmuno: "Difaaca jirka oo daciif ah", mhOther: "Xaalad caafimaad oo muhiim ah", mhNone: "Midkoodna ma ahan",
         mhOtherLabel: "Fadlan noo sheeg wax badan", mhOtherPlaceholder: "Wax muhiim ah oo aan ogaan lahayn",
         mhAllergyAntibioticsLabel: "Antibiyootigee?", mhAllergyAntibioticsPlaceholder: "tusaale: benisilin, amoksisilin, klindamaaysin",
@@ -1141,6 +1164,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelAvulsionTime: "Hace cuanto se salio el diente?", avulsionHelper: "Esto ayuda al dentista a evaluar la urgencia.",
         avUnder5: "Ahora mismo (menos de 5 minutos)", av5to15: "Hace 5 a 15 minutos", av15to30: "Hace 15 a 30 minutos", av30to60: "Hace 30 a 60 minutos", avOver60: "Mas de 60 minutos",
         sectionMedical: "Informacion medica relevante", medicalHelper: "Seleccione todo lo que aplique.",
+        sectionCurrentMeds: "Medicamentos actuales", currentMedsHelper: "Liste lo que toma regularmente. Opcional.",
+        currentMedsLabel: "Medicamentos actuales", currentMedsPlaceholder: "Recetados, sin receta, suplementos, herbales — incluya la dosis si la sabe",
         mhAllergyAntibiotics: "Alergia a antibioticos", mhAllergyPain: "Alergia a analgesicos", mhAllergyLatex: "Alergia al latex", mhBloodThinners: "Anticoagulantes", mhDiabetes: "Diabetes", mhPregnancy: "Embarazo", mhImmuno: "Inmunocomprometido", mhOther: "Otra condicion medica importante", mhNone: "Ninguno de los anteriores",
         mhOtherLabel: "Por favor diganos mas", mhOtherPlaceholder: "Cualquier cosa importante que debamos saber",
         mhAllergyAntibioticsLabel: "Cual(es) antibiotico(s)?", mhAllergyAntibioticsPlaceholder: "por ejemplo penicilina, amoxicilina, clindamicina",
@@ -1184,6 +1209,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelAvulsionTime: "牙齿脱落多久了？", avulsionHelper: "这有助于牙医评估紧急程度。",
         avUnder5: "刚刚（不到5分钟）", av5to15: "5到15分钟前", av15to30: "15到30分钟前", av30to60: "30到60分钟前", avOver60: "超过60分钟",
         sectionMedical: "相关医疗信息", medicalHelper: "选择所有适用项。",
+        sectionCurrentMeds: "目前服用的药物", currentMedsHelper: "列出您定期服用的任何药物。可选。",
+        currentMedsLabel: "目前服用的药物", currentMedsPlaceholder: "处方药、非处方药、补品、草药 — 如知道剂量请注明",
         mhAllergyAntibiotics: "抗生素过敏", mhAllergyPain: "止痛药过敏", mhAllergyLatex: "乳胶过敏", mhBloodThinners: "血液稀释剂", mhDiabetes: "糖尿病", mhPregnancy: "怀孕", mhImmuno: "免疫力低下", mhOther: "其他重要医疗状况", mhNone: "以上都没有",
         mhOtherLabel: "请告诉我们更多", mhOtherPlaceholder: "任何我们应该知道的重要信息",
         mhAllergyAntibioticsLabel: "哪种抗生素?", mhAllergyAntibioticsPlaceholder: "例如 青霉素、阿莫西林、克林霉素",
@@ -1281,7 +1308,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       if (sections[0]) sections[0].textContent = t("sectionAbout");
       if (sections[1]) sections[1].textContent = t("sectionConcern");
       if (sections[2]) sections[2].textContent = t("sectionMedical");
-      if (sections[3]) sections[3].textContent = t("sectionCoverage");
+      if (sections[3]) sections[3].textContent = t("sectionCurrentMeds");
+      if (sections[4]) sections[4].textContent = t("sectionCoverage");
 
       // Demographics
       var setLabel = function(id, key) { var el = document.querySelector("label[for='" + id + "']"); if (el) el.textContent = t(key); };
@@ -1345,9 +1373,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       // Medical/coverage helpers
       var medHelper = document.getElementById("med-helper");
+      var curMedsHelper = document.getElementById("cur-meds-helper");
       var covHelper = document.getElementById("cov-helper");
       if (medHelper) medHelper.textContent = t("medicalHelper");
+      if (curMedsHelper) curMedsHelper.textContent = t("currentMedsHelper");
       if (covHelper) covHelper.textContent = t("coverageHelper");
+
+      // Current medications field
+      setLabel("current-medications", "currentMedsLabel");
+      setPlaceholder("current-medications", "currentMedsPlaceholder");
     }
 
     // Language bar click handler
@@ -1552,10 +1586,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     // Conditional onset: show when complaint mentions symptoms, hide for general inquiries
     // Word boundary \b at start prevents false positives (e.g. "hit" inside "whitening")
     // Compound phrases handle "fell out", "came out", "came off" etc.
-    // Compound symptom words (toothache, toothpain, etc.) added explicitly because
-    // \bache does not match inside "toothache" — continuous letters mean no word
-    // boundary between "tooth" and "ache."
-    var SYMPTOM_KEYWORDS = /\b(pain|painful|hurt|ache|aching|sore|tender|throb|sharp|burn|sting|discomfort|uncomfortable|swell|swollen|puffy|inflam|bump|lump|broke|broken|crack|fractur|shatter|split|snap|chip|bleed|blood|bled|knock|loose|wobbly|wiggly|shift|moved|moving|sensitive|hot|cold|infect|fever|abscess|pus|drain|trauma|fall|fell|impact|hit|struck|punch|accident|collision|injur|numb|tingl|extract|pull|remov|filling|crown|cap|wisdom|cavity|decay|rotten|emergency|urgent|gum|toothache|toothaches|toothpain|gumache|earache|jawache|headache|migraine)|fell.out|came.out|came.off|broke.off|knocked.out|lost.{0,6}(tooth|teeth|filling|crown|cap)/i;
+    var SYMPTOM_KEYWORDS = /\b(pain|painful|hurt|ache|aching|sore|tender|throb|sharp|burn|sting|discomfort|uncomfortable|swell|swollen|puffy|inflam|bump|lump|broke|broken|crack|fractur|shatter|split|snap|chip|bleed|blood|bled|knock|loose|wobbly|wiggly|shift|moved|moving|sensitive|hot|cold|infect|fever|abscess|pus|drain|trauma|fall|fell|impact|hit|struck|punch|accident|collision|injur|numb|tingl|extract|pull|remov|filling|crown|cap|wisdom|cavity|decay|rotten|emergency|urgent|gum)|fell.out|came.out|came.off|broke.off|knocked.out|lost.{0,6}(tooth|teeth|filling|crown|cap)/i;
     var onsetWrapper = document.getElementById("onset-wrapper");
     var onsetSelect = document.getElementById("onset-bucket");
     var ccTextarea = document.getElementById("chief-complaint");
@@ -1656,6 +1687,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         onsetBucket: getValue("onset-bucket"),
         patientEmail: getOptionalValue("patient-email"),
         coverageStatus: getOptionalValue("coverage-status"),
+        currentMedications: getOptionalValue("current-medications"),
         acknowledged: isChecked("intake-acknowledge"),
         avulsionTime: document.getElementById("rf-avulsion").checked
           ? (getOptionalValue("avulsion-time") || null) : null,
@@ -1727,6 +1759,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         intake_medical_flags: data.intakeMedicalFlags,
         avulsion_time_bucket: data.avulsionTime,
         patient_email: data.patientEmail || null,
+        current_medications: data.currentMedications || null,
         intake_source: getIntakeSource(),
         intake_version: "v2",
         intake_acknowledged_at: new Date().toISOString(),
@@ -1835,6 +1868,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           mhOther: isChecked("mh-other"),
           mhOtherDetail: getValue("mh-other-detail"),
           mhNone: isChecked("mh-none"),
+          currentMedications: getValue("current-medications"),
           acknowledged: isChecked("intake-acknowledge")
         };
         sessionStorage.setItem(STATE_KEY, JSON.stringify(state));
@@ -1873,6 +1907,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         setCheck("mh-other", s.mhOther);
         setVal("mh-other-detail", s.mhOtherDetail);
         setCheck("mh-none", s.mhNone);
+        setVal("current-medications", s.currentMedications);
         setCheck("intake-acknowledge", s.acknowledged);
         toggleOtherMedicalDetail();
         toggleAllergyAntibioticsDetail();
