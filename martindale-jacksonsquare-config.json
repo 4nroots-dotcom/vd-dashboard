@@ -2,13 +2,25 @@
   "practice_id": "martindale-jacksonsquare",
   "practice_name": "Martindale Dental",
   "practice_location": "Jackson Square, Hamilton",
-  "config_version": "1.3",
-  "last_updated": "2026-04-24",
+  "config_version": "2.0",
+  "last_updated": "2026-04-25",
+
+  "supported_languages": ["en", "fr", "es", "ar", "zh", "pa", "hi", "fa", "so"],
+  "default_language": "en",
+  "language_display_names": {
+    "en": "English",
+    "fr": "Français",
+    "es": "Español",
+    "ar": "العربية",
+    "zh": "中文",
+    "pa": "ਪੰਜਾਬੀ",
+    "hi": "हिन्दी",
+    "fa": "فارسی",
+    "so": "Soomaali"
+  },
 
   "bot": {
     "name": "Sam",
-    "disclosure": "I'm Martindale Dental's AI assistant",
-    "greeting": "Hi! I'm Sam, Martindale Dental's AI assistant. I can help with appointment questions, office info, or any dental concern — from routine questions to a broken tooth or sudden pain. What's going on?",
     "typing_indicator_ms": 600
   },
 
@@ -26,7 +38,7 @@
   "branding_assets": {
     "header_logo_url": "https://vd-dashboard-iota.vercel.app/martindale-logo.svg",
     "header_logo_alt": "Martindale Dental",
-    "header_logo_height_px": 32,
+    "header_logo_height_px": 28,
     "header_logo_is_icon_only": true,
     "header_shows_practice_name": true,
     "header_shows_bot_name": true,
@@ -45,72 +57,12 @@
     "intake_form": "https://vd-dashboard-iota.vercel.app/intake.html",
     "website_home": "https://martindaledental.com/hamilton-dentist/",
     "website_contact": "https://martindaledental.com/hamilton-dentist/contact-hamilton/",
-    "website_faq": "https://martindaledental.com/faq/"
-  },
-
-  "intent_routing": {
-    "clinical_keywords": [
-      "pain", "hurt", "hurts", "hurting", "ache", "aching", "sore", "throbbing",
-      "sharp pain", "severe pain", "excruciating",
-      "swell", "swelling", "swollen", "puffy", "puffed",
-      "bleed", "bleeding", "bloody",
-      "broke", "broken", "cracked", "chipped", "fractured", "split",
-      "accident", "fell", "fall", "hit", "impact", "trauma", "injury", "injured",
-      "emergency", "urgent", "urgently",
-      "knocked out", "fell out", "came out",
-      "abscess", "pus", "infected", "infection", "gum infection",
-      "can't eat", "can't chew", "can't sleep", "cant eat", "cant chew", "cant sleep",
-      "wisdom tooth", "wisdom teeth",
-      "lost filling", "lost crown", "crown fell", "filling fell",
-      "toothache", "jaw pain", "gum pain",
-      "fever", "hot cheek", "face feels hot",
-      "difficulty swallowing", "trouble swallowing", "trouble breathing", "difficulty breathing",
-      "numb", "numbness", "tingling",
-      "chipped tooth", "cracked tooth", "loose tooth"
-    ],
-    "appointment_keywords": [
-      "appointment", "appt", "appointment request", "book", "booking", "schedule", "reschedule",
-      "cleaning", "checkup", "check-up", "check up", "exam",
-      "new patient", "consult", "consultation", "first visit",
-      "whitening", "filling", "crown", "root canal", "extraction",
-      "braces", "invisalign", "orthodontics", "retainer",
-      "see a dentist", "see the dentist", "make an appointment", "see someone",
-      "available", "availability", "opening", "slot"
-    ],
-    "deflect_keywords": [
-      "insurance", "coverage", "covered", "claim", "claims", "policy",
-      "blue cross", "manulife", "sunlife", "green shield", "cdcp", "canada dental",
-      "ontario works", "odsp", "senior discount", "low income",
-      "price", "cost", "how much", "fee", "fees", "rate",
-      "refund", "billing", "invoice", "payment plan", "financing"
-    ],
-    "llm_fallback_enabled": true,
-    "llm_fallback_model": "gpt-4o-mini",
-    "llm_fallback_temperature": 0.0,
-    "llm_fallback_max_tokens": 10
+    "website_faq": "https://martindaledental.com/faq/",
+    "chat_handler_endpoint": "https://zjwnqryeefegqfmamaqd.supabase.co/functions/v1/chat-handler"
   },
 
   "safety": {
-    "self_harm_keywords": [
-      "kill myself", "end my life", "suicide", "suicidal", "want to die",
-      "hurt myself", "self harm", "self-harm"
-    ],
-    "self_harm_response": "I can hear you're going through something really hard. This isn't what I can help with, but please reach out to someone who can — in Canada you can call or text 988 anytime for immediate support. If you're in immediate danger, please call 911.",
-    "abuse_deflection_threshold": 3,
-    "abuse_deflection_response": "I want to help, but I'm not able to continue this way. If you have a dental concern, I'm here. Otherwise you can reach our office at 905-393-8501 during business hours."
-  },
-
-  "handoff": {
-    "clinical_handoff_message": "Let me bring up a quick form to gather a few important details for our team. Once you submit, Sam will continue the conversation with you by text.",
-    "empathy_fallback": "I'm sorry to hear that.",
-    "appointment_ask_message": "We'd be happy to help you with that! Is there a preferred day or time that works for you? If you could please share your name and contact information, our office team will reach out to confirm.",
-    "appointment_confirm_body": "I've passed your request to our office team — they'll reach out to confirm the details. Is there anything else I can help with?",
-    "deflect_ask_message": "Our team would be happy to walk you through that individually. If you could please share your name and contact information, they'll reach out with the specifics.",
-    "deflect_confirm_body": "Our team will be in touch with the specifics. Is there anything else I can help with?",
-    "partial_name_followup": "Thanks! And what name should I put on the message for our team?",
-    "partial_phone_followup_body": "And what's the best phone number or email to reach you at?",
-    "unresolved_fallback_message": "I want to make sure you get the right answer. Would it be okay if our team reached out? If you could please share your name and contact information, they'll follow up.",
-    "prefill_fields": ["patient_name", "patient_phone", "patient_email", "patient_city", "chief_complaint_raw"]
+    "abuse_deflection_threshold": 3
   },
 
   "rate_limits": {
@@ -131,7 +83,7 @@
     "bubble_position": "bottom-right",
     "bubble_offset_px": { "bottom": 20, "right": 20 },
     "bubble_size_px": 56,
-    "panel_size_desktop_px": { "width": 360, "height": 560 },
+    "panel_size_desktop_px": { "width": 380, "height": 580 },
     "panel_mobile_fullscreen": true,
     "mobile_breakpoint_px": 640,
     "pulse_on_first_load": true,
@@ -145,14 +97,13 @@
     "container_id": "GTM-K7XDHFB8",
     "events": {
       "widget_opened": "chat_widget_opened",
+      "widget_closed": "chat_closed",
+      "language_selected": "chat_language_selected",
       "message_sent": "chat_message_sent",
       "message_received": "chat_message_received",
       "intent_resolved": "chat_intent_resolved",
       "intake_opened": "chat_intake_opened",
-      "intake_submitted": "chat_intake_submitted",
-      "closed": "chat_closed"
+      "handoff_to_intake": "chat_handoff_to_intake"
     }
-  },
-
-  "emergency_disclaimer": "If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, please call 911 or go to the nearest emergency room. This chat does not replace emergency care."
+  }
 }
