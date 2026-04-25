@@ -95,8 +95,10 @@ window.addEventListener('DOMContentLoaded', function() {
     display: none; max-width: 100%; max-height: 100%; object-fit: contain;
   }
   /* When the logo loads successfully, JS adds .has-logo and the img replaces
-     the letterform. If the logo URL 404s or errors, the letterform stays. */
-  .header-mark.has-logo { background: var(--text-on-primary); padding: 4px; }
+     the letterform. If the logo URL 404s or errors, the letterform stays.
+     Keep the container background as the header primary green so the
+     white SVG text reads correctly (a white background would wash it out). */
+  .header-mark.has-logo { background: var(--primary); padding: 4px; }
   .header-mark.has-logo .header-mark-fallback { display: none; }
   .header-mark.has-logo .header-mark-img { display: block; }
   .header-text { flex: 1; min-width: 0; }
@@ -284,9 +286,6 @@ window.addEventListener('DOMContentLoaded', function() {
       <div class="header-sub" id="header-disclosure">AI assistant</div>
     </div>
     <div class="header-actions">
-      <button class="header-icon-btn" id="lang-toggle-header" aria-label="Choose language" title="Language">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l6 6"/><path d="M4 14l6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="M22 22l-5-10-5 10"/><path d="M14 18h6"/></svg>
-      </button>
       <button class="header-icon-btn" id="close-btn" aria-label="Close chat" title="Close">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
       </button>
@@ -445,7 +444,6 @@ window.addEventListener('DOMContentLoaded', function() {
     el("composer-input").placeholder = (s.ui_strings && s.ui_strings.input_placeholder) || "Type your message…";
     el("composer-send").setAttribute("aria-label", (s.ui_strings && s.ui_strings.send_button_aria) || "Send message");
     el("close-btn").setAttribute("aria-label", (s.ui_strings && s.ui_strings.close_chat_aria) || "Close chat");
-    el("lang-toggle-header").setAttribute("aria-label", (s.ui_strings && s.ui_strings.language_picker_aria) || "Choose language");
     el("poweredby-text").textContent = (c.ui && c.ui.poweredby_text) ? c.ui.poweredby_text.replace(" VirtualDentist.ai", "") : "Powered by";
     el("footer-lang-toggle").textContent = (s.ui_strings && s.ui_strings.language_picker_label) || "language";
 
@@ -688,18 +686,16 @@ window.addEventListener('DOMContentLoaded', function() {
     renderHeader();
     renderLanguagePicker();
 
-    // Show language picker on first open if no language preference cookie.
+    // Language picker visibility:
+    // - On first open with no language cookie, show picker AND render the
+    //   greeting immediately (so engagement isn't blocked on picking).
+    // - Picker stays visible until the user picks a language OR starts
+    //   typing in the composer. No time-based auto-dismiss — that was too
+    //   aggressive in testing.
     var hasLangCookie = !!getCookie(COOKIE_NAME + "_lang");
     if (!hasLangCookie && state.config.supported_languages && state.config.supported_languages.length > 1) {
       showLanguagePicker(true);
-      // Don't render greeting yet — wait for language selection (or auto-dismiss timeout).
-      // Auto-greet after 5s in detected language if patient doesn't pick.
-      setTimeout(function() {
-        if (!state.greetingShown) {
-          showLanguagePicker(false);
-          showGreetingIfNeeded();
-        }
-      }, 5000);
+      showGreetingIfNeeded();
     } else {
       showLanguagePicker(false);
       showGreetingIfNeeded();
@@ -709,6 +705,10 @@ window.addEventListener('DOMContentLoaded', function() {
     var input = el("composer-input");
     input.addEventListener("input", function() {
       setSendDisabled(input.value.trim().length === 0 || state.inFlight);
+      // First keystroke = patient is engaging — dismiss the picker if visible.
+      if (input.value.length > 0 && state.languagePickerVisible) {
+        showLanguagePicker(false);
+      }
       // Auto-grow textarea
       input.style.height = "auto";
       input.style.height = Math.min(input.scrollHeight, 120) + "px";
@@ -738,9 +738,6 @@ window.addEventListener('DOMContentLoaded', function() {
       if (window.parent !== window) {
         try { window.parent.postMessage({ type: "vd-chat-close" }, "*"); } catch(e) {}
       }
-    });
-    el("lang-toggle-header").addEventListener("click", function() {
-      showLanguagePicker(!state.languagePickerVisible);
     });
     el("footer-lang-toggle").addEventListener("click", function() {
       showLanguagePicker(!state.languagePickerVisible);
