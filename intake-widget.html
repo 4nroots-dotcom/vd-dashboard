@@ -22,18 +22,26 @@ window.addEventListener('DOMContentLoaded',function(){
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --green: #2e7d32;
-      --green-dark: #1b5e20;
-      --green-light: #e8f5e9;
-      --green-border: #a5d6a7;
-      --green-accent: #43a047;
+      /* ─────────────────────────────────────────────────────────────
+         Aligned with martindale-jacksonsquare-config.json v2.0 brand{}
+         CTA green = config accent (#71bb55), hover = darker accent.
+         Subtle backgrounds = config surface. Borders = config border-subtle.
+         Variable names retained for backwards-compat with the rest of
+         this file; values updated.
+         ───────────────────────────────────────────────────────────── */
+      --green: #71bb55;          /* CTA + dominant accent — config accent */
+      --green-dark: #4a8c34;     /* CTA hover — darker accent */
+      --green-light: #f4fbf5;    /* surface tint — config surface */
+      --green-border: #d4e3d8;   /* subtle borders — config border-subtle */
+      --green-accent: #71bb55;   /* highlights/labels (collapsed to --green) */
+      --primary: #1b4d2e;        /* deep-forest primary, available where needed */
       --text-dark: #1a1a1a;
       --text-mid: #4a4a4a;
       --text-light: #717171;
       --bg: #ffffff;
       --surface: #f5f5f5;
       --border: #e0e0e0;
-      --border-active: #2e7d32;
+      --border-active: #71bb55;  /* focus border matches CTA green */
       --error: #c0392b;
       --radius: 10px;
     }
