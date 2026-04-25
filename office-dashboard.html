@@ -1154,7 +1154,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     var result = await sb
       .from("triage_cases")
-      .select("id, patient_name, patient_name_english, patient_phone, patient_dob, patient_city, patient_city_english, patient_email, chief_complaint, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at, revenue_generated, sms_transcript, sms_structured_output, has_sms_continuation, sms_received_at, intake_medical_flags, current_medications, clinical_note, patient_language, extraction_source, source, post_triage_escalation, post_triage_last_message_at")
+      .select("id, patient_name, patient_name_english, patient_phone, patient_dob, patient_city, patient_city_english, patient_email, chief_complaint, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at, revenue_generated, sms_transcript, sms_structured_output, has_sms_continuation, sms_received_at, intake_medical_flags, current_medications, clinical_note, patient_language, extraction_source, source, post_triage_escalation, post_triage_last_message_at, triage_tag")
       .order("created_at", { ascending: currentSortAsc });
 
     if (result.error) {
