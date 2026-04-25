@@ -36,8 +36,22 @@
     config: null,
     open: false,
     iframeLoaded: false,
-    pulseFired: false
+    pulseFired: false,
+    autoOpenScheduled: false
   };
+
+  // ── Cookie helpers ───────────────────────────────────────────────────
+  function getCookie(name) {
+    var v = "; " + document.cookie;
+    var parts = v.split("; " + name + "=");
+    if (parts.length === 2) return parts.pop().split(";").shift();
+    return null;
+  }
+  function setCookie(name, value, hours) {
+    var d = new Date();
+    d.setTime(d.getTime() + hours * 60 * 60 * 1000);
+    document.cookie = name + "=" + value + "; expires=" + d.toUTCString() + "; path=/; SameSite=Lax";
+  }
 
   // ── Style injection — scoped under #vd-chat-mount ────────────────────
   function injectStyles(brand, ui) {
@@ -217,7 +231,24 @@
     state.open ? closePanel(refs) : openPanel(refs);
   }
 
-  // ── Pulse — fires once shortly after page load if config flag set ────
+  // ── Auto-open on first-ever visit ────────────────────────────────────
+  // Phase 0 discovery strategy: patients arriving at the dental site are
+  // there for a reason (toothache, lost filling, looking for emergency
+  // dentist). A bubble in the corner is easy to miss. Auto-open the panel
+  // once on first visit so the chatbot is unmistakable. Cookie tracks
+  // first-seen so subsequent visits show only the bubble (respectful).
+  function maybeAutoOpen(refs) {
+    if (state.autoOpenScheduled) return;
+    if (getCookie("vd_chat_seen")) return; // returning visitor — bubble only
+    state.autoOpenScheduled = true;
+    // Set the cookie immediately (90 days) so a refresh-during-load doesn't
+    // double-trigger and so partial page views still count as "seen".
+    setCookie("vd_chat_seen", "1", 24 * 90);
+    setTimeout(function() {
+      // Only open if user hasn't already clicked the bubble themselves.
+      if (!state.open) openPanel(refs);
+    }, 3000);
+  }
   function maybePulse(bubble, ui) {
     if (!ui || !ui.pulse_on_first_load) return;
     if (state.pulseFired) return;
@@ -287,6 +318,7 @@
     });
 
     maybePulse(refs.bubble, ui);
+    maybeAutoOpen(refs);
   }
 
   init();
