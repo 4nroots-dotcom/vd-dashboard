@@ -465,10 +465,14 @@ window.addEventListener('DOMContentLoaded', function() {
 
   function renderLanguagePicker() {
     var c = state.config;
-    var supported = c.supported_languages || ["en"];
+    // Only render pills for languages we've actually shipped overlays for.
+    // available_languages is a subset of supported_languages (the latter is
+    // the eventual roadmap; the former is what's live today). For Phase 0
+    // this is just ["en"], so the picker won't render at all.
+    var available = c.available_languages || c.supported_languages || ["en"];
     var names = c.language_display_names || {};
     var grid = el("lang-grid");
-    grid.innerHTML = supported.map(function(lang) {
+    grid.innerHTML = available.map(function(lang) {
       var label = names[lang] || lang.toUpperCase();
       var active = lang === state.language ? " active" : "";
       return '<button type="button" class="lang-btn' + active + '" data-lang="' + lang + '">' + label + '</button>';
@@ -477,6 +481,14 @@ window.addEventListener('DOMContentLoaded', function() {
       var btn = e.target.closest(".lang-btn"); if (!btn) return;
       switchLanguage(btn.getAttribute("data-lang"));
     });
+
+    // Hide the footer "Language" toggle if only one language is available.
+    // Picker is meaningless with one option, and clicking the toggle would
+    // expose a 1-pill picker that just looks broken.
+    var footerToggle = el("footer-lang-toggle");
+    if (footerToggle) {
+      footerToggle.style.display = available.length > 1 ? "" : "none";
+    }
   }
 
   function showLanguagePicker(show) {
@@ -687,13 +699,13 @@ window.addEventListener('DOMContentLoaded', function() {
     renderLanguagePicker();
 
     // Language picker visibility:
-    // - On first open with no language cookie, show picker AND render the
-    //   greeting immediately (so engagement isn't blocked on picking).
-    // - Picker stays visible until the user picks a language OR starts
-    //   typing in the composer. No time-based auto-dismiss — that was too
-    //   aggressive in testing.
+    // - Hidden entirely if only one language is shipped (available_languages
+    //   length 1) — a 1-option picker is worse UX than no picker.
+    // - Otherwise: shown on first open with no language cookie, and stays
+    //   visible until the user picks OR starts typing in the composer.
+    var available = state.config.available_languages || state.config.supported_languages || ["en"];
     var hasLangCookie = !!getCookie(COOKIE_NAME + "_lang");
-    if (!hasLangCookie && state.config.supported_languages && state.config.supported_languages.length > 1) {
+    if (!hasLangCookie && available.length > 1) {
       showLanguagePicker(true);
       showGreetingIfNeeded();
     } else {
