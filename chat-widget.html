@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>Sam — Martindale Dental</title>
+<meta name="format-detection" content="telephone=no">
+
+<!-- Google Tag Manager (deferred) -->
+<script>
+window.dataLayer = window.dataLayer || [];
+window.addEventListener('DOMContentLoaded', function() {
+  dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+  var j = document.createElement('script'); j.async = true;
+  j.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-K7XDHFB8';
+  document.head.appendChild(j);
+});
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+<style>
+  /* ═══════════════════════════════════════════════════════════════════
+     Tokens — pulled from martindale-jacksonsquare-config.json brand{}
+     If those values change in config, update here too (or wire from JS).
+     ═══════════════════════════════════════════════════════════════════ */
+  :root {
+    --primary: #1b4d2e;
+    --accent: #71bb55;
+    --accent-hover: #4a8c34;
+    --surface: #f4fbf5;
+    --text-on-primary: #ffffff;
+    --text-on-accent: #ffffff;
+    --text-body: #1a1a1a;
+    --text-muted: #5a6b5e;
+    --border-subtle: #d4e3d8;
+    --bubble-user-bg: #1b4d2e;
+    --bubble-user-text: #ffffff;
+    --bubble-bot-bg: #ffffff;
+    --bubble-bot-text: #1a1a1a;
+    --bubble-bot-border: #e2eee5;
+    --warning-bg: #fff3e0;
+    --warning-border: #ffcc80;
+    --warning-text: #b34d00;
+    --shadow-panel: 0 12px 40px rgba(27, 77, 46, 0.15), 0 2px 8px rgba(0,0,0,0.06);
+    --radius-panel: 16px;
+    --radius-bubble: 14px;
+    --radius-pill: 999px;
+    --font-display: "DM Serif Display", Georgia, serif;
+    --font-body: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%; width: 100%; background: transparent;
+    font-family: var(--font-body); color: var(--text-body);
+    line-height: 1.5; font-size: 14px; -webkit-font-smoothing: antialiased;
+  }
+  body { overflow: hidden; }
+  body.embedded-fullpanel { background: var(--surface); }
+
+  /* ═══════════════════════════════════════════════════════════════════
+     Panel container — fills the iframe viewport.
+     The host page sizes the iframe; the panel always fills it.
+     ═══════════════════════════════════════════════════════════════════ */
+  .panel {
+    display: flex; flex-direction: column;
+    height: 100vh; width: 100vw;
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  /* ── Header ─────────────────────────────────────────────────────── */
+  .panel-header {
+    flex: 0 0 auto;
+    padding: 14px 16px;
+    background: var(--primary); color: var(--text-on-primary);
+    display: flex; align-items: center; gap: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .header-mark {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; overflow: hidden; position: relative;
+  }
+  .header-mark-fallback {
+    font-family: var(--font-display); font-size: 20px; font-weight: 400; font-style: italic;
+    line-height: 1; color: #fff;
+  }
+  .header-mark-img {
+    display: none; max-width: 100%; max-height: 100%; object-fit: contain;
+  }
+  /* When the logo loads successfully, JS adds .has-logo and the img replaces
+     the letterform. If the logo URL 404s or errors, the letterform stays. */
+  .header-mark.has-logo { background: var(--text-on-primary); padding: 4px; }
+  .header-mark.has-logo .header-mark-fallback { display: none; }
+  .header-mark.has-logo .header-mark-img { display: block; }
+  .header-text { flex: 1; min-width: 0; }
+  .header-title {
+    font-family: var(--font-display); font-size: 16px; line-height: 1.15;
+    color: var(--text-on-primary); display: flex; align-items: baseline; gap: 6px;
+  }
+  .header-title-bot { font-style: italic; color: var(--accent); }
+  .header-sub {
+    font-size: 11px; color: rgba(255,255,255,0.7);
+    margin-top: 2px; font-weight: 500;
+  }
+  .header-actions { display: flex; gap: 4px; flex-shrink: 0; }
+  .header-icon-btn {
+    width: 32px; height: 32px; border: none; background: transparent;
+    color: rgba(255,255,255,0.7); cursor: pointer; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, color 0.15s;
+  }
+  .header-icon-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  .header-icon-btn svg { width: 18px; height: 18px; }
+
+  /* ── Language picker (shown on first load before a message is sent) ─ */
+  .lang-picker {
+    flex: 0 0 auto;
+    padding: 16px 16px 14px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-subtle);
+    display: none;
+  }
+  .lang-picker.show { display: block; }
+  .lang-picker-label {
+    font-size: 11px; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.06em;
+    margin-bottom: 10px; text-align: center;
+  }
+  .lang-grid {
+    display: flex; flex-wrap: wrap; gap: 6px; justify-content: center;
+  }
+  .lang-btn {
+    font-family: var(--font-body); font-size: 12px; font-weight: 600;
+    padding: 7px 14px; border-radius: var(--radius-pill);
+    border: 1px solid var(--border-subtle); background: #fff; color: var(--text-muted);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .lang-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--surface); }
+  .lang-btn.active { background: var(--accent); border-color: var(--accent); color: var(--text-on-accent); }
+  /* RTL friendly: when html[dir=rtl] active, font may need adjustment */
+
+  /* ── Messages area ───────────────────────────────────────────────── */
+  .messages {
+    flex: 1 1 auto; overflow-y: auto; padding: 16px;
+    display: flex; flex-direction: column; gap: 10px;
+    scroll-behavior: smooth;
+    background: var(--surface);
+  }
+  .messages::-webkit-scrollbar { width: 6px; }
+  .messages::-webkit-scrollbar-thumb { background: rgba(27,77,46,0.18); border-radius: 3px; }
+  .messages::-webkit-scrollbar-track { background: transparent; }
+
+  .msg { max-width: 85%; padding: 10px 14px; border-radius: var(--radius-bubble);
+         line-height: 1.45; font-size: 14px; word-wrap: break-word;
+         animation: msgIn 0.22s ease-out; }
+  @keyframes msgIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  .msg.bot {
+    align-self: flex-start; background: var(--bubble-bot-bg); color: var(--bubble-bot-text);
+    border: 1px solid var(--bubble-bot-border); border-bottom-left-radius: 4px;
+  }
+  .msg.user {
+    align-self: flex-end; background: var(--bubble-user-bg); color: var(--bubble-user-text);
+    border-bottom-right-radius: 4px;
+  }
+
+  /* RTL: flip msg side */
+  html[dir="rtl"] .msg.bot { align-self: flex-end; border-bottom-left-radius: var(--radius-bubble); border-bottom-right-radius: 4px; }
+  html[dir="rtl"] .msg.user { align-self: flex-start; border-bottom-right-radius: var(--radius-bubble); border-bottom-left-radius: 4px; }
+
+  /* Intake handoff CTA inside a bot bubble */
+  .msg.bot .intake-cta {
+    display: inline-block; margin-top: 10px;
+    padding: 9px 18px; border-radius: var(--radius-pill);
+    background: var(--accent); color: var(--text-on-accent);
+    font-weight: 700; font-size: 13px; text-decoration: none;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .msg.bot .intake-cta:hover { background: var(--accent-hover); transform: translateY(-1px); }
+
+  /* Emergency disclaimer styling — surface as warning bubble */
+  .msg.warning {
+    align-self: stretch; max-width: none;
+    background: var(--warning-bg); color: var(--warning-text);
+    border: 1px solid var(--warning-border); border-radius: 10px;
+    padding: 10px 14px; font-size: 12px; line-height: 1.5;
+  }
+
+  /* Typing indicator */
+  .typing {
+    align-self: flex-start; display: flex; gap: 4px; padding: 12px 14px;
+    background: var(--bubble-bot-bg); border: 1px solid var(--bubble-bot-border);
+    border-radius: var(--radius-bubble); border-bottom-left-radius: 4px;
+  }
+  .typing span {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--text-muted); opacity: 0.5;
+    animation: typingDot 1.2s infinite;
+  }
+  .typing span:nth-child(2) { animation-delay: 0.15s; }
+  .typing span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes typingDot {
+    0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+    30% { opacity: 1; transform: translateY(-3px); }
+  }
+
+  /* ── Composer ────────────────────────────────────────────────────── */
+  .composer {
+    flex: 0 0 auto; padding: 12px 14px 14px;
+    background: var(--bubble-bot-bg);
+    border-top: 1px solid var(--border-subtle);
+    display: flex; align-items: flex-end; gap: 8px;
+  }
+  .composer-input {
+    flex: 1; min-height: 40px; max-height: 120px; resize: none;
+    border: 1px solid var(--border-subtle); border-radius: 20px;
+    padding: 10px 14px; font-family: var(--font-body); font-size: 14px;
+    line-height: 1.4; color: var(--text-body); background: var(--surface);
+    outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .composer-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(113,187,85,0.18);
+    background: #fff;
+  }
+  .composer-input::placeholder { color: var(--text-muted); }
+
+  .composer-send {
+    flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%;
+    border: none; background: var(--primary); color: var(--text-on-primary);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .composer-send:hover:not(:disabled) { background: var(--accent); transform: scale(1.05); }
+  .composer-send:disabled { opacity: 0.4; cursor: not-allowed; }
+  .composer-send svg { width: 18px; height: 18px; }
+  html[dir="rtl"] .composer-send svg { transform: scaleX(-1); }
+
+  /* Footer credit */
+  .footer {
+    flex: 0 0 auto; padding: 6px 14px 8px;
+    background: var(--bubble-bot-bg);
+    text-align: center; font-size: 10px; color: var(--text-muted);
+    border-top: 1px solid var(--border-subtle);
+  }
+  .footer a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .footer a:hover { text-decoration: underline; }
+  .footer .lang-toggle {
+    margin-left: 10px; cursor: pointer; color: var(--text-muted); background: none;
+    border: none; font-size: 10px; font-family: var(--font-body); text-decoration: underline;
+  }
+  .footer .lang-toggle:hover { color: var(--primary); }
+
+  /* RTL adjustments — Arabic, Farsi need right-to-left layout */
+  html[dir="rtl"] {
+    --font-body: -apple-system, "Segoe UI", "Tahoma", sans-serif;
+  }
+  html[dir="rtl"] .panel-header { flex-direction: row-reverse; }
+  html[dir="rtl"] .header-text { text-align: right; }
+  html[dir="rtl"] .composer { flex-direction: row-reverse; }
+</style>
+</head>
+
+<body>
+<div class="panel" role="region" aria-label="Chat with Sam">
+
+  <!-- HEADER -->
+  <header class="panel-header">
+    <div class="header-mark" id="header-mark" aria-hidden="true">
+      <span class="header-mark-fallback" id="header-mark-fallback">M</span>
+      <img class="header-mark-img" id="header-mark-img" alt="" />
+    </div>
+    <div class="header-text">
+      <div class="header-title">
+        <span id="header-practice">Martindale Dental</span>
+        <span class="header-title-bot" id="header-bot">· Sam</span>
+      </div>
+      <div class="header-sub" id="header-disclosure">AI assistant</div>
+    </div>
+    <div class="header-actions">
+      <button class="header-icon-btn" id="lang-toggle-header" aria-label="Choose language" title="Language">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 8l6 6"/><path d="M4 14l6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="M22 22l-5-10-5 10"/><path d="M14 18h6"/></svg>
+      </button>
+      <button class="header-icon-btn" id="close-btn" aria-label="Close chat" title="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- LANGUAGE PICKER (first load) -->
+  <div class="lang-picker" id="lang-picker">
+    <div class="lang-picker-label" id="lang-picker-label">Language / 语言 / اللغة</div>
+    <div class="lang-grid" id="lang-grid"><!-- populated from config --></div>
+  </div>
+
+  <!-- MESSAGES -->
+  <div class="messages" id="messages" aria-live="polite"><!-- populated dynamically --></div>
+
+  <!-- COMPOSER -->
+  <div class="composer">
+    <textarea class="composer-input" id="composer-input"
+      rows="1" placeholder="Type your message…" aria-label="Message" maxlength="2000"></textarea>
+    <button class="composer-send" id="composer-send" aria-label="Send message" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <span id="poweredby-text">Powered by</span>
+    <a href="https://virtualdentist.ai" target="_blank" rel="noopener">VirtualDentist.ai</a>
+    <button type="button" class="lang-toggle" id="footer-lang-toggle">change language</button>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  // ═══════════════════════════════════════════════════════════════════
+  // Config — endpoints and identifiers
+  // For Phase 0 these are inlined. Move to a build-time substitution
+  // (sed in CI, or read from a meta tag injected by the host) when the
+  // widget is reused for additional practices.
+  // ═══════════════════════════════════════════════════════════════════
+  var PRACTICE_ID = "martindale-jacksonsquare";
+  var CONFIG_URL = "https://vd-dashboard-iota.vercel.app/" + PRACTICE_ID + "-config.json";
+  var STRINGS_URL_BASE = "https://vd-dashboard-iota.vercel.app/" + PRACTICE_ID + "-strings-";
+  var CHAT_HANDLER_URL = "https://zjwnqryeefegqfmamaqd.supabase.co/functions/v1/chat-handler";
+  var COOKIE_NAME = "vd_chat_session";
+  var COOKIE_TTL_HOURS = 24;
+  var RTL_LANGUAGES = ["ar", "fa", "ur", "he"];
+
+  // ═══════════════════════════════════════════════════════════════════
+  // State
+  // ═══════════════════════════════════════════════════════════════════
+  var state = {
+    config: null,           // root config (language-invariant)
+    strings: null,          // language-specific overlay
+    language: null,         // resolved language code
+    sessionCookie: null,
+    sessionId: null,
+    messageHistory: [],     // local mirror for UX; server is source of truth
+    inFlight: false,
+    languagePickerVisible: true,
+    greetingShown: false
+  };
+
+  // ═══════════════════════════════════════════════════════════════════
+  // Cookie helpers — session continuity across reloads
+  // ═══════════════════════════════════════════════════════════════════
+  function getCookie(name) {
+    var v = "; " + document.cookie;
+    var parts = v.split("; " + name + "=");
+    if (parts.length === 2) return parts.pop().split(";").shift();
+    return null;
+  }
+  function setCookie(name, value, hours) {
+    var d = new Date(); d.setTime(d.getTime() + hours * 60 * 60 * 1000);
+    document.cookie = name + "=" + value + "; expires=" + d.toUTCString() + "; path=/; SameSite=Lax";
+  }
+  function uuid4() {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0, v = c === "x" ? r : (r & 0x3 | 0x8); return v.toString(16);
+    });
+  }
+  function ensureSessionCookie() {
+    var existing = getCookie(COOKIE_NAME);
+    if (existing) { state.sessionCookie = existing; return; }
+    var fresh = uuid4(); setCookie(COOKIE_NAME, fresh, COOKIE_TTL_HOURS);
+    state.sessionCookie = fresh;
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // GTM event helper
+  // ═══════════════════════════════════════════════════════════════════
+  function fireEvent(eventKey, payload) {
+    if (!state.config || !state.config.gtm || !state.config.gtm.events) return;
+    var name = state.config.gtm.events[eventKey];
+    if (!name) return;
+    try {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push(Object.assign({ event: name, practice_id: PRACTICE_ID, language: state.language }, payload || {}));
+    } catch (e) {}
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // Config loading — root + strings overlay (deep merge mirrors handler)
+  // ═══════════════════════════════════════════════════════════════════
+  async function loadRoot() {
+    var res = await fetch(CONFIG_URL, { cache: "default" });
+    if (!res.ok) throw new Error("config_root_failed");
+    return await res.json();
+  }
+  async function loadStrings(lang) {
+    var url = STRINGS_URL_BASE + lang + ".json";
+    var res = await fetch(url, { cache: "default" });
+    if (!res.ok) throw new Error("config_strings_failed");
+    return await res.json();
+  }
+  function deepMerge(a, b) {
+    if (a === null || a === undefined) return b;
+    if (b === null || b === undefined) return a;
+    if (typeof a !== "object" || typeof b !== "object") return b;
+    if (Array.isArray(a) || Array.isArray(b)) return b;
+    var out = {}; for (var k in a) out[k] = a[k];
+    for (var k in b) out[k] = deepMerge(a[k], b[k]);
+    return out;
+  }
+
+  function detectInitialLanguage(root) {
+    // Priority: existing cookie language → browser language match → default
+    var cookieLang = getCookie(COOKIE_NAME + "_lang");
+    var supported = root.supported_languages || ["en"];
+    if (cookieLang && supported.indexOf(cookieLang) !== -1) return cookieLang;
+    var nav = (navigator.language || "en").toLowerCase().split("-")[0];
+    if (supported.indexOf(nav) !== -1) return nav;
+    return root.default_language || "en";
+  }
+
+  function applyDirAndLang(lang) {
+    var dir = RTL_LANGUAGES.indexOf(lang) !== -1 ? "rtl" : "ltr";
+    document.documentElement.setAttribute("lang", lang);
+    document.documentElement.setAttribute("dir", dir);
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // Render helpers
+  // ═══════════════════════════════════════════════════════════════════
+  function el(id) { return document.getElementById(id); }
+
+  function renderHeader() {
+    var c = state.config, s = state.strings;
+    var brand = c.branding_assets || {};
+    el("header-practice").textContent = brand.header_shows_practice_name ? c.practice_name : "";
+    el("header-bot").textContent = brand.header_shows_bot_name ? "· " + (c.bot && c.bot.name ? c.bot.name : "Sam") : "";
+    el("header-disclosure").textContent = (s.bot && s.bot.disclosure) || "AI assistant";
+    el("composer-input").placeholder = (s.ui_strings && s.ui_strings.input_placeholder) || "Type your message…";
+    el("composer-send").setAttribute("aria-label", (s.ui_strings && s.ui_strings.send_button_aria) || "Send message");
+    el("close-btn").setAttribute("aria-label", (s.ui_strings && s.ui_strings.close_chat_aria) || "Close chat");
+    el("lang-toggle-header").setAttribute("aria-label", (s.ui_strings && s.ui_strings.language_picker_aria) || "Choose language");
+    el("poweredby-text").textContent = (c.ui && c.ui.poweredby_text) ? c.ui.poweredby_text.replace(" VirtualDentist.ai", "") : "Powered by";
+    el("footer-lang-toggle").textContent = (s.ui_strings && s.ui_strings.language_picker_label) || "language";
+
+    // Logo: attempt to load branding_assets.header_logo_url; if it loads
+    // successfully, swap out the letterform fallback. If it 404s or errors,
+    // the M-letterform stays visible. Idempotent — safe to call repeatedly
+    // (e.g., on language switch).
+    var mark = el("header-mark");
+    var img = el("header-mark-img");
+    var logoUrl = brand.header_logo_url;
+    var alt = brand.header_logo_alt || c.practice_name || "";
+    if (logoUrl && img && !mark.classList.contains("has-logo")) {
+      img.alt = alt;
+      img.onload = function() { mark.classList.add("has-logo"); };
+      img.onerror = function() { /* leave letterform visible */ };
+      img.src = logoUrl;
+    }
+  }
+
+  function renderLanguagePicker() {
+    var c = state.config;
+    var supported = c.supported_languages || ["en"];
+    var names = c.language_display_names || {};
+    var grid = el("lang-grid");
+    grid.innerHTML = supported.map(function(lang) {
+      var label = names[lang] || lang.toUpperCase();
+      var active = lang === state.language ? " active" : "";
+      return '<button type="button" class="lang-btn' + active + '" data-lang="' + lang + '">' + label + '</button>';
+    }).join("");
+    grid.addEventListener("click", function(e) {
+      var btn = e.target.closest(".lang-btn"); if (!btn) return;
+      switchLanguage(btn.getAttribute("data-lang"));
+    });
+  }
+
+  function showLanguagePicker(show) {
+    var picker = el("lang-picker");
+    if (show) picker.classList.add("show");
+    else picker.classList.remove("show");
+    state.languagePickerVisible = show;
+  }
+
+  function appendBotBubble(text, opts) {
+    opts = opts || {};
+    var msg = document.createElement("div");
+    msg.className = "msg bot" + (opts.warning ? " warning" : "");
+    // Plain text only — never inject HTML from server. CTA appended separately.
+    msg.textContent = text;
+    if (opts.intakeUrl) {
+      var btn = document.createElement("a");
+      btn.className = "intake-cta";
+      btn.href = opts.intakeUrl;
+      btn.target = "_blank";
+      btn.rel = "noopener";
+      btn.textContent = (state.strings.ui_strings && state.strings.ui_strings.open_intake_button) || "Open intake form";
+      btn.addEventListener("click", function() {
+        fireEvent("intake_opened", { intake_url: opts.intakeUrl });
+        fireEvent("handoff_to_intake", { intake_url: opts.intakeUrl });
+      });
+      msg.appendChild(document.createElement("br"));
+      msg.appendChild(btn);
+    }
+    el("messages").appendChild(msg);
+    scrollToBottom();
+  }
+
+  function appendUserBubble(text) {
+    var msg = document.createElement("div");
+    msg.className = "msg user";
+    msg.textContent = text;
+    el("messages").appendChild(msg);
+    scrollToBottom();
+  }
+
+  function appendWarningBubble(text) {
+    appendBotBubble(text, { warning: true });
+  }
+
+  var typingEl = null;
+  function showTyping(show) {
+    if (show && !typingEl) {
+      typingEl = document.createElement("div");
+      typingEl.className = "typing";
+      typingEl.setAttribute("aria-label", (state.strings.ui_strings && state.strings.ui_strings.typing_indicator_aria) || "Sam is typing");
+      typingEl.innerHTML = "<span></span><span></span><span></span>";
+      el("messages").appendChild(typingEl);
+      scrollToBottom();
+    } else if (!show && typingEl) {
+      typingEl.remove(); typingEl = null;
+    }
+  }
+
+  function scrollToBottom() {
+    var m = el("messages"); m.scrollTop = m.scrollHeight;
+  }
+
+  function showError(text) {
+    appendBotBubble(text);
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // Greeting + emergency disclaimer (rendered locally; not sent to server)
+  // ═══════════════════════════════════════════════════════════════════
+  function showGreetingIfNeeded() {
+    if (state.greetingShown) return;
+    var s = state.strings;
+    if (s.bot && s.bot.greeting) appendBotBubble(s.bot.greeting);
+    if (s.emergency_disclaimer) appendWarningBubble(s.emergency_disclaimer);
+    state.greetingShown = true;
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // Language switching mid-session
+  // ═══════════════════════════════════════════════════════════════════
+  async function switchLanguage(newLang) {
+    if (newLang === state.language) {
+      showLanguagePicker(false); return;
+    }
+    try {
+      var newStrings = await loadStrings(newLang);
+      state.language = newLang;
+      state.strings = newStrings;
+      setCookie(COOKIE_NAME + "_lang", newLang, COOKIE_TTL_HOURS * 30);
+      applyDirAndLang(newLang);
+      // Rebuild static UI (header/placeholders) with new strings.
+      renderHeader();
+      // Rebuild picker active state.
+      renderLanguagePicker();
+      // If greeting hasn't been shown yet, show it now in the new language.
+      if (!state.greetingShown) {
+        showLanguagePicker(false);
+        showGreetingIfNeeded();
+      } else {
+        showLanguagePicker(false);
+      }
+      fireEvent("language_selected", { language: newLang });
+    } catch (e) {
+      // Strings overlay failed to load. Surface a generic English error;
+      // safer than leaving the UI in a half-translated state.
+      showError("Sorry, that language isn't available right now.");
+    }
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // Send message
+  // ═══════════════════════════════════════════════════════════════════
+  async function sendMessage(text) {
+    if (state.inFlight) return;
+    text = (text || "").trim();
+    if (!text) return;
+
+    appendUserBubble(text);
+    state.messageHistory.push({ role: "user", content: text });
+    fireEvent("message_sent", { length: text.length });
+
+    state.inFlight = true;
+    setSendDisabled(true);
+    showTyping(true);
+
+    var payload = {
+      practice_id: PRACTICE_ID,
+      session_cookie: state.sessionCookie,
+      user_message: text,
+      language: state.language,
+      user_agent: (navigator.userAgent || "").slice(0, 500),
+      referrer: (document.referrer || "").slice(0, 500)
+    };
+
+    try {
+      var res = await fetch(CHAT_HANDLER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      var data = null;
+      try { data = await res.json(); } catch(e) {}
+
+      showTyping(false);
+
+      if (!res.ok || !data) {
+        var errKey = res.status === 429 ? "error_rate_limited" : "error_send_failed";
+        var fallback = res.status === 429
+          ? "You've sent quite a few messages. Please give us a moment, then try again."
+          : "Couldn't send that message. Please try again.";
+        showError((state.strings.ui_strings && state.strings.ui_strings[errKey]) || fallback);
+        return;
+      }
+
+      state.sessionId = data.session_id || state.sessionId;
+      // Server may have resolved a different language than what we sent
+      // (e.g., it normalized to default). Sync up if so.
+      if (data.language && data.language !== state.language) {
+        await switchLanguage(data.language);
+      }
+
+      // Render the bot reply.
+      var openIntake = data.action === "open_intake_form";
+      appendBotBubble(data.reply || "", {
+        intakeUrl: openIntake && data.intake_form_url ? data.intake_form_url : null
+      });
+      state.messageHistory.push({ role: "assistant", content: data.reply || "" });
+      fireEvent("message_received", { intent: data.intent, action: data.action });
+      if (data.intent) fireEvent("intent_resolved", { intent: data.intent });
+
+    } catch (e) {
+      showTyping(false);
+      showError((state.strings.ui_strings && state.strings.ui_strings.error_send_failed) ||
+                "Couldn't send that message. Please try again.");
+    } finally {
+      state.inFlight = false;
+      setSendDisabled(el("composer-input").value.trim().length === 0);
+    }
+  }
+
+  function setSendDisabled(disabled) {
+    el("composer-send").disabled = disabled;
+  }
+
+  // ═══════════════════════════════════════════════════════════════════
+  // Init
+  // ═══════════════════════════════════════════════════════════════════
+  async function init() {
+    ensureSessionCookie();
+    fireEvent("widget_opened");
+
+    try {
+      var root = await loadRoot();
+      var initialLang = detectInitialLanguage(root);
+      var strings = await loadStrings(initialLang);
+      state.config = root;
+      state.language = initialLang;
+      state.strings = strings;
+      applyDirAndLang(initialLang);
+    } catch (e) {
+      // Hard failure: config didn't load. Show plain English error and stop.
+      el("messages").innerHTML = '<div class="msg warning">Sorry, the chat is temporarily unavailable. Please try again in a moment, or call our office at 905-393-8501.</div>';
+      return;
+    }
+
+    renderHeader();
+    renderLanguagePicker();
+
+    // Show language picker on first open if no language preference cookie.
+    var hasLangCookie = !!getCookie(COOKIE_NAME + "_lang");
+    if (!hasLangCookie && state.config.supported_languages && state.config.supported_languages.length > 1) {
+      showLanguagePicker(true);
+      // Don't render greeting yet — wait for language selection (or auto-dismiss timeout).
+      // Auto-greet after 5s in detected language if patient doesn't pick.
+      setTimeout(function() {
+        if (!state.greetingShown) {
+          showLanguagePicker(false);
+          showGreetingIfNeeded();
+        }
+      }, 5000);
+    } else {
+      showLanguagePicker(false);
+      showGreetingIfNeeded();
+    }
+
+    // Composer wiring
+    var input = el("composer-input");
+    input.addEventListener("input", function() {
+      setSendDisabled(input.value.trim().length === 0 || state.inFlight);
+      // Auto-grow textarea
+      input.style.height = "auto";
+      input.style.height = Math.min(input.scrollHeight, 120) + "px";
+    });
+    input.addEventListener("keydown", function(e) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        if (!state.inFlight && input.value.trim()) {
+          var v = input.value; input.value = ""; input.style.height = "auto";
+          setSendDisabled(true);
+          sendMessage(v);
+        }
+      }
+    });
+    el("composer-send").addEventListener("click", function() {
+      if (state.inFlight) return;
+      var v = input.value.trim(); if (!v) return;
+      input.value = ""; input.style.height = "auto";
+      setSendDisabled(true);
+      sendMessage(v);
+    });
+
+    // Header buttons
+    el("close-btn").addEventListener("click", function() {
+      fireEvent("widget_closed");
+      // Notify host page (if iframe) to hide the panel.
+      if (window.parent !== window) {
+        try { window.parent.postMessage({ type: "vd-chat-close" }, "*"); } catch(e) {}
+      }
+    });
+    el("lang-toggle-header").addEventListener("click", function() {
+      showLanguagePicker(!state.languagePickerVisible);
+    });
+    el("footer-lang-toggle").addEventListener("click", function() {
+      showLanguagePicker(!state.languagePickerVisible);
+    });
+  }
+
+  // Boot
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>
