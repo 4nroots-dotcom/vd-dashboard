@@ -1,0 +1,94 @@
+{
+  "language": "en",
+  "language_name": "English",
+  "direction": "ltr",
+
+  "bot": {
+    "disclosure": "I'm Martindale Dental's AI assistant",
+    "greeting": "Hi! I'm Sam, Martindale Dental's AI assistant. I can help with appointment questions, office info, or any dental concern. What's going on?"
+  },
+
+  "ui_strings": {
+    "panel_title_practice": "Martindale Dental",
+    "panel_title_bot": "Sam",
+    "input_placeholder": "Type your message…",
+    "send_button_label": "Send",
+    "send_button_aria": "Send message",
+    "language_picker_label": "Language",
+    "language_picker_aria": "Choose your preferred language",
+    "open_chat_aria": "Open chat with Sam",
+    "close_chat_aria": "Close chat",
+    "minimize_chat_aria": "Minimize chat",
+    "typing_indicator_aria": "Sam is typing",
+    "open_intake_button": "Open intake form",
+    "powered_by": "Powered by VirtualDentist.ai",
+    "error_send_failed": "Couldn't send that message. Please try again.",
+    "error_rate_limited": "You've sent quite a few messages. Please give us a moment, then try again."
+  },
+
+  "intent_routing": {
+    "clinical_keywords": [
+      "pain", "hurt", "hurts", "hurting", "ache", "aching", "sore", "throbbing",
+      "sharp pain", "severe pain", "excruciating",
+      "swell", "swelling", "swollen", "puffy", "puffed",
+      "bleed", "bleeding", "bloody",
+      "broke", "broken", "cracked", "chipped", "fractured", "split",
+      "accident", "fell", "fall", "hit", "impact", "trauma", "injury", "injured",
+      "emergency", "urgent", "urgently",
+      "knocked out", "fell out", "came out",
+      "abscess", "pus", "infected", "infection", "gum infection",
+      "can't eat", "can't chew", "can't sleep", "cant eat", "cant chew", "cant sleep",
+      "wisdom tooth", "wisdom teeth",
+      "lost filling", "lost crown", "crown fell", "filling fell",
+      "toothache", "jaw pain", "gum pain",
+      "fever", "hot cheek", "face feels hot",
+      "difficulty swallowing", "trouble swallowing", "trouble breathing", "difficulty breathing",
+      "numb", "numbness", "tingling",
+      "chipped tooth", "cracked tooth", "loose tooth"
+    ],
+    "appointment_keywords": [
+      "appointment", "appt", "appointment request", "book", "booking", "schedule", "reschedule",
+      "cleaning", "checkup", "check-up", "check up", "exam",
+      "new patient", "consult", "consultation", "first visit",
+      "whitening", "filling", "crown", "root canal", "extraction",
+      "braces", "invisalign", "orthodontics", "retainer",
+      "see a dentist", "see the dentist", "make an appointment", "see someone",
+      "available", "availability", "opening", "slot"
+    ],
+    "deflect_keywords": [
+      "insurance", "coverage", "covered", "claim", "claims", "policy",
+      "blue cross", "manulife", "sunlife", "green shield", "cdcp", "canada dental",
+      "ontario works", "odsp", "senior discount", "low income",
+      "price", "cost", "how much", "fee", "fees", "rate",
+      "refund", "billing", "invoice", "payment plan", "financing"
+    ],
+    "llm_fallback_enabled": true,
+    "llm_fallback_model": "gpt-4o-mini",
+    "llm_fallback_temperature": 0.0,
+    "llm_fallback_max_tokens": 10
+  },
+
+  "safety": {
+    "self_harm_keywords": [
+      "kill myself", "end my life", "suicide", "suicidal", "want to die",
+      "hurt myself", "self harm", "self-harm"
+    ],
+    "self_harm_response": "You're not alone, and what you're going through sounds really heavy. This isn't something I can help with directly, but please reach out to someone who can — in Canada you can call or text 988 anytime, day or night, for immediate support. If you're in immediate danger, please call 911.",
+    "abuse_deflection_response": "I want to help, but I'm not able to continue this way. If you have a dental concern, I'm here. Otherwise you can reach our office at 905-393-8501 during business hours."
+  },
+
+  "handoff": {
+    "clinical_handoff_message": "Let me bring up a quick form to gather a few important details for our team. Once you submit, Sam will continue the conversation with you by text.",
+    "empathy_fallback": "I'm sorry to hear that.",
+    "appointment_ask_message": "We'd be happy to help you with that! Is there a preferred day or time that works for you? If you could please share your name and contact information, our office team will reach out to confirm.",
+    "appointment_confirm_body": "I've passed your request to our office team — they'll reach out to confirm the details. Is there anything else I can help with?",
+    "deflect_ask_message": "Our team would be happy to walk you through that individually. If you could please share your name and contact information, they'll reach out with the specifics.",
+    "deflect_confirm_body": "Our team will be in touch with the specifics. Is there anything else I can help with?",
+    "partial_name_followup": "Thanks! And what name should I put on the message for our team?",
+    "partial_phone_followup_body": "And what's the best phone number or email to reach you at?",
+    "unresolved_fallback_message": "I want to make sure you get the right answer. Would it be okay if our team reached out? If you could please share your name and contact information, they'll follow up.",
+    "prefill_fields": ["patient_name", "patient_phone", "patient_email", "patient_city", "chief_complaint_raw"]
+  },
+
+  "emergency_disclaimer": "If you develop difficulty breathing or swallowing, bleeding that won't stop, rapidly spreading facial swelling or a sudden severe change in your symptoms, that would be the time to call 911 or go to your nearest emergency room. This chat does not replace emergency care."
+}
