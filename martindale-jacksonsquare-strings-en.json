@@ -5,7 +5,7 @@
 
   "bot": {
     "disclosure": "I'm Martindale Dental's AI assistant",
-    "greeting": "Hi! I'm Sam, Martindale Dental's AI assistant. I can help with appointment questions, office info, or any dental concern. What's going on?"
+    "greeting": "Hi! I'm Sam, Martindale Dental's AI assistant. I can help with appointments, office questions, or any dental concern — including emergencies, sudden pain, or anything urgent. What's going on?"
   },
 
   "ui_strings": {
@@ -80,7 +80,8 @@
   "handoff": {
     "clinical_handoff_message": "Let me bring up a quick form to gather a few important details for our team. Once you submit, Sam will continue the conversation with you by text.",
     "empathy_fallback": "I'm sorry to hear that.",
-    "appointment_ask_message": "We'd be happy to help you with that! Is there a preferred day or time that works for you? If you could please share your name and contact information, our office team will reach out to confirm.",
+    "appointment_empathy_fallback": "Happy to help with that.",
+    "appointment_ask_message": "Is there a preferred day or time that works for you? If you could please share your name and a phone number or email, our office team will reach out to confirm the details.",
     "appointment_confirm_body": "I've passed your request to our office team — they'll reach out to confirm the details. Is there anything else I can help with?",
     "deflect_ask_message": "Our team would be happy to walk you through that individually. If you could please share your name and contact information, they'll reach out with the specifics.",
     "deflect_confirm_body": "Our team will be in touch with the specifics. Is there anything else I can help with?",
