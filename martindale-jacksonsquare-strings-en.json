@@ -97,8 +97,8 @@
     "appointment_confirm_body": "I've passed your request to our office team — they'll reach out to confirm the details. Is there anything else I can help with?",
     "deflect_ask_message": "Our team would be happy to walk you through that individually. If you could please share your name and contact information, they'll reach out with the specifics.",
     "deflect_confirm_body": "Our team will be in touch with the specifics. Is there anything else I can help with?",
-    "partial_name_followup": "Thanks! And what name should I put on the message for our team?",
-    "partial_phone_followup_body": "And what's the best phone number or email to reach you at?",
+    "partial_name_followup": "Thanks! And what's your name?",
+    "partial_phone_followup_body": "And what's the best phone number to reach you at?",
     "unresolved_fallback_message": "I want to make sure you get the right answer. Would it be okay if our team reached out? If you could please share your name and contact information, they'll follow up.",
     "prefill_fields": ["patient_name", "patient_phone", "patient_email", "patient_city", "chief_complaint_raw"]
   },
