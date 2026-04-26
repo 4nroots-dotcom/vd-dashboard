@@ -90,6 +90,7 @@
   "handoff": {
     "clinical_handoff_message": "Let me bring up a quick form to gather a few important details for our team. Once you submit, Sam will follow up with you to complete the assessment — you can pick voice or text on the form.",
     "clinical_redirect_message": "I understand — but for clinical concerns, our team needs a few specific details to route you correctly. I'm not able to triage symptoms here in chat. The form below takes about a minute and you can pick voice or text follow-up. Once you submit, Sam will pick up from there.",
+    "clinical_pivot_nudge": "Sure — just a heads up, the intake form is still here whenever you want to come back to your earlier concern.",
     "empathy_fallback": "I'm sorry to hear that.",
     "appointment_empathy_fallback": "Happy to help with that.",
     "appointment_time_ask_message": "What day and time work for you?",
