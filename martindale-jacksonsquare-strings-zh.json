@@ -1,0 +1,109 @@
+{
+  "language": "zh",
+  "language_name": "中文",
+  "direction": "ltr",
+
+  "bot": {
+    "disclosure": "我是 Martindale Dental 的 AI 助理",
+    "greeting": "您好!我是 Sam,Martindale Dental 的 AI 助理。我可以协助您预约、回答办公室相关问题或任何牙科问题——包括紧急情况、突发疼痛或任何紧迫事项。请问有什么可以帮您?"
+  },
+
+  "ui_strings": {
+    "panel_title_practice": "Martindale Dental",
+    "panel_title_bot": "Sam",
+    "input_placeholder": "请输入您的消息…",
+    "send_button_label": "发送",
+    "send_button_aria": "发送消息",
+    "language_picker_label": "语言",
+    "language_picker_aria": "选择您的首选语言",
+    "open_chat_aria": "打开与 Sam 的对话",
+    "close_chat_aria": "关闭对话",
+    "minimize_chat_aria": "最小化对话",
+    "typing_indicator_aria": "Sam 正在输入",
+    "open_intake_button": "打开登记表",
+    "powered_by": "由 VirtualDentist.ai 提供技术支持",
+    "error_send_failed": "无法发送该消息。请重试。",
+    "error_rate_limited": "您已发送较多消息。请稍等片刻后再试。"
+  },
+
+  "intent_routing": {
+    "clinical_keywords": [
+      "疼", "痛", "疼痛", "牙痛", "酸痛", "刺痛", "钝痛", "跳痛", "抽痛",
+      "剧痛", "剧烈疼痛", "难以忍受的疼痛",
+      "肿", "肿胀", "肿了", "浮肿", "肿起来",
+      "出血", "流血", "渗血", "血",
+      "断", "断了", "裂", "裂了", "崩", "崩了", "缺", "缺了", "碎", "破裂",
+      "事故", "摔", "摔了", "撞", "撞到", "撞击", "外伤", "受伤",
+      "紧急", "急", "紧急情况",
+      "脱落", "掉了", "掉出", "脱出",
+      "脓肿", "化脓", "感染", "牙龈感染",
+      "不能吃", "不能咀嚼", "不能睡", "无法进食", "无法咀嚼",
+      "智齿",
+      "补牙掉了", "牙冠掉了", "牙冠脱落",
+      "牙齿疼", "下巴疼", "颌骨痛", "牙龈疼", "牙龈痛",
+      "发烧", "脸颊发烫",
+      "吞咽困难", "呼吸困难",
+      "麻木", "刺痛感",
+      "牙齿崩了", "牙齿裂了", "牙齿松动"
+    ],
+    "appointment_keywords": [
+      "预约", "约", "预定", "排期", "改期", "重新预约",
+      "洗牙", "清洁", "检查", "体检", "牙齿检查",
+      "新患者", "咨询", "首次就诊",
+      "美白", "牙齿美白", "补牙", "补牙材料", "牙冠", "根管治疗", "拔牙",
+      "牙套", "矫正", "隐适美", "正畸", "保持器",
+      "种植牙", "种植体", "牙种植",
+      "假牙", "义齿", "局部假牙",
+      "贴面", "牙贴面", "瓷贴面",
+      "粘接", "牙齿粘接",
+      "牙桥", "桥",
+      "护齿器", "夜间护齿器", "防磨牙套",
+      "封闭剂", "窝沟封闭",
+      "嵌体",
+      "牙龈治疗", "牙周",
+      "看牙医", "看医生", "见牙医",
+      "有空", "可约", "时段",
+      "感兴趣", "想了解", "想做", "考虑"
+    ],
+    "deflect_keywords": [
+      "保险", "覆盖", "理赔", "保单",
+      "blue cross", "manulife", "sunlife", "green shield", "cdcp",
+      "ontario works", "odsp", "老人折扣", "低收入",
+      "价格", "费用", "多少钱", "收费",
+      "退款", "账单", "发票", "分期付款", "融资"
+    ],
+    "llm_fallback_enabled": true,
+    "llm_fallback_model": "gpt-4o-mini",
+    "llm_fallback_temperature": 0.0,
+    "llm_fallback_max_tokens": 10
+  },
+
+  "safety": {
+    "self_harm_keywords": [
+      "自杀", "结束生命", "想死", "不想活了",
+      "伤害自己", "自残"
+    ],
+    "self_harm_response": "您并不孤单,您正在经历的事情听起来非常沉重。这不是我能直接帮助的事情,但请联系能够帮助您的人——在加拿大,您可以随时拨打或发短信至 988 获得即时支持,无论白天黑夜。如果您处于紧急危险中,请拨打 911。",
+    "abuse_deflection_response": "我想帮助您,但我无法以这种方式继续。如果您有牙科方面的问题,我在这里。否则您可以在营业时间致电我们的办公室 905-393-8501。"
+  },
+
+  "handoff": {
+    "clinical_handoff_message": "请允许我打开一个简短的表格,为我们的团队收集一些重要信息。提交后,Sam 将与您联系完成评估——您可以在表格上选择语音或短信跟进。",
+    "clinical_redirect_message": "我理解——但对于临床问题,我们的团队需要一些具体信息以便正确地为您安排。我无法在聊天中对症状进行分诊。下面的表格大约需要一分钟,您可以选择语音或短信跟进。提交后,Sam 将从那里继续。",
+    "clinical_pivot_nudge": "当然——只是提醒一下,登记表仍然可用,您随时可以回来处理之前的问题。",
+    "empathy_fallback": "听到这个我很遗憾。",
+    "appointment_empathy_fallback": "很乐意帮助您。",
+    "appointment_time_ask_message": "请问哪一天和时间方便您?",
+    "appointment_time_ack_template": "好的 — {time}。",
+    "appointment_contact_ask_message": "请问您的姓名和我们可以联系到您的电话号码?",
+    "appointment_confirm_body": "我已将您的请求转给我们的团队——他们会与您联系确认详情。还有什么我可以帮助的吗?",
+    "deflect_ask_message": "我们的团队很乐意单独向您说明。请提供您的姓名和联系方式,他们会与您联系告知具体详情。",
+    "deflect_confirm_body": "我们的团队会与您联系告知详情。还有什么我可以帮助的吗?",
+    "partial_name_followup": "谢谢!请问您的姓名是?",
+    "partial_phone_followup_body": "请问您的最佳联系电话是?",
+    "unresolved_fallback_message": "我希望确保您得到正确的答复。让我们的团队与您联系可以吗?请提供您的姓名和联系方式,他们会跟进。",
+    "prefill_fields": ["patient_name", "patient_phone", "patient_email", "patient_city", "chief_complaint_raw"]
+  },
+
+  "emergency_disclaimer": "如果您出现呼吸或吞咽困难、出血不止、面部肿胀迅速扩散,或症状突然严重变化,这时应立即拨打 911 或前往最近的急诊室。本对话不能替代紧急医疗服务。"
+}
