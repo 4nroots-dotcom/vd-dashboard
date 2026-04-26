@@ -146,6 +146,20 @@ window.addEventListener('DOMContentLoaded', function() {
   }
   .lang-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--surface); }
   .lang-btn.active { background: var(--accent); border-color: var(--accent); color: var(--text-on-accent); }
+  /* Coming-soon: language is in supported_languages but not yet in
+     available_languages. Pill renders as a visual signal that more
+     languages are planned, but is not clickable. */
+  .lang-btn.coming-soon {
+    opacity: 0.42;
+    cursor: default;
+    background: transparent;
+    border-style: dashed;
+  }
+  .lang-btn.coming-soon:hover {
+    border-color: var(--border-subtle);
+    color: var(--text-muted);
+    background: transparent;
+  }
   /* RTL friendly: when html[dir=rtl] active, font may need adjustment */
 
   /* ── Messages area ───────────────────────────────────────────────── */
@@ -465,29 +479,38 @@ window.addEventListener('DOMContentLoaded', function() {
 
   function renderLanguagePicker() {
     var c = state.config;
-    // Only render pills for languages we've actually shipped overlays for.
-    // available_languages is a subset of supported_languages (the latter is
-    // the eventual roadmap; the former is what's live today). For Phase 0
-    // this is just ["en"], so the picker won't render at all.
+    // Render every supported language as a pill. Languages we've actually
+    // shipped overlays for (in available_languages) are clickable; the
+    // rest render as muted "coming soon" pills — visible signal that more
+    // languages are planned without breaking when patients click them.
+    var supported = c.supported_languages || ["en"];
     var available = c.available_languages || c.supported_languages || ["en"];
+    var availableSet = {};
+    for (var i = 0; i < available.length; i++) availableSet[available[i]] = true;
     var names = c.language_display_names || {};
     var grid = el("lang-grid");
-    grid.innerHTML = available.map(function(lang) {
+    grid.innerHTML = supported.map(function(lang) {
       var label = names[lang] || lang.toUpperCase();
-      var active = lang === state.language ? " active" : "";
-      return '<button type="button" class="lang-btn' + active + '" data-lang="' + lang + '">' + label + '</button>';
+      var isAvailable = !!availableSet[lang];
+      var classes = "lang-btn";
+      if (lang === state.language) classes += " active";
+      if (!isAvailable) classes += " coming-soon";
+      var titleAttr = isAvailable ? "" : ' title="Coming soon"';
+      var disabledAttr = isAvailable ? "" : ' aria-disabled="true"';
+      return '<button type="button" class="' + classes + '" data-lang="' + lang + '"' + titleAttr + disabledAttr + '>' + label + '</button>';
     }).join("");
     grid.addEventListener("click", function(e) {
       var btn = e.target.closest(".lang-btn"); if (!btn) return;
+      // Ignore clicks on coming-soon pills.
+      if (btn.classList.contains("coming-soon")) return;
       switchLanguage(btn.getAttribute("data-lang"));
     });
 
-    // Hide the footer "Language" toggle if only one language is available.
-    // Picker is meaningless with one option, and clicking the toggle would
-    // expose a 1-pill picker that just looks broken.
+    // Footer "Language" toggle is useful even with only one available
+    // language now, since the picker shows planned languages too.
     var footerToggle = el("footer-lang-toggle");
     if (footerToggle) {
-      footerToggle.style.display = available.length > 1 ? "" : "none";
+      footerToggle.style.display = supported.length > 1 ? "" : "none";
     }
   }
 
@@ -584,11 +607,36 @@ window.addEventListener('DOMContentLoaded', function() {
       renderHeader();
       // Rebuild picker active state.
       renderLanguagePicker();
-      // If greeting hasn't been shown yet, show it now in the new language.
-      if (!state.greetingShown) {
+
+      // Pre-conversation language switch: if the user hasn't typed anything
+      // yet (only bot greeting + emergency disclaimer shown), clear the
+      // messages container and re-render those in the new language. The
+      // patient's first language pick should reset the visible bubbles —
+      // otherwise they get a stale English greeting alongside Somali
+      // input placeholder, which looks broken.
+      //
+      // Mid-conversation switch: leave message history alone. The LLM
+      // will respond in the new language going forward; rewriting prior
+      // bubbles would be confusing.
+      var hasUserMessages = state.messageHistory.some(function(m) {
+        return m.role === "user";
+      });
+      if (!hasUserMessages) {
+        // Wipe and re-render greeting + disclaimer.
+        var msgsEl = el("messages");
+        if (msgsEl) msgsEl.innerHTML = "";
+        state.greetingShown = false;
+        state.messageHistory = [];
+        showLanguagePicker(false);
+        showGreetingIfNeeded();
+      } else if (!state.greetingShown) {
+        // Edge case: greeting wasn't shown yet but messageHistory has user
+        // turns somehow. Show greeting in new language.
         showLanguagePicker(false);
         showGreetingIfNeeded();
       } else {
+        // Mid-conversation: just close the picker. Subsequent bot replies
+        // will arrive in the new language.
         showLanguagePicker(false);
       }
       fireEvent("language_selected", { language: newLang });
@@ -699,13 +747,13 @@ window.addEventListener('DOMContentLoaded', function() {
     renderLanguagePicker();
 
     // Language picker visibility:
-    // - Hidden entirely if only one language is shipped (available_languages
-    //   length 1) — a 1-option picker is worse UX than no picker.
-    // - Otherwise: shown on first open with no language cookie, and stays
-    //   visible until the user picks OR starts typing in the composer.
-    var available = state.config.available_languages || state.config.supported_languages || ["en"];
+    // - Shown on first open if no language cookie AND there's more than
+    //   one supported language (planned or available). Picker advertises
+    //   the multilingual roadmap — coming-soon pills are visible signal.
+    // - Stays visible until user picks a language OR starts typing.
+    var supported = state.config.supported_languages || ["en"];
     var hasLangCookie = !!getCookie(COOKIE_NAME + "_lang");
-    if (!hasLangCookie && available.length > 1) {
+    if (!hasLangCookie && supported.length > 1) {
       showLanguagePicker(true);
       showGreetingIfNeeded();
     } else {
