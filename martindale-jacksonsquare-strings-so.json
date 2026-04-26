@@ -1,0 +1,109 @@
+{
+  "language": "so",
+  "language_name": "Soomaali",
+  "direction": "ltr",
+
+  "bot": {
+    "disclosure": "Waxaan ahay caawiyaha AI ee Martindale Dental",
+    "greeting": "Salaan! Waxaan ahay Sam, caawiyaha AI ee Martindale Dental. Waxaan kaa caawin karaa ballamaha, su'aalaha xafiiska, ama walaac kasta oo ku saabsan ilkaha — oo ay ku jiraan xaaladaha degdega ah, xanuun ku soo kor istaagay, ama wax kasta oo deg deg ah. Sidee baan kuu caawin karaa?"
+  },
+
+  "ui_strings": {
+    "panel_title_practice": "Martindale Dental",
+    "panel_title_bot": "Sam",
+    "input_placeholder": "Qor fariintaada…",
+    "send_button_label": "Dir",
+    "send_button_aria": "Dir fariinta",
+    "language_picker_label": "Luqadda",
+    "language_picker_aria": "Dooro luqadda aad jeceshahay",
+    "open_chat_aria": "Fur sheekada Sam",
+    "close_chat_aria": "Xidh sheekada",
+    "minimize_chat_aria": "Yaree sheekada",
+    "typing_indicator_aria": "Sam wuu qorayaa",
+    "open_intake_button": "Fur foomka qaadista",
+    "powered_by": "Waxaa awood u siiya VirtualDentist.ai",
+    "error_send_failed": "Lama dirin karin fariintaas. Fadlan mar kale isku day.",
+    "error_rate_limited": "Waxaad dirtay fariimo badan. Fadlan sug daqiiqad, ka dibna mar kale isku day."
+  },
+
+  "intent_routing": {
+    "clinical_keywords": [
+      "xanuun", "xanuunsanaya", "xanuunsanaysa", "xanuun daran", "xanuun aad u daran",
+      "wax i xanuunaya", "ilkahayga way i xanuunayaan",
+      "xanuun fiiqan", "xanuun aan loo dulqaadan karin",
+      "barar", "bararay", "buufnaaday", "bararsanaan",
+      "dhiig", "dhiig baxaya", "dhiig baxay", "dhiig",
+      "jabay", "jabsanaaday", "dildilac", "dildilacsanaan",
+      "shil", "dhicid", "garaac", "dhaawac", "dhaawacmay",
+      "deg deg", "degdeg", "khatar",
+      "ka soo baxay", "ka soo dhacay",
+      "malasta", "malas", "qoodh", "caabuq", "infekshan",
+      "ma cuni karo", "ma calalin karo", "ma seexan karo",
+      "ilkaha caqliga",
+      "buuxinta way ka soo dhacday", "taajka wuu ka soo dhacay",
+      "xanuun ilig", "xanuun garka", "xanuun ciridka",
+      "qandho", "dhabanada kulul",
+      "dhibaato liqida", "dhibaato neefsiga",
+      "suusay", "suusid", "sin sin",
+      "ilig dildilacsan", "ilig liicaya", "ilig oo lulmaya"
+    ],
+    "appointment_keywords": [
+      "ballan", "ballansiyo", "qabso", "qorsho", "wakhti",
+      "nadiifin", "baadhitaan", "kormeer",
+      "bukaan cusub", "tashi", "kulanka koowaad",
+      "cadayn", "buuxin", "buuxinno", "taaj", "daaweynta xididka", "ka saarid",
+      "ilkaha qalaba", "invisalign", "tooshin ilkaha",
+      "implant", "implants", "implant ilkaha",
+      "ilko been ah", "denture",
+      "veneer", "veneers",
+      "bonding",
+      "bridge", "buundo ilkaha",
+      "ilkaha ilaaliye", "habeenkii ilaaliye",
+      "sealant",
+      "daaweynta ciridka", "periodontal",
+      "arag dhakhtarka ilkaha", "arag qof",
+      "diyaar", "wakhti banaan",
+      "xiiseeya", "rabaa", "ka fikiraya"
+    ],
+    "deflect_keywords": [
+      "caymis", "daboolaad", "shir-tirsi", "siyaasad",
+      "blue cross", "manulife", "sunlife", "green shield", "cdcp",
+      "ontario works", "odsp", "qiimo dhimis odayaal", "dakhli yar",
+      "qiimaha", "qiimo", "imisa", "kharash", "khidmad",
+      "celin lacag", "biil", "qaansheeg", "qorshaha lacag bixinta", "amaah"
+    ],
+    "llm_fallback_enabled": true,
+    "llm_fallback_model": "gpt-4o-mini",
+    "llm_fallback_temperature": 0.0,
+    "llm_fallback_max_tokens": 10
+  },
+
+  "safety": {
+    "self_harm_keywords": [
+      "is dilo", "naftayda dhammeyn", "is dil", "rabaa inaan dhinto",
+      "naftayda waxyeello", "is dhaawici"
+    ],
+    "self_harm_response": "Adigu kaligaa ma tihid, oo waxaad la kulanaysid wax aad u culus. Tan ma aha wax aan toos kuu caawin karo, laakiin fadlan la xidhiidh qof kuu caawin kara — Kanada gudaheeda waxaad wici kartaa ama qori kartaa 988 wakhti kasta maalin iyo habeen taageero degdeg ah. Haddii aad halis degdeg ah ku jirto, fadlan wac 911.",
+    "abuse_deflection_response": "Waxaan rabay inaan caawiyo, laakiin sidan ma sii wadi karo. Haddii aad walaac ku saabsan ilkaha qabto, anigu halkan baan joogaa. Haddii kale waxaad la xidhiidhi kartaa xafiiskayaga 905-393-8501 saacadaha shaqada."
+  },
+
+  "handoff": {
+    "clinical_handoff_message": "I oggolow inaan furo foomka degdega ah si aan u soo ururiyo qaar ka mid ah faahfaahinta muhiimka ah ee kooxdayada. Marka aad gudbiso, Sam wuxuu kula soo socon doonaa si uu u dhammeystiro qiimeynta — waxaad ka dooran kartaa cod ama qoraal foomka.",
+    "clinical_redirect_message": "Waan fahmay — laakiin walaaca caafimaadka, kooxdayada waxay u baahan tahay qaar ka mid ah faahfaahinta gaarka ah si ay si sax ah kuugu hagaan. Ma awoodi karo inaan halkan ku samayo qiimeynta calaamadaha. Foomka hoose wuxuu qaadanayaa qiyaastii daqiiqad waxaadna ka dooran kartaa cod ama qoraal. Marka aad gudbiso, Sam halkaas ayuu ka sii wadayaa.",
+    "clinical_pivot_nudge": "Hubaal — kaliya xusuusinta, foomka qaadista weli wuu jiraa marka aad rabto inaad ku noqoto walaaca aad horay u sheegtay.",
+    "empathy_fallback": "Waan ka xumahay inaan maqlo taas.",
+    "appointment_empathy_fallback": "Si farxad leh ayaan kaa caawin karaa.",
+    "appointment_time_ask_message": "Maalintee iyo wakhtigee ayaa kuu fiican?",
+    "appointment_time_ack_template": "Waan fahmay — {time}.",
+    "appointment_contact_ask_message": "Magacaaga iyo nambar telefoon oo aan kugula soo xidhiidhi karno waa kuwee?",
+    "appointment_confirm_body": "Codsigaaga waxaan u gudbiyey kooxda xafiiska — way kula soo xidhiidhi doonaan si ay u xaqiijiyaan faahfaahinta. Ma jirtaa wax kale oo aan kaa caawin karo?",
+    "deflect_ask_message": "Kooxdayadu way ku faraxsanaan doonaan inay si shakhsiyeed kuugu sharxaan taas. Haddii aad la wadaagi karto magacaaga iyo macluumaadkaaga xidhiidhka, way kula soo xidhiidhi doonaan faahfaahinta.",
+    "deflect_confirm_body": "Kooxdayadu way kula soo xidhiidhi doonaan faahfaahinta. Ma jirtaa wax kale oo aan kaa caawin karo?",
+    "partial_name_followup": "Mahadsanid! Magacaaga waa kuma?",
+    "partial_phone_followup_body": "Lambarka telefoon ee ugu fiican ee laguugu soo xidhiidhi karo waa kuma?",
+    "unresolved_fallback_message": "Waxaan rabaa inaan hubiyo inaad heshid jawaabta saxda ah. Ma kuu fiicnaan lahayd haddii kooxdayadu kula soo xidhiidho? Haddii aad la wadaagi karto magacaaga iyo macluumaadkaaga xidhiidhka, way ku la socon doonaan.",
+    "prefill_fields": ["patient_name", "patient_phone", "patient_email", "patient_city", "chief_complaint_raw"]
+  },
+
+  "emergency_disclaimer": "Haddii aad yeelato dhibaato neefsiga ama liqida, dhiig aan joogsan, barar wajiga oo si dhakhso ah u faafaya, ama isbeddel ku yimaada calaamadahaaga oo deg deg iyo daran ah, kaas waa wakhtiga aad ku wacdo 911 ama aad u tagto qolka degdega ee ugu dhow. Sheekadan kama beddesho daryeelka degdega."
+}
