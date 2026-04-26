@@ -1,0 +1,110 @@
+{
+  "language": "es",
+  "language_name": "Español",
+  "direction": "ltr",
+
+  "bot": {
+    "disclosure": "Soy el asistente de IA de Martindale Dental",
+    "greeting": "¡Hola! Soy Sam, el asistente de IA de Martindale Dental. Puedo ayudar con citas, preguntas de la oficina, o cualquier preocupación dental — incluyendo emergencias, dolor repentino o cualquier asunto urgente. ¿En qué puedo ayudarle?"
+  },
+
+  "ui_strings": {
+    "panel_title_practice": "Martindale Dental",
+    "panel_title_bot": "Sam",
+    "input_placeholder": "Escriba su mensaje…",
+    "send_button_label": "Enviar",
+    "send_button_aria": "Enviar mensaje",
+    "language_picker_label": "Idioma",
+    "language_picker_aria": "Elija su idioma preferido",
+    "open_chat_aria": "Abrir chat con Sam",
+    "close_chat_aria": "Cerrar chat",
+    "minimize_chat_aria": "Minimizar chat",
+    "typing_indicator_aria": "Sam está escribiendo",
+    "open_intake_button": "Abrir formulario de admisión",
+    "powered_by": "Desarrollado por VirtualDentist.ai",
+    "error_send_failed": "No se pudo enviar ese mensaje. Por favor intente de nuevo.",
+    "error_rate_limited": "Ha enviado bastantes mensajes. Por favor espere un momento e intente de nuevo."
+  },
+
+  "intent_routing": {
+    "clinical_keywords": [
+      "dolor", "duele", "duelen", "doliendo", "molestia",
+      "adolorido", "adolorida", "sensible", "punzante", "pulsante",
+      "dolor agudo", "dolor severo", "dolor intenso", "insoportable",
+      "hinchazón", "hinchado", "hinchada", "inflamado", "inflamada", "inflamación",
+      "sangra", "sangrado", "sangrando", "sangre",
+      "roto", "rota", "fracturado", "fracturada", "agrietado", "agrietada", "astillado", "astillada", "partido",
+      "accidente", "caí", "caída", "golpe", "golpeado", "impacto", "trauma", "lesión", "lesionado",
+      "emergencia", "urgente", "urgentemente",
+      "se cayó", "se salió", "se desprendió",
+      "absceso", "pus", "infectado", "infectada", "infección", "infección de encías",
+      "no puedo comer", "no puedo masticar", "no puedo dormir",
+      "muela del juicio", "muelas del juicio", "cordal", "cordales",
+      "empaste perdido", "corona caída", "corona perdida",
+      "dolor de muelas", "dolor de dientes", "dolor de mandíbula", "dolor de encías",
+      "fiebre", "mejilla caliente",
+      "dificultad para tragar", "dificultad para respirar",
+      "entumecido", "entumecimiento", "hormigueo",
+      "diente astillado", "diente agrietado", "diente flojo"
+    ],
+    "appointment_keywords": [
+      "cita", "reservar", "agendar", "programar", "reagendar",
+      "limpieza", "chequeo", "revisión", "examen",
+      "paciente nuevo", "consulta", "primera visita",
+      "blanqueamiento", "empaste", "empastes", "corona", "coronas", "endodoncia", "extracción",
+      "frenos", "brackets", "invisalign", "ortodoncia", "retenedor",
+      "implante", "implantes", "implante dental", "implantes dentales",
+      "prótesis", "dentadura", "dentaduras", "dentadura postiza",
+      "carilla", "carillas", "carillas dentales",
+      "adhesión", "unión dental",
+      "puente", "puentes", "puente dental",
+      "protector bucal", "protector nocturno",
+      "sellador", "selladores",
+      "incrustación", "onlay",
+      "tratamiento de encías", "periodontal",
+      "ver al dentista", "ver a un dentista", "ver a alguien",
+      "disponible", "disponibilidad", "espacio",
+      "interesado en", "interesada en", "me gustaría", "estoy pensando en"
+    ],
+    "deflect_keywords": [
+      "seguro", "cobertura", "cubierto", "cubierta", "reclamo", "póliza",
+      "blue cross", "manulife", "sunlife", "green shield", "cdcp",
+      "ontario works", "odsp", "descuento adulto mayor", "bajos ingresos",
+      "precio", "costo", "cuánto cuesta", "tarifa", "tarifas", "honorarios",
+      "reembolso", "facturación", "factura", "plan de pago", "financiamiento"
+    ],
+    "llm_fallback_enabled": true,
+    "llm_fallback_model": "gpt-4o-mini",
+    "llm_fallback_temperature": 0.0,
+    "llm_fallback_max_tokens": 10
+  },
+
+  "safety": {
+    "self_harm_keywords": [
+      "matarme", "quitarme la vida", "suicidio", "suicida", "quiero morir",
+      "hacerme daño", "autolesión"
+    ],
+    "self_harm_response": "No está solo/a, y lo que está pasando suena muy difícil. Esto no es algo con lo que pueda ayudarle directamente, pero por favor contacte a alguien que pueda — en Canadá puede llamar o enviar un texto al 988 a cualquier hora del día o de la noche para apoyo inmediato. Si está en peligro inmediato, por favor llame al 911.",
+    "abuse_deflection_response": "Quiero ayudar, pero no puedo continuar de esta manera. Si tiene una preocupación dental, estoy aquí. De lo contrario, puede comunicarse con nuestra oficina al 905-393-8501 durante el horario de atención."
+  },
+
+  "handoff": {
+    "clinical_handoff_message": "Permítame abrir un formulario rápido para reunir algunos detalles importantes para nuestro equipo. Una vez que lo envíe, Sam le contactará para completar la evaluación — puede elegir seguimiento por voz o texto en el formulario.",
+    "clinical_redirect_message": "Entiendo — pero para preocupaciones clínicas, nuestro equipo necesita algunos detalles específicos para guiarle correctamente. No puedo hacer triaje de síntomas aquí en el chat. El formulario a continuación toma aproximadamente un minuto y puede elegir seguimiento por voz o texto. Una vez que lo envíe, Sam continuará desde ahí.",
+    "clinical_pivot_nudge": "Por supuesto — solo como recordatorio, el formulario sigue disponible cuando quiera regresar a su preocupación anterior.",
+    "empathy_fallback": "Lamento escuchar eso.",
+    "appointment_empathy_fallback": "Con mucho gusto.",
+    "appointment_time_ask_message": "¿Qué día y hora le funcionan?",
+    "appointment_time_ack_template": "Entendido — {time}.",
+    "appointment_contact_ask_message": "¿Y cuál es su nombre y un número de teléfono donde podamos contactarle?",
+    "appointment_confirm_body": "He enviado su solicitud a nuestro equipo — se comunicarán con usted para confirmar los detalles. ¿Hay algo más en lo que pueda ayudar?",
+    "deflect_ask_message": "Nuestro equipo estará encantado de explicarle eso individualmente. Si pudiera compartir su nombre y datos de contacto, ellos le contactarán con los detalles específicos.",
+    "deflect_confirm_body": "Nuestro equipo se pondrá en contacto con los detalles. ¿Hay algo más en lo que pueda ayudar?",
+    "partial_name_followup": "¡Gracias! ¿Y cuál es su nombre?",
+    "partial_phone_followup_body": "¿Y cuál es el mejor número de teléfono para contactarle?",
+    "unresolved_fallback_message": "Quiero asegurarme de que reciba la respuesta correcta. ¿Estaría bien que nuestro equipo se comunicara con usted? Si pudiera compartir su nombre y datos de contacto, ellos le contactarán.",
+    "prefill_fields": ["patient_name", "patient_phone", "patient_email", "patient_city", "chief_complaint_raw"]
+  },
+
+  "emergency_disclaimer": "Si presenta dificultad para respirar o tragar, sangrado que no se detiene, hinchazón facial que se extiende rápidamente o un cambio repentino y grave en sus síntomas, ese sería el momento de llamar al 911 o ir a la sala de emergencias más cercana. Este chat no reemplaza la atención de emergencia."
+}
