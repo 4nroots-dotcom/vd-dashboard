@@ -246,7 +246,36 @@
     "llm_fallback_enabled": true,
     "llm_fallback_model": "gpt-4o-mini",
     "llm_fallback_temperature": 0.0,
-    "llm_fallback_max_tokens": 10
+    "llm_fallback_max_tokens": 10,
+    "closer_keywords": [
+      "no thanks",
+      "no thank you",
+      "no",
+      "nope",
+      "nah",
+      "that's all",
+      "thats all",
+      "that's it",
+      "thats it",
+      "all good",
+      "i'm good",
+      "im good",
+      "i'm fine",
+      "im fine",
+      "nothing else",
+      "no more",
+      "goodbye",
+      "bye",
+      "see you",
+      "see ya",
+      "thanks bye",
+      "ok thanks",
+      "okay thanks",
+      "thank you",
+      "all set",
+      "we're good",
+      "were good"
+    ]
   },
   "safety": {
     "self_harm_keywords": [
@@ -288,7 +317,8 @@
     ],
     "appointment_confirm_greeting_named": "Thanks {name}!",
     "appointment_confirm_greeting": "Thanks!",
-    "appointment_confirm_time_noted": " I've noted {time} as your preferred time."
+    "appointment_confirm_time_noted": " I've noted {time} as your preferred time.",
+    "closer_response": "You're welcome! Have a great day, and don't hesitate to come back if you need anything."
   },
   "emergency_disclaimer": "If you develop difficulty breathing or swallowing, bleeding that won't stop, rapidly spreading facial swelling or a sudden severe change in your symptoms, that would be the time to call 911 or go to your nearest emergency room. This chat does not replace emergency care."
 }
