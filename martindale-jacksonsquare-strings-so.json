@@ -178,6 +178,16 @@
       "muusig",
       "heesta",
       "cunto karinta"
+    ],
+    "closer_keywords": [
+      "maya mahadsanid",
+      "maya",
+      "intaas",
+      "waa hagaag",
+      "waan fiicanahay",
+      "mahadsanid",
+      "nabadgelyo",
+      "macsalaamo"
     ]
   },
   "safety": {
@@ -218,7 +228,8 @@
     "appointment_confirm_greeting": "Mahadsanid!",
     "appointment_confirm_time_noted": " Waxaan u qoray {time} sida wakhtigaaga la doorbiday.",
     "greeting_response": "Salaan! Waxaan ahay Sam, kaaliyaha AI ee Martindale Dental. Sideen kaa caawin karaa maanta? Waxaad i waydiisan kartaa ballamaha, adeegyada, ama wax kasta oo ku saabsan ilkaha.",
-    "off_topic_response": "Waxaan kaliya kaa caawin karaa su'aalaha ku saabsan ilkaha ee Martindale Dental. Ma jiraa wax ku saabsan ilkaha aan kaa caawin karo?"
+    "off_topic_response": "Waxaan kaliya kaa caawin karaa su'aalaha ku saabsan ilkaha ee Martindale Dental. Ma jiraa wax ku saabsan ilkaha aan kaa caawin karo?",
+    "closer_response": "Adaa mudan! Maalin wanaagsan, hana ka caga jiidan inaad ku soo laabato haddii aad wax u baahato."
   },
   "emergency_disclaimer": "Haddii aad yeelato dhibaato neefsiga ama liqida, dhiig aan joogsan, barar wajiga oo si dhakhso ah u faafaya, ama isbeddel ku yimaada calaamadahaaga oo deg deg iyo daran ah, kaas waa wakhtiga aad ku wacdo 911 ama aad u tagto qolka degdega ee ugu dhow. Sheekadan kama beddesho daryeelka degdega."
 }
