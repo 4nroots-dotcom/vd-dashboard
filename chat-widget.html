@@ -363,7 +363,8 @@ window.addEventListener('DOMContentLoaded', function() {
     messageHistory: [],     // local mirror for UX; server is source of truth
     inFlight: false,
     languagePickerVisible: true,
-    greetingShown: false
+    greetingShown: false,
+    disclaimerShown: false  // emergency disclaimer rendered after first user message
   };
 
   // ═══════════════════════════════════════════════════════════════════
@@ -586,8 +587,25 @@ window.addEventListener('DOMContentLoaded', function() {
     if (state.greetingShown) return;
     var s = state.strings;
     if (s.bot && s.bot.greeting) appendBotBubble(s.bot.greeting);
-    if (s.emergency_disclaimer) appendWarningBubble(s.emergency_disclaimer);
+    // Defer emergency disclaimer to after the first user message. On first
+    // load, the language picker takes ~30-40% of mobile height; if the
+    // disclaimer also renders here, the greeting gets pushed off-screen and
+    // the user lands looking at the disclaimer instead of the welcome.
+    // The disclaimer still appears (showDisclaimerIfNeeded is called from
+    // sendMessage on first send) — just shifted in time.
     state.greetingShown = true;
+    var m = el("messages");
+    if (m) m.scrollTop = 0;
+  }
+
+  // Render the emergency disclaimer ONCE per session, the first time the
+  // user sends a message. Splits the disclaimer out of showGreetingIfNeeded
+  // so the first-load view isn't crowded.
+  function showDisclaimerIfNeeded() {
+    if (state.disclaimerShown) return;
+    var s = state.strings;
+    if (s.emergency_disclaimer) appendWarningBubble(s.emergency_disclaimer);
+    state.disclaimerShown = true;
   }
 
   // ═══════════════════════════════════════════════════════════════════
@@ -622,7 +640,8 @@ window.addEventListener('DOMContentLoaded', function() {
         return m.role === "user";
       });
       if (!hasUserMessages) {
-        // Wipe and re-render greeting + disclaimer.
+        // Wipe and re-render greeting in new language. Disclaimer stays
+        // deferred — it'll render on the user's first message.
         var msgsEl = el("messages");
         if (msgsEl) msgsEl.innerHTML = "";
         state.greetingShown = false;
@@ -658,6 +677,11 @@ window.addEventListener('DOMContentLoaded', function() {
     appendUserBubble(text);
     state.messageHistory.push({ role: "user", content: text });
     fireEvent("message_sent", { length: text.length });
+
+    // Render the emergency disclaimer immediately after the patient's
+    // first message. Done before awaiting the network response so the
+    // safety information shows even if the request errors out.
+    showDisclaimerIfNeeded();
 
     state.inFlight = true;
     setSendDisabled(true);
