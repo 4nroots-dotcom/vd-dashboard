@@ -226,6 +226,26 @@
       "chanson",
       "recette",
       "cuisine"
+    ],
+    "closer_keywords": [
+      "non merci",
+      "non",
+      "rien d'autre",
+      "rien dautre",
+      "c'est tout",
+      "cest tout",
+      "ça va",
+      "ca va",
+      "ça ira",
+      "ca ira",
+      "merci",
+      "au revoir",
+      "bonne journée",
+      "bonne soirée",
+      "à bientôt",
+      "a bientot",
+      "salut",
+      "ok merci"
     ]
   },
   "safety": {
@@ -267,7 +287,8 @@
     "appointment_confirm_greeting": "Merci !",
     "appointment_confirm_time_noted": " J'ai noté {time} comme votre créneau préféré.",
     "greeting_response": "Bonjour ! Je suis Sam, l'assistant IA de Martindale Dental. Comment puis-je vous aider aujourd'hui ? Vous pouvez me parler de rendez-vous, de services, ou de toute préoccupation dentaire.",
-    "off_topic_response": "Je peux seulement répondre aux questions dentaires concernant Martindale Dental. Y a-t-il quelque chose de dentaire qui peut m'occuper ?"
+    "off_topic_response": "Je peux seulement répondre aux questions dentaires concernant Martindale Dental. Y a-t-il quelque chose de dentaire qui peut m'occuper ?",
+    "closer_response": "Je vous en prie ! Bonne journée, et n'hésitez pas à revenir si vous avez besoin de quelque chose."
   },
   "emergency_disclaimer": "Si vous développez des difficultés à respirer ou à avaler, des saignements qui ne s'arrêtent pas, un gonflement facial qui s'étend rapidement ou un changement soudain et grave de vos symptômes, ce serait le moment d'appeler le 911 ou de vous rendre à l'urgence la plus proche. Ce chat ne remplace pas les soins d'urgence."
 }
