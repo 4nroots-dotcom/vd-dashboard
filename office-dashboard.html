@@ -1262,7 +1262,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       var langCode = c.patient_language || "en";
       var langLabels = { ar: "Arabic", hi: "Hindi", pa: "Punjabi", fr: "French", fa: "Farsi", so: "Somali", es: "Spanish", zh: "Chinese" };
-      var isSMS = c.extraction_source === "sms-openai" || !!c.sms_transcript || (langCode !== "en" && !c.source);
+      var isSMS = c.extraction_source === "sms-openai" || c.extraction_source === "sms-claude" || !!c.sms_transcript || (langCode !== "en" && !c.source);
       var isVoice = c.source === "vapi" || c.extraction_source === "vapi";
       var channelPip = isSMS
         ? "<span style=\"display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:1px 6px;border-radius:999px;background:rgba(0,200,232,0.1);color:#00c8e8;border:1px solid rgba(0,200,232,0.3);margin-left:4px;\">SMS</span>"
@@ -1357,11 +1357,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     revSaveBtn.onclick = function() { saveRevenue(c.id, revenueInput.value.trim()); };
 
     // SMS banner
+    // Classification rules:
+    //   - SMS-only: case originated and was triaged entirely via text. No voice call.
+    //     Detected by intake_source==="sms" OR extraction_source ∈ {sms-openai, sms-claude}
+    //     AND no voice signal.
+    //   - Voice continuation: case had a voice call (source==="vapi" or extraction_source==="vapi")
+    //     AND patient sent additional SMS afterward (has_sms_continuation OR sms_transcript).
+    //   - Multilingual SMS triage: SMS-only AND patient_language is non-English.
+    // Note: has_sms_continuation is set true on every SMS turn by sms-router regardless of
+    // whether a voice precursor exists, so it cannot be used alone to identify continuations.
     var existingBanner = document.getElementById("sms-case-banner");
     if (existingBanner) existingBanner.remove();
-    var isSmsExtraction = c.extraction_source === "sms-openai";
-    var isSmsTriage = isSmsExtraction && c.patient_language && c.patient_language !== "en";
-    if (c.has_sms_continuation || isSmsExtraction) {
+    var hadVoiceCall = c.source === "vapi" || c.extraction_source === "vapi";
+    var hasSmsActivity = c.has_sms_continuation === true || !!c.sms_transcript;
+    var isSmsExtraction = c.extraction_source === "sms-openai" || c.extraction_source === "sms-claude";
+    var isSmsPrimary = !hadVoiceCall && (c.intake_source === "sms" || isSmsExtraction);
+    var isVoiceContinuation = hadVoiceCall && hasSmsActivity;
+    var isSmsTriage = isSmsPrimary && c.patient_language && c.patient_language !== "en";
+    if (isSmsPrimary || isVoiceContinuation) {
       var smsBanner = document.createElement("div");
       smsBanner.id = "sms-case-banner";
       smsBanner.className = "sms-banner";
@@ -1369,7 +1382,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var langName = langLabels[c.patient_language] || c.patient_language;
       smsBanner.innerHTML = isSmsTriage
         ? "<strong>&#128172; SMS triage (" + esc(langName) + ").</strong> This case was triaged entirely via text in the patient's language. The AI-generated clinical note is in English. Review carefully for completeness before taking action."
-        : isSmsExtraction
+        : isSmsPrimary
         ? "<strong>&#128172; SMS triage.</strong> This case was triaged entirely via text &mdash; no voice call was made. Review the AI-generated clinical note carefully for completeness before taking action."
         : "<strong>&#9888; SMS continuation.</strong> This patient provided additional information via text after the call ended. Review the SMS thread below and verify the clinical note is complete before finalising this case.";
       revenueBar.parentNode.insertBefore(smsBanner, revenueBar.nextSibling);
