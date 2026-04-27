@@ -1480,12 +1480,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var pendingPhone = c.patient_phone
         ? c.patient_phone.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3") : "—";
       var pendingDob = c.patient_dob ? formatDOB(c.patient_dob) : "—";
+      // Differentiate chatbot non-emergent bookings (complete, no Sam
+      // follow-up needed) from intake-form cases where Sam's voice/SMS
+      // triage is still pending. The "Sam has not yet completed this
+      // call" warning is correct context for the latter and wrong for
+      // the former — chatbot bookings are submission-complete.
+      var isNonEmergentChatbot = c.triage_tag === "non_emergent_inquiry";
+      var pendingLabel = isNonEmergentChatbot
+        ? "Non-Emergent Inquiry &mdash; Office Follow-Up Needed"
+        : "Intake Information &mdash; Triage Pending";
+      var pendingWarning = isNonEmergentChatbot
+        ? '<span style="color:#744210;">&#128172; This patient submitted a non-emergent inquiry through the website chat. Please reach out to confirm details and book if appropriate.</span>'
+        : '<span style="color:#C05621;">&#9888; Sam has not yet completed this call. The information below was submitted via the intake form.</span>';
+      var pendingWarningBg = isNonEmergentChatbot
+        ? 'background:#FFFFF0;border:1px solid #D69E2E;'
+        : 'background:#FFFAF0;border:1px solid #F6AD55;';
       var pendingCard = document.createElement("div");
       pendingCard.innerHTML =
         '<div class="contact-card" style="margin:16px;">' +
-          '<div class="contact-card-label">Intake Information — Triage Pending</div>' +
-          '<div style="font-size:12px;color:#C05621;margin-bottom:12px;padding:8px 10px;background:#FFFAF0;border-radius:6px;border:1px solid #F6AD55;">' +
-            '&#9888; Sam has not yet completed this call. The information below was submitted via the intake form.' +
+          '<div class="contact-card-label">' + pendingLabel + '</div>' +
+          '<div style="font-size:12px;margin-bottom:12px;padding:8px 10px;border-radius:6px;' + pendingWarningBg + '">' +
+            pendingWarning +
           '</div>' +
           '<div class="contact-grid">' +
             '<div class="contact-row"><div class="contact-field-label">Name</div><div class="contact-field-value">' + esc(c.patient_name || "—") + '</div></div>' +
@@ -1493,9 +1508,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             '<div class="contact-row"><div class="contact-field-label">Date of Birth</div><div class="contact-field-value">' + esc(pendingDob) + '</div></div>' +
             '<div class="contact-row"><div class="contact-field-label">City</div><div class="contact-field-value">' + esc(c.patient_city || "—") + '</div></div>' +
             (c.patient_language && c.patient_language !== "en" ? '<div class="contact-row"><div class="contact-field-label">Language</div><div class="contact-field-value" style="color:#6b46c1;font-weight:600;">' + esc(({"ar":"Arabic","hi":"Hindi","pa":"Punjabi","fr":"French","fa":"Farsi","so":"Somali","es":"Spanish","zh":"Chinese"})[c.patient_language] || c.patient_language) + ' (SMS triage)</div></div>' : '') +
-            '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Chief Complaint</div><div class="contact-field-value">' + esc(c.chief_complaint_english || c.chief_complaint || "—") + '</div></div>' +
-            '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Medical History</div><div class="contact-field-value">' + esc(humanizeMedicalFlags(c.intake_medical_flags || {})) + '</div></div>' +
-            (c.current_medications ? '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Current Medications</div><div class="contact-field-value">' + esc(c.current_medications) + '</div></div>' : '') +
+            '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">' + (isNonEmergentChatbot ? "Patient Request" : "Chief Complaint") + '</div><div class="contact-field-value">' + esc(c.chief_complaint_english || c.chief_complaint || "—") + '</div></div>' +
+            (isNonEmergentChatbot ? '' : '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Medical History</div><div class="contact-field-value">' + esc(humanizeMedicalFlags(c.intake_medical_flags || {})) + '</div></div>') +
+            (!isNonEmergentChatbot && c.current_medications ? '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Current Medications</div><div class="contact-field-value">' + esc(c.current_medications) + '</div></div>' : '') +
           '</div>' +
         '</div>';
       card.appendChild(pendingCard);
