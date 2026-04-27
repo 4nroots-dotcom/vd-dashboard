@@ -1154,7 +1154,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     var result = await sb
       .from("triage_cases")
-      .select("id, patient_name, patient_name_english, patient_phone, patient_dob, patient_city, patient_city_english, patient_email, chief_complaint, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at, revenue_generated, sms_transcript, sms_structured_output, has_sms_continuation, sms_received_at, intake_medical_flags, current_medications, clinical_note, patient_language, extraction_source, source, post_triage_escalation, post_triage_last_message_at, triage_tag")
+      .select("id, patient_name, patient_name_english, patient_phone, patient_dob, patient_city, patient_city_english, patient_email, chief_complaint, chief_complaint_english, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at, revenue_generated, sms_transcript, sms_structured_output, has_sms_continuation, sms_received_at, intake_medical_flags, current_medications, clinical_note, patient_language, extraction_source, source, post_triage_escalation, post_triage_last_message_at")
       .order("created_at", { ascending: currentSortAsc });
 
     if (result.error) {
@@ -1242,7 +1242,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var time = dt.toLocaleTimeString("en-CA", { hour: "2-digit", minute: "2-digit", hour12: true });
       var date = dt.toLocaleDateString("en-CA", { month: "short", day: "numeric" });
       var name = maskName(c.patient_name);
-      var complaint = c.chief_complaint || "No complaint recorded";
+      var complaint = c.chief_complaint_english || c.chief_complaint || "No complaint recorded";
       var sev = (c.severity || "").toLowerCase();
       // Backward compat: old "emergency" (same-day) → now "urgent". Run SQL migration first for "urgent"→"critical".
       if (sev === "emergency") { sev = "urgent"; c.severity = "urgent"; }
@@ -1477,54 +1477,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     card.appendChild(ph);
 
     if (!so) {
-      // Detect non_emergent_inquiry: chatbot-originated cases where a
-      // patient asked about a service or appointment (not clinical) and
-      // gave name + contact. There's no Sam call pending — the case is
-      // waiting for office staff to phone the patient back. Suppress the
-      // "Sam has not yet completed this call" banner and skip the clinical
-      // intake fields (DOB, medical history, etc.) that don't apply.
-      var isNonEmergent = c.triage_tag === "non_emergent_inquiry";
-
       var pendingPhone = c.patient_phone
         ? c.patient_phone.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3") : "—";
       var pendingDob = c.patient_dob ? formatDOB(c.patient_dob) : "—";
       var pendingCard = document.createElement("div");
-
-      if (isNonEmergent) {
-        // Streamlined card for chatbot inquiries.
-        pendingCard.innerHTML =
-          '<div class="contact-card" style="margin:16px;">' +
-            '<div class="contact-card-label">Patient Inquiry — Office Follow-Up Needed</div>' +
-            '<div style="font-size:12px;color:#744210;margin-bottom:12px;padding:8px 10px;background:#fffff0;border-radius:6px;border:1px solid #D69E2E;">' +
-              '&#128172; This patient submitted a non-emergent inquiry through the website chat. Please reach out to confirm details and book if appropriate.' +
-            '</div>' +
-            '<div class="contact-grid">' +
-              '<div class="contact-row"><div class="contact-field-label">Name</div><div class="contact-field-value">' + esc(c.patient_name || "—") + '</div></div>' +
-              '<div class="contact-row"><div class="contact-field-label">Phone</div><div class="contact-field-value">' + esc(pendingPhone) + '</div></div>' +
-              (c.patient_email ? '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Email</div><div class="contact-field-value">' + esc(c.patient_email) + '</div></div>' : '') +
-              '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Patient Request</div><div class="contact-field-value">' + esc(c.chief_complaint || "—") + '</div></div>' +
-            '</div>' +
-          '</div>';
-      } else {
-        // Original pending card for intake-form submissions awaiting Sam's call.
-        pendingCard.innerHTML =
-          '<div class="contact-card" style="margin:16px;">' +
-            '<div class="contact-card-label">Intake Information — Triage Pending</div>' +
-            '<div style="font-size:12px;color:#C05621;margin-bottom:12px;padding:8px 10px;background:#FFFAF0;border-radius:6px;border:1px solid #F6AD55;">' +
-              '&#9888; Sam has not yet completed this call. The information below was submitted via the intake form.' +
-            '</div>' +
-            '<div class="contact-grid">' +
-              '<div class="contact-row"><div class="contact-field-label">Name</div><div class="contact-field-value">' + esc(c.patient_name || "—") + '</div></div>' +
-              '<div class="contact-row"><div class="contact-field-label">Phone</div><div class="contact-field-value">' + esc(pendingPhone) + '</div></div>' +
-              '<div class="contact-row"><div class="contact-field-label">Date of Birth</div><div class="contact-field-value">' + esc(pendingDob) + '</div></div>' +
-              '<div class="contact-row"><div class="contact-field-label">City</div><div class="contact-field-value">' + esc(c.patient_city || "—") + '</div></div>' +
-              (c.patient_language && c.patient_language !== "en" ? '<div class="contact-row"><div class="contact-field-label">Language</div><div class="contact-field-value" style="color:#6b46c1;font-weight:600;">' + esc(({"ar":"Arabic","hi":"Hindi","pa":"Punjabi","fr":"French","fa":"Farsi","so":"Somali","es":"Spanish","zh":"Chinese"})[c.patient_language] || c.patient_language) + ' (SMS triage)</div></div>' : '') +
-              '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Chief Complaint</div><div class="contact-field-value">' + esc(c.chief_complaint || "—") + '</div></div>' +
-              '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Medical History</div><div class="contact-field-value">' + esc(humanizeMedicalFlags(c.intake_medical_flags || {})) + '</div></div>' +
-              (c.current_medications ? '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Current Medications</div><div class="contact-field-value">' + esc(c.current_medications) + '</div></div>' : '') +
-            '</div>' +
-          '</div>';
-      }
+      pendingCard.innerHTML =
+        '<div class="contact-card" style="margin:16px;">' +
+          '<div class="contact-card-label">Intake Information — Triage Pending</div>' +
+          '<div style="font-size:12px;color:#C05621;margin-bottom:12px;padding:8px 10px;background:#FFFAF0;border-radius:6px;border:1px solid #F6AD55;">' +
+            '&#9888; Sam has not yet completed this call. The information below was submitted via the intake form.' +
+          '</div>' +
+          '<div class="contact-grid">' +
+            '<div class="contact-row"><div class="contact-field-label">Name</div><div class="contact-field-value">' + esc(c.patient_name || "—") + '</div></div>' +
+            '<div class="contact-row"><div class="contact-field-label">Phone</div><div class="contact-field-value">' + esc(pendingPhone) + '</div></div>' +
+            '<div class="contact-row"><div class="contact-field-label">Date of Birth</div><div class="contact-field-value">' + esc(pendingDob) + '</div></div>' +
+            '<div class="contact-row"><div class="contact-field-label">City</div><div class="contact-field-value">' + esc(c.patient_city || "—") + '</div></div>' +
+            (c.patient_language && c.patient_language !== "en" ? '<div class="contact-row"><div class="contact-field-label">Language</div><div class="contact-field-value" style="color:#6b46c1;font-weight:600;">' + esc(({"ar":"Arabic","hi":"Hindi","pa":"Punjabi","fr":"French","fa":"Farsi","so":"Somali","es":"Spanish","zh":"Chinese"})[c.patient_language] || c.patient_language) + ' (SMS triage)</div></div>' : '') +
+            '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Chief Complaint</div><div class="contact-field-value">' + esc(c.chief_complaint_english || c.chief_complaint || "—") + '</div></div>' +
+            '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Medical History</div><div class="contact-field-value">' + esc(humanizeMedicalFlags(c.intake_medical_flags || {})) + '</div></div>' +
+            (c.current_medications ? '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Current Medications</div><div class="contact-field-value">' + esc(c.current_medications) + '</div></div>' : '') +
+          '</div>' +
+        '</div>';
       card.appendChild(pendingCard);
       wrap.appendChild(card);
       return wrap;
@@ -1563,7 +1536,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     body.appendChild(contactCard);
 
     // Chief Complaint
-    var cc = so.chief_complaint_quote || so.chief_complaint || c.chief_complaint || "Not recorded";
+    var cc = so.chief_complaint_quote || so.chief_complaint || c.chief_complaint_english || c.chief_complaint || "Not recorded";
     body.appendChild(section("Chief Complaint",
       "<div class=\"note-section-body\"><div class=\"note-quote\">" + esc(cc) + "</div></div>"
     ));
