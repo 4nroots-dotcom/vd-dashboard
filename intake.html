@@ -1472,6 +1472,66 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     restoreFormState();
 
+    // ── CHAT SESSION PREFILL ────────────────────────────────────────────
+    // When chat-handler routes a patient from the chatbot to this form
+    // (clinical-handoff or unresolved-fallback), it includes
+    // ?prefill_session=<uuid> in the URL. We call chat-session-prefill
+    // to fetch the captured fields (name, phone, email, city,
+    // chief_complaint_raw) and pre-fill the form so the patient doesn't
+    // retype information they already gave the chatbot.
+    //
+    // Behavior:
+    //   - Only populate fields that are EMPTY (don't overwrite restoreFormState).
+    //   - If session is expired or missing, silently fail — patient just fills
+    //     the form normally. No error UI for this case.
+    //   - Only prefill known-safe fields. patient_dob is never in chat sessions.
+    var prefillSessionId = urlParams.get("prefill_session");
+    if (prefillSessionId) {
+      var PREFILL_URL = SUPABASE_URL + "/functions/v1/chat-session-prefill";
+      fetch(PREFILL_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + SUPABASE_ANON_KEY,
+          "apikey": SUPABASE_ANON_KEY,
+        },
+        body: JSON.stringify({ session_id: prefillSessionId }),
+      })
+        .then(function(res) {
+          if (!res.ok) return null;
+          return res.json();
+        })
+        .then(function(data) {
+          if (!data) return;
+          // Only populate empty fields. restoreFormState may have already
+          // populated some — don't blow that away.
+          var fields = [
+            { id: "patient-name", val: data.patient_name },
+            { id: "patient-phone", val: data.patient_phone },
+            { id: "patient-email", val: data.patient_email },
+            { id: "patient-city", val: data.patient_city },
+            { id: "chief-complaint", val: data.chief_complaint_raw },
+          ];
+          fields.forEach(function(f) {
+            if (!f.val) return;
+            var el = document.getElementById(f.id);
+            if (!el) return;
+            // Only fill if empty — don't overwrite user input or restored state.
+            if (el.value && el.value.trim().length > 0) return;
+            el.value = f.val;
+          });
+          // If chat session has a language set, switch to it (overrides
+          // langParam which may have been picked up from a different URL).
+          if (data.language && T[data.language]) {
+            applyLanguage(data.language);
+          }
+        })
+        .catch(function(err) {
+          // Silent fail — patient just fills the form normally.
+          console.warn("Prefill failed:", err);
+        });
+    }
+
     document.getElementById("start-assessment-btn").addEventListener("click", function() {
       welcomeScreen.style.display = "none";
       formScreen.classList.add("show");
@@ -1739,6 +1799,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     function getIntakeSource() {
       var params = new URLSearchParams(window.location.search);
       var src = params.get("src") || "";
+      // Chatbot-originating sessions get their own intake_source so
+      // dashboard analytics can distinguish chatbot escalations from
+      // direct form submissions.
+      if (src === "chat_widget") return "widget_chat";
       // Any office-origin source (office, office_poster_multilingual, etc.) maps to in_office
       if (src.indexOf("office") !== -1) return "in_office";
       if (variantSrc) return variantSrc;
