@@ -212,6 +212,17 @@
       "音乐",
       "歌曲",
       "食谱"
+    ],
+    "closer_keywords": [
+      "不用了",
+      "不用",
+      "没有了",
+      "没事了",
+      "好的",
+      "谢谢",
+      "再见",
+      "拜拜",
+      "好的谢谢"
     ]
   },
   "safety": {
@@ -252,7 +263,8 @@
     "appointment_confirm_greeting": "谢谢!",
     "appointment_confirm_time_noted": "我已记下您的首选时间为 {time}。",
     "greeting_response": "您好!我是Sam,Martindale牙科的AI助手。今天我可以为您提供什么帮助?您可以询问预约、服务或任何牙科问题。",
-    "off_topic_response": "我只能帮助回答关于Martindale牙科的牙科相关问题。有什么牙科方面的问题我可以帮您吗?"
+    "off_topic_response": "我只能帮助回答关于Martindale牙科的牙科相关问题。有什么牙科方面的问题我可以帮您吗?",
+    "closer_response": "不客气!祝您有美好的一天,如果需要任何帮助,请随时回来。"
   },
   "emergency_disclaimer": "如果您出现呼吸或吞咽困难、出血不止、面部肿胀迅速扩散,或症状突然严重变化,这时应立即拨打 911 或前往最近的急诊室。本对话不能替代紧急医疗服务。"
 }
