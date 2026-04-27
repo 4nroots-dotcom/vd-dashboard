@@ -225,6 +225,23 @@
       "canción",
       "receta",
       "cocina"
+    ],
+    "closer_keywords": [
+      "no gracias",
+      "no",
+      "nada más",
+      "nada mas",
+      "eso es todo",
+      "está bien",
+      "esta bien",
+      "todo bien",
+      "estoy bien",
+      "gracias",
+      "adiós",
+      "adios",
+      "hasta luego",
+      "chao",
+      "ok gracias"
     ]
   },
   "safety": {
@@ -266,7 +283,8 @@
     "appointment_confirm_greeting": "¡Gracias!",
     "appointment_confirm_time_noted": " He anotado {time} como su horario preferido.",
     "greeting_response": "¡Hola! Soy Sam, el asistente de IA de Martindale Dental. ¿En qué puedo ayudarle hoy? Puede preguntarme sobre citas, servicios, o cualquier preocupación dental.",
-    "off_topic_response": "Solo puedo ayudar con preguntas dentales para Martindale Dental. ¿Hay algo dental con lo que pueda ayudarle?"
+    "off_topic_response": "Solo puedo ayudar con preguntas dentales para Martindale Dental. ¿Hay algo dental con lo que pueda ayudarle?",
+    "closer_response": "¡De nada! Que tenga un buen día, y no dude en volver si necesita algo."
   },
   "emergency_disclaimer": "Si presenta dificultad para respirar o tragar, sangrado que no se detiene, hinchazón facial que se extiende rápidamente o un cambio repentino y grave en sus síntomas, ese sería el momento de llamar al 911 o ir a la sala de emergencias más cercana. Este chat no reemplaza la atención de emergencia."
 }
