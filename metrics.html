@@ -208,6 +208,44 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #1a3260; border-radius: 2px; }
+
+    /* ---- BASELINE PARAMETERS (Ranu additions May 8) ---- */
+    .baseline-form { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px; }
+    @media (max-width: 520px) { .baseline-form { grid-template-columns: 1fr; } }
+    .baseline-field { display: flex; flex-direction: column; gap: 6px; }
+    .baseline-label { font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.08em; }
+    .baseline-input { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); font-size: 14px; padding: 10px 12px; outline: none; transition: border-color 0.2s, background 0.2s; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    .baseline-input:focus { border-color: rgba(0,200,232,0.4); background: rgba(255,255,255,0.07); }
+    .baseline-input::placeholder { color: var(--text-faint); }
+    .baseline-derived { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.05); }
+    @media (max-width: 520px) { .baseline-derived { grid-template-columns: 1fr; } }
+    .baseline-derived-card { background: rgba(0,200,232,0.04); border: 1px solid rgba(0,200,232,0.12); border-radius: 10px; padding: 12px; text-align: center; }
+    .baseline-derived-val { font-family: "DM Serif Display", serif; font-size: 24px; color: var(--cyan); line-height: 1.1; }
+    .baseline-derived-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-top: 4px; }
+    .baseline-help { font-size: 11px; color: var(--text-faint); line-height: 1.6; margin-top: 12px; padding: 10px 12px; background: rgba(255,255,255,0.02); border-radius: 6px; border-left: 2px solid rgba(0,200,232,0.3); }
+
+    /* ---- CALL-CENTRE COMPARISON ---- */
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 520px) { .compare-grid { grid-template-columns: 1fr; } }
+    .compare-card { padding: 16px; border-radius: 12px; border: 1px solid var(--border); background: rgba(255,255,255,0.025); }
+    .compare-card.us { border-color: rgba(0,200,232,0.25); background: rgba(0,200,232,0.04); }
+    .compare-card-head { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 8px; }
+    .compare-card.us .compare-card-head { color: var(--cyan); }
+    .compare-card-price { font-family: "DM Serif Display", serif; font-size: 28px; line-height: 1.1; color: var(--text-primary); margin-bottom: 4px; }
+    .compare-card.us .compare-card-price { color: var(--cyan); }
+    .compare-card-period { font-size: 11px; color: var(--text-muted); margin-bottom: 10px; }
+    .compare-card-body { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+    .compare-card-body strong { color: var(--text-primary); }
+    .compare-note { font-size: 11px; color: var(--text-faint); line-height: 1.6; margin-top: 12px; padding: 10px 12px; background: rgba(255,255,255,0.02); border-radius: 6px; }
+    .compare-note strong { color: var(--text-secondary); }
+
+    /* ---- PROBLEMS WE SOLVE ---- */
+    .problems-list { display: flex; flex-direction: column; gap: 10px; }
+    .problem-row { display: flex; gap: 12px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .problem-row:last-child { border-bottom: none; }
+    .problem-num { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; background: rgba(0,200,232,0.1); border: 1px solid rgba(0,200,232,0.25); color: var(--cyan); font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    .problem-text { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+    .problem-text strong { color: var(--text-primary); display: block; margin-bottom: 2px; }
   </style>
 </head>
 <body>
@@ -609,9 +647,85 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       }
 
       html += '</div></div>';
+
+      /* === BASELINE PARAMETERS — Ranu addition May 8 === */
+      /* Practice-specific baseline used to calculate $/chair/hour, used as the
+         anchor for chairtime-saved revenue calculations. Persisted to
+         localStorage for now; proper DB persistence is part of the joint
+         Balaji-Ranu metrics session. */
+      var savedOps = localStorage.getItem("vd_baseline_ops") || "";
+      var savedRev = localStorage.getItem("vd_baseline_monthly_revenue") || "";
+      var savedHours = localStorage.getItem("vd_baseline_hours_per_day") || "8";
+      var savedDays = localStorage.getItem("vd_baseline_days_per_month") || "20";
+      html += secHead("Practice baseline parameters");
+      html += '<div class="panel"><div class="panel-head"><div class="panel-title">Pre-implementation Baseline</div><div class="panel-subtle">Practice-entered</div></div><div class="panel-body">';
+      html += '<div class="baseline-form">' +
+        '<div class="baseline-field"><label class="baseline-label" for="bp-ops">Operatories (chairs)</label><input id="bp-ops" class="baseline-input" type="number" min="1" step="1" placeholder="e.g. 4" value="' + escHtml(savedOps) + '" /></div>' +
+        '<div class="baseline-field"><label class="baseline-label" for="bp-revenue">Avg monthly revenue ($)</label><input id="bp-revenue" class="baseline-input" type="number" min="0" step="100" placeholder="e.g. 120000" value="' + escHtml(savedRev) + '" /></div>' +
+        '<div class="baseline-field"><label class="baseline-label" for="bp-hours">Operating hours per day</label><input id="bp-hours" class="baseline-input" type="number" min="1" max="24" step="0.5" placeholder="e.g. 8" value="' + escHtml(savedHours) + '" /></div>' +
+        '<div class="baseline-field"><label class="baseline-label" for="bp-days">Working days per month</label><input id="bp-days" class="baseline-input" type="number" min="1" max="31" step="1" placeholder="e.g. 20" value="' + escHtml(savedDays) + '" /></div>' +
+        '</div>';
+      html += '<div class="baseline-derived">' +
+        '<div class="baseline-derived-card"><div class="baseline-derived-val" id="bp-rev-per-chair-hour">&mdash;</div><div class="baseline-derived-label">$ per chair-hour</div></div>' +
+        '<div class="baseline-derived-card"><div class="baseline-derived-val" id="bp-emergency-cases">' + critical + ' / ' + urgent + '</div><div class="baseline-derived-label">Critical / Urgent (this period)</div></div>' +
+        '<div class="baseline-derived-card"><div class="baseline-derived-val" id="bp-chairtime-recovered">&mdash;</div><div class="baseline-derived-label">Chairtime $ recovered (est.)</div></div>' +
+        '</div>';
+      html += '<div class="baseline-help">Estimate assumes ~10 minutes of chairtime is saved per emergency case (Critical or Urgent) by AI-conducted intake versus front-desk intake. Saved time is recoverable as billable chair availability at the practice\'s baseline $ per chair-hour rate. Methodology will be refined in upcoming joint Balaji-Ranu metrics session.</div>';
+      html += '</div></div>';
+
+      /* === COST COMPARISON — Ranu addition May 8 === */
+      html += secHead("Cost comparison \u2014 human call-centre vs. AI");
+      html += '<div class="panel"><div class="panel-head"><div class="panel-title">After-Hours Coverage Cost</div><div class="panel-subtle">Per practice, per month</div></div><div class="panel-body">';
+      html += '<div class="compare-grid">' +
+        '<div class="compare-card"><div class="compare-card-head">Human call-centre</div><div class="compare-card-price">$3,420</div><div class="compare-card-period">per month</div><div class="compare-card-body">Based on <strong>$8/hour</strong> (low-end industry rate) covering after-hours window 6pm to 8am = 14 hours per day &times; 30.5 days. Handles <strong>one call at a time</strong>.</div></div>' +
+        '<div class="compare-card us"><div class="compare-card-head">VirtualDentist.ai</div><div class="compare-card-price">$399</div><div class="compare-card-period">per month (current pricing)</div><div class="compare-card-body">24/7 coverage. Multilingual (9 languages). Structured clinical triage with deterministic safety gates. Handles <strong>parallel calls</strong> &mdash; no caller queued.</div></div>' +
+        '</div>';
+      html += '<div class="compare-note"><strong>The capacity argument:</strong> a human call-centre handles one call at a time. When a practice hits a busy moment (six callers in five minutes during a snowstorm or after a viral post), the human call-centre queues five and loses two to abandonment. We handle all six. The pricing comparison isn\'t $399 vs. $3,420 for the same capacity &mdash; it\'s $399 for unbounded concurrent capacity vs. $3,420 for sequential bottleneck capacity. That difference compounds at practice scale.</div>';
+      html += '</div></div>';
+
+      /* === PROBLEMS WE SOLVE — Ranu addition May 8 === */
+      html += secHead("Problems VirtualDentist.ai solves");
+      html += '<div class="panel"><div class="panel-head"><div class="panel-title">Operational gaps the platform addresses</div></div><div class="panel-body">';
+      html += '<div class="problems-list">' +
+        '<div class="problem-row"><div class="problem-num">1</div><div class="problem-text"><strong>Missed calls after hours</strong>Patients with urgent dental concerns can\'t reach the practice between 6pm and 8am. Currently lost to voicemail or competing practices.</div></div>' +
+        '<div class="problem-row"><div class="problem-num">2</div><div class="problem-text"><strong>Missed calls when reception is busy</strong>Front desk managing check-ins, payments, or another caller cannot answer the next call. New-patient enquiries are the most price-sensitive losses.</div></div>' +
+        '<div class="problem-row"><div class="problem-num">3</div><div class="problem-text"><strong>No 24/7 review and triage of all calls</strong>Without standardized clinical triage, urgent cases sit in voicemail until the practice opens. Severity assessment is reactive, not anticipatory.</div></div>' +
+        '<div class="problem-row"><div class="problem-num">4</div><div class="problem-text"><strong>Chairtime spent on intake instead of treatment</strong>Front-desk intake during emergency visits consumes ~10 minutes per case of available chairtime. AI-conducted intake recovers that time for billable treatment.</div></div>' +
+        '<div class="problem-row"><div class="problem-num">5</div><div class="problem-text"><strong>Payroll cost of receptionist overflow</strong>Practices either pay for additional receptionists to cover overflow demand, or accept abandoned calls. The platform is fractional capacity at much lower cost.</div></div>' +
+        '<div class="problem-row"><div class="problem-num">6</div><div class="problem-text"><strong>Patient experience gap</strong>Patients expect 24/7 access to information and intake. Voicemail in 2026 is a service gap, not a baseline.</div></div>' +
+        '<div class="problem-row"><div class="problem-num">7</div><div class="problem-text"><strong>Medico-legal exposure from access delays</strong>Patients with complex dental concerns who cannot reach the practice in a timely way create both clinical risk and liability exposure. Documented intake reduces both.</div></div>' +
+        '</div>';
+      html += '</div></div>';
+
       html += '<div style="height:40px"></div>';
 
       document.getElementById("main-content").innerHTML = html;
+
+      /* Wire up baseline parameter inputs (Ranu addition May 8) */
+      var bpOps = document.getElementById("bp-ops");
+      var bpRev = document.getElementById("bp-revenue");
+      var bpHours = document.getElementById("bp-hours");
+      var bpDays = document.getElementById("bp-days");
+      function recalcBaseline() {
+        var ops = parseFloat(bpOps.value) || 0;
+        var rev = parseFloat(bpRev.value) || 0;
+        var hrs = parseFloat(bpHours.value) || 0;
+        var dys = parseFloat(bpDays.value) || 0;
+        localStorage.setItem("vd_baseline_ops", bpOps.value);
+        localStorage.setItem("vd_baseline_monthly_revenue", bpRev.value);
+        localStorage.setItem("vd_baseline_hours_per_day", bpHours.value);
+        localStorage.setItem("vd_baseline_days_per_month", bpDays.value);
+        var revPerChairHour = (ops > 0 && hrs > 0 && dys > 0 && rev > 0) ? (rev / (ops * hrs * dys)) : null;
+        var emergencyCases = critical + urgent;
+        var chairtimeRecovered = (revPerChairHour !== null && emergencyCases > 0) ? (revPerChairHour * (emergencyCases * 10 / 60)) : null;
+        document.getElementById("bp-rev-per-chair-hour").innerHTML = revPerChairHour !== null ? ("$" + revPerChairHour.toFixed(0)) : "&mdash;";
+        document.getElementById("bp-chairtime-recovered").innerHTML = chairtimeRecovered !== null ? ("$" + chairtimeRecovered.toFixed(0)) : "&mdash;";
+      }
+      [bpOps, bpRev, bpHours, bpDays].forEach(function(input) {
+        input.addEventListener("input", recalcBaseline);
+        input.addEventListener("change", recalcBaseline);
+      });
+      recalcBaseline();
     }
 
     function isUsableCall(c) { var so = getSO(c); var hasComplaint = !!so.chief_complaint; var hasPain = so.pain_score != null; var hasOnset = !!so.onset; var hasLocation = !!so.jaw || !!so.side; var hasFlags = !!so.swelling || !!so.swelling_present || !!so.trauma || !!so.fever || !!so.uncontrolled_bleeding || !!so.difficulty_breathing_or_swallowing || !!so.nocturnal_pain || !!so.cold_pain_lingers_over_10_seconds; return hasComplaint || hasPain || hasOnset || hasLocation || hasFlags; }
