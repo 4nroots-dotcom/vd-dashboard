@@ -350,7 +350,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         // Main cases query (period-filtered, excludes non-emergent inquiries)
         var query = sb.from("triage_cases")
           .select("id, created_at, severity, extraction_source, review_status, reviewed_at, reviewed_by, contacted_patient_at, final_disposition, prescription_issued, duration_seconds, structured_output, triage_tag, contradictions, revenue_generated, subsequent_appointment_booked, satisfaction_score, return_likelihood, survey_feedback, appointment_completed_at, patient_language, intake_source, preferred_channel, has_sms_continuation, sms_structured_output")
-          .neq("triage_tag", "non_emergent_inquiry")
+          .or("triage_tag.is.null,triage_tag.neq.non_emergent_inquiry")
           .order("created_at", { ascending: true });
         if (currentPeriod > 0) { var since = new Date(); since.setDate(since.getDate() - currentPeriod); query = query.gte("created_at", since.toISOString()); }
         var result = await query;
