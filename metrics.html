@@ -435,9 +435,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var langCounts = {}; cases.forEach(function(c) { var lang = c.patient_language || "en"; langCounts[lang] = (langCounts[lang] || 0) + 1; });
       var langLabels = { en:"English", ar:"Arabic", hi:"Hindi", pa:"Punjabi", fr:"French", fa:"Farsi", so:"Somali", es:"Spanish", zh:"Chinese" };
 
+      // ── Helper: SMS extraction recognizes both legacy (sms-openai) and current (sms-claude) paths ──
+      // (May 8 fix: dashboard was undercounting SMS cases because Claude swap left these filters stale.)
+      function isSmsExtraction(c) { return c.extraction_source === "sms-openai" || c.extraction_source === "sms-claude"; }
+
       // ── NEW: Channel distribution ──
-      var voiceCases = cases.filter(function(c) { return c.extraction_source !== "sms-openai"; }).length;
-      var smsCases = cases.filter(function(c) { return c.extraction_source === "sms-openai"; }).length;
+      var voiceCases = cases.filter(function(c) { return !isSmsExtraction(c); }).length;
+      var smsCases = cases.filter(isSmsExtraction).length;
 
       // ── NEW: Intake source distribution ──
       var srcCounts = {}; cases.forEach(function(c) { var src = c.intake_source || "unknown"; srcCounts[src] = (srcCounts[src] || 0) + 1; });
@@ -448,12 +452,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var nonEmergent = cases.filter(function(c) { var so = getSO(c); return c.triage_tag === "non_emergent_inquiry" || so.triage_tag === "non_emergent_inquiry"; }).length;
 
       // ── NEW: SMS extraction success rate ──
-      var smsSubmissions = cases.filter(function(c) { return c.has_sms_continuation || c.extraction_source === "sms-openai"; }).length;
-      var smsExtracted = cases.filter(function(c) { return c.extraction_source === "sms-openai" && c.sms_structured_output; }).length;
+      var smsSubmissions = cases.filter(function(c) { return c.has_sms_continuation || isSmsExtraction(c); }).length;
+      var smsExtracted = cases.filter(function(c) { return isSmsExtraction(c) && c.sms_structured_output; }).length;
 
       // ── NEW: Multilingual conversion (non-English submissions that completed triage) ──
       var multilingualTotal = cases.filter(function(c) { return c.patient_language && c.patient_language !== "en"; }).length;
-      var multilingualComplete = cases.filter(function(c) { return c.patient_language && c.patient_language !== "en" && c.extraction_source === "sms-openai"; }).length;
+      var multilingualComplete = cases.filter(function(c) { return c.patient_language && c.patient_language !== "en" && isSmsExtraction(c); }).length;
 
       // ── FIX: TTR split (remote vs in-office) ──
       var remoteCases = cases.filter(function(c) { return c.intake_source !== "in_office"; });
@@ -605,7 +609,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       '</div></div></div>';
 
       html += '<div class="panel"><div class="panel-head"><div class="panel-title">Extraction Source</div></div><div class="panel-body">' +
-        extractionRow("Vapi (primary)", extCounts["vapi"] || 0, total, "#00c8e8") + extractionRow("SMS-OpenAI", extCounts["sms-openai"] || 0, total, "#00c87a") + extractionRow("OpenAI (fallback)", extCounts["openai"] || 0, total, "#a78bfa") + extractionRow("None / unknown", extCounts["none"] || 0, total, "#5f7597") +
+        extractionRow("Vapi (voice)", extCounts["vapi"] || 0, total, "#00c8e8") + extractionRow("SMS-Claude (current)", extCounts["sms-claude"] || 0, total, "#4ad394") + extractionRow("SMS-OpenAI (legacy)", extCounts["sms-openai"] || 0, total, "#00c87a") + extractionRow("OpenAI (fallback)", extCounts["openai"] || 0, total, "#a78bfa") + extractionRow("None / unknown", extCounts["none"] || 0, total, "#5f7597") +
         '<div class="panel-divider"></div><div class="panel-sub-label">Intake vs. Call Discrepancies</div><div class="mini-list">' +
         '<div class="mini-row"><span class="mini-row-label">Cases with discrepancies</span><span class="mini-row-val ' + (casesWithContradictions > 0 ? "warn" : "ok") + '">' + casesWithContradictions + ' / ' + total + '</span></div>';
 
