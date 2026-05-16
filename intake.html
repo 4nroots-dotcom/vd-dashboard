@@ -235,6 +235,48 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     .form-card { margin-top: 18px; padding: 24px 18px 20px; display: none; }
     .form-card.show { display: block; }
+
+    .call-escalation-banner {
+      display: none;
+      background: rgba(0, 200, 232, 0.08);
+      border: 1px solid rgba(0, 200, 232, 0.22);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      margin-bottom: 18px;
+    }
+    .call-escalation-banner.show { display: block; }
+    .call-escalation-banner-title {
+      font-weight: 700; color: var(--white); font-size: 15px; margin-bottom: 4px;
+    }
+    .call-escalation-banner-body {
+      color: var(--text-secondary); font-size: 13px; line-height: 1.5;
+    }
+
+    .sam-mentioned {
+      display: none;
+      margin-top: 10px;
+      padding: 12px 14px;
+      background: rgba(0, 200, 232, 0.06);
+      border-left: 3px solid var(--cyan);
+      border-radius: 0 6px 6px 0;
+    }
+    .sam-mentioned.show { display: block; }
+    .sam-mentioned-label {
+      font-size: 11px; color: var(--cyan-soft); font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px;
+    }
+    .sam-mentioned-text {
+      color: var(--text-primary); font-size: 14px; line-height: 1.5;
+    }
+    .sam-mentioned-edit-prompt {
+      margin-top: 6px; color: var(--text-muted); font-size: 12px;
+    }
+
+    [dir="rtl"] .sam-mentioned {
+      border-left: none;
+      border-right: 3px solid var(--cyan);
+      border-radius: 6px 0 0 6px;
+    }
     .form-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 18px; }
     .form-title { font-size: 27px; font-weight: 400; font-family: "DM Serif Display", Georgia, serif; line-height: 1.1; margin-bottom: 6px; }
     .form-sub { color: var(--text-secondary); font-size: 15px; max-width: 640px; }
@@ -433,7 +475,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
           <div class="hero-sub" id="hero-sub">Whether it's a cleaning, a dental emergency, or just a question &mdash; describe what you need and our team will follow up with you directly.</div>
           <div class="hero-cost">This service is available at no cost.</div>
-          <div class="hero-response" id="hero-response">Sam responds in minutes &middot; Available 24/7</div>
+          <div class="hero-response" id="hero-response">Available 24/7 &middot; Reviewed by our dental team</div>
           <div class="hero-cta-block">
             <button class="hero-primary-btn" id="start-assessment-btn" type="button">Start assessment</button>
             <div class="trust-row">
@@ -467,14 +509,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="lf-title">Here's exactly what happens after you click.</div>
             <div class="lf-step"><span class="lf-step-num">1</span><div><div class="lf-step-title">Fill out a short form (about 2 minutes)</div><div class="lf-step-body">Describe your concern in your own words &mdash; what happened, where it hurts, when it started. No account needed. No insurance information required to start.</div></div></div>
             <div class="lf-step"><span class="lf-step-num">2</span><div><div class="lf-step-title">Sam follows up</div><div class="lf-step-body">Sam is our AI dental triage assistant. After you submit, Sam calls or texts the phone number you provided and walks you through a short set of guided clinical questions &mdash; covering pain level, swelling, trauma, and key red flag symptoms. Sam is not a dentist and does not diagnose &mdash; Sam collects structured information so the dentist doesn't have to start from scratch.</div></div></div>
-            <div class="lf-step"><span class="lf-step-num">3</span><div><div class="lf-step-title">Our dental team reviews your case</div><div class="lf-step-body">Our dental team at Martindale Dental reviews your information. During office hours, we may follow up with you directly by phone with guidance, next steps, or an appointment. After hours, your case is reviewed first thing the next business day.</div></div></div>
+            <div class="lf-step"><span class="lf-step-num">3</span><div><div class="lf-step-title">Our dental team reviews your case</div><div class="lf-step-body">Our dental team at Martindale Dental reviews your information. During office hours, we may follow up with you directly by phone with guidance, next steps, or an appointment. After hours, your case is reviewed during the next available office hours.</div></div></div>
             <div class="lf-micro-cta"><button class="hero-primary-btn lf-cta-btn" type="button" onclick="document.getElementById('start-assessment-btn').click()">Start assessment</button><div class="lf-micro-sub">Free &middot; Takes about 2 minutes</div></div>
           </div>
 
           <div class="lf-section">
             <div class="lf-title">Why we built this.</div>
-            <div class="lf-body">Dental emergencies don't wait for office hours. But most dental clinics aren't set up to help you at 11pm on a Saturday. You're stuck Googling symptoms, debating whether to go to the ER, or just waiting it out in pain until Monday.</div>
-            <div class="lf-body">We built this triage service so you can get your concern in front of a real dentist &mdash; even when our doors are closed. You tell us what's happening, Sam gathers the clinical details, and a dentist reviews it all. No guesswork. No waiting on hold. No unnecessary ER visit for something a dentist should handle.</div>
+            <div class="lf-body">Dental concerns don't wait for office hours. But most dental clinics aren't set up to take new information at 11pm on a Saturday. You're often stuck Googling symptoms or waiting it out until Monday.</div>
+            <div class="lf-body">We built this so your concern can be reviewed by our dental team &mdash; even when our doors are closed. You tell us what's happening, Sam gathers structured details, and our dental team reviews it. No guesswork on your end about what to share. No waiting on hold.</div>
             <div class="lf-body">And yes, it's free. There's no charge for the triage assessment. If you need to come in for treatment, that's a separate conversation &mdash; and we'll walk you through costs before anything happens.</div>
           </div>
 
@@ -522,6 +564,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </section>
 
     <section id="screen-form" class="card form-card">
+      <div class="call-escalation-banner" id="call-escalation-banner">
+        <div class="call-escalation-banner-title" id="call-escalation-banner-title">Continuing from your call with Sam</div>
+        <div class="call-escalation-banner-body" id="call-escalation-banner-body">A few more details so our dental team can review your case.</div>
+      </div>
+
       <div class="form-top">
         <div>
           <div class="form-title">Before we begin</div>
@@ -547,7 +594,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <div class="field">
             <label for="patient-phone">Phone number</label>
             <input class="input" id="patient-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="10-digit number" />
-            <div class="helper phone-helper-strong">Sam will call or text this number shortly after you submit.</div>
+            <div class="helper phone-helper-strong">Sam will call or text this number after you submit.</div>
           </div>
 
           <div class="field">
@@ -570,6 +617,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="field">
           <label for="chief-complaint">Tell us what you need</label>
           <textarea class="textarea" id="chief-complaint" placeholder="e.g. I'd like to book a cleaning / My tooth broke after a fall / I have a question about insurance"></textarea>
+          <div class="sam-mentioned" id="sam-mentioned">
+            <div class="sam-mentioned-label" id="sam-mentioned-label">Sam mentioned</div>
+            <div class="sam-mentioned-text" id="sam-mentioned-text"></div>
+            <div class="sam-mentioned-edit-prompt" id="sam-mentioned-edit-prompt">Is this still right? Edit above if needed.</div>
+          </div>
         </div>
 
         <div class="field" style="margin-top:14px;" id="onset-wrapper">
@@ -714,7 +766,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
 
       <div class="expect-call-card" id="expect-call-card">
-        <div class="expect-call-title">Sam is calling now or shortly</div>
+        <div class="expect-call-title">Sam will call you to continue</div>
         <div class="expect-call-copy">Please keep your phone nearby and answer the call when it comes through. The call will come from 1-833-959-3932.</div>
       </div>
 
@@ -760,7 +812,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
         heroTitle: "How can Martindale Dental", heroAccent: "help you?",
         heroSub: "Whether it's a cleaning, a dental emergency, or just a question \u2014 describe what you need and our team will follow up with you directly.",
-        heroCost: "This service is available at no cost.", heroResponse: "Sam responds in minutes · Available 24/7",
+        heroCost: "This service is available at no cost.", heroResponse: "Available 24/7 · Reviewed by our dental team",
         heroBtn: "Start assessment",
         trustSecure: "Secure and private",
         trustSam: "Speak first with Sam, our AI dental triage assistant",
@@ -779,8 +831,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelName: "Full name", placeholderName: "First and last name",
         labelDob: "Date of birth",
         labelPhone: "Phone number", placeholderPhone: "10-digit number",
-        phoneHelper: "Sam will call or text this number shortly after you submit.",
-        phoneHelperSms: "Sam will text this number shortly after you submit.",
+        phoneHelper: "Sam will call or text this number after you submit.",
+        phoneHelperSms: "Sam will text this number after you submit.",
         labelCity: "City", placeholderCity: "City",
         labelEmail: "Email address", emailOptional: "(optional)", placeholderEmail: "For follow-up communications only",
         sectionConcern: "How can we help?",
@@ -812,23 +864,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         handoffCopy: "Sam is our AI dental assistant. Whether it's a dental concern or a general question, Sam will gather the details and our dental team will follow up with you directly.",
         handoffCopySms: "Sam will text you shortly in your language. Please reply to Sam's messages. Our dental team will follow up with you directly.",
         handoffPanelTitle: "What happens now",
-        handoffPanelCopyCall: "Your intake has been received and Sam will call the phone number you provided shortly.",
+        handoffPanelCopyCall: "Your intake has been received. Sam will call the phone number you provided to continue.",
         handoffPanelCopySms: "Your intake has been received. Sam will text you shortly.",
         incomingLabel: "Answer the call from",
         incomingLabelSms: "You will receive a text from",
         incomingSub: "Saving this number now may help you recognize the call quickly. If your call ends unexpectedly, Sam may follow up by text to the number you provided.",
         incomingSubSms: "Save this number so you recognize Sam's message.",
-        expectTitle: "Sam is calling now or shortly",
-        expectTitleSms: "Sam is texting you now or shortly",
+        expectTitle: "Sam will call you to continue",
+        expectTitleSms: "Sam will text you to continue",
         expectCopy: "Please keep your phone nearby and answer the call when it comes through. The call will come from 1-833-959-3932.",
         expectCopySms: "Please keep your phone nearby and reply to Sam's text messages.",
-        valName: "Please enter your full name.", valNameShort: "Please enter a valid full name.", valDob: "Please enter your date of birth.", valDobInvalid: "Please enter a valid date of birth.", valDobFuture: "Date of birth cannot be in the future.", valPhone: "Please enter your phone number.", valPhoneInvalid: "Please enter a valid 10-digit phone number, or 11 digits starting with 1.", valCity: "Please enter your city.", valComplaint: "Please describe how we can help you today.", valComplaintShort: "Please provide a little more detail about your concern.", valOnset: "Please tell us when this started.", valRedFlags: "Please select at least one option under current symptoms, or choose 'None of the above.'", valMedical: "Please select at least one option under relevant medical information, or choose 'None of the above.'", valMedicalOther: "Please tell us more about the other important medical condition.", valConsent: "Please confirm the acknowledgement before continuing."
+        valName: "Please enter your full name.", valNameShort: "Please enter a valid full name.", valDob: "Please enter your date of birth.", valDobInvalid: "Please enter a valid date of birth.", valDobFuture: "Date of birth cannot be in the future.", valPhone: "Please enter your phone number.", valPhoneInvalid: "Please enter a valid 10-digit phone number, or 11 digits starting with 1.", valCity: "Please enter your city.", valComplaint: "Please describe how we can help you today.", valComplaintShort: "Please provide a little more detail about your concern.", valOnset: "Please tell us when this started.", valRedFlags: "Please select at least one option under current symptoms, or choose 'None of the above.'", valMedical: "Please select at least one option under relevant medical information, or choose 'None of the above.'", valMedicalOther: "Please tell us more about the other important medical condition.", valConsent: "Please confirm the acknowledgement before continuing.",
+        callBannerTitle: "Continuing from your call with Sam", callBannerBody: "A few more details so our dental team can review your case.", samMentionedLabel: "Sam mentioned", samMentionedEditPrompt: "Is this still right? Edit above if needed."
       },
       ar: {
         heroKicker: "عيادة مارتنديل لطب الأسنان \u00b7 جاكسون سكوير",
         heroTitle: "كيف يمكن لـ Martindale Dental", heroAccent: "مساعدتك؟",
         heroSub: "سواء كان تنظيف أسنان، حالة طوارئ، أو مجرد سؤال — أخبرنا بما تحتاجه وسيتواصل فريقنا معك مباشرة.",
-        heroCost: "هذه الخدمة متاحة مجانا.", heroResponse: "سام يرد في دقائق · متاح على مدار الساعة",
+        heroCost: "هذه الخدمة متاحة مجانا.", heroResponse: "متاح على مدار الساعة · يراجعه فريق طب الأسنان لدينا",
         heroBtn: "ابدأ التقييم",
         trustSecure: "آمن وخاص",
         trustSam: "تحدث أولا مع سام، مساعد فرز الأسنان بالذكاء الاصطناعي",
@@ -880,23 +933,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         handoffCopy: "سام هو مساعد فرز أسنان يعمل بالذكاء الاصطناعي. سيطرح سام بعض الأسئلة لتقييم مشكلتك. سيتواصل فريق طب الأسنان لدينا معك مباشرة.",
         handoffCopySms: "سيرسل لك سام رسالة نصية قريبا بلغتك. يرجى الرد على رسائل سام. سيتواصل فريق طب الأسنان لدينا معك مباشرة.",
         handoffPanelTitle: "ما سيحدث الآن",
-        handoffPanelCopyCall: "تم استلام معلوماتك. سيرسل سام رسالة نصية قريبا.",
+        handoffPanelCopyCall: "تم استلام معلوماتك. سيتصل بك سام لمواصلة التقييم.",
         handoffPanelCopySms: "تم استلام معلوماتك. سيرسل سام رسالة نصية قريبا.",
         incomingLabel: "ستتلقى رسالة من",
         incomingLabelSms: "ستتلقى رسالة من",
         incomingSub: "احفظ هذا الرقم لتتعرف على رسالة سام.",
         incomingSubSms: "احفظ هذا الرقم لتتعرف على رسالة سام.",
-        expectTitle: "سام يرسل لك رسالة الآن أو قريبا",
-        expectTitleSms: "سام يرسل لك رسالة الآن أو قريبا",
+        expectTitle: "سام سيتصل بك للمتابعة",
+        expectTitleSms: "سام سيرسل لك رسالة للمتابعة",
         expectCopy: "يرجى إبقاء هاتفك قريبا والرد على رسائل سام النصية.",
         expectCopySms: "يرجى إبقاء هاتفك قريبا والرد على رسائل سام النصية.",
-        valName: "يرجى إدخال اسمك الكامل.", valNameShort: "يرجى إدخال اسم صالح.", valDob: "يرجى إدخال تاريخ ميلادك.", valDobInvalid: "يرجى إدخال تاريخ ميلاد صالح.", valDobFuture: "تاريخ الميلاد لا يمكن أن يكون في المستقبل.", valPhone: "يرجى إدخال رقم هاتفك.", valPhoneInvalid: "يرجى إدخال رقم هاتف صالح من 10 أرقام.", valCity: "يرجى إدخال مدينتك.", valComplaint: "يرجى وصف ما يزعجك اليوم.", valComplaintShort: "يرجى تقديم المزيد من التفاصيل.", valOnset: "يرجى إخبارنا متى بدأ هذا.", valRedFlags: "يرجى اختيار خيار واحد على الأقل أو 'لا شيء مما سبق'.", valMedical: "يرجى اختيار خيار واحد على الأقل أو 'لا شيء مما سبق'.", valMedicalOther: "يرجى إخبارنا بالمزيد عن الحالة الطبية.", valConsent: "يرجى تأكيد الموافقة قبل المتابعة."
+        valName: "يرجى إدخال اسمك الكامل.", valNameShort: "يرجى إدخال اسم صالح.", valDob: "يرجى إدخال تاريخ ميلادك.", valDobInvalid: "يرجى إدخال تاريخ ميلاد صالح.", valDobFuture: "تاريخ الميلاد لا يمكن أن يكون في المستقبل.", valPhone: "يرجى إدخال رقم هاتفك.", valPhoneInvalid: "يرجى إدخال رقم هاتف صالح من 10 أرقام.", valCity: "يرجى إدخال مدينتك.", valComplaint: "يرجى وصف ما يزعجك اليوم.", valComplaintShort: "يرجى تقديم المزيد من التفاصيل.", valOnset: "يرجى إخبارنا متى بدأ هذا.", valRedFlags: "يرجى اختيار خيار واحد على الأقل أو 'لا شيء مما سبق'.", valMedical: "يرجى اختيار خيار واحد على الأقل أو 'لا شيء مما سبق'.", valMedicalOther: "يرجى إخبارنا بالمزيد عن الحالة الطبية.", valConsent: "يرجى تأكيد الموافقة قبل المتابعة.",
+        callBannerTitle: "متابعة لاتصالك مع سام", callBannerBody: "بعض التفاصيل الإضافية حتى يتمكن فريق طب الأسنان لدينا من مراجعة حالتك.", samMentionedLabel: "ذكر سام", samMentionedEditPrompt: "هل هذا لا يزال صحيحاً؟ عدّل أعلاه عند الحاجة."
       },
       hi: {
         heroKicker: "मार्टिंडेल डेंटल \u00b7 जैक्सन स्क्वेयर",
         heroTitle: "Martindale Dental आपकी कैसे", heroAccent: "मदद कर सकते हैं?",
         heroSub: "चाहे सफ़ाई हो, दांतों की इमरजेंसी हो, या कोई सवाल हो — बताएं आपको क्या चाहिए और हमारी टीम सीधे आपसे संपर्क करेगी।",
-        heroCost: "यह सेवा निःशुल्क उपलब्ध है।", heroResponse: "सैम मिनटों में जवाब देता है · 24/7 उपलब्ध",
+        heroCost: "यह सेवा निःशुल्क उपलब्ध है।", heroResponse: "24/7 उपलब्ध · हमारी डेंटल टीम द्वारा समीक्षा",
         heroBtn: "आकलन शुरू करें",
         trustSecure: "सुरक्षित और निजी", trustSam: "पहले सैम से बात करें, हमारे AI डेंटल ट्रायज सहायक", trustDentist: "हमारी डेंटल टीम सीधे आपसे संपर्क करेगी",
         warningPanel: "यदि आपको सांस लेने में कठिनाई, अनियंत्रित रक्तस्राव, बड़ी सूजन, या गंभीर चेहरे की चोट है, तो 911 पर कॉल करके तुरंत आपातकालीन देखभाल लें।",
@@ -945,23 +999,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         handoffCopy: "सैम एक AI डेंटल ट्रायज सहायक है। सैम आपकी समस्या का आकलन करने के लिए कुछ सवाल पूछेगा।",
         handoffCopySms: "सैम जल्द ही आपकी भाषा में मैसेज करेगा। कृपया सैम के मैसेज का जवाब दें।",
         handoffPanelTitle: "अब क्या होगा",
-        handoffPanelCopyCall: "आपकी जानकारी प्राप्त हो गई है। सैम जल्द ही मैसेज करेगा।",
+        handoffPanelCopyCall: "आपकी जानकारी प्राप्त हो गई है। सैम जारी रखने के लिए मैसेज करेगा।",
         handoffPanelCopySms: "आपकी जानकारी प्राप्त हो गई है। सैम जल्द ही मैसेज करेगा।",
         incomingLabel: "आपको इस नंबर से मैसेज मिलेगा",
         incomingLabelSms: "आपको इस नंबर से मैसेज मिलेगा",
         incomingSub: "इस नंबर को सेव करें ताकि आप सैम का मैसेज पहचान सकें।",
         incomingSubSms: "इस नंबर को सेव करें ताकि आप सैम का मैसेज पहचान सकें।",
-        expectTitle: "सैम अभी या जल्द ही मैसेज कर रहा है",
-        expectTitleSms: "सैम अभी या जल्द ही मैसेज कर रहा है",
+        expectTitle: "सैम जारी रखने के लिए मैसेज करेगा",
+        expectTitleSms: "सैम जारी रखने के लिए मैसेज करेगा",
         expectCopy: "कृपया अपना फोन पास रखें और सैम के मैसेज का जवाब दें।",
         expectCopySms: "कृपया अपना फोन पास रखें और सैम के मैसेज का जवाब दें।",
-        valName: "कृपया अपना पूरा नाम दर्ज करें।", valNameShort: "कृपया एक वैध नाम दर्ज करें।", valDob: "कृपया अपनी जन्म तिथि दर्ज करें।", valDobInvalid: "कृपया एक वैध जन्म तिथि दर्ज करें।", valDobFuture: "जन्म तिथि भविष्य में नहीं हो सकती।", valPhone: "कृपया अपना फोन नंबर दर्ज करें।", valPhoneInvalid: "कृपया एक वैध 10 अंकों का फोन नंबर दर्ज करें।", valCity: "कृपया अपना शहर दर्ज करें।", valComplaint: "कृपया बताएं कि आज आपको क्या परेशानी हो रही है।", valComplaintShort: "कृपया थोड़ा और विवरण दें।", valOnset: "कृपया बताएं यह कब शुरू हुआ।", valRedFlags: "कृपया कम से कम एक विकल्प चुनें या 'इनमें से कोई नहीं'।", valMedical: "कृपया कम से कम एक विकल्प चुनें या 'इनमें से कोई नहीं'।", valMedicalOther: "कृपया चिकित्सा स्थिति के बारे में और बताएं।", valConsent: "कृपया जारी रखने से पहले सहमति की पुष्टि करें।"
+        valName: "कृपया अपना पूरा नाम दर्ज करें।", valNameShort: "कृपया एक वैध नाम दर्ज करें।", valDob: "कृपया अपनी जन्म तिथि दर्ज करें।", valDobInvalid: "कृपया एक वैध जन्म तिथि दर्ज करें।", valDobFuture: "जन्म तिथि भविष्य में नहीं हो सकती।", valPhone: "कृपया अपना फोन नंबर दर्ज करें।", valPhoneInvalid: "कृपया एक वैध 10 अंकों का फोन नंबर दर्ज करें।", valCity: "कृपया अपना शहर दर्ज करें।", valComplaint: "कृपया बताएं कि आज आपको क्या परेशानी हो रही है।", valComplaintShort: "कृपया थोड़ा और विवरण दें।", valOnset: "कृपया बताएं यह कब शुरू हुआ।", valRedFlags: "कृपया कम से कम एक विकल्प चुनें या 'इनमें से कोई नहीं'।", valMedical: "कृपया कम से कम एक विकल्प चुनें या 'इनमें से कोई नहीं'।", valMedicalOther: "कृपया चिकित्सा स्थिति के बारे में और बताएं।", valConsent: "कृपया जारी रखने से पहले सहमति की पुष्टि करें।",
+        callBannerTitle: "सैम के साथ आपकी कॉल जारी रखना", callBannerBody: "कुछ और विवरण ताकि हमारी डेंटल टीम आपके केस की समीक्षा कर सके।", samMentionedLabel: "सैम ने बताया", samMentionedEditPrompt: "क्या यह अभी भी सही है? आवश्यकता पड़ने पर ऊपर संपादित करें।"
       },
       pa: {
         heroKicker: "ਮਾਰਟਿੰਡੇਲ ਡੈਂਟਲ \u00b7 ਜੈਕਸਨ ਸਕੁਆਇਰ",
         heroTitle: "Martindale Dental ਤੁਹਾਡੀ ਕਿਵੇਂ", heroAccent: "ਮਦਦ ਕਰ ਸਕਦੇ ਹਨ?",
         heroSub: "ਭਾਵੇਂ ਸਫ਼ਾਈ ਹੋਵੇ, ਦੰਦਾਂ ਦੀ ਐਮਰਜੈਂਸੀ ਹੋਵੇ, ਜਾਂ ਕੋਈ ਸਵਾਲ ਹੋਵੇ — ਦੱਸੋ ਤੁਹਾਨੂੰ ਕੀ ਚਾਹੀਦਾ ਹੈ ਅਤੇ ਸਾਡੀ ਟੀਮ ਸਿੱਧੇ ਤੁਹਾਡੇ ਨਾਲ ਸੰਪਰਕ ਕਰੇਗੀ।",
-        heroCost: "ਇਹ ਸੇਵਾ ਮੁਫ਼ਤ ਉਪਲਬਧ ਹੈ।", heroResponse: "ਸੈਮ ਮਿੰਟਾਂ ਵਿੱਚ ਜਵਾਬ ਦਿੰਦਾ ਹੈ · 24/7 ਉਪਲਬਧ",
+        heroCost: "ਇਹ ਸੇਵਾ ਮੁਫ਼ਤ ਉਪਲਬਧ ਹੈ।", heroResponse: "24/7 ਉਪਲਬਧ · ਸਾਡੀ ਡੈਂਟਲ ਟੀਮ ਦੁਆਰਾ ਸਮੀਖਿਆ",
         heroBtn: "ਮੁਲਾਂਕਣ ਸ਼ੁਰੂ ਕਰੋ",
         trustSecure: "ਸੁਰੱਖਿਅਤ ਅਤੇ ਨਿੱਜੀ", trustSam: "ਪਹਿਲਾਂ ਸੈਮ ਨਾਲ ਗੱਲ ਕਰੋ, ਸਾਡਾ AI ਡੈਂਟਲ ਸਹਾਇਕ", trustDentist: "ਸਾਡੀ ਡੈਂਟਲ ਟੀਮ ਸਿੱਧੇ ਤੁਹਾਡੇ ਨਾਲ ਸੰਪਰਕ ਕਰੇਗੀ",
         warningPanel: "ਜੇ ਤੁਹਾਨੂੰ ਸਾਹ ਲੈਣ ਵਿੱਚ ਮੁਸ਼ਕਲ, ਬੇਕਾਬੂ ਖੂਨ ਵਹਿਣਾ, ਵੱਡੀ ਸੋਜ, ਜਾਂ ਗੰਭੀਰ ਚਿਹਰੇ ਦੀ ਸੱਟ ਹੈ, ਤਾਂ 911 ਤੇ ਕਾਲ ਕਰਕੇ ਤੁਰੰਤ ਐਮਰਜੈਂਸੀ ਦੇਖਭਾਲ ਲਓ।",
@@ -997,18 +1052,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         handoffTitle: "ਅਗਲਾ ਕਦਮ: ਆਪਣੇ ਟੈਕਸਟ ਮੈਸੇਜ ਦੇਖੋ", handoffTitleSms: "ਅਗਲਾ ਕਦਮ: ਆਪਣੇ ਟੈਕਸਟ ਮੈਸੇਜ ਦੇਖੋ",
         handoffCopy: "ਸੈਮ ਇੱਕ AI ਡੈਂਟਲ ਸਹਾਇਕ ਹੈ। ਸੈਮ ਤੁਹਾਡੀ ਸਮੱਸਿਆ ਦਾ ਮੁਲਾਂਕਣ ਕਰਨ ਲਈ ਸਵਾਲ ਪੁੱਛੇਗਾ।",
         handoffCopySms: "ਸੈਮ ਜਲਦੀ ਹੀ ਤੁਹਾਡੀ ਭਾਸ਼ਾ ਵਿੱਚ ਮੈਸੇਜ ਕਰੇਗਾ। ਕਿਰਪਾ ਕਰਕੇ ਸੈਮ ਦੇ ਮੈਸੇਜ ਦਾ ਜਵਾਬ ਦਿਓ।",
-        handoffPanelTitle: "ਹੁਣ ਕੀ ਹੋਵੇਗਾ", handoffPanelCopyCall: "ਤੁਹਾਡੀ ਜਾਣਕਾਰੀ ਮਿਲ ਗਈ ਹੈ। ਸੈਮ ਜਲਦੀ ਮੈਸੇਜ ਕਰੇਗਾ।", handoffPanelCopySms: "ਤੁਹਾਡੀ ਜਾਣਕਾਰੀ ਮਿਲ ਗਈ ਹੈ। ਸੈਮ ਜਲਦੀ ਮੈਸੇਜ ਕਰੇਗਾ।",
+        handoffPanelTitle: "ਹੁਣ ਕੀ ਹੋਵੇਗਾ", handoffPanelCopyCall: "ਤੁਹਾਡੀ ਜਾਣਕਾਰੀ ਮਿਲ ਗਈ ਹੈ। ਸੈਮ ਜਾਰੀ ਰੱਖਣ ਲਈ ਮੈਸੇਜ ਕਰੇਗਾ।", handoffPanelCopySms: "ਤੁਹਾਡੀ ਜਾਣਕਾਰੀ ਮਿਲ ਗਈ ਹੈ। ਸੈਮ ਜਾਰੀ ਰੱਖਣ ਲਈ ਮੈਸੇਜ ਕਰੇਗਾ।",
         incomingLabel: "ਤੁਹਾਨੂੰ ਇਸ ਨੰਬਰ ਤੋਂ ਮੈਸੇਜ ਮਿਲੇਗਾ", incomingLabelSms: "ਤੁਹਾਨੂੰ ਇਸ ਨੰਬਰ ਤੋਂ ਮੈਸੇਜ ਮਿਲੇਗਾ",
         incomingSub: "ਇਸ ਨੰਬਰ ਨੂੰ ਸੇਵ ਕਰੋ ਤਾਂ ਜੋ ਤੁਸੀਂ ਸੈਮ ਦਾ ਮੈਸੇਜ ਪਛਾਣ ਸਕੋ।", incomingSubSms: "ਇਸ ਨੰਬਰ ਨੂੰ ਸੇਵ ਕਰੋ ਤਾਂ ਜੋ ਤੁਸੀਂ ਸੈਮ ਦਾ ਮੈਸੇਜ ਪਛਾਣ ਸਕੋ।",
-        expectTitle: "ਸੈਮ ਹੁਣ ਜਾਂ ਜਲਦੀ ਮੈਸੇਜ ਕਰ ਰਿਹਾ ਹੈ", expectTitleSms: "ਸੈਮ ਹੁਣ ਜਾਂ ਜਲਦੀ ਮੈਸੇਜ ਕਰ ਰਿਹਾ ਹੈ",
+        expectTitle: "ਸੈਮ ਜਾਰੀ ਰੱਖਣ ਲਈ ਮੈਸੇਜ ਕਰੇਗਾ", expectTitleSms: "ਸੈਮ ਜਾਰੀ ਰੱਖਣ ਲਈ ਮੈਸੇਜ ਕਰੇਗਾ",
         expectCopy: "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਫੋਨ ਨੇੜੇ ਰੱਖੋ ਅਤੇ ਸੈਮ ਦੇ ਮੈਸੇਜ ਦਾ ਜਵਾਬ ਦਿਓ।", expectCopySms: "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਫੋਨ ਨੇੜੇ ਰੱਖੋ ਅਤੇ ਸੈਮ ਦੇ ਮੈਸੇਜ ਦਾ ਜਵਾਬ ਦਿਓ।",
-        valName: "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਪੂਰਾ ਨਾਮ ਦਰਜ ਕਰੋ।", valNameShort: "ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਵੈਧ ਨਾਮ ਦਰਜ ਕਰੋ।", valDob: "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੀ ਜਨਮ ਮਿਤੀ ਦਰਜ ਕਰੋ।", valDobInvalid: "ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਵੈਧ ਜਨਮ ਮਿਤੀ ਦਰਜ ਕਰੋ।", valDobFuture: "ਜਨਮ ਮਿਤੀ ਭਵਿੱਖ ਵਿੱਚ ਨਹੀਂ ਹੋ ਸਕਦੀ।", valPhone: "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਫੋਨ ਨੰਬਰ ਦਰਜ ਕਰੋ।", valPhoneInvalid: "ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਵੈਧ 10 ਅੰਕਾਂ ਦਾ ਫੋਨ ਨੰਬਰ ਦਰਜ ਕਰੋ।", valCity: "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਸ਼ਹਿਰ ਦਰਜ ਕਰੋ।", valComplaint: "ਕਿਰਪਾ ਕਰਕੇ ਦੱਸੋ ਅੱਜ ਕੀ ਪਰੇਸ਼ਾਨੀ ਹੋ ਰਹੀ ਹੈ।", valComplaintShort: "ਕਿਰਪਾ ਕਰਕੇ ਥੋੜਾ ਹੋਰ ਵੇਰਵਾ ਦਿਓ।", valOnset: "ਕਿਰਪਾ ਕਰਕੇ ਦੱਸੋ ਇਹ ਕਦੋਂ ਸ਼ੁਰੂ ਹੋਇਆ।", valRedFlags: "ਕਿਰਪਾ ਕਰਕੇ ਘੱਟੋ-ਘੱਟ ਇੱਕ ਵਿਕਲਪ ਚੁਣੋ।", valMedical: "ਕਿਰਪਾ ਕਰਕੇ ਘੱਟੋ-ਘੱਟ ਇੱਕ ਵਿਕਲਪ ਚੁਣੋ।", valMedicalOther: "ਕਿਰਪਾ ਕਰਕੇ ਡਾਕਟਰੀ ਸਥਿਤੀ ਬਾਰੇ ਹੋਰ ਦੱਸੋ।", valConsent: "ਕਿਰਪਾ ਕਰਕੇ ਜਾਰੀ ਰੱਖਣ ਤੋਂ ਪਹਿਲਾਂ ਸਹਿਮਤੀ ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ।"
+        valName: "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਪੂਰਾ ਨਾਮ ਦਰਜ ਕਰੋ।", valNameShort: "ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਵੈਧ ਨਾਮ ਦਰਜ ਕਰੋ।", valDob: "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੀ ਜਨਮ ਮਿਤੀ ਦਰਜ ਕਰੋ।", valDobInvalid: "ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਵੈਧ ਜਨਮ ਮਿਤੀ ਦਰਜ ਕਰੋ।", valDobFuture: "ਜਨਮ ਮਿਤੀ ਭਵਿੱਖ ਵਿੱਚ ਨਹੀਂ ਹੋ ਸਕਦੀ।", valPhone: "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਫੋਨ ਨੰਬਰ ਦਰਜ ਕਰੋ।", valPhoneInvalid: "ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਵੈਧ 10 ਅੰਕਾਂ ਦਾ ਫੋਨ ਨੰਬਰ ਦਰਜ ਕਰੋ।", valCity: "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਸ਼ਹਿਰ ਦਰਜ ਕਰੋ।", valComplaint: "ਕਿਰਪਾ ਕਰਕੇ ਦੱਸੋ ਅੱਜ ਕੀ ਪਰੇਸ਼ਾਨੀ ਹੋ ਰਹੀ ਹੈ।", valComplaintShort: "ਕਿਰਪਾ ਕਰਕੇ ਥੋੜਾ ਹੋਰ ਵੇਰਵਾ ਦਿਓ।", valOnset: "ਕਿਰਪਾ ਕਰਕੇ ਦੱਸੋ ਇਹ ਕਦੋਂ ਸ਼ੁਰੂ ਹੋਇਆ।", valRedFlags: "ਕਿਰਪਾ ਕਰਕੇ ਘੱਟੋ-ਘੱਟ ਇੱਕ ਵਿਕਲਪ ਚੁਣੋ।", valMedical: "ਕਿਰਪਾ ਕਰਕੇ ਘੱਟੋ-ਘੱਟ ਇੱਕ ਵਿਕਲਪ ਚੁਣੋ।", valMedicalOther: "ਕਿਰਪਾ ਕਰਕੇ ਡਾਕਟਰੀ ਸਥਿਤੀ ਬਾਰੇ ਹੋਰ ਦੱਸੋ।", valConsent: "ਕਿਰਪਾ ਕਰਕੇ ਜਾਰੀ ਰੱਖਣ ਤੋਂ ਪਹਿਲਾਂ ਸਹਿਮਤੀ ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ।",
+        callBannerTitle: "ਸੈਮ ਨਾਲ ਤੁਹਾਡੀ ਕਾਲ ਜਾਰੀ", callBannerBody: "ਕੁਝ ਹੋਰ ਵੇਰਵੇ ਤਾਂ ਜੋ ਸਾਡੀ ਡੈਂਟਲ ਟੀਮ ਤੁਹਾਡੇ ਕੇਸ ਦੀ ਸਮੀਖਿਆ ਕਰ ਸਕੇ।", samMentionedLabel: "ਸੈਮ ਨੇ ਦੱਸਿਆ", samMentionedEditPrompt: "ਕੀ ਇਹ ਅਜੇ ਵੀ ਸਹੀ ਹੈ? ਲੋੜ ਪੈਣ 'ਤੇ ਉੱਪਰ ਸੰਪਾਦਿਤ ਕਰੋ।"
       },
       fr: {
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
         heroTitle: "Comment Martindale Dental peut", heroAccent: "vous aider?",
         heroSub: "Que ce soit pour un nettoyage, une urgence dentaire ou une simple question \u2014 d\u00e9crivez ce dont vous avez besoin et notre \u00e9quipe vous contactera directement.",
-        heroCost: "Ce service est offert sans frais.", heroResponse: "Sam repond en quelques minutes · Disponible 24/7",
+        heroCost: "Ce service est offert sans frais.", heroResponse: "Disponible 24/7 · Revu par notre equipe dentaire",
         heroBtn: "Commencer l'evaluation",
         trustSecure: "Securise et prive", trustSam: "Parlez d'abord avec Sam, notre assistant de triage dentaire IA", trustDentist: "Notre equipe dentaire vous contactera directement",
         warningPanel: "Si vous avez des difficultes a respirer, un saignement incontrole, un gonflement important ou un traumatisme facial grave, appelez le 911 immediatement.",
@@ -1044,18 +1100,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         handoffTitle: "Prochaine etape: verifiez vos messages", handoffTitleSms: "Prochaine etape: verifiez vos messages",
         handoffCopy: "Sam est un assistant de triage dentaire IA. Sam vous posera quelques questions pour evaluer votre probleme dentaire.",
         handoffCopySms: "Sam vous enverra bientot un message dans votre langue. Veuillez repondre aux messages de Sam.",
-        handoffPanelTitle: "Ce qui se passe maintenant", handoffPanelCopyCall: "Vos informations ont ete recues. Sam vous enverra un message sous peu.", handoffPanelCopySms: "Vos informations ont ete recues. Sam vous enverra un message sous peu.",
+        handoffPanelTitle: "Ce qui se passe maintenant", handoffPanelCopyCall: "Vos informations ont ete recues. Sam vous enverra un message pour continuer.", handoffPanelCopySms: "Vos informations ont ete recues. Sam vous enverra un message pour continuer.",
         incomingLabel: "Vous recevrez un message du", incomingLabelSms: "Vous recevrez un message du",
         incomingSub: "Enregistrez ce numero pour reconnaitre le message de Sam.", incomingSubSms: "Enregistrez ce numero pour reconnaitre le message de Sam.",
-        expectTitle: "Sam vous envoie un message maintenant ou sous peu", expectTitleSms: "Sam vous envoie un message maintenant ou sous peu",
+        expectTitle: "Sam vous envoie un message pour continuer", expectTitleSms: "Sam vous envoie un message pour continuer",
         expectCopy: "Gardez votre telephone a portee de main et repondez aux messages de Sam.", expectCopySms: "Gardez votre telephone a portee de main et repondez aux messages de Sam.",
-        valName: "Veuillez entrer votre nom complet.", valNameShort: "Veuillez entrer un nom valide.", valDob: "Veuillez entrer votre date de naissance.", valDobInvalid: "Veuillez entrer une date de naissance valide.", valDobFuture: "La date de naissance ne peut pas etre dans le futur.", valPhone: "Veuillez entrer votre numero de telephone.", valPhoneInvalid: "Veuillez entrer un numero de telephone valide a 10 chiffres.", valCity: "Veuillez entrer votre ville.", valComplaint: "Veuillez decrire ce qui vous derange aujourd'hui.", valComplaintShort: "Veuillez fournir un peu plus de details.", valOnset: "Veuillez nous dire quand cela a commence.", valRedFlags: "Veuillez selectionner au moins une option ou 'Aucun'.", valMedical: "Veuillez selectionner au moins une option ou 'Aucun'.", valMedicalOther: "Veuillez en dire plus sur la condition medicale.", valConsent: "Veuillez confirmer avant de continuer."
+        valName: "Veuillez entrer votre nom complet.", valNameShort: "Veuillez entrer un nom valide.", valDob: "Veuillez entrer votre date de naissance.", valDobInvalid: "Veuillez entrer une date de naissance valide.", valDobFuture: "La date de naissance ne peut pas etre dans le futur.", valPhone: "Veuillez entrer votre numero de telephone.", valPhoneInvalid: "Veuillez entrer un numero de telephone valide a 10 chiffres.", valCity: "Veuillez entrer votre ville.", valComplaint: "Veuillez decrire ce qui vous derange aujourd'hui.", valComplaintShort: "Veuillez fournir un peu plus de details.", valOnset: "Veuillez nous dire quand cela a commence.", valRedFlags: "Veuillez selectionner au moins une option ou 'Aucun'.", valMedical: "Veuillez selectionner au moins une option ou 'Aucun'.", valMedicalOther: "Veuillez en dire plus sur la condition medicale.", valConsent: "Veuillez confirmer avant de continuer.",
+        callBannerTitle: "Suite de votre appel avec Sam", callBannerBody: "Quelques details supplementaires pour que notre equipe dentaire puisse examiner votre cas.", samMentionedLabel: "Sam a mentionne", samMentionedEditPrompt: "Est-ce toujours exact? Modifiez ci-dessus si necessaire."
       },
       fa: {
         heroKicker: "مارتیندیل دنتال \u00b7 جکسون اسکوئر",
         heroTitle: "Martindale Dental چگونه می‌تواند", heroAccent: "به شما کمک کند؟",
         heroSub: "چه نظافت دندان باشد، چه فوریت دندانپزشکی، یا فقط یک سوال — بگویید چه نیاز دارید و تیم ما مستقیماً با شما تماس خواهد گرفت.",
-        heroCost: "این خدمات رایگان است.", heroResponse: "سام در عرض چند دقیقه پاسخ می دهد · 24/7 در دسترس",
+        heroCost: "این خدمات رایگان است.", heroResponse: "24/7 در دسترس · توسط تیم دندانپزشکی ما بررسی می‌شود",
         heroBtn: "شروع ارزیابی",
         trustSecure: "امن و خصوصی", trustSam: "ابتدا با سام صحبت کنید، دستیار تریاژ دندانپزشکی ما", trustDentist: "تیم دندانپزشکی ما مستقیما با شما تماس خواهد گرفت",
         warningPanel: "اگر مشکل تنفس، خونریزی غیرقابل کنترل، تورم شدید یا آسیب جدی صورت دارید، فورا با 911 تماس بگیرید.",
@@ -1090,18 +1147,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         btnBack: "بازگشت", btnSubmit: "صحبت با سام", btnSubmitSms: "پیام به سام",
         handoffTitle: "مرحله بعد: پیام های خود را بررسی کنید", handoffTitleSms: "مرحله بعد: پیام های خود را بررسی کنید",
         handoffCopy: "سام یک دستیار تریاژ دندانپزشکی هوش مصنوعی است.", handoffCopySms: "سام به زودی به زبان شما پیام خواهد داد. لطفا به پیام های سام پاسخ دهید.",
-        handoffPanelTitle: "حالا چه اتفاقی می افتد", handoffPanelCopyCall: "اطلاعات شما دریافت شد. سام به زودی پیام خواهد داد.", handoffPanelCopySms: "اطلاعات شما دریافت شد. سام به زودی پیام خواهد داد.",
+        handoffPanelTitle: "حالا چه اتفاقی می افتد", handoffPanelCopyCall: "اطلاعات شما دریافت شد. سام برای ادامه پیام خواهد داد.", handoffPanelCopySms: "اطلاعات شما دریافت شد. سام برای ادامه پیام خواهد داد.",
         incomingLabel: "از این شماره پیام دریافت خواهید کرد", incomingLabelSms: "از این شماره پیام دریافت خواهید کرد",
         incomingSub: "این شماره را ذخیره کنید تا پیام سام را بشناسید.", incomingSubSms: "این شماره را ذخیره کنید تا پیام سام را بشناسید.",
-        expectTitle: "سام الان یا به زودی پیام می دهد", expectTitleSms: "سام الان یا به زودی پیام می دهد",
+        expectTitle: "سام برای ادامه پیام می‌دهد", expectTitleSms: "سام برای ادامه پیام می‌دهد",
         expectCopy: "لطفا تلفن خود را نزدیک نگه دارید و به پیام های سام پاسخ دهید.", expectCopySms: "لطفا تلفن خود را نزدیک نگه دارید و به پیام های سام پاسخ دهید.",
-        valName: "لطفا نام کامل خود را وارد کنید.", valNameShort: "لطفا یک نام معتبر وارد کنید.", valDob: "لطفا تاریخ تولد خود را وارد کنید.", valDobInvalid: "لطفا یک تاریخ تولد معتبر وارد کنید.", valDobFuture: "تاریخ تولد نمی تواند در آینده باشد.", valPhone: "لطفا شماره تلفن خود را وارد کنید.", valPhoneInvalid: "لطفا یک شماره تلفن 10 رقمی معتبر وارد کنید.", valCity: "لطفا شهر خود را وارد کنید.", valComplaint: "لطفا توضیح دهید امروز چه چیزی شما را اذیت می کند.", valComplaintShort: "لطفا کمی بیشتر توضیح دهید.", valOnset: "لطفا بگویید این کی شروع شد.", valRedFlags: "لطفا حداقل یک گزینه را انتخاب کنید.", valMedical: "لطفا حداقل یک گزینه را انتخاب کنید.", valMedicalOther: "لطفا در مورد وضعیت پزشکی بیشتر بگویید.", valConsent: "لطفا قبل از ادامه تایید کنید."
+        valName: "لطفا نام کامل خود را وارد کنید.", valNameShort: "لطفا یک نام معتبر وارد کنید.", valDob: "لطفا تاریخ تولد خود را وارد کنید.", valDobInvalid: "لطفا یک تاریخ تولد معتبر وارد کنید.", valDobFuture: "تاریخ تولد نمی تواند در آینده باشد.", valPhone: "لطفا شماره تلفن خود را وارد کنید.", valPhoneInvalid: "لطفا یک شماره تلفن 10 رقمی معتبر وارد کنید.", valCity: "لطفا شهر خود را وارد کنید.", valComplaint: "لطفا توضیح دهید امروز چه چیزی شما را اذیت می کند.", valComplaintShort: "لطفا کمی بیشتر توضیح دهید.", valOnset: "لطفا بگویید این کی شروع شد.", valRedFlags: "لطفا حداقل یک گزینه را انتخاب کنید.", valMedical: "لطفا حداقل یک گزینه را انتخاب کنید.", valMedicalOther: "لطفا در مورد وضعیت پزشکی بیشتر بگویید.", valConsent: "لطفا قبل از ادامه تایید کنید.",
+        callBannerTitle: "ادامه تماس شما با سام", callBannerBody: "چند جزئیات بیشتر تا تیم دندانپزشکی ما بتواند پرونده شما را بررسی کند.", samMentionedLabel: "سام اشاره کرد", samMentionedEditPrompt: "آیا هنوز درست است؟ در صورت نیاز در بالا ویرایش کنید."
       },
       so: {
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
         heroTitle: "Sidee Martindale Dental", heroAccent: "kugu caawin karaa?",
         heroSub: "Ha ahaato nadiifinta ilkaha, xaalad degdeg ah, ama su'aal — noo sheeg waxa aad u baahan tahay, kooxdayadana si toos ah ayay kuula soo xiriiri doontaa.",
-        heroCost: "Adeeggan waa bilaash.", heroResponse: "Sam wuu ku jawaabi doonaa daqiiqado gudahood · 24/7",
+        heroCost: "Adeeggan waa bilaash.", heroResponse: "24/7 · Waxa dib u eega kooxda dhakhtarada ilkaha",
         heroBtn: "Bilow qiimaynta",
         trustSecure: "Amaan ah oo gaar ah", trustSam: "Marka hore la hadal Sam, kaaliyaha qiimaynta ilkaha AI", trustDentist: "Kooxda dhakhtarada ilkaha ayaa si toos ah kuula soo xiriiri doonta",
         warningPanel: "Haddii aad dhibaato neefsashada, dhiig aan joogsan karin, bararka weyn, ama dhaawac weji ah aad u daran, wac 911 isla markiiba.",
@@ -1134,18 +1192,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         btnBack: "Dib u noqo", btnSubmit: "La hadal Sam", btnSubmitSms: "Fariin u dir Sam",
         handoffTitle: "Tallaabada xigta: hubi fariimaha qoraalahaaga", handoffTitleSms: "Tallaabada xigta: hubi fariimaha qoraalahaaga",
         handoffCopy: "Sam waa kaaliyaha qiimaynta ilkaha AI.", handoffCopySms: "Sam ayaa dhaqso kuugu soo diri doona fariin luqaddaada. Fadlan ka jawaab fariimaha Sam.",
-        handoffPanelTitle: "Maxaa hadda dhacaya", handoffPanelCopyCall: "Macluumaadkaaga waa la helay. Sam ayaa dhaqso fariin ku soo diri doona.", handoffPanelCopySms: "Macluumaadkaaga waa la helay. Sam ayaa dhaqso fariin ku soo diri doona.",
+        handoffPanelTitle: "Maxaa hadda dhacaya", handoffPanelCopyCall: "Macluumaadkaaga waa la helay. Sam ayaa fariin ku soo diri doona si aad u sii wadato.", handoffPanelCopySms: "Macluumaadkaaga waa la helay. Sam ayaa fariin ku soo diri doona si aad u sii wadato.",
         incomingLabel: "Waxaad fariin ka heli doontaa", incomingLabelSms: "Waxaad fariin ka heli doontaa",
         incomingSub: "Kaydi lambarkaan si aad u garto fariinta Sam.", incomingSubSms: "Kaydi lambarkaan si aad u garto fariinta Sam.",
-        expectTitle: "Sam ayaa hadda ama dhaqso fariin ku soo diraya", expectTitleSms: "Sam ayaa hadda ama dhaqso fariin ku soo diraya",
+        expectTitle: "Sam wuxuu kuu soo dirayaa fariin si aad u sii wadato", expectTitleSms: "Sam wuxuu kuu soo dirayaa fariin si aad u sii wadato",
         expectCopy: "Fadlan taleefankaaga u hay meel dhow oo ka jawaab fariimaha Sam.", expectCopySms: "Fadlan taleefankaaga u hay meel dhow oo ka jawaab fariimaha Sam.",
-        valName: "Fadlan geli magacaaga oo buuxa.", valNameShort: "Fadlan geli magac sax ah.", valDob: "Fadlan geli taariikhda dhalashada.", valDobInvalid: "Fadlan geli taariikh sax ah.", valDobFuture: "Taariikhda dhalashada ma noqon karto mustaqbalka.", valPhone: "Fadlan geli lambarka taleefankaaga.", valPhoneInvalid: "Fadlan geli lambar taleefan sax ah oo 10 nambar ah.", valCity: "Fadlan geli magaaladaada.", valComplaint: "Fadlan sharax waxa ku dhibaya maanta.", valComplaintShort: "Fadlan bixin faahfaahin dheeraad ah.", valOnset: "Fadlan noo sheeg goorma ay bilaabatay.", valRedFlags: "Fadlan dooro ugu yaraan hal ikhtiyaar.", valMedical: "Fadlan dooro ugu yaraan hal ikhtiyaar.", valMedicalOther: "Fadlan wax badan ka sheeg xaaladda caafimaadka.", valConsent: "Fadlan xaqiiji ogolaanshaha ka hor intaadan sii wadin."
+        valName: "Fadlan geli magacaaga oo buuxa.", valNameShort: "Fadlan geli magac sax ah.", valDob: "Fadlan geli taariikhda dhalashada.", valDobInvalid: "Fadlan geli taariikh sax ah.", valDobFuture: "Taariikhda dhalashada ma noqon karto mustaqbalka.", valPhone: "Fadlan geli lambarka taleefankaaga.", valPhoneInvalid: "Fadlan geli lambar taleefan sax ah oo 10 nambar ah.", valCity: "Fadlan geli magaaladaada.", valComplaint: "Fadlan sharax waxa ku dhibaya maanta.", valComplaintShort: "Fadlan bixin faahfaahin dheeraad ah.", valOnset: "Fadlan noo sheeg goorma ay bilaabatay.", valRedFlags: "Fadlan dooro ugu yaraan hal ikhtiyaar.", valMedical: "Fadlan dooro ugu yaraan hal ikhtiyaar.", valMedicalOther: "Fadlan wax badan ka sheeg xaaladda caafimaadka.", valConsent: "Fadlan xaqiiji ogolaanshaha ka hor intaadan sii wadin.",
+        callBannerTitle: "Ka sii wadid wicitaankii Sam", callBannerBody: "Faahfaahin yar oo dheeraad ah si kooxda dhakhtarrada ilkahayagu ay u dib u eegi karaan kiiskaaga.", samMentionedLabel: "Sam wuxuu xusay", samMentionedEditPrompt: "Ma weli waa sax? Wax ka beddel kor haddii loo baahdo."
       },
       es: {
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
         heroTitle: "\u00bfC\u00f3mo puede Martindale Dental", heroAccent: "ayudarle?",
         heroSub: "Ya sea una limpieza, una emergencia dental o solo una pregunta \u2014 describa lo que necesita y nuestro equipo se comunicar\u00e1 directamente con usted.",
-        heroCost: "Este servicio es gratuito.", heroResponse: "Sam responde en minutos · Disponible 24/7",
+        heroCost: "Este servicio es gratuito.", heroResponse: "Disponible 24/7 · Revisado por nuestro equipo dental",
         heroBtn: "Iniciar evaluacion",
         trustSecure: "Seguro y privado", trustSam: "Hable primero con Sam, nuestro asistente de triaje dental con IA", trustDentist: "Nuestro equipo dental se comunicara con usted directamente",
         warningPanel: "Si tiene dificultad para respirar, sangrado incontrolable, hinchazon importante o trauma facial grave, llame al 911 inmediatamente.",
@@ -1179,18 +1238,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         btnBack: "Volver", btnSubmit: "Hablar con Sam", btnSubmitSms: "Enviar mensaje a Sam",
         handoffTitle: "Siguiente paso: revise sus mensajes de texto", handoffTitleSms: "Siguiente paso: revise sus mensajes de texto",
         handoffCopy: "Sam es un asistente de triaje dental con IA.", handoffCopySms: "Sam le enviara un mensaje pronto en su idioma. Por favor responda a los mensajes de Sam.",
-        handoffPanelTitle: "Que pasa ahora", handoffPanelCopyCall: "Su informacion ha sido recibida. Sam le enviara un mensaje pronto.", handoffPanelCopySms: "Su informacion ha sido recibida. Sam le enviara un mensaje pronto.",
+        handoffPanelTitle: "Que pasa ahora", handoffPanelCopyCall: "Su informacion ha sido recibida. Sam le enviara un mensaje para continuar.", handoffPanelCopySms: "Su informacion ha sido recibida. Sam le enviara un mensaje para continuar.",
         incomingLabel: "Recibira un mensaje del", incomingLabelSms: "Recibira un mensaje del",
         incomingSub: "Guarde este numero para reconocer el mensaje de Sam.", incomingSubSms: "Guarde este numero para reconocer el mensaje de Sam.",
-        expectTitle: "Sam le esta enviando un mensaje ahora o pronto", expectTitleSms: "Sam le esta enviando un mensaje ahora o pronto",
+        expectTitle: "Sam le enviara un mensaje para continuar", expectTitleSms: "Sam le enviara un mensaje para continuar",
         expectCopy: "Por favor tenga su telefono cerca y responda a los mensajes de Sam.", expectCopySms: "Por favor tenga su telefono cerca y responda a los mensajes de Sam.",
-        valName: "Por favor ingrese su nombre completo.", valNameShort: "Por favor ingrese un nombre valido.", valDob: "Por favor ingrese su fecha de nacimiento.", valDobInvalid: "Por favor ingrese una fecha de nacimiento valida.", valDobFuture: "La fecha de nacimiento no puede ser en el futuro.", valPhone: "Por favor ingrese su numero de telefono.", valPhoneInvalid: "Por favor ingrese un numero de telefono valido de 10 digitos.", valCity: "Por favor ingrese su ciudad.", valComplaint: "Por favor describa que le esta molestando hoy.", valComplaintShort: "Por favor proporcione un poco mas de detalle.", valOnset: "Por favor diganos cuando comenzo esto.", valRedFlags: "Por favor seleccione al menos una opcion o 'Ninguno'.", valMedical: "Por favor seleccione al menos una opcion o 'Ninguno'.", valMedicalOther: "Por favor diganos mas sobre la condicion medica.", valConsent: "Por favor confirme antes de continuar."
+        valName: "Por favor ingrese su nombre completo.", valNameShort: "Por favor ingrese un nombre valido.", valDob: "Por favor ingrese su fecha de nacimiento.", valDobInvalid: "Por favor ingrese una fecha de nacimiento valida.", valDobFuture: "La fecha de nacimiento no puede ser en el futuro.", valPhone: "Por favor ingrese su numero de telefono.", valPhoneInvalid: "Por favor ingrese un numero de telefono valido de 10 digitos.", valCity: "Por favor ingrese su ciudad.", valComplaint: "Por favor describa que le esta molestando hoy.", valComplaintShort: "Por favor proporcione un poco mas de detalle.", valOnset: "Por favor diganos cuando comenzo esto.", valRedFlags: "Por favor seleccione al menos una opcion o 'Ninguno'.", valMedical: "Por favor seleccione al menos una opcion o 'Ninguno'.", valMedicalOther: "Por favor diganos mas sobre la condicion medica.", valConsent: "Por favor confirme antes de continuar.",
+        callBannerTitle: "Continuando desde su llamada con Sam", callBannerBody: "Algunos detalles mas para que nuestro equipo dental pueda revisar su caso.", samMentionedLabel: "Sam menciono", samMentionedEditPrompt: "Esto sigue siendo correcto? Edite arriba si es necesario."
       },
       zh: {
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
         heroTitle: "Martindale Dental 如何", heroAccent: "帮助您？",
         heroSub: "无论是洗牙、牙科急诊还是咨询 — 告诉我们您需要什么，我们的团队将直接与您联系。",
-        heroCost: "此服务免费提供。", heroResponse: "Sam几分钟内回复 · 全天候服务",
+        heroCost: "此服务免费提供。", heroResponse: "全天候服务 · 由我们的牙科团队审核",
         heroBtn: "开始评估",
         trustSecure: "安全且私密", trustSam: "先与Sam交谈，我们的AI牙科分诊助手", trustDentist: "我们的牙科团队将直接与您联系",
         warningPanel: "如果您呼吸困难、出血不止、严重肿胀或面部严重受伤，请立即拨打911。",
@@ -1224,12 +1284,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         btnBack: "返回", btnSubmit: "与Sam交谈", btnSubmitSms: "给Sam发消息",
         handoffTitle: "下一步：查看您的短信", handoffTitleSms: "下一步：查看您的短信",
         handoffCopy: "Sam是AI牙科分诊助手。", handoffCopySms: "Sam将很快用您的语言给您发消息。请回复Sam的消息。",
-        handoffPanelTitle: "接下来会发生什么", handoffPanelCopyCall: "您的信息已收到。Sam将很快发送消息。", handoffPanelCopySms: "您的信息已收到。Sam将很快发送消息。",
+        handoffPanelTitle: "接下来会发生什么", handoffPanelCopyCall: "您的信息已收到。Sam将发送消息继续。", handoffPanelCopySms: "您的信息已收到。Sam将发送消息继续。",
         incomingLabel: "您将收到来自此号码的消息", incomingLabelSms: "您将收到来自此号码的消息",
         incomingSub: "保存此号码以识别Sam的消息。", incomingSubSms: "保存此号码以识别Sam的消息。",
         expectTitle: "Sam正在发送消息", expectTitleSms: "Sam正在发送消息",
         expectCopy: "请将手机放在身边并回复Sam的消息。", expectCopySms: "请将手机放在身边并回复Sam的消息。",
-        valName: "请输入您的全名。", valNameShort: "请输入有效的姓名。", valDob: "请输入您的出生日期。", valDobInvalid: "请输入有效的出生日期。", valDobFuture: "出生日期不能是未来的日期。", valPhone: "请输入您的电话号码。", valPhoneInvalid: "请输入有效的10位电话号码。", valCity: "请输入您的城市。", valComplaint: "请描述今天什么在困扰您。", valComplaintShort: "请提供更多细节。", valOnset: "请告诉我们这是什么时候开始的。", valRedFlags: "请至少选择一个选项或'以上都没有'。", valMedical: "请至少选择一个选项或'以上都没有'。", valMedicalOther: "请告诉我们更多关于医疗状况的信息。", valConsent: "请在继续之前确认。"
+        valName: "请输入您的全名。", valNameShort: "请输入有效的姓名。", valDob: "请输入您的出生日期。", valDobInvalid: "请输入有效的出生日期。", valDobFuture: "出生日期不能是未来的日期。", valPhone: "请输入您的电话号码。", valPhoneInvalid: "请输入有效的10位电话号码。", valCity: "请输入您的城市。", valComplaint: "请描述今天什么在困扰您。", valComplaintShort: "请提供更多细节。", valOnset: "请告诉我们这是什么时候开始的。", valRedFlags: "请至少选择一个选项或'以上都没有'。", valMedical: "请至少选择一个选项或'以上都没有'。", valMedicalOther: "请告诉我们更多关于医疗状况的信息。", valConsent: "请在继续之前确认。",
+        callBannerTitle: "继续您与Sam的通话", callBannerBody: "再补充几个细节，以便我们的牙科团队审核您的病例。", samMentionedLabel: "Sam提到", samMentionedEditPrompt: "这还正确吗？如有需要请在上方编辑。"
       }
     };
 
@@ -1382,6 +1443,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       // Current medications field
       setLabel("current-medications", "currentMedsLabel");
       setPlaceholder("current-medications", "currentMedsPlaceholder");
+
+      // Call-escalation banner + Sam-mentioned confirmation
+      var bannerTitle = document.getElementById("call-escalation-banner-title");
+      var bannerBody = document.getElementById("call-escalation-banner-body");
+      var smLabel = document.getElementById("sam-mentioned-label");
+      var smEditPrompt = document.getElementById("sam-mentioned-edit-prompt");
+      if (bannerTitle) bannerTitle.textContent = t("callBannerTitle");
+      if (bannerBody) bannerBody.textContent = t("callBannerBody");
+      if (smLabel) smLabel.textContent = t("samMentionedLabel");
+      if (smEditPrompt) smEditPrompt.textContent = t("samMentionedEditPrompt");
     }
 
     // Language bar click handler
@@ -1398,37 +1469,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         title: "Dental emergency in Hamilton?",
         accent: "Help is here — 24/7.",
         sub: "Tell us what's happening and describe your concern and our dental team will follow up. No waiting room. No phone hold. Start online now — it takes about 2 minutes.",
-        context: "Located in Jackson Square, downtown Hamilton. Walk-ins welcome during office hours. After hours? Start here and a dentist will follow up first thing."
+        context: "Located in Jackson Square, downtown Hamilton. Walk-ins welcome during office hours. After hours? Start here and our dental team will review your case as soon as office hours allow."
       },
       afterhours: {
         title: "It's after hours —",
         accent: "but we're still here.",
-        sub: "Our AI triage assistant Sam is available nights, weekends, and holidays. Describe your concern now, and our dental team will review your case and follow up during the next available office hours.",
-        context: "No need to wait until Monday. No need to go to the ER for a dental issue. Start your assessment now and wake up with a plan."
+        sub: "Our AI triage assistant Sam is available nights, weekends, and holidays. Describe your concern now, and our dental team will review your case during the next available office hours.",
+        context: "No need to wait until Monday to get your concern documented. Start your assessment now and our dental team will review it as office hours allow."
       },
       toothache: {
         title: "Toothache keeping you up?",
-        accent: "Get assessed now.",
+        accent: "Get started now.",
         sub: "Describe your pain and symptoms. Sam, our AI dental triage assistant, will follow up with guided questions — and our dental team will follow up with you directly.",
-        context: "You don't need to wait it out or guess what's wrong. Get a professional assessment started from your phone — day or night."
+        context: "You don't need to wait it out or guess what to share. Start the intake from your phone — day or night."
       },
       broken: {
         title: "Broken or knocked-out tooth?",
         accent: "Start here.",
         sub: "Tell us what happened — a fall, a bite, an accident. Sam will walk you through a quick triage, and our dental team will follow up with guidance and next steps.",
-        context: "Time matters with dental trauma. Start your assessment now — even if it's after hours — so your dentist has the details first thing."
+        context: "Time can matter with dental trauma. Start your intake now — even if it's after hours — so our dental team has the details ready to review."
       },
       infection: {
         title: "Swelling or signs of infection?",
-        accent: "Don't wait.",
-        sub: "Dental infections can escalate quickly. Describe your symptoms now — Sam will follow up with clinical triage questions, and our dental team will follow up with you directly.",
-        context: "If you have a fever, facial swelling, or difficulty swallowing along with dental pain, getting assessed promptly is important. Start here — a dentist will follow up."
+        accent: "Get assessed soon.",
+        sub: "Describe your symptoms now — Sam will follow up with structured triage questions, and our dental team will follow up with you directly.",
+        context: "If you have a fever, facial swelling, or difficulty swallowing along with dental pain, get assessed sooner rather than later. If you have trouble breathing or major swelling, call 911 right away."
       },
       virtual: {
-        title: "See a dentist",
-        accent: "without leaving home.",
-        sub: "Start with a quick online assessment. Sam, our AI triage assistant, follows up to gather details — then our dental team reviews your case and follows up directly.",
-        context: "No commute, no waiting room. Get your dental concern assessed from your couch, your office, or wherever you are. Available 24/7 in Hamilton."
+        title: "Start your dental intake",
+        accent: "from home.",
+        sub: "Begin with a quick online intake. Sam, our AI triage assistant, gathers the details — then our dental team reviews and follows up directly.",
+        context: "No commute, no waiting room to start. Get your dental concern documented for our team from your couch, your office, or wherever you are. Available 24/7 in Hamilton."
       }
     };
 
@@ -1529,6 +1600,86 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         .catch(function(err) {
           // Silent fail — patient just fills the form normally.
           console.warn("Prefill failed:", err);
+        });
+    }
+
+    // ── CALL ESCALATION PREFILL ─────────────────────────────────────────
+    // When General Sam (voice) escalates a patient via Path E, she sends
+    // an SMS with a link including ?call_case=<case_id>. The page fetches
+    // the case data from triage_cases and pre-fills the form, skipping the
+    // welcome screen entirely and showing a "Continuing from your call"
+    // banner. The patient sees what Sam captured ("Sam mentioned: ...") as
+    // a confirmation gesture rather than starting cold.
+    //
+    // Backend dependency: /functions/v1/case-prefill must return
+    //   { patient_name, patient_phone, patient_email, patient_city,
+    //     chief_complaint_raw, language } from the triage_cases row.
+    //   Should enforce a recency window (e.g. case created within last
+    //   24h) and reject expired / unknown case_ids with a 404.
+    //
+    // Behavior:
+    //   - Skip welcome screen on URL param (SMS came from real call event).
+    //   - If fetch returns nothing, leave welcome hidden anyway and let
+    //     patient fill form fresh — they came from a legit SMS link.
+    //   - Banner + "Sam mentioned" panel shown only on successful prefill.
+    var callCaseId = urlParams.get("call_case");
+    if (callCaseId) {
+      // Skip welcome — the SMS link is a legitimate call-escalation entry
+      welcomeScreen.style.display = "none";
+      formScreen.classList.add("show");
+
+      var CASE_PREFILL_URL = SUPABASE_URL + "/functions/v1/case-prefill";
+      fetch(CASE_PREFILL_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + SUPABASE_ANON_KEY,
+          "apikey": SUPABASE_ANON_KEY,
+        },
+        body: JSON.stringify({ case_id: callCaseId }),
+      })
+        .then(function(res) {
+          if (!res.ok) return null;
+          return res.json();
+        })
+        .then(function(data) {
+          if (!data) return;
+          var fields = [
+            { id: "patient-name", val: data.patient_name },
+            { id: "patient-phone", val: data.patient_phone },
+            { id: "patient-email", val: data.patient_email },
+            { id: "patient-city", val: data.patient_city },
+            { id: "chief-complaint", val: data.chief_complaint_raw },
+          ];
+          fields.forEach(function(f) {
+            if (!f.val) return;
+            var el = document.getElementById(f.id);
+            if (!el) return;
+            if (el.value && el.value.trim().length > 0) return;
+            el.value = f.val;
+          });
+          if (data.language && T[data.language]) {
+            applyLanguage(data.language);
+          }
+          // Show the "Continuing from your call" banner
+          var banner = document.getElementById("call-escalation-banner");
+          if (banner) banner.classList.add("show");
+          // Show "Sam mentioned: ..." confirmation if chief complaint captured
+          var complaint = data.chief_complaint_raw;
+          if (complaint) {
+            var sm = document.getElementById("sam-mentioned");
+            var smText = document.getElementById("sam-mentioned-text");
+            if (sm && smText) {
+              smText.textContent = complaint;
+              sm.classList.add("show");
+            }
+          }
+          // Recompute onset visibility now that complaint is populated
+          if (typeof updateOnsetVisibility === "function") updateOnsetVisibility();
+        })
+        .catch(function(err) {
+          // Silent fail — form still works without prefill
+          console.warn("Call case prefill failed:", err);
         });
     }
 
@@ -1643,22 +1794,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       else { wrapper.style.display = "none"; document.getElementById("avulsion-time").value = ""; }
     }
 
-    // Conditional onset: show when complaint mentions symptoms, hide for general inquiries
-    // Word boundary \b at start prevents false positives (e.g. "hit" inside "whitening")
-    // Compound phrases handle "fell out", "came out", "came off" etc.
+    // Onset visibility logic:
+    // - Default to SHOWING onset (with "Not applicable" as a valid option).
+    // - Only HIDE when chief complaint clearly matches English administrative
+    //   keywords (booking, hours, insurance, etc.) AND does NOT contain
+    //   symptom keywords. This ensures non-English speakers always see the
+    //   onset field (since the English regex won't match their language),
+    //   while preserving the smooth UX for English admin requests.
     var SYMPTOM_KEYWORDS = /\b(pain|painful|hurt|ache|aching|sore|tender|throb|sharp|burn|sting|discomfort|uncomfortable|swell|swollen|puffy|inflam|bump|lump|broke|broken|crack|fractur|shatter|split|snap|chip|bleed|blood|bled|knock|loose|wobbly|wiggly|shift|moved|moving|sensitive|hot|cold|infect|fever|abscess|pus|drain|trauma|fall|fell|impact|hit|struck|punch|accident|collision|injur|numb|tingl|extract|pull|remov|filling|crown|cap|wisdom|cavity|decay|rotten|emergency|urgent|gum)|fell.out|came.out|came.off|broke.off|knocked.out|lost.{0,6}(tooth|teeth|filling|crown|cap)/i;
+    var ADMIN_KEYWORDS = /\b(book|booking|appointment|cleaning|checkup|schedule|reschedul|cost|price|fee|insurance|coverage|hours|open|location|address|directions|parking|new patient|consult|consultation|cdcp|odsp|ow)\b/i;
     var onsetWrapper = document.getElementById("onset-wrapper");
     var onsetSelect = document.getElementById("onset-bucket");
     var ccTextarea = document.getElementById("chief-complaint");
 
     function updateOnsetVisibility() {
       var text = ccTextarea.value.trim();
-      if (text.length > 2 && SYMPTOM_KEYWORDS.test(text)) {
-        onsetWrapper.style.display = "block";
-        if (onsetSelect.value === "not_applicable") onsetSelect.value = "";
-      } else {
+      var isAdminOnly = text.length > 2 && ADMIN_KEYWORDS.test(text) && !SYMPTOM_KEYWORDS.test(text);
+      if (isAdminOnly) {
         onsetWrapper.style.display = "none";
         onsetSelect.value = "not_applicable";
+      } else {
+        onsetWrapper.style.display = "block";
+        if (onsetSelect.value === "not_applicable") onsetSelect.value = "";
       }
     }
     ccTextarea.addEventListener("input", updateOnsetVisibility);
@@ -1799,6 +1956,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     function getIntakeSource() {
       var params = new URLSearchParams(window.location.search);
       var src = params.get("src") || "";
+      // Call-escalation from General Sam (voice → SMS link → form)
+      // takes precedence over other sources so dashboard can distinguish
+      // a voice-escalation submission from cold-web or chatbot entries.
+      if (params.get("call_case")) return "general_sam_voice_escalation";
       // Chatbot-originating sessions get their own intake_source so
       // dashboard analytics can distinguish chatbot escalations from
       // direct form submissions.
@@ -1810,6 +1971,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     function buildIntakePayload(data) {
+      var params = new URLSearchParams(window.location.search);
+      var existingCaseId = params.get("call_case") || null;
       return {
         patient_name: data.patientName,
         patient_dob: data.patientDob,
@@ -1828,7 +1991,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         intake_version: "v2",
         intake_acknowledged_at: new Date().toISOString(),
         patient_language: currentLang,
-        preferred_channel: preferredChannel
+        preferred_channel: preferredChannel,
+        // When present, intake-trigger should UPDATE the existing case row
+        // rather than INSERT a new one. Backend dependency: intake-trigger
+        // must handle existing_case_id and merge form data with Sam's
+        // already-captured fields. Without this support, the call_case
+        // entry mode will still work front-end but create a duplicate row.
+        existing_case_id: existingCaseId
       };
     }
 
@@ -1869,7 +2038,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       } else if (isDuplicate) {
         handoffTitle.textContent = t("handoffTitle");
         handoffCopy.textContent = t("handoffCopy");
-        handoffPanelCopy.textContent = "We already have your information. Your phone should ring shortly. If you do not receive a call within a few minutes, please call Sam directly.";
+        handoffPanelCopy.textContent = "We already have your information. Sam will call the number you provided. If you don't receive a call, please call Sam directly using the number below.";
         expectCallCard.style.display = "block";
         incomingNumberCard.style.display = "block";
         callActions.innerHTML =
@@ -1883,7 +2052,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         expectCallCard.style.display = "block";
         incomingNumberCard.style.display = "block";
         callActions.innerHTML =
-          '<div class="call-fallback">If you do not receive a call within 5 minutes, you can also call ' +
+          '<div class="call-fallback">If you don\'t receive a call, you can also call ' +
           '<a class="call-number" href="' + FALLBACK_DIAL_NUMBER_HREF + '">' + FALLBACK_DIAL_NUMBER_DISPLAY + '</a>.</div>';
       } else {
         handoffTitle.textContent = t("handoffTitle");
