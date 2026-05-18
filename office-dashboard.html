@@ -1804,8 +1804,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   function maskName(name) {
     if (!name) return "Unknown";
-    var p = name.trim().split(" ");
-    if (p.length < 2) return name;
+    // Strip "(Native)" suffix that loadCases appends when patient_name_english
+    // exists. Without this, masking "Balaji Swaminath (ਬਲਾਜੀ ਸਮਾਮੀਨਾਥ)" produces
+    // "Balaji ਸ." — English first name with Punjabi last initial.
+    var clean = name.replace(/\s*\([^)]*\)\s*$/, "").trim();
+    var p = clean.split(" ");
+    if (p.length < 2) return clean;
     return p[0] + " " + p[p.length - 1].charAt(0) + ".";
   }
 
