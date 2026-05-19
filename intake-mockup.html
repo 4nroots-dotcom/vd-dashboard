@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intake — welcome screen mockup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/*
+ * INTAKE_HERO_MOCKUP_2026_05_18
+ * Wireframe-level mockup of redesigned intake.html welcome screen.
+ * Mobile-first, photo-lite, typography-led. For visual review only.
+ * Not wired up to backend; throwaway when production rebuild ships.
+ */
+:root {
+  --dark: #0e0e0e;
+  --dark-2: #1a1a1a;
+  --dark-3: #232323;
+  --green: #71bb55;
+  --green-dark: #4a8c34;
+  --green-soft: rgba(113, 187, 85, 0.12);
+  --green-border: rgba(113, 187, 85, 0.28);
+  --white: #ffffff;
+  --white-soft: rgba(255, 255, 255, 0.72);
+  --white-muted: rgba(255, 255, 255, 0.48);
+  --white-line: rgba(255, 255, 255, 0.08);
+  --light: #f7f8f5;
+  --light-2: #ffffff;
+  --light-line: #e8eae3;
+  --ink: #131613;
+  --ink-soft: #4a504a;
+  --ink-muted: #7c827c;
+  --amber-bg: #fef6e8;
+  --amber-border: #f4d49a;
+  --amber-text: #92560b;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  background: #18170f;
+  min-height: 100vh;
+  font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+/* Mockup desk — centers the mobile preview on desktop viewing */
+.desk {
+  min-height: 100vh;
+  padding: 24px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.desk-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #6b6862;
+  text-align: center;
+}
+
+.preview {
+  width: 100%;
+  max-width: 420px;
+  background: var(--dark);
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+/* ── Header bar ── */
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 12px;
+  background: var(--dark);
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.brand-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+.brand-loc {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--white-muted);
+}
+
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--white-line);
+  color: var(--white-soft);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.lang-toggle-globe { font-size: 12px; }
+.lang-toggle-caret { font-size: 9px; opacity: 0.65; }
+
+/* ── Language banner (NYT-style, first-visit, supported langs only) ── */
+.lang-banner {
+  background: linear-gradient(90deg, rgba(113, 187, 85, 0.18) 0%, rgba(113, 187, 85, 0.08) 100%);
+  border-top: 1px solid var(--green-border);
+  border-bottom: 1px solid var(--green-border);
+  padding: 11px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.lang-banner-text {
+  font-size: 13px;
+  color: var(--white);
+  line-height: 1.4;
+}
+.lang-banner-text strong { font-family: "DM Serif Display", Georgia, serif; font-weight: 400; font-style: normal; color: var(--green); }
+.lang-banner-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.lang-banner-btn {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--green);
+  color: var(--white);
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+.lang-banner-dismiss {
+  font-size: 16px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid var(--white-line);
+  color: var(--white-soft);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding-bottom: 2px;
+}
+
+/* ── Hero (dark) ── */
+.hero {
+  padding: 22px 20px 28px;
+  background:
+    radial-gradient(circle at top right, rgba(113, 187, 85, 0.10), transparent 38%),
+    radial-gradient(circle at bottom left, rgba(113, 187, 85, 0.06), transparent 42%),
+    var(--dark);
+  color: var(--white);
+  position: relative;
+}
+
+.hero-kicker {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 14px;
+}
+
+.hero-title {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: 38px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  font-weight: 400;
+  margin-bottom: 14px;
+}
+.hero-title-accent {
+  font-style: italic;
+  color: var(--green);
+}
+
+.hero-sub {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--white-soft);
+  max-width: 28ch;
+  margin-bottom: 18px;
+}
+
+.reassure {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--green);
+  letter-spacing: 0.02em;
+  margin-bottom: 20px;
+}
+.reassure-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--green);
+}
+.reassure-sep {
+  color: var(--white-muted);
+  font-weight: 400;
+}
+
+.cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 18px 20px;
+  border-radius: 16px;
+  border: none;
+  background: linear-gradient(135deg, var(--green-dark) 0%, var(--green) 100%);
+  color: var(--white);
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.005em;
+  box-shadow: 0 14px 36px rgba(74, 140, 52, 0.32);
+  cursor: pointer;
+}
+.cta-arrow {
+  margin-left: 8px;
+  font-weight: 700;
+}
+
+.cta-sub {
+  text-align: center;
+  font-size: 12px;
+  color: var(--white-muted);
+  margin-top: 10px;
+  letter-spacing: 0.02em;
+}
+
+/* ── Three-step section (light) ── */
+.how {
+  background: var(--light);
+  padding: 28px 20px 32px;
+}
+
+.how-kicker {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--green-dark);
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.step {
+  background: var(--light-2);
+  border: 1px solid var(--light-line);
+  border-radius: 14px;
+  padding: 16px 10px;
+  text-align: center;
+}
+
+.step-num {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: 24px;
+  color: var(--green-dark);
+  line-height: 1;
+  margin-bottom: 6px;
+  font-style: italic;
+}
+
+.step-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.25;
+  margin-bottom: 4px;
+}
+
+.step-body {
+  font-size: 11px;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+
+/* ── Conditions section (light) ── */
+.conditions {
+  background: var(--light);
+  padding: 0 20px 28px;
+}
+
+.conditions-title {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-size: 22px;
+  color: var(--ink);
+  line-height: 1.15;
+  margin-bottom: 4px;
+  text-align: center;
+  font-weight: 400;
+}
+
+.conditions-sub {
+  font-size: 12px;
+  color: var(--ink-muted);
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 22px;
+}
+
+.pill {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: var(--light-2);
+  border: 1px solid var(--light-line);
+  color: var(--ink-soft);
+}
+
+/* ── 911 warning ── */
+.warning {
+  margin: 0 20px;
+  background: var(--amber-bg);
+  border: 1px solid var(--amber-border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--amber-text);
+}
+.warning strong { font-weight: 700; }
+
+/* ── Footer (dark) ── */
+.foot {
+  background: var(--dark);
+  color: var(--white-muted);
+  padding: 26px 20px 24px;
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.6;
+  border-top: 1px solid var(--white-line);
+}
+
+.foot-address {
+  color: var(--white-soft);
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.foot-disclaimer {
+  font-size: 10px;
+  color: var(--white-muted);
+  margin-bottom: 10px;
+  max-width: 30ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.foot-powered {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--white-muted);
+}
+.foot-powered a {
+  color: var(--green);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* Tablet/desktop: keep mobile design centered; don't go wider */
+@media (min-width: 768px) {
+  .desk { padding: 48px 24px; }
+  .preview { box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.06); }
+}
+</style>
+</head>
+<body>
+
+<div class="desk">
+  <div class="desk-label">Mockup preview · welcome screen · mobile viewport</div>
+
+  <div class="preview">
+
+    <!-- ── Header bar ── -->
+    <div class="bar">
+      <div class="brand">
+        <span class="brand-name">Martindale Dental</span>
+        <span class="brand-loc">Jackson Square · Hamilton</span>
+      </div>
+      <button class="lang-toggle" type="button" aria-label="Change language">
+        <span class="lang-toggle-globe" aria-hidden="true">🌐</span>
+        <span class="lang-toggle-current">English</span>
+        <span class="lang-toggle-caret" aria-hidden="true">▾</span>
+      </button>
+    </div>
+
+    <!-- ── Language banner: shown only on first visit AND when browser language matches a supported non-English language ── -->
+    <div class="lang-banner">
+      <div class="lang-banner-text">
+        This page is also available in <strong>ਪੰਜਾਬੀ</strong>.
+      </div>
+      <div class="lang-banner-actions">
+        <button class="lang-banner-btn" type="button">Switch</button>
+        <button class="lang-banner-dismiss" type="button" aria-label="Dismiss">×</button>
+      </div>
+    </div>
+
+    <!-- ── Hero ── -->
+    <div class="hero">
+      <div class="hero-kicker">For Martindale patients</div>
+      <h1 class="hero-title">
+        How can Martindale Dental
+        <span class="hero-title-accent">help you?</span>
+      </h1>
+      <p class="hero-sub">
+        Whether it's a cleaning, a toothache, or a question — describe what you need and our dental team will follow up.
+      </p>
+
+      <div class="reassure">
+        <span class="reassure-dot"></span>
+        <span>Free</span>
+        <span class="reassure-sep">·</span>
+        <span>Available 24/7</span>
+        <span class="reassure-sep">·</span>
+        <span>Dental team reviews</span>
+      </div>
+
+      <button class="cta" type="button">
+        Start assessment
+        <span class="cta-arrow">→</span>
+      </button>
+      <div class="cta-sub">Free · Takes about 2 minutes</div>
+    </div>
+
+    <!-- ── Three-step "Here's what happens" ── -->
+    <div class="how">
+      <div class="how-kicker">Here's what happens</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-title">Fill a short form</div>
+          <div class="step-body">2 minutes. No account.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-title">Sam follows up</div>
+          <div class="step-body">A call or text from Sam.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-title">Team reviews</div>
+          <div class="step-body">Our dentists follow up.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Conditions / "Sam can help with" ── -->
+    <div class="conditions">
+      <h2 class="conditions-title">Sam can help with</h2>
+      <p class="conditions-sub">A wide range of dental concerns and questions.</p>
+      <div class="pills">
+        <span class="pill">Toothache</span>
+        <span class="pill">Broken tooth</span>
+        <span class="pill">Knocked-out tooth</span>
+        <span class="pill">Infection</span>
+        <span class="pill">Swelling</span>
+        <span class="pill">Lost filling</span>
+        <span class="pill">Mouth injury</span>
+        <span class="pill">Post-treatment pain</span>
+        <span class="pill">Sensitivity</span>
+        <span class="pill">Appointment</span>
+        <span class="pill">New patient</span>
+        <span class="pill">Cleaning or checkup</span>
+        <span class="pill">Insurance question</span>
+        <span class="pill">General concern</span>
+      </div>
+
+      <!-- ── 911 warning, subtle ── -->
+      <div class="warning">
+        <strong>If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma,</strong> call 911 immediately.
+      </div>
+    </div>
+
+    <!-- ── Footer ── -->
+    <div class="foot">
+      <div class="foot-address">Martindale Dental · 2 King St W, Unit #270, Hamilton, ON</div>
+      <div class="foot-disclaimer">This service provides dental triage guidance and does not replace emergency medical care or an in-person dental examination.</div>
+      <div class="foot-powered">Triage powered by <a href="#">VirtualDentist.ai</a></div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
