@@ -2,17 +2,14 @@
   "practice_id": "martindale-jacksonsquare",
   "practice_name": "Martindale Dental",
   "practice_location": "Jackson Square, Hamilton",
-  "vertical": "dental",
   "config_version": "1.4",
-  "last_updated": "2026-04-27",
-
+  "last_updated": "2026-05-20",
   "bot": {
     "name": "Sam",
     "disclosure": "I'm Martindale Dental's AI assistant",
     "greeting": "Hi! I'm Sam, Martindale Dental's AI assistant. I can help with appointment questions, office info, or any dental concern — from routine questions to a broken tooth or sudden pain. What's going on?",
     "typing_indicator_ms": 600
   },
-
   "brand": {
     "primary": "#1b4d2e",
     "accent": "#71bb55",
@@ -23,7 +20,6 @@
     "text_muted": "#5a6b5e",
     "border_subtle": "#d4e3d8"
   },
-
   "branding_assets": {
     "header_logo_url": "https://vd-dashboard-iota.vercel.app/martindale-logo.svg",
     "header_logo_alt": "Martindale Dental",
@@ -33,7 +29,6 @@
     "header_shows_bot_name": true,
     "bubble_icon": "chat"
   },
-
   "contact": {
     "office_phone_display": "905-393-8501",
     "office_phone_dial": "+19053938501",
@@ -41,66 +36,174 @@
     "office_address_short": "2 King St. W. Unit #270, Hamilton ON",
     "office_address_display": "2 King St. West, Unit #270\nHamilton, ON L8P 1A1\n(inside Jackson Square Mall)"
   },
-
   "urls": {
     "intake_form": "https://vd-dashboard-iota.vercel.app/intake.html",
     "website_home": "https://martindaledental.com/hamilton-dentist/",
     "website_contact": "https://martindaledental.com/hamilton-dentist/contact-hamilton/",
-    "website_faq": "https://martindaledental.com/faq/"
+    "website_faq": "https://martindaledental.com/faq/",
+    "booking_url": "https://can10.recallmax.com/rsm/request/public/bookOnline/patient/layout.html?a=6vwQ4CKrzA0hTsFBEfww2Qa2x_vNpsBtWX",
+    "booking_url_emergency_exam": null,
+    "booking_url_routine": null
   },
-
   "intent_routing": {
     "clinical_keywords": [
-      "pain", "hurt", "hurts", "hurting", "ache", "aching", "sore", "throbbing",
-      "sharp pain", "severe pain", "excruciating",
-      "swell", "swelling", "swollen", "puffy", "puffed",
-      "bleed", "bleeding", "bloody",
-      "broke", "broken", "cracked", "chipped", "fractured", "split",
-      "accident", "fell", "fall", "hit", "impact", "trauma", "injury", "injured",
-      "emergency", "urgent", "urgently",
-      "knocked out", "fell out", "came out",
-      "abscess", "pus", "infected", "infection", "gum infection",
-      "can't eat", "can't chew", "can't sleep", "cant eat", "cant chew", "cant sleep",
-      "wisdom tooth", "wisdom teeth",
-      "lost filling", "lost crown", "crown fell", "filling fell",
-      "toothache", "jaw pain", "gum pain",
-      "fever", "hot cheek", "face feels hot",
-      "difficulty swallowing", "trouble swallowing", "trouble breathing", "difficulty breathing",
-      "numb", "numbness", "tingling",
-      "chipped tooth", "cracked tooth", "loose tooth"
+      "pain",
+      "hurt",
+      "hurts",
+      "hurting",
+      "ache",
+      "aching",
+      "sore",
+      "throbbing",
+      "sharp pain",
+      "severe pain",
+      "excruciating",
+      "swell",
+      "swelling",
+      "swollen",
+      "puffy",
+      "puffed",
+      "bleed",
+      "bleeding",
+      "bloody",
+      "broke",
+      "broken",
+      "cracked",
+      "chipped",
+      "fractured",
+      "split",
+      "accident",
+      "fell",
+      "fall",
+      "hit",
+      "impact",
+      "trauma",
+      "injury",
+      "injured",
+      "emergency",
+      "urgent",
+      "urgently",
+      "knocked out",
+      "fell out",
+      "came out",
+      "abscess",
+      "pus",
+      "infected",
+      "infection",
+      "gum infection",
+      "can't eat",
+      "can't chew",
+      "can't sleep",
+      "cant eat",
+      "cant chew",
+      "cant sleep",
+      "wisdom tooth",
+      "wisdom teeth",
+      "lost filling",
+      "lost crown",
+      "crown fell",
+      "filling fell",
+      "toothache",
+      "jaw pain",
+      "gum pain",
+      "fever",
+      "hot cheek",
+      "face feels hot",
+      "difficulty swallowing",
+      "trouble swallowing",
+      "trouble breathing",
+      "difficulty breathing",
+      "numb",
+      "numbness",
+      "tingling",
+      "chipped tooth",
+      "cracked tooth",
+      "loose tooth"
     ],
     "appointment_keywords": [
-      "appointment", "appt", "appointment request", "book", "booking", "schedule", "reschedule",
-      "cleaning", "checkup", "check-up", "check up", "exam",
-      "new patient", "consult", "consultation", "first visit",
-      "whitening", "filling", "crown", "root canal", "extraction",
-      "braces", "invisalign", "orthodontics", "retainer",
-      "see a dentist", "see the dentist", "make an appointment", "see someone",
-      "available", "availability", "opening", "slot"
+      "appointment",
+      "appt",
+      "appointment request",
+      "book",
+      "booking",
+      "schedule",
+      "reschedule",
+      "cleaning",
+      "checkup",
+      "check-up",
+      "check up",
+      "exam",
+      "new patient",
+      "consult",
+      "consultation",
+      "first visit",
+      "whitening",
+      "filling",
+      "crown",
+      "root canal",
+      "extraction",
+      "braces",
+      "invisalign",
+      "orthodontics",
+      "retainer",
+      "see a dentist",
+      "see the dentist",
+      "make an appointment",
+      "see someone",
+      "available",
+      "availability",
+      "opening",
+      "slot"
     ],
     "deflect_keywords": [
-      "insurance", "coverage", "covered", "claim", "claims", "policy",
-      "blue cross", "manulife", "sunlife", "green shield", "cdcp", "canada dental",
-      "ontario works", "odsp", "senior discount", "low income",
-      "price", "cost", "how much", "fee", "fees", "rate",
-      "refund", "billing", "invoice", "payment plan", "financing"
+      "insurance",
+      "coverage",
+      "covered",
+      "claim",
+      "claims",
+      "policy",
+      "blue cross",
+      "manulife",
+      "sunlife",
+      "green shield",
+      "cdcp",
+      "canada dental",
+      "ontario works",
+      "odsp",
+      "senior discount",
+      "low income",
+      "price",
+      "cost",
+      "how much",
+      "fee",
+      "fees",
+      "rate",
+      "refund",
+      "billing",
+      "invoice",
+      "payment plan",
+      "financing"
     ],
     "llm_fallback_enabled": true,
     "llm_fallback_model": "gpt-4o-mini",
     "llm_fallback_temperature": 0.0,
     "llm_fallback_max_tokens": 10
   },
-
   "safety": {
     "self_harm_keywords": [
-      "kill myself", "end my life", "suicide", "suicidal", "want to die",
-      "hurt myself", "self harm", "self-harm"
+      "kill myself",
+      "end my life",
+      "suicide",
+      "suicidal",
+      "want to die",
+      "hurt myself",
+      "self harm",
+      "self-harm"
     ],
     "self_harm_response": "I can hear you're going through something really hard. This isn't what I can help with, but please reach out to someone who can — in Canada you can call or text 988 anytime for immediate support. If you're in immediate danger, please call 911.",
     "abuse_deflection_threshold": 3,
     "abuse_deflection_response": "I want to help, but I'm not able to continue this way. If you have a dental concern, I'm here. Otherwise you can reach our office at 905-393-8501 during business hours."
   },
-
   "handoff": {
     "clinical_handoff_message": "Let me bring up a quick form to gather a few important details for our team. Once you submit, Sam will continue the conversation with you by text.",
     "empathy_fallback": "I'm sorry to hear that.",
@@ -111,43 +214,37 @@
     "partial_name_followup": "Thanks! And what name should I put on the message for our team?",
     "partial_phone_followup_body": "And what's the best phone number or email to reach you at?",
     "unresolved_fallback_message": "I want to make sure you get the right answer. Would it be okay if our team reached out? If you could please share your name and contact information, they'll follow up.",
-    "prefill_fields": ["patient_name", "patient_phone", "patient_email", "patient_city", "chief_complaint_raw"]
+    "prefill_fields": [
+      "patient_name",
+      "patient_phone",
+      "patient_email",
+      "patient_city",
+      "chief_complaint_raw"
+    ]
   },
-
   "rate_limits": {
     "messages_per_session_per_hour": 30,
     "messages_per_session_per_day": 100,
     "messages_per_ip_per_hour": 500,
     "sessions_per_ip_per_day": 50
   },
-
   "session": {
     "cookie_name": "vd_chat_session",
-    "cookie_ttl_hours": 720,
-    "server_session_ttl_hours": 720,
+    "cookie_ttl_hours": 24,
+    "server_session_ttl_hours": 24,
     "idle_timeout_minutes": 30
   },
-
-  "default_language": "en",
-  "supported_languages": ["en", "fr", "es", "ar", "zh", "pa", "hi", "fa", "so"],
-  "available_languages": ["en", "fr", "es", "ar", "zh", "pa", "hi", "fa", "so"],
-  "language_display_names": {
-    "en": "English",
-    "fr": "Français",
-    "es": "Español",
-    "ar": "العربية",
-    "zh": "中文",
-    "pa": "ਪੰਜਾਬੀ",
-    "hi": "हिन्दी",
-    "fa": "فارسی",
-    "so": "Soomaali"
-  },
-
   "ui": {
     "bubble_position": "bottom-right",
-    "bubble_offset_px": { "bottom": 20, "right": 20 },
+    "bubble_offset_px": {
+      "bottom": 20,
+      "right": 20
+    },
     "bubble_size_px": 56,
-    "panel_size_desktop_px": { "width": 360, "height": 560 },
+    "panel_size_desktop_px": {
+      "width": 360,
+      "height": 560
+    },
     "panel_mobile_fullscreen": true,
     "mobile_breakpoint_px": 640,
     "pulse_on_first_load": true,
@@ -156,7 +253,6 @@
     "poweredby_text": "Powered by VirtualDentist.ai",
     "poweredby_url": "https://virtualdentist.ai"
   },
-
   "gtm": {
     "container_id": "GTM-K7XDHFB8",
     "events": {
@@ -169,6 +265,5 @@
       "closed": "chat_closed"
     }
   },
-
   "emergency_disclaimer": "If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, please call 911 or go to the nearest emergency room. This chat does not replace emergency care."
 }
