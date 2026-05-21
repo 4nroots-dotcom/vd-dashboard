@@ -1489,37 +1489,56 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       "<div class=\"print-vd\">AI-Generated Triage Summary<br>Powered by VirtualDentist.ai</div>";
     card.appendChild(ph);
 
+    // ── NON-EMERGENT INQUIRY DETECTION (must run BEFORE the !so branch) ──
+    // A non-emergent inquiry (routine booking/question) should NEVER render as
+    // a clinical note, regardless of whether it has a structured_output.
+    // Cold-call General Sam routine cases DO carry a structured_output (so the
+    // old `if (!so)` gate fell through to the full clinical workup, dressing a
+    // "book a cleaning" call up with empty HPI / "Denied" red-flag rows — see
+    // the Dawn / Dr S. cases). We detect non-emergent via the tag in EITHER the
+    // top-level column OR structured_output, and render a clean inquiry card.
+    var soTag = (c.structured_output || {});
+    var isNonEmergentInquiry = c.triage_tag === "non_emergent_inquiry" || soTag.triage_tag === "non_emergent_inquiry";
+    var nonEmergentVia =
+      c.intake_source === "widget_contact" ? "the website chat"
+      : c.intake_source === "web_form" ? "the intake form"
+      : (c.intake_source === "vapi_general_sam" || c.intake_source === "vapi_general_sam_test" || c.intake_source === "general_sam_voice_escalation" || c.source === "vapi" || c.extraction_source === "vapi") ? "a call with Sam"
+      : (c.extraction_source === "sms-openai" || c.extraction_source === "sms-claude" || c.sms_transcript) ? "a text conversation with Sam"
+      : "the intake form";
+
+    if (isNonEmergentInquiry) {
+      var nePhone = c.patient_phone
+        ? c.patient_phone.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3") : "—";
+      var neRequest = soTag.chief_complaint_quote || soTag.chief_complaint || c.chief_complaint_english || c.chief_complaint || "—";
+      var neCard = document.createElement("div");
+      neCard.innerHTML =
+        '<div class="contact-card" style="margin:16px;">' +
+          '<div class="contact-card-label">Non-Emergent Inquiry &mdash; Office Follow-Up Needed</div>' +
+          '<div style="font-size:12px;margin-bottom:12px;padding:8px 10px;border-radius:6px;background:#FFFFF0;border:1px solid #D69E2E;">' +
+            '<span style="color:#744210;">&#128172; This patient submitted a non-emergent inquiry through ' + nonEmergentVia + '. Please reach out to confirm details and book if appropriate.</span>' +
+          '</div>' +
+          '<div class="contact-grid">' +
+            '<div class="contact-row"><div class="contact-field-label">Name</div><div class="contact-field-value">' + esc(c.patient_name || "—") + '</div></div>' +
+            '<div class="contact-row"><div class="contact-field-label">Phone</div><div class="contact-field-value">' + esc(nePhone) + '</div></div>' +
+            (c.patient_language && c.patient_language !== "en" ? '<div class="contact-row"><div class="contact-field-label">Language</div><div class="contact-field-value" style="color:#6b46c1;font-weight:600;">' + esc(({"ar":"Arabic","hi":"Hindi","pa":"Punjabi","fr":"French","fa":"Farsi","so":"Somali","es":"Spanish","zh":"Chinese"})[c.patient_language] || c.patient_language) + '</div></div>' : '') +
+            '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Patient Request</div><div class="contact-field-value">' + esc(neRequest) + '</div></div>' +
+          '</div>' +
+        '</div>';
+      card.appendChild(neCard);
+      wrap.appendChild(card);
+      return wrap;
+    }
+
     if (!so) {
       var pendingPhone = c.patient_phone
         ? c.patient_phone.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3") : "—";
       var pendingDob = c.patient_dob ? formatDOB(c.patient_dob) : "—";
-      // Differentiate chatbot non-emergent bookings (complete, no Sam
-      // follow-up needed) from intake-form cases where Sam's voice/SMS
-      // triage is still pending. The "Sam has not yet completed this
-      // call" warning is correct context for the latter and wrong for
-      // the former — chatbot bookings are submission-complete.
-      // Non-emergent inquiries can now originate from MULTIPLE sources, not
-      // just the website chatbot: the chatbot (intake_source 'widget_contact'),
-      // the routine intake FORM (intake_source 'web_form'), and General Sam
-      // routine calls. They all carry triage_tag 'non_emergent_inquiry', so we
-      // must distinguish the actual source via intake_source — NOT assume the
-      // tag means "website chat" (that assumption mis-sourced form leads).
-      var isNonEmergentInquiry = c.triage_tag === "non_emergent_inquiry";
-      var nonEmergentVia =
-        c.intake_source === "widget_contact" ? "the website chat"
-        : c.intake_source === "web_form" ? "the intake form"
-        : (c.source === "vapi" || c.extraction_source === "vapi") ? "a call with Sam"
-        : (c.extraction_source === "sms-openai" || c.extraction_source === "sms-claude" || c.sms_transcript) ? "a text conversation with Sam"
-        : "the intake form";
-      var pendingLabel = isNonEmergentInquiry
-        ? "Non-Emergent Inquiry &mdash; Office Follow-Up Needed"
-        : "Intake Information &mdash; Triage Pending";
-      var pendingWarning = isNonEmergentInquiry
-        ? '<span style="color:#744210;">&#128172; This patient submitted a non-emergent inquiry through ' + nonEmergentVia + '. Please reach out to confirm details and book if appropriate.</span>'
-        : '<span style="color:#C05621;">&#9888; Sam has not yet completed this call. The information below was submitted via the intake form.</span>';
-      var pendingWarningBg = isNonEmergentInquiry
-        ? 'background:#FFFFF0;border:1px solid #D69E2E;'
-        : 'background:#FFFAF0;border:1px solid #F6AD55;';
+      // Intake-form case where Sam's voice/SMS triage is still pending (no
+      // structured_output yet). Non-emergent inquiries are already handled
+      // above and returned, so this is always a triage-pending clinical case.
+      var pendingLabel = "Intake Information &mdash; Triage Pending";
+      var pendingWarning = '<span style="color:#C05621;">&#9888; Sam has not yet completed this call. The information below was submitted via the intake form.</span>';
+      var pendingWarningBg = 'background:#FFFAF0;border:1px solid #F6AD55;';
       var pendingCard = document.createElement("div");
       pendingCard.innerHTML =
         '<div class="contact-card" style="margin:16px;">' +
@@ -1533,9 +1552,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             '<div class="contact-row"><div class="contact-field-label">Date of Birth</div><div class="contact-field-value">' + esc(pendingDob) + '</div></div>' +
             '<div class="contact-row"><div class="contact-field-label">City</div><div class="contact-field-value">' + esc(c.patient_city || "—") + '</div></div>' +
             (c.patient_language && c.patient_language !== "en" ? '<div class="contact-row"><div class="contact-field-label">Language</div><div class="contact-field-value" style="color:#6b46c1;font-weight:600;">' + esc(({"ar":"Arabic","hi":"Hindi","pa":"Punjabi","fr":"French","fa":"Farsi","so":"Somali","es":"Spanish","zh":"Chinese"})[c.patient_language] || c.patient_language) + ' (SMS triage)</div></div>' : '') +
-            '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">' + (isNonEmergentInquiry ? "Patient Request" : "Chief Complaint") + '</div><div class="contact-field-value">' + esc(c.chief_complaint_english || c.chief_complaint || "—") + '</div></div>' +
-            (isNonEmergentInquiry ? '' : '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Medical History</div><div class="contact-field-value">' + esc(humanizeMedicalFlags(c.intake_medical_flags || {})) + '</div></div>') +
-            (!isNonEmergentInquiry && c.current_medications ? '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Current Medications</div><div class="contact-field-value">' + esc(c.current_medications) + '</div></div>' : '') +
+            '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Chief Complaint</div><div class="contact-field-value">' + esc(c.chief_complaint_english || c.chief_complaint || "—") + '</div></div>' +
+            '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Medical History</div><div class="contact-field-value">' + esc(humanizeMedicalFlags(c.intake_medical_flags || {})) + '</div></div>' +
+            (c.current_medications ? '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Current Medications</div><div class="contact-field-value">' + esc(c.current_medications) + '</div></div>' : '') +
           '</div>' +
         '</div>';
       card.appendChild(pendingCard);
