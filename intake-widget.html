@@ -1075,7 +1075,14 @@ window.addEventListener('DOMContentLoaded',function(){
 
   function getIntakeSource() {
     var params = new URLSearchParams(window.location.search);
-    return params.get("src") || "widget";
+    var src = params.get("src");
+    // Defensive: this is the structured intake WIDGET. "widget_contact" is the
+    // chat-handler's source value (dashboard labels it "the website chat"). If
+    // the Martindale embed passes ?src=widget_contact, our form submissions get
+    // mislabeled as chat. Normalize that one collision away so a widget form
+    // always reads as the widget. Genuine campaign tags still pass through.
+    if (!src || src === "widget_contact") return "widget";
+    return src;
   }
 
   async function widgetSubmit() {
