@@ -14,7 +14,7 @@ window.addEventListener('DOMContentLoaded',function(){
 </script>
 <!-- End Google Tag Manager -->
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Martindale Dental — Talk to Sam</title>
   <meta name="format-detection" content="telephone=no">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -1160,9 +1160,7 @@ window.addEventListener('DOMContentLoaded',function(){
       document.getElementById("handoff-sub").textContent = sms ? t("handoffSubSms") : t("handoffSub");
 
       // Notify parent iframe of resize
-      if (window.parent !== window) {
-        try { window.parent.postMessage({ type: "vd-widget-resize", height: document.body.scrollHeight }, "*"); } catch(e) {}
-      }
+      if (window.__vdPostHeight) window.__vdPostHeight(true);
 
     } catch(e) {
       errEl.textContent = "Unexpected error. Please try again.";
@@ -1190,9 +1188,7 @@ window.addEventListener('DOMContentLoaded',function(){
       if (isAdmin) widgetEl.classList.add("routine-mode");
       else widgetEl.classList.remove("routine-mode");
       applyComplaintPlaceholder();
-      if (window.parent !== window) {
-        try { window.parent.postMessage({ type: "vd-widget-resize", height: document.body.scrollHeight }, "*"); } catch(e) {}
-      }
+      if (window.__vdPostHeight) window.__vdPostHeight(true);
     }
     if (urgentBtn) urgentBtn.addEventListener("click", function() { selectType("clinical"); });
     if (routineBtn) routineBtn.addEventListener("click", function() { selectType("admin"); });
@@ -1207,13 +1203,45 @@ window.addEventListener('DOMContentLoaded',function(){
     widgetSubmit();
   });
 
-  // Auto-resize for iframe
-  if (window.parent !== window) {
-    var resizeObserver = new ResizeObserver(function() {
-      try { window.parent.postMessage({ type: "vd-widget-resize", height: document.body.scrollHeight }, "*"); } catch(e) {}
-    });
-    resizeObserver.observe(document.body);
-  }
+  // Auto-resize for iframe — race-proof.
+  // The original bug: the first scrollHeight was measured before the web
+  // fonts (DM Sans / DM Serif) loaded and before layout settled, so the parent
+  // locked in a wrong (clipped) height and the buttons fell below the visible
+  // frame; it only corrected when a manual zoom forced a reflow. Fix: post the
+  // height at every point where layout can change — DOM ready, full load,
+  // font-ready, a few delayed retries, on resize, and on every interaction.
+  (function() {
+    if (window.parent === window) return; // not embedded
+    var lastH = 0;
+    function postHeight(force) {
+      var h = Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight,
+        document.body.offsetHeight
+      );
+      if (!force && Math.abs(h - lastH) < 2) return; // dedupe noise
+      lastH = h;
+      try { window.parent.postMessage({ type: "vd-widget-resize", height: h }, "*"); } catch (e) {}
+    }
+    window.__vdPostHeight = postHeight; // reachable from the other post sites
+
+    // Fire at each moment layout can change.
+    postHeight(true);
+    window.addEventListener("load", function(){ postHeight(true); });
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function(){ postHeight(true); });
+    }
+    // Delayed retries catch late font swap / async layout that no event covers.
+    [100, 300, 600, 1200].forEach(function(ms){ setTimeout(function(){ postHeight(true); }, ms); });
+
+    window.addEventListener("resize", function(){ postHeight(false); });
+
+    if (window.ResizeObserver) {
+      var ro = new ResizeObserver(function(){ postHeight(false); });
+      ro.observe(document.body);
+      ro.observe(document.documentElement);
+    }
+  })();
 </script>
 </body>
 </html>
