@@ -29,17 +29,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
      * VD brand showing through, not a missed swap.
      */
     :root {
-      --navy-0: #061a0c;        /* outer background — deepest forest */
-      --navy-1: #091e10;        /* primary background — deep forest */
-      --navy-2: #112d17;        /* surface — mid forest */
-      --navy-3: #1b4d2e;        /* accented surface — Martindale forest primary */
+      --navy-0: #080808;        /* outer background — deepest neutral (mockup) */
+      --navy-1: #0e0e0e;        /* primary background — mockup --dark */
+      --navy-2: #1a1a1a;        /* surface — mockup --dark-2 */
+      --navy-3: #232323;        /* accented surface — mockup --dark-3 */
       --cyan: #71bb55;          /* primary accent — Martindale CTA green */
       --cyan-soft: #9ed085;     /* lighter accent — soft green */
       --cyan-dim: #4a8c34;      /* dim/hover accent — Martindale dark green */
-      --white: #f5fbf5;         /* near-white with green tint */
-      --text-primary: #e8f0e8;
-      --text-secondary: #bcd4b8;
-      --text-muted: #8aa886;
+      --white: #ffffff;         /* pure white (mockup) */
+      --text-primary: #f2f2f2;
+      --text-secondary: rgba(255, 255, 255, 0.72);
+      --text-muted: rgba(255, 255, 255, 0.46);
       --border: rgba(255, 255, 255, 0.08);
       --border-soft: rgba(255, 255, 255, 0.05);
       --border-active: rgba(113, 187, 85, 0.32);
@@ -51,8 +51,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       --radius-xl: 30px;
       --radius-lg: 22px;
       --radius-md: 16px;
+      /* MOCKUP_TRANSPLANT_2026_05_20 — global mk-* tokens so the welcome,
+       * form, and handoff scoped blocks all resolve them (not just .mk-screen). */
+      --mk-dark: #0e0e0e;
+      --mk-green: #71bb55;
+      --mk-green-dark: #4a8c34;
+      --mk-green-soft: rgba(113,187,85,0.12);
+      --mk-green-border: rgba(113,187,85,0.28);
+      --mk-white: #ffffff;
+      --mk-white-soft: rgba(255,255,255,0.72);
+      --mk-white-muted: rgba(255,255,255,0.48);
+      --mk-white-line: rgba(255,255,255,0.08);
       --radius-sm: 12px;
-      --maxw: 980px;
+      --maxw: 468px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -78,6 +89,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .hero-typewriter { min-height: 28px; margin-top: 10px; margin-bottom: 6px; overflow: hidden; }
     .hero-tw-text { font-family: "DM Serif Display", serif; font-size: 18px; color: var(--text-secondary); font-style: italic; transition: opacity 0.4s ease; }
     .lang-chooser { font-size: 12px; font-weight: 600; color: var(--cyan-soft); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; transition: opacity 0.3s; }
+    /* NYT-style first-visit language banner (§4.1.1) */
+    .lang-banner { display: none; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;
+      background: var(--navy-1); border: 1px solid var(--cyan-dim); border-radius: 12px;
+      padding: 10px 16px; margin-bottom: 14px; font-size: 14px; color: var(--text-soft); }
+    .lang-banner.show { display: flex; }
+    .lang-banner-text { font-weight: 500; }
+    .lang-banner-actions { display: flex; align-items: center; gap: 8px; }
+    .lang-banner-switch { background: var(--cyan); color: var(--navy-0); border: none; border-radius: 999px;
+      padding: 6px 16px; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .lang-banner-switch:hover { filter: brightness(1.05); }
+    .lang-banner-dismiss { background: transparent; color: var(--text-muted); border: none; font-size: 18px;
+      line-height: 1; cursor: pointer; padding: 4px 8px; }
+    .lang-banner-dismiss:hover { color: var(--text-soft); }
     .hero-multilingual.hidden { display: none; }
     .hero-title-accent { font-family: "DM Serif Display", serif; font-style: italic; color: var(--cyan); }
     .hero-response { font-size: 13px; color: var(--cyan); font-weight: 600; letter-spacing: 0.03em; margin-top: 4px; margin-bottom: 8px; }
@@ -112,7 +136,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     [dir="rtl"] .handoff-panel-title, [dir="rtl"] .handoff-panel-copy { text-align: right; direction: rtl; }
     [dir="rtl"] input, [dir="rtl"] textarea, [dir="rtl"] select { text-align: right; direction: rtl; }
 
-    .brand { display: flex; justify-content: center; margin: 8px 0 16px; }
+    .brand { display: flex; justify-content: space-between; align-items: center; gap: 14px; margin: 8px 0 16px; }
 
     .brand-dual {
       display: flex;
@@ -190,7 +214,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
 
     .card {
-      background: linear-gradient(180deg, rgba(27, 77, 46, 0.92) 0%, rgba(9, 30, 16, 0.92) 100%);
+      background: var(--navy-1);
       border: 1px solid var(--border);
       border-radius: var(--radius-xl);
       box-shadow: var(--shadow-lg);
@@ -209,10 +233,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     }
     .hero-inner { position: relative; z-index: 1; display: grid; gap: 18px; }
     .hero-copy-block { display: grid; gap: 14px; }
-    .hero-kicker { font-size: 11px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: #bce0a7; }
+    .hero-kicker { font-size: 11px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: #9ed085; }
     .hero-title { font-size: clamp(40px, 7.5vw, 58px); line-height: 1.04; letter-spacing: -0.025em; font-weight: 400; font-style: normal; font-family: "DM Serif Display", Georgia, serif; color: var(--white); max-width: 9em; }
     .hero-sub { font-size: 18px; line-height: 1.56; color: var(--text-secondary); max-width: 34ch; margin-top: 2px; }
-    .hero-cost { font-size: 18px; line-height: 1.5; font-weight: 750; color: #eef4e8; margin-top: 4px; }
+    .hero-cost { font-size: 18px; line-height: 1.5; font-weight: 750; color: #f2f2f2; margin-top: 4px; }
     .hero-cta-block { display: grid; gap: 18px; margin-top: 10px; }
 
     .hero-primary-btn {
@@ -228,7 +252,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .hero-primary-btn:disabled { opacity: 0.62; cursor: not-allowed; }
 
     .trust-row { display: grid; gap: 10px; padding-top: 12px; margin-top: 4px; border-top: 1px solid var(--border-soft); }
-    .trust-item { display: flex; align-items: center; gap: 10px; color: #cee0c8; font-size: 14px; line-height: 1.45; font-weight: 400; }
+    .trust-item { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.72); font-size: 14px; line-height: 1.45; font-weight: 400; }
     .trust-dot { width: 7px; height: 7px; border-radius: 999px; background: var(--cyan-soft); box-shadow: 0 0 0 4px rgba(158, 208, 133, 0.12); flex-shrink: 0; margin-left: 2px; }
 
     .hero-image-block { display: grid; gap: 16px; }
@@ -237,10 +261,43 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .hero-image { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; object-position: center 18%; transform: scale(1.025); }
 
     .hero-secondary { display: grid; gap: 18px; margin-top: 2px; padding-top: 4px; }
-    .warning-panel { padding: 16px; border-radius: 18px; background: var(--urgent-bg); border: 1px solid rgba(228, 106, 133, 0.42); color: #ffdbe5; font-size: 15px; line-height: 1.56; font-weight: 660; }
+
+    /* BIFURCATION_REBUILD_2026_05_19 — hero reassurance dots + CTA sub + de-emphasized lang bar */
+    .hero-reassure { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 13px; font-weight: 700; color: var(--cyan-soft); letter-spacing: 0.02em; margin-top: 2px; }
+    .hero-reassure-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--cyan); flex-shrink: 0; }
+    .hero-reassure-sep { color: var(--text-muted); font-weight: 400; }
+    .hero-cta-sub { text-align: center; font-size: 12.5px; color: var(--text-muted); letter-spacing: 0.01em; }
+
+    /* Compact language toggle + dropdown (replaces the nine pill bar) */
+    .lang-toggle-wrap { position: relative; flex-shrink: 0; }
+    .lang-toggle {
+      display: inline-flex; align-items: center; gap: 7px; padding: 8px 12px;
+      border-radius: 999px; background: var(--surface); border: 1px solid var(--border);
+      color: var(--text-secondary); font-size: 13px; font-weight: 600; cursor: pointer;
+      font-family: inherit;
+    }
+    .lang-toggle:hover { border-color: var(--border-active); }
+    .lang-toggle-caret { font-size: 9px; opacity: 0.6; }
+    .lang-menu {
+      position: absolute; top: calc(100% + 8px); right: 0; z-index: 40;
+      background: var(--navy-2); border: 1px solid var(--border);
+      border-radius: 14px; padding: 6px; min-width: 168px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5); display: none;
+    }
+    .lang-menu.open { display: block; }
+    .lang-menu-item {
+      display: block; width: 100%; text-align: left; padding: 9px 12px;
+      border-radius: 9px; background: transparent; border: none; cursor: pointer;
+      color: var(--text-secondary); font-family: inherit; font-size: 14px; font-weight: 500;
+    }
+    .lang-menu-item:hover { background: var(--surface-strong); color: var(--text-primary); }
+    .lang-menu-item.active { color: var(--cyan); font-weight: 700; }
+    .hero .lang-chooser { margin-top: 6px; }
+    .hero .lang-bar { margin-top: 8px; margin-bottom: 4px; opacity: 0.92; }
+    .warning-panel { padding: 16px; border-radius: 18px; background: var(--amber-soft-bg); border: 1px solid var(--amber-soft-border); color: var(--amber-text); font-size: 15px; line-height: 1.56; font-weight: 600; }
     .flow-block { display: grid; gap: 12px; padding-top: 2px; }
-    .flow-title { font-size: 12px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: #dde6d4; }
-    .flow-copy { color: #dbe6d3; font-size: 16px; line-height: 1.65; max-width: 52ch; }
+    .flow-title { font-size: 12px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(255,255,255,0.72); }
+    .flow-copy { color: rgba(255,255,255,0.72); font-size: 16px; line-height: 1.65; max-width: 52ch; }
     .legal-note { text-align: center; font-size: 12px; line-height: 1.56; color: var(--text-muted); max-width: 760px; margin: 0 auto; }
 
     .form-card { margin-top: 18px; padding: 24px 18px 20px; display: none; }
@@ -293,14 +350,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .step-pill { flex-shrink: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--cyan); background: rgba(113, 187, 85, 0.08); border: 1px solid rgba(113, 187, 85, 0.2); border-radius: 999px; padding: 8px 12px; }
 
     .section { margin-top: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; }
-    .section-title { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #c5d4ba; margin-bottom: 12px; }
+    .section-title { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.55); margin-bottom: 12px; }
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; overflow: hidden; }
     .field.full { grid-column: 1 / -1; }
     .field label { font-size: 12px; color: var(--text-secondary); font-weight: 600; }
     .helper { font-size: 12px; color: var(--text-muted); margin-top: -1px; }
-    .phone-helper-strong { color: #cfe2bf; }
+    .phone-helper-strong { color: rgba(255,255,255,0.62); }
 
     .input, .select, .textarea {
       width: 100%;
@@ -316,7 +373,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .textarea { padding: 13px 14px; min-height: 96px; resize: vertical; }
     .input:focus, .select:focus, .textarea:focus { border-color: var(--border-active); background: rgba(255,255,255,0.07); }
     .input::placeholder, .textarea::placeholder { color: var(--text-muted); }
-    .select option { background: #112d17; }
+    .select option { background: #1a1a1a; }
 
     .radio-group, .check-group { display: grid; gap: 10px; margin-top: 4px; }
     .choice { display: flex; gap: 10px; align-items: flex-start; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 11px 12px; color: var(--text-secondary); }
@@ -325,7 +382,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
     .conditional-field { display: none; margin-top: 12px; }
 
-    .pre-submit-note { margin-top: 16px; padding: 14px 15px; border-radius: 14px; background: rgba(113, 187, 85, 0.06); border: 1px solid rgba(113, 187, 85, 0.14); color: #d8e5c5; font-size: 13px; line-height: 1.55; }
+    .pre-submit-note { margin-top: 16px; padding: 14px 15px; border-radius: 14px; background: rgba(113, 187, 85, 0.06); border: 1px solid rgba(113, 187, 85, 0.14); color: rgba(255,255,255,0.66); font-size: 13px; line-height: 1.55; }
 
     .ack { margin-top: 16px; display: flex; gap: 10px; align-items: flex-start; color: var(--text-secondary); font-size: 13px; }
     .ack input { accent-color: var(--cyan); margin-top: 2px; flex-shrink: 0; }
@@ -353,29 +410,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .handoff-title { font-size: clamp(28px, 6vw, 38px); font-weight: 780; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 14px; color: var(--white); }
 
     .incoming-number-card { margin: 0 auto 14px; max-width: 720px; background: rgba(255,255,255,0.055); border: 1px solid rgba(158, 208, 133, 0.18); border-radius: 18px; padding: 18px 16px; text-align: center; }
-    .incoming-number-label { font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #c2d3b3; margin-bottom: 8px; }
+    .incoming-number-label { font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.58); margin-bottom: 8px; }
     .incoming-number-value { font-size: clamp(24px, 6vw, 34px); font-weight: 800; line-height: 1.1; color: var(--white); letter-spacing: -0.02em; }
     .incoming-number-sub { margin-top: 8px; font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
 
     .expect-call-card { margin: 0 auto 14px; max-width: 720px; background: rgba(0, 200, 122, 0.08); border: 1px solid rgba(0, 200, 122, 0.24); border-radius: 18px; padding: 18px 18px; text-align: center; }
-    .expect-call-title { font-size: 21px; font-weight: 780; color: #eef4e8; line-height: 1.25; margin-bottom: 6px; }
-    .expect-call-copy { color: #cee0c8; font-size: 15px; line-height: 1.55; }
+    .expect-call-title { font-size: 21px; font-weight: 780; color: #f2f2f2; line-height: 1.25; margin-bottom: 6px; }
+    .expect-call-copy { color: rgba(255,255,255,0.72); font-size: 15px; line-height: 1.55; }
 
     .handoff-image-shell { margin: 0 auto 16px; max-width: 440px; border-radius: 22px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); background: rgba(255,255,255,0.02); }
     .handoff-image { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: center 20%; }
 
     .handoff-copy { color: var(--text-secondary); max-width: 700px; margin: 0 auto 14px; font-size: 15px; line-height: 1.6; }
     .handoff-panel { margin: 0 auto 14px; max-width: 720px; text-align: left; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; display: grid; gap: 10px; }
-    .handoff-panel-title { font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: #dde6d4; }
-    .handoff-panel-copy { color: #dee8d6; font-size: 15px; line-height: 1.65; }
+    .handoff-panel-title { font-size: 12px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(255,255,255,0.72); }
+    .handoff-panel-copy { color: rgba(255,255,255,0.72); font-size: 15px; line-height: 1.65; }
 
-    .case-status { display: inline-block; margin: 10px auto 0; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius-sm); padding: 8px 10px; color: #aebda9; font-size: 12px; word-break: break-word; max-width: 100%; }
+    .case-status { display: inline-block; margin: 10px auto 0; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius-sm); padding: 8px 10px; color: rgba(255,255,255,0.50); font-size: 12px; word-break: break-word; max-width: 100%; }
 
     .call-actions { display: grid; gap: 12px; max-width: 520px; margin: 0 auto; }
     .call-btn { display: inline-flex; align-items: center; justify-content: center; width: 100%; border: none; border-radius: 18px; padding: 18px 20px; font-size: 20px; font-weight: 800; letter-spacing: -0.01em; color: #fff; background: linear-gradient(135deg, #4a8c34 0%, #71bb55 100%); box-shadow: 0 16px 34px rgba(74, 140, 52, 0.24); text-decoration: none; transition: transform 0.12s ease, opacity 0.2s ease, box-shadow 0.2s ease; }
     .call-btn:hover { box-shadow: 0 18px 38px rgba(74, 140, 52, 0.3); }
     .call-btn:active { transform: scale(0.986); opacity: 0.95; }
-    .call-number { font-size: 18px; font-weight: 700; color: #eaf2e6; text-decoration: none; display: inline-block; }
+    .call-number { font-size: 18px; font-weight: 700; color: #f2f2f2; text-decoration: none; display: inline-block; }
     .call-number:hover { color: #ffffff; }
     .call-fallback { font-size: 13px; line-height: 1.56; color: var(--text-muted); max-width: 600px; margin: 0 auto; }
     .plain-phone { color: inherit; text-decoration: none; white-space: nowrap; }
@@ -385,18 +442,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .brand { margin-bottom: 24px; }
       .hero { padding: 30px 30px 28px; }
       .hero-inner {
-        grid-template-columns: minmax(0, 1.02fr) minmax(360px, 0.98fr);
-        grid-template-areas: "copy media" "secondary secondary" "legal legal";
-        column-gap: 26px; row-gap: 18px; align-items: start;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas: "copy" "secondary" "legal";
+        column-gap: 26px; row-gap: 22px; align-items: start;
       }
-      .hero-copy-block { grid-area: copy; }
-      .hero-title { max-width: 8em; }
-      .hero-sub { max-width: 31ch; }
-      .hero-image-block { grid-area: media; }
-      .hero-image-shell { margin: 0; border-radius: 26px; }
-      .hero-image { aspect-ratio: 4 / 5; object-position: center 24%; }
-      .trust-row { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-      .trust-item { align-items: flex-start; font-size: 13px; }
+      .hero-copy-block { grid-area: copy; max-width: 620px; }
+      .hero-title { max-width: 9em; }
+      .hero-sub { max-width: 46ch; }
       .hero-secondary { grid-area: secondary; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr); align-items: start; gap: 22px; }
       .legal-note { grid-area: legal; }
       .brand-dual { gap: 20px; }
@@ -419,6 +471,333 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .incoming-number-value { font-size: 26px; }
       .expect-call-title { font-size: 19px; }
     }
+
+    /* ===========================================================
+     * BIFURCATION_REBUILD_2026_05_19
+     * New components for patient-declared urgency bifurcation,
+     * channel choice, handoff variants, booking strip.
+     * Color tokens reuse existing --cyan / --navy-* / amber set.
+     * =========================================================== */
+
+    /* Amber tokens for urgent-branch + warnings on dark */
+    :root {
+      --amber-icon: #d97706;
+      --amber-soft-bg: rgba(217, 119, 6, 0.12);
+      --amber-soft-border: rgba(217, 119, 6, 0.30);
+      --amber-active-bg: rgba(217, 119, 6, 0.18);
+      --amber-text: #fcbf6c;
+      --amber-text-strong: #f59e0b;
+      --green-soft: rgba(113, 187, 85, 0.12);
+      --green-active-bg: rgba(113, 187, 85, 0.16);
+    }
+
+    /* ── Urgency choice question ── */
+    .choice-section { margin-bottom: 24px; }
+    .choice-label {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--cyan); margin-bottom: 12px;
+    }
+    .choice-options { display: flex; flex-direction: column; gap: 10px; }
+    .choice-card {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 16px; border-radius: 14px;
+      background: var(--surface); border: 1.5px solid var(--border);
+      cursor: pointer; transition: all 0.18s ease;
+      text-align: left; width: 100%; font-family: inherit;
+    }
+    .choice-card:hover { border-color: var(--border-active); }
+    .choice-card-icon {
+      flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .choice-card-text { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+    .choice-card-title { font-size: 15px; font-weight: 700; color: var(--text-primary); line-height: 1.25; }
+    .choice-card-desc { font-size: 12.5px; color: var(--text-secondary); line-height: 1.45; }
+    /* urgent variant */
+    .choice-card.urgent .choice-card-icon { background: var(--amber-soft-bg); color: var(--amber-icon); border: 1px solid var(--amber-soft-border); }
+    .choice-card.urgent.selected { background: var(--amber-active-bg); border-color: var(--amber-icon); }
+    .choice-card.urgent.selected .choice-card-icon { background: var(--amber-icon); color: #fff; }
+    /* routine variant */
+    .choice-card.routine .choice-card-icon { background: var(--green-soft); color: var(--cyan); border: 1px solid var(--border-active); }
+    .choice-card.routine.selected { background: var(--green-active-bg); border-color: var(--cyan); }
+    .choice-card.routine.selected .choice-card-icon { background: var(--cyan); color: #fff; }
+
+    /* ── Channel choice row (urgent submit) ── */
+    .channel-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; }
+    .channel-helper { margin-top: 10px; font-size: 12px; color: var(--text-muted); line-height: 1.45; text-align: center; }
+    @media (max-width: 760px) { .channel-row { grid-template-columns: 1fr; } }
+
+    /* ── Booking strip (routine handoff) ── */
+    .booking-strip {
+      margin-top: 14px; padding: 14px;
+      background: var(--green-soft); border: 1px solid var(--border-active);
+      border-radius: 12px; display: flex; gap: 12px; align-items: center; text-align: left;
+    }
+    .booking-strip-icon {
+      flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%;
+      background: var(--green-active-bg); display: flex; align-items: center;
+      justify-content: center; font-size: 16px;
+    }
+    .booking-strip-content { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+    .booking-strip-content strong { color: var(--text-primary); font-weight: 700; font-size: 13px; }
+    .booking-strip-link { display: inline-flex; align-items: center; gap: 4px; color: var(--cyan); font-weight: 700; font-size: 13px; text-decoration: none; }
+    .booking-strip-link:hover { color: var(--text-primary); }
+
+    /* ── Warn strip (handoff, amber on dark) ── */
+    .warn-strip {
+      display: flex; gap: 10px; align-items: flex-start; padding: 12px 14px;
+      background: var(--amber-soft-bg); border: 1px solid var(--amber-soft-border);
+      border-radius: 12px; margin: 14px 0; text-align: left;
+    }
+    .warn-strip-icon { flex-shrink: 0; color: var(--amber-icon); font-size: 16px; line-height: 1.4; }
+    .warn-strip-text { font-size: 13px; color: var(--amber-text); line-height: 1.45; }
+    .warn-strip-text strong { color: var(--amber-text-strong); font-weight: 700; }
+
+    /* ── Routine handoff action buttons ── */
+    .routine-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 8px 0 4px; }
+    @media (max-width: 520px) { .routine-actions { grid-template-columns: 1fr; } }
+    .routine-action-btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 16px 18px; border-radius: 14px; border: none;
+      background: linear-gradient(135deg, var(--cyan-dim) 0%, var(--cyan) 100%);
+      color: #fff; font-family: inherit; font-size: 15px; font-weight: 800;
+      cursor: pointer; text-decoration: none;
+      box-shadow: 0 12px 30px rgba(74, 140, 52, 0.30);
+    }
+
+    /* ── Handoff sub-headline ── */
+    .handoff-sub { max-width: 540px; margin: 4px auto 18px; color: var(--text-secondary); font-size: 15px; line-height: 1.6; }
+
+    /* ── Big number card (urgent handoff) ── */
+    .number-card {
+      margin: 0 auto 16px; max-width: 460px;
+      background: rgba(255,255,255,0.055); border: 1px solid rgba(158, 208, 133, 0.18);
+      border-radius: 20px; padding: 20px 18px; text-align: center;
+    }
+    .number-label { font-size: 12px; font-weight: 700; letter-spacing: 0.10em; text-transform: uppercase; color: var(--cyan); margin-bottom: 8px; }
+    .number-value { font-size: clamp(26px, 7vw, 36px); font-weight: 800; line-height: 1.05; color: var(--white); letter-spacing: -0.02em; }
+    .number-sub { font-size: 13px; line-height: 1.5; color: var(--text-muted); margin-top: 10px; }
+    .number-save-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      margin-top: 14px; padding: 9px 18px; border-radius: 999px;
+      border: 1px solid var(--border-active); background: transparent;
+      color: var(--cyan); font-family: inherit; font-size: 13px; font-weight: 700;
+      text-decoration: none; cursor: pointer; transition: all 0.16s ease;
+    }
+    .number-save-btn:hover { background: var(--green-soft); color: var(--text-primary); }
+
+    /* ── What happens next (both variants) ── */
+    .handoff-steps { max-width: 540px; margin: 18px auto 6px; text-align: left; }
+    .next-kicker { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 12px; }
+    .next-step-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+    .next-step { display: flex; gap: 12px; align-items: flex-start; }
+    .next-step-num {
+      flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+      background: var(--green-active-bg); color: var(--cyan);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 800;
+    }
+    .next-step-text { flex: 1; font-size: 14px; line-height: 1.55; color: var(--text-secondary); padding-top: 2px; }
+    [dir="rtl"] .handoff-steps, [dir="rtl"] .number-sub, [dir="rtl"] .handoff-sub { text-align: right; }
+    [dir="rtl"] .warn-strip, [dir="rtl"] .booking-strip { text-align: right; }
+  </style>
+  <style>
+    /* MOCKUP_TRANSPLANT_2026_05_20 — welcome screen rebuilt to match
+     * intake-hero-mockup.html exactly. All rules scoped under .mk-screen
+     * so they cannot affect the form or handoff screens. */
+    .mk-screen {
+      --mk-dark: var(--navy-1);
+      --mk-green: var(--cyan);
+      --mk-green-dark: var(--cyan-dim);
+      --mk-green-soft: rgba(113,187,85,0.12);
+      --mk-green-border: rgba(113,187,85,0.28);
+      --mk-white: #ffffff;
+      --mk-white-soft: rgba(255,255,255,0.72);
+      --mk-white-muted: rgba(255,255,255,0.48);
+      --mk-white-line: rgba(255,255,255,0.08);
+      --mk-amber-icon: #d97706;
+      --mk-amber-bg: rgba(217,119,6,0.10);
+      --mk-amber-border: rgba(217,119,6,0.28);
+      --mk-amber-text: #fcbf6c;
+      --mk-amber-text-strong: #f59e0b;
+      background: var(--mk-dark);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04);
+      padding: 0;
+      border: none;
+    }
+    .mk-screen .mk-hero {
+      padding: 24px 22px 28px;
+      background:
+        radial-gradient(circle at top right, rgba(113,187,85,0.10), transparent 38%),
+        radial-gradient(circle at bottom left, rgba(113,187,85,0.06), transparent 42%),
+        var(--mk-dark);
+    }
+    .mk-screen .mk-kicker { font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mk-green); margin-bottom: 14px; }
+    .mk-screen .mk-title { font-family: "DM Serif Display", Georgia, serif; font-size: 38px; line-height: 1.05; letter-spacing: -0.02em; color: var(--mk-white); font-weight: 400; margin-bottom: 14px; }
+    .mk-screen .mk-title-accent { font-style: italic; color: var(--mk-green); }
+    .mk-screen .mk-sub { font-size: 15px; line-height: 1.55; color: var(--mk-white-soft); max-width: 30ch; margin-bottom: 18px; }
+    .mk-screen .mk-reassure { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 12px; font-weight: 600; color: var(--mk-green); letter-spacing: 0.02em; margin-bottom: 20px; }
+    .mk-screen .mk-reassure-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--mk-green); }
+    .mk-screen .mk-reassure-sep { color: var(--mk-white-muted); font-weight: 400; }
+    .mk-screen .mk-cta { display: flex; align-items: center; justify-content: center; width: 100%; padding: 18px 20px; border-radius: 16px; border: none; background: linear-gradient(135deg, var(--mk-green-dark) 0%, var(--mk-green) 100%); color: var(--mk-white); font-family: inherit; font-size: 18px; font-weight: 800; letter-spacing: -0.005em; box-shadow: 0 14px 36px rgba(74,140,52,0.32); cursor: pointer; }
+    .mk-screen .mk-cta-arrow { margin-left: 8px; font-weight: 700; }
+    .mk-screen .mk-cta-sub { text-align: center; font-size: 12px; color: var(--mk-white-muted); margin-top: 10px; letter-spacing: 0.02em; }
+    .mk-screen .mk-how { background: var(--mk-dark); padding: 28px 22px 32px; border-top: 1px solid var(--mk-white-line); }
+    .mk-screen .mk-how-kicker { font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mk-green); text-align: center; margin-bottom: 18px; }
+    .mk-screen .mk-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .mk-screen .mk-step { background: rgba(255,255,255,0.025); border: 1px solid var(--mk-white-line); border-radius: 14px; padding: 16px 10px; text-align: center; }
+    .mk-screen .mk-step-num { font-family: "DM Serif Display", Georgia, serif; font-size: 26px; color: var(--mk-green); line-height: 1; margin-bottom: 6px; font-style: italic; }
+    .mk-screen .mk-step-title { font-size: 12px; font-weight: 700; color: var(--mk-white); line-height: 1.25; margin-bottom: 4px; }
+    .mk-screen .mk-step-body { font-size: 11px; color: var(--mk-white-soft); line-height: 1.4; }
+    .mk-screen .mk-conditions { background: var(--mk-dark); padding: 0 22px 28px; }
+    .mk-screen .mk-conditions-title { font-family: "DM Serif Display", Georgia, serif; font-size: 22px; color: var(--mk-white); line-height: 1.15; margin-bottom: 4px; text-align: center; font-weight: 400; }
+    .mk-screen .mk-conditions-sub { font-size: 12px; color: var(--mk-white-muted); text-align: center; margin-bottom: 16px; }
+    .mk-screen .mk-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 22px; }
+    .mk-screen .mk-pill { font-size: 12px; font-weight: 500; padding: 7px 12px; border-radius: 999px; background: rgba(255,255,255,0.04); border: 1px solid var(--mk-white-line); color: var(--mk-white-soft); }
+    .mk-screen .mk-warning { margin: 0 22px; display: flex; gap: 10px; align-items: flex-start; background: var(--mk-amber-bg); border: 1px solid var(--mk-amber-border); border-radius: 12px; padding: 12px 14px; font-size: 12px; line-height: 1.5; color: var(--mk-amber-text); text-align: left; }
+    .mk-screen .mk-warning-icon { flex-shrink: 0; color: var(--mk-amber-icon); font-size: 14px; line-height: 1.4; }
+    .mk-screen .mk-warning strong { font-weight: 700; color: var(--mk-amber-text-strong); }
+    .mk-screen .mk-foot { background: var(--mk-dark); color: var(--mk-white-muted); padding: 26px 22px 24px; text-align: center; font-size: 11px; line-height: 1.6; border-top: 1px solid var(--mk-white-line); }
+    .mk-screen .mk-foot-address { color: var(--mk-white-soft); font-weight: 500; margin-bottom: 6px; }
+    .mk-screen .mk-foot-disclaimer { font-size: 10px; color: var(--mk-white-muted); margin-bottom: 10px; max-width: 32ch; margin-left: auto; margin-right: auto; }
+    .mk-screen .mk-foot-powered { display: flex; align-items: center; justify-content: center; gap: 7px; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mk-white-muted); }
+    .mk-screen .vd-lockup { display: inline-flex; align-items: center; gap: 5px; text-decoration: none; text-transform: none; letter-spacing: 0; }
+    .mk-screen .vd-lockup svg { width: 15px; height: 15px; display: block; flex-shrink: 0; }
+    .mk-screen .vd-wordmark { font-size: 12px; font-weight: 600; color: #eaf2ff; line-height: 1; }
+    .mk-screen .vd-wordmark span { color: #00c8e8; }
+
+    /* ===========================================================
+     * MOCKUP_MATCH_FORM_HANDOFF_2026_05_20
+     * Scoped restyle of form + handoff to match the mockups.
+     * Pure styling — element IDs and JS wiring untouched.
+     * ID-scoped to win specificity over legacy class rules.
+     * =========================================================== */
+    #screen-form.form-card, #screen-handoff.handoff-card {
+      margin-top: 14px; padding: 0; background: var(--mk-dark);
+      border: 1px solid var(--mk-white-line); border-radius: 22px; overflow: hidden;
+    }
+    #screen-form > * { padding-left: 22px; padding-right: 22px; }
+    #screen-form .form-top { padding-top: 24px; margin-bottom: 18px; }
+    #screen-form .form-title { font-family: "DM Serif Display", Georgia, serif; font-size: 26px; line-height: 1.15; color: var(--mk-white); font-weight: 400; }
+    #screen-form .form-sub { font-size: 14px; color: var(--mk-white-soft); }
+    #screen-form .step-pill { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: var(--mk-green); background: var(--mk-green-soft); border: 1px solid var(--mk-green-border); border-radius: 999px; padding: 6px 11px; }
+    #screen-form .section { margin-top: 22px; padding-top: 22px; border-top: 1px solid var(--mk-white-line); }
+    #screen-form .section-title { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--mk-white-muted); margin-bottom: 14px; }
+    #screen-form .field label, #screen-form .field-label { font-size: 12px; font-weight: 600; color: var(--mk-white-soft); }
+    #screen-form .helper, #screen-form .section-helper { font-size: 12px; color: var(--mk-white-muted); line-height: 1.45; }
+    #screen-form .input, #screen-form .select, #screen-form .textarea {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 10px; padding: 12px 14px; font-size: 15px; color: var(--mk-white);
+    }
+    #screen-form .input:focus, #screen-form .select:focus, #screen-form .textarea:focus {
+      border-color: rgba(113,187,85,0.40); background: rgba(255,255,255,0.05);
+    }
+    #screen-form .input::placeholder, #screen-form .textarea::placeholder { color: var(--mk-white-muted); }
+    #screen-form .check-group { gap: 6px; }
+    #screen-form .check-group .choice {
+      display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px;
+      border-radius: 10px; background: rgba(255,255,255,0.02); border: 1px solid var(--mk-white-line);
+      font-size: 13px; color: var(--mk-white-soft); line-height: 1.4; cursor: pointer;
+    }
+    #screen-form .check-group .choice input { accent-color: var(--mk-green); margin-top: 1px; flex-shrink: 0; }
+    #screen-form .ack {
+      margin-top: 18px; padding: 12px 14px; background: rgba(255,255,255,0.04);
+      border: 1px solid var(--mk-white-line); border-radius: 10px;
+      font-size: 12px; color: var(--mk-white-soft); line-height: 1.5;
+    }
+    #screen-form .ack input { accent-color: var(--mk-green); }
+    #screen-form .action-bar { padding-bottom: 26px; margin-top: 22px; }
+
+    #screen-handoff { padding: 28px 20px 8px; text-align: center; }
+    #screen-handoff .handoff-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 52px; height: 52px; border-radius: 50%; background: rgba(113,187,85,0.16);
+      border: 1px solid var(--mk-green-border); color: var(--mk-green); font-size: 24px; margin-bottom: 16px;
+    }
+    #screen-handoff .handoff-title { font-family: "DM Serif Display", Georgia, serif; font-size: 26px; line-height: 1.15; color: var(--mk-white); font-weight: 400; margin-bottom: 8px; }
+    #screen-handoff .handoff-sub { font-size: 15px; color: var(--mk-white-soft); line-height: 1.55; max-width: 30ch; margin: 0 auto 24px; }
+    #screen-handoff .number-card {
+      background: linear-gradient(180deg, rgba(113,187,85,0.10) 0%, rgba(113,187,85,0.04) 100%);
+      border: 1px solid var(--mk-green-border); border-radius: 18px; padding: 22px 18px 18px; margin-bottom: 14px;
+    }
+    #screen-handoff .number-label { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--mk-green); margin-bottom: 8px; }
+    #screen-handoff .number-value { font-family: "DM Serif Display", Georgia, serif; font-size: 32px; letter-spacing: -0.01em; color: var(--mk-white); margin-bottom: 10px; font-weight: 400; }
+    #screen-handoff .number-sub { font-size: 13px; color: var(--mk-white-soft); line-height: 1.45; }
+    #screen-handoff .number-save-btn {
+      display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; padding: 9px 14px; border-radius: 999px;
+      background: rgba(255,255,255,0.06); border: 1px solid var(--mk-white-line); color: var(--mk-white);
+      font-size: 13px; font-weight: 600; text-decoration: none;
+    }
+    #screen-handoff .handoff-steps {
+      margin-top: 24px; padding: 18px; background: rgba(255,255,255,0.025);
+      border: 1px solid var(--mk-white-line); border-radius: 14px; text-align: left;
+    }
+    #screen-handoff .next-kicker { font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mk-green); margin-bottom: 8px; }
+    #screen-handoff .next-step-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+    #screen-handoff .next-step { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.5; color: var(--mk-white-soft); }
+    #screen-handoff .next-step-num {
+      flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; background: var(--mk-green-soft);
+      border: 1px solid var(--mk-green-border); color: var(--mk-green); font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; margin-top: 1px;
+    }
+    #screen-handoff .case-status { color: var(--mk-white-muted); font-size: 11px; padding: 16px 0 24px; }
+
+    /* ===========================================================
+     * APPLE_FLAIR_2026_05_20 — restrained motion: calm entrances,
+     * screen transitions, choice feedback, handoff payoff, scroll
+     * reveals. All guarded by prefers-reduced-motion.
+     * =========================================================== */
+    @keyframes mkRise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+    @keyframes mkSlideIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+    @keyframes mkPop { 0% { opacity: 0; transform: scale(0.6); } 60% { transform: scale(1.08); } 100% { opacity: 1; transform: scale(1); } }
+
+    /* Welcome hero: staggered calm entrance on load */
+    .mk-screen .mk-hero > * { opacity: 0; animation: mkRise 0.5s cubic-bezier(0.22, 0.61, 0.36, 1) forwards; }
+    .mk-screen .mk-hero > *:nth-child(1) { animation-delay: 0.05s; }
+    .mk-screen .mk-hero > *:nth-child(2) { animation-delay: 0.11s; }
+    .mk-screen .mk-hero > *:nth-child(3) { animation-delay: 0.17s; }
+    .mk-screen .mk-hero > *:nth-child(4) { animation-delay: 0.23s; }
+    .mk-screen .mk-hero > *:nth-child(5) { animation-delay: 0.29s; }
+    .mk-screen .mk-hero > *:nth-child(6) { animation-delay: 0.35s; }
+
+    /* Screen transitions: form + handoff arrive rather than snap */
+    .form-card.show { animation: mkSlideIn 0.42s cubic-bezier(0.22, 0.61, 0.36, 1); }
+    .handoff-card.show { animation: mkSlideIn 0.42s cubic-bezier(0.22, 0.61, 0.36, 1); }
+
+    /* Choice cards: tactile press feedback */
+    .choice-card { transition: background 0.18s ease, border-color 0.18s ease, transform 0.12s ease; }
+    .choice-card:active { transform: scale(0.985); }
+
+    /* CTA / primary buttons: considered press */
+    .mk-screen .mk-cta { transition: transform 0.12s ease, box-shadow 0.2s ease; }
+    .mk-screen .mk-cta:active { transform: scale(0.985); }
+    .mk-screen .mk-cta:hover .mk-cta-arrow { transform: translateX(3px); }
+    .mk-screen .mk-cta-arrow { display: inline-block; transition: transform 0.2s ease; }
+
+    /* Handoff: the earned payoff — checkmark springs in */
+    .handoff-card.show .handoff-icon { animation: mkPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.18s backwards; }
+
+    /* Scroll reveals for below-the-fold welcome blocks */
+    .mk-reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.55s cubic-bezier(0.22,0.61,0.36,1), transform 0.55s cubic-bezier(0.22,0.61,0.36,1); }
+    .mk-reveal.mk-revealed { opacity: 1; transform: none; }
+    .mk-screen .mk-revealed .mk-step:nth-child(2) { transition-delay: 0.06s; }
+    .mk-screen .mk-revealed .mk-step:nth-child(3) { transition-delay: 0.12s; }
+
+    /* Optional urgency nudge (routine + symptom keywords) — soft, non-blocking */
+    .urgency-nudge { display: flex; align-items: center; gap: 10px; margin-top: 10px; padding: 10px 12px; background: var(--amber-soft-bg, rgba(217,119,6,0.12)); border: 1px solid var(--amber-soft-border, rgba(217,119,6,0.30)); border-radius: 10px; font-size: 12.5px; color: var(--amber-text, #fcbf6c); animation: mkRise 0.32s ease; }
+    .urgency-nudge-text { flex: 1; line-height: 1.4; }
+    .urgency-nudge-switch { background: var(--amber-icon, #d97706); color: #fff; border: none; border-radius: 999px; padding: 6px 12px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap; }
+    .urgency-nudge-dismiss { background: transparent; border: none; color: var(--amber-text, #fcbf6c); font-size: 18px; cursor: pointer; line-height: 1; padding: 0 2px; }
+
+    /* Accessibility: honor reduced-motion absolutely */
+    @media (prefers-reduced-motion: reduce) {
+      .mk-screen .mk-hero > *, .form-card.show, .handoff-card.show, .handoff-card.show .handoff-icon, .urgency-nudge { animation: none !important; opacity: 1 !important; transform: none !important; }
+      .mk-reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+      .mk-screen .mk-cta-arrow { transition: none !important; }
+    }
   </style>
 
 </head>
@@ -429,11 +808,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
   <div class="shell">
 
+    <div class="lang-banner" id="lang-banner" role="region" aria-label="Language options">
+      <span class="lang-banner-text" id="lang-banner-text"></span>
+      <span class="lang-banner-actions">
+        <button class="lang-banner-switch" id="lang-banner-switch" type="button"></button>
+        <button class="lang-banner-dismiss" id="lang-banner-dismiss" type="button" aria-label="Dismiss">&times;</button>
+      </span>
+    </div>
+
     <div class="brand">
       <div class="brand-dual">
         <div class="brand-practice">
           <div>
-            <svg xmlns="http://www.w3.org/2000/svg" style="height:52px;width:auto;display:block;" viewBox="70 36 454 300" shape-rendering="geometricPrecision" aria-label="Martindale Dental logo">
+            <svg xmlns="http://www.w3.org/2000/svg" style="height:34px;width:auto;display:block;" viewBox="70 36 454 300" shape-rendering="geometricPrecision" aria-label="Martindale Dental logo">
               <path d="M 292 41 L 184 138 L 180 136 L 75 42 L 75 258 L 291 258 L 292 257 Z M 487 304 L 485 306 L 486 307 L 492 304 L 499 305 L 502 308 L 502 313 L 501 314 L 491 314 L 485 317 L 484 319 L 485 327 L 489 329 L 496 329 L 501 325 L 504 329 L 504 309 L 503 306 L 499 303 Z M 501 315 L 502 316 L 502 322 L 497 327 L 492 328 L 489 327 L 486 324 L 486 320 L 490 316 Z M 433 303 L 433 328 L 435 329 L 435 315 L 437 309 L 441 305 L 447 304 L 452 308 L 453 311 L 453 329 L 455 329 L 455 310 L 454 307 L 450 303 L 442 303 L 436 308 L 435 303 Z M 408 303 L 403 306 L 400 312 L 401 323 L 408 329 L 417 329 L 421 327 L 423 324 L 422 323 L 419 326 L 414 328 L 408 327 L 403 322 L 402 317 L 403 316 L 424 316 L 423 308 L 417 303 Z M 402 312 L 406 306 L 411 304 L 414 304 L 418 306 L 422 311 L 421 314 L 403 314 Z M 326 303 L 322 305 L 318 310 L 317 314 L 318 321 L 320 325 L 326 329 L 335 329 L 341 324 L 339 323 L 336 326 L 329 328 L 324 326 L 321 323 L 319 317 L 320 316 L 342 316 L 341 309 L 338 305 L 334 303 Z M 319 313 L 321 309 L 325 305 L 328 304 L 334 305 L 340 312 L 339 314 L 320 314 Z M 277 304 L 275 306 L 276 307 L 283 304 L 289 305 L 292 308 L 293 312 L 291 314 L 282 314 L 277 316 L 274 319 L 274 325 L 279 329 L 286 329 L 292 325 L 293 329 L 295 329 L 294 326 L 294 308 L 293 306 L 289 303 Z M 291 315 L 293 317 L 293 319 L 289 326 L 282 328 L 279 327 L 276 324 L 276 320 L 279 317 L 284 315 Z M 207 303 L 208 308 L 208 329 L 210 328 L 210 311 L 215 305 L 218 304 L 223 305 L 227 310 L 227 329 L 229 329 L 229 310 L 227 305 L 224 303 L 216 303 L 210 307 L 209 303 Z M 196 303 L 196 329 L 198 329 L 198 303 Z M 165 303 L 160 303 L 156 307 L 154 306 L 154 303 L 152 303 L 152 328 L 154 329 L 155 310 L 160 305 L 164 305 Z M 124 305 L 124 307 L 131 304 L 137 305 L 140 308 L 141 313 L 140 314 L 130 314 L 125 316 L 122 320 L 123 326 L 127 329 L 135 329 L 140 325 L 141 329 L 143 329 L 142 307 L 137 303 L 128 303 Z M 140 315 L 141 320 L 140 323 L 137 326 L 130 328 L 125 325 L 124 320 L 127 317 L 132 315 Z M 76 303 L 76 329 L 78 329 L 78 313 L 79 310 L 82 306 L 87 304 L 91 305 L 94 309 L 94 328 L 96 329 L 96 312 L 97 309 L 101 305 L 104 304 L 109 305 L 112 309 L 113 329 L 115 328 L 115 313 L 114 308 L 111 304 L 101 303 L 96 308 L 91 303 L 84 303 L 79 308 L 78 303 Z M 467 297 L 468 298 L 467 302 L 462 303 L 462 305 L 466 305 L 468 308 L 467 309 L 468 310 L 468 319 L 467 320 L 468 321 L 467 323 L 468 327 L 471 329 L 477 329 L 477 327 L 474 328 L 469 323 L 469 307 L 471 305 L 477 305 L 477 303 L 470 303 L 469 302 L 469 296 Z M 177 296 L 177 302 L 176 303 L 171 303 L 171 305 L 176 305 L 177 306 L 177 325 L 180 329 L 187 329 L 187 327 L 183 328 L 179 324 L 179 306 L 180 305 L 187 305 L 187 303 L 180 303 L 179 302 L 179 296 Z M 198 290 L 195 292 L 196 294 L 199 293 Z M 515 286 L 515 328 L 517 329 L 517 286 Z M 391 286 L 389 286 L 389 306 L 388 307 L 382 303 L 373 303 L 369 305 L 365 311 L 365 321 L 368 326 L 371 328 L 382 329 L 386 327 L 388 324 L 389 328 L 391 329 Z M 380 304 L 384 306 L 388 310 L 390 315 L 388 322 L 384 326 L 379 328 L 373 327 L 367 320 L 368 310 L 373 305 Z M 306 286 L 306 329 L 308 328 L 308 287 Z M 265 286 L 263 286 L 263 307 L 262 308 L 260 305 L 256 303 L 247 303 L 243 305 L 239 310 L 238 314 L 239 322 L 243 327 L 247 329 L 256 329 L 262 324 L 263 329 L 265 329 Z M 250 304 L 258 306 L 263 312 L 262 322 L 258 326 L 252 328 L 247 327 L 244 325 L 240 318 L 240 314 L 242 309 L 245 306 Z" fill="rgb(255,255,255)" fill-rule="evenodd"/>
               <path d="M 336 41 L 359 43 L 386 50 L 402 57 L 421 70 L 436 87 L 445 105 L 448 114 L 451 130 L 452 157 L 451 158 L 451 168 L 450 169 L 449 179 L 444 195 L 435 212 L 418 230 L 403 240 L 378 250 L 350 256 L 331 257 L 516 257 L 516 41 Z M 75 41 L 77 43 L 74 41 L 74 257 L 74 42 Z" fill="rgb(113,187,85)" fill-rule="evenodd"/>
             </svg>
@@ -441,76 +828,73 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
         </div>
 
-        <div class="brand-divider"></div>
-
-        <div class="brand-powered">
-          <span class="brand-powered-label">Triage powered by</span>
-          <a href="https://virtualdentist.ai" class="brand-lockup" aria-label="VirtualDentist.ai" target="_blank" rel="noopener">
-            <svg class="brand-mark" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <defs>
-                <linearGradient id="intakeLogoGrad" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stop-color="#1a4fa0" />
-                  <stop offset="100%" stop-color="#00c8e8" />
-                </linearGradient>
-              </defs>
-              <path d="M38 14 C28 14 18 22 18 36 C18 50 22 62 24 72 C26 82 28 88 34 94 C38 98 42 100 46 98 C50 96 54 92 60 92 C66 92 70 96 74 98 C78 100 82 98 86 94 C92 88 94 82 96 72 C98 62 102 50 102 36 C102 22 92 14 82 14 C76 14 70 18 60 18 C50 18 44 14 38 14 Z" stroke="url(#intakeLogoGrad)" stroke-width="7" fill="none" stroke-linejoin="round" />
-              <polyline points="22,55 36,55 44,38 52,72 60,48 68,62 76,55 98,55" stroke="url(#intakeLogoGrad)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-            <span class="brand-wordmark">Virtual<span>Dentist.ai</span></span>
-          </a>
+      </div>
+      <div class="lang-toggle-wrap">
+        <button class="lang-toggle" id="lang-toggle" type="button" aria-haspopup="true" aria-expanded="false">
+          <span aria-hidden="true">&#127760;</span>
+          <span class="lang-toggle-current" id="lang-toggle-current">English</span>
+          <span class="lang-toggle-caret" aria-hidden="true">&#9662;</span>
+        </button>
+        <div class="lang-menu" id="lang-menu" role="menu">
+          <button class="lang-menu-item active" data-lang="en" type="button" role="menuitem">English</button>
+          <button class="lang-menu-item" data-lang="ar" type="button" role="menuitem">العربية</button>
+          <button class="lang-menu-item" data-lang="hi" type="button" role="menuitem">हिन्दी</button>
+          <button class="lang-menu-item" data-lang="pa" type="button" role="menuitem">ਪੰਜਾਬੀ</button>
+          <button class="lang-menu-item" data-lang="fr" type="button" role="menuitem">Fran&ccedil;ais</button>
+          <button class="lang-menu-item" data-lang="fa" type="button" role="menuitem">فارسی</button>
+          <button class="lang-menu-item" data-lang="so" type="button" role="menuitem">Soomaali</button>
+          <button class="lang-menu-item" data-lang="es" type="button" role="menuitem">Espa&ntilde;ol</button>
+          <button class="lang-menu-item" data-lang="zh" type="button" role="menuitem">中文</button>
         </div>
-
       </div>
     </div>
 
-    <section id="screen-welcome" class="card hero">
-      <div class="hero-inner">
-        <div class="hero-copy-block">
-          <div class="hero-kicker" id="hero-kicker">Martindale Dental &middot; Jackson Square</div>
-          <div class="hero-title" id="hero-title">How can Martindale Dental<br><span class="hero-title-accent">help you?</span></div>
-          <div class="hero-typewriter" id="hero-typewriter">
-            <span class="hero-tw-text" id="hero-tw-text"></span>
+    <section id="screen-welcome" class="mk-screen">
+      <div class="mk-body">
+        <div class="mk-hero">
+          <div class="mk-kicker" id="hero-kicker">Jackson Square &middot; Hamilton, Ontario</div>
+          <h1 class="mk-title" id="hero-title">How can Martindale Dental <span class="mk-title-accent">help you?</span></h1>
+          <p class="mk-sub" id="hero-sub">Whether it's a cleaning, a toothache, or a question &mdash; Sam, our AI assistant, gathers your details so our dental team has everything they need to help you.</p>
+          <div class="mk-reassure" id="hero-reassure">
+            <span class="mk-reassure-dot"></span><span>Free</span>
+            <span class="mk-reassure-sep">&middot;</span><span>Available 24/7</span>
+            <span class="mk-reassure-sep">&middot;</span><span>Dental team reviews</span>
           </div>
-          <div class="lang-chooser" id="lang-chooser">Choose your language</div>
-          <div class="lang-bar" id="lang-bar">
-            <button class="lang-btn active" data-lang="en" type="button">English</button>
-            <button class="lang-btn" data-lang="ar" type="button">العربية</button>
-            <button class="lang-btn" data-lang="hi" type="button">हिन्दी</button>
-            <button class="lang-btn" data-lang="pa" type="button">ਪੰਜਾਬੀ</button>
-            <button class="lang-btn" data-lang="fr" type="button">Fran&ccedil;ais</button>
-            <button class="lang-btn" data-lang="fa" type="button">فارسی</button>
-            <button class="lang-btn" data-lang="so" type="button">Soomaali</button>
-            <button class="lang-btn" data-lang="es" type="button">Espa&ntilde;ol</button>
-            <button class="lang-btn" data-lang="zh" type="button">中文</button>
-          </div>
-          <div class="hero-sub" id="hero-sub">Whether it's a cleaning, a dental emergency, or just a question &mdash; describe what you need and our team will follow up with you directly.</div>
-          <div class="hero-cost">This service is available at no cost.</div>
-          <div class="hero-response" id="hero-response">Available 24/7 &middot; Reviewed by our dental team</div>
-          <div class="hero-cta-block">
-            <button class="hero-primary-btn" id="start-assessment-btn" type="button">Start assessment</button>
-            <div class="trust-row">
-              <div class="trust-item"><span class="trust-dot"></span><span>Secure and private</span></div>
-              <div class="trust-item"><span class="trust-dot"></span><span>Speak first with Sam, our AI dental triage assistant</span></div>
-              <div class="trust-item"><span class="trust-dot"></span><span>Our dental team will follow up with you directly</span></div>
-            </div>
+          <button class="mk-cta" id="start-assessment-btn" type="button">Start assessment<span class="mk-cta-arrow">&rarr;</span></button>
+          <div class="mk-cta-sub" id="hero-cta-sub">Free &middot; Takes about 2 minutes &middot; Sam follows up by call or text</div>
+        </div>
+
+        <div class="mk-how mk-reveal">
+          <div class="mk-how-kicker">Here's what happens</div>
+          <div class="mk-steps">
+            <div class="mk-step"><div class="mk-step-num">1</div><div class="mk-step-title">Fill a short form</div><div class="mk-step-body">2 minutes. No account.</div></div>
+            <div class="mk-step"><div class="mk-step-num">2</div><div class="mk-step-title">Sam follows up</div><div class="mk-step-body">A call or text from Sam.</div></div>
+            <div class="mk-step"><div class="mk-step-num">3</div><div class="mk-step-title">Team reviews</div><div class="mk-step-body">Our dentists follow up.</div></div>
           </div>
         </div>
 
-        <div class="hero-image-block">
-          <div class="hero-image-shell">
-            <img class="hero-image" src="intake-hero.png" alt="Person holding jaw in dental discomfort" />
+        <div class="mk-conditions mk-reveal">
+          <h2 class="mk-conditions-title">Sam can help with</h2>
+          <p class="mk-conditions-sub">A wide range of dental concerns and questions.</p>
+          <div class="mk-pills">
+            <span class="mk-pill">Toothache</span>
+            <span class="mk-pill">Broken tooth</span>
+            <span class="mk-pill">Knocked-out tooth</span>
+            <span class="mk-pill">Infection</span>
+            <span class="mk-pill">Swelling</span>
+            <span class="mk-pill">Lost filling</span>
+            <span class="mk-pill">Mouth injury</span>
+            <span class="mk-pill">Post-treatment pain</span>
+            <span class="mk-pill">Sensitivity</span>
+            <span class="mk-pill">Appointment</span>
+            <span class="mk-pill">New patient</span>
+            <span class="mk-pill">Cleaning or checkup</span>
+            <span class="mk-pill">Insurance question</span>
+            <span class="mk-pill">General concern</span>
           </div>
-        </div>
-
-        <div class="hero-secondary">
-          <div class="warning-panel">
-            If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, seek emergency care immediately by calling 911.
-          </div>
-          <div class="flow-block">
-            <div class="flow-title">Next step: speak with Sam</div>
-            <div class="flow-copy">
-              Sam is our AI dental assistant. Whether it's a dental concern or a general question, Sam will gather the details and our dental team will follow up with you directly. After you submit, Sam will call or text the number you provide.
-            </div>
+          <div class="mk-warning">
+            <span class="mk-warning-icon" aria-hidden="true">&#9888;</span>
+            <span><strong>If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma,</strong> call 911 immediately.</span>
           </div>
         </div>
 
@@ -565,10 +949,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
         </div>
 
-        <div class="legal-note" id="legal-note">
-          <div style="margin-bottom:6px;font-weight:600;color:var(--text-secondary);">Martindale Dental &middot; Jackson Square &middot; 2 King St W, Unit #270, Hamilton, ON L8P 1A1</div>
-          <div id="legal-disclaimer">This service is provided by Martindale Dental at Jackson Square, powered by VirtualDentist.ai. It provides dental triage guidance and does not replace emergency medical care or an in-person dental examination.</div>
-          <div style="margin-top:6px;color:var(--text-muted);font-size:11px;" id="legal-privacy">Your information stays in Canada.</div>
+        <div class="mk-foot" id="legal-note">
+          <div class="mk-foot-address">Martindale Dental &middot; 2 King St W, Unit #270, Hamilton, ON</div>
+          <div class="mk-foot-disclaimer" id="legal-disclaimer">This service provides dental triage guidance and does not replace emergency medical care or an in-person dental examination. Your information stays in Canada.</div>
+          <div class="mk-foot-powered"><span>Triage powered by</span><a href="https://virtualdentist.ai" target="_blank" rel="noopener" class="vd-lockup" aria-label="VirtualDentist.ai"><svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs><linearGradient id="vdFootGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1a4fa0"/><stop offset="100%" stop-color="#00c8e8"/></linearGradient></defs><path d="M38 14 C28 14 18 22 18 36 C18 50 22 62 24 72 C26 82 28 88 34 94 C38 98 42 100 46 98 C50 96 54 92 60 92 C66 92 70 96 74 98 C78 100 82 98 86 94 C92 88 94 82 96 72 C98 62 102 50 102 36 C102 22 92 14 82 14 C76 14 70 18 60 18 C50 18 44 14 38 14 Z" stroke="url(#vdFootGrad)" stroke-width="7" fill="none" stroke-linejoin="round"/><polyline points="22,55 36,55 44,38 52,72 60,48 68,62 76,55 98,55" stroke="url(#vdFootGrad)" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="vd-wordmark">Virtual<span>Dentist.ai</span></span></a></div>
         </div>
       </div>
     </section>
@@ -581,11 +965,34 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <div class="form-top">
         <div>
-          <div class="form-title">Before we begin</div>
-          <div class="form-sub">Please share a few details so we can better understand your needs before connecting you to Sam.</div>
+          <div class="form-title" id="form-title">Before we begin</div>
+          <div class="form-sub" id="form-sub">Please share a few details so we can better understand your needs before connecting you to Sam.</div>
         </div>
-        <div class="step-pill">Step 1 of 2</div>
+        <div class="step-pill" id="step-pill">Step 2 of 2</div>
       </div>
+
+      <div class="choice-section" id="choice-section">
+        <div class="choice-label" id="choice-label">What brings you in today?</div>
+        <div class="choice-options">
+          <button type="button" class="choice-card urgent selected" id="choice-urgent" onclick="selectInquiryType('clinical')">
+            <span class="choice-card-icon" aria-hidden="true">&#9888;</span>
+            <span class="choice-card-text">
+              <span class="choice-card-title" id="choice-urgent-title">Something hurts or feels wrong</span>
+              <span class="choice-card-desc" id="choice-urgent-desc">Pain, swelling, an injury, or something that started recently.</span>
+            </span>
+          </button>
+          <button type="button" class="choice-card routine" id="choice-routine" onclick="selectInquiryType('admin')">
+            <span class="choice-card-icon" aria-hidden="true">&#10003;</span>
+            <span class="choice-card-text">
+              <span class="choice-card-title" id="choice-routine-title">A booking, question, or routine concern</span>
+              <span class="choice-card-desc" id="choice-routine-desc">Appointment, insurance, cleaning, or a general inquiry.</span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <input type="hidden" id="inquiry-type" value="clinical" />
+      <input type="hidden" id="channel-chosen" value="" />
 
       <div class="section">
         <div class="section-title">About you</div>
@@ -596,7 +1003,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <input class="input" id="patient-name" type="text" placeholder="First and last name" autocomplete="name" />
           </div>
 
-          <div class="field">
+          <div class="field" id="dob-field-wrapper">
             <label for="patient-dob">Date of birth</label>
             <input class="input" id="patient-dob" type="date" max="" autocomplete="bday" />
           </div>
@@ -607,7 +1014,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="helper phone-helper-strong">Sam will call or text this number after you submit.</div>
           </div>
 
-          <div class="field">
+          <div class="field" id="city-field-wrapper">
             <label for="patient-city">City</label>
             <input class="input" id="patient-city" type="text" placeholder="City" autocomplete="address-level2" />
           </div>
@@ -626,12 +1033,29 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         <div class="field">
           <label for="chief-complaint">Tell us what you need</label>
-          <textarea class="textarea" id="chief-complaint" placeholder="e.g. I'd like to book a cleaning / My tooth broke after a fall / I have a question about insurance"></textarea>
+          <textarea class="textarea" id="chief-complaint" placeholder="e.g. My tooth broke after a fall / I have severe tooth pain / My gum is swollen"></textarea>
           <div class="sam-mentioned" id="sam-mentioned">
             <div class="sam-mentioned-label" id="sam-mentioned-label">Sam mentioned</div>
             <div class="sam-mentioned-text" id="sam-mentioned-text"></div>
             <div class="sam-mentioned-edit-prompt" id="sam-mentioned-edit-prompt">Is this still right? Edit above if needed.</div>
           </div>
+          <div class="urgency-nudge" id="urgency-nudge" style="display:none;">
+            <span class="urgency-nudge-text" id="urgency-nudge-text">This sounds like it might be urgent. Want to switch?</span>
+            <button type="button" class="urgency-nudge-switch" id="urgency-nudge-switch">Switch to urgent</button>
+            <button type="button" class="urgency-nudge-dismiss" id="urgency-nudge-dismiss" aria-label="Dismiss">&times;</button>
+          </div>
+        </div>
+
+        <div class="field" id="best-time-wrapper" style="margin-top:14px; display:none;">
+          <label for="best-time">Best time to reach you</label>
+          <select class="select" id="best-time">
+            <option value="anytime">Anytime during office hours</option>
+            <option value="morning">Morning</option>
+            <option value="afternoon">Afternoon</option>
+            <option value="evening">Evening</option>
+            <option value="text_preferred">I'd rather text than call</option>
+          </select>
+          <div class="helper" id="best-time-helper" style="margin-top:6px;">Sam will continue the conversation by call or text — whichever works best for you.</div>
         </div>
 
         <div class="field" style="margin-top:14px;" id="onset-wrapper">
@@ -647,7 +1071,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </select>
         </div>
 
-        <div class="field" style="margin-top:14px;">
+        <div class="field" style="margin-top:14px;" id="redflags-wrapper">
           <label>Are any of these happening right now?</label>
           <div class="check-group">
             <label class="choice"><input type="checkbox" id="rf-breathing-swallowing" /><span>Trouble breathing or swallowing</span></label>
@@ -677,7 +1101,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
       </div>
 
-      <div class="section">
+      <div class="section" id="medical-section">
         <div class="section-title">Relevant medical information</div>
         <div class="helper" id="med-helper" style="margin-bottom:10px;">Select any that apply.</div>
         <div class="check-group">
@@ -715,7 +1139,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
       </div>
 
-      <div class="section">
+      <div class="section" id="current-meds-section">
         <div class="section-title">Current medications</div>
         <div class="helper" id="cur-meds-helper" style="margin-bottom:10px;">List anything you take regularly. Optional.</div>
         <div class="field">
@@ -724,7 +1148,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
       </div>
 
-      <div class="section">
+      <div class="section" id="coverage-section">
         <div class="section-title">Coverage information (optional)</div>
         <div class="helper" id="cov-helper" style="margin-bottom:10px;">This helps with follow-up planning only.</div>
         <div class="field">
@@ -741,9 +1165,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
       </div>
 
-      <div class="pre-submit-note">
-        After you submit, Sam will call or text the phone number you provided to continue your assessment. If Sam calls, it will come from
-        <span class="plain-phone"><span>1-833</span>-<span>959</span>-<span>3932</span></span>.
+      <div class="pre-submit-note" id="pre-submit-note">
+        <span id="pre-submit-note-clinical">
+          After you submit, Sam will call or text the phone number you provided to continue your assessment. If Sam calls, it will come from
+          <span class="plain-phone"><span>1-833</span>-<span>959</span>-<span>3932</span></span>.
+        </span>
+        <span id="pre-submit-note-routine" style="display:none;">
+          After you submit, you'll be able to call or text Sam right away to continue — your details will already be loaded so you can pick up where you left off.
+        </span>
       </div>
 
       <label class="ack">
@@ -757,43 +1186,58 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <div class="action-bar">
         <button class="btn-secondary" id="back-to-welcome-btn" type="button">Back</button>
-        <div class="action-bar-right">
-          <button class="btn-text-sam" id="intake-text-btn" type="button">Text Sam instead</button>
-          <button class="btn-primary" id="intake-submit-btn" type="button">Talk to Sam</button>
-        </div>
+        <!-- Submit area is rendered by updateSubmitArea() based on branch + language.
+             URGENT/en: Talk + Text. URGENT/non-en: Text only. ROUTINE: single Continue. -->
+        <div class="action-bar-right" id="intake-action-right"></div>
       </div>
+      <div class="channel-helper" id="channel-helper" style="display:none;"></div>
     </section>
 
     <section id="screen-handoff" class="card handoff-card">
 
       <div class="handoff-icon">&#x2713;</div>
-      <div class="handoff-title">Next step: answer Sam's call</div>
+      <h2 class="handoff-title" id="handoff-title">Your details are with our dental team.</h2>
+      <p class="handoff-sub" id="handoff-sub"></p>
 
-      <div class="incoming-number-card" id="incoming-number-card">
-        <div class="incoming-number-label">Answer the call from</div>
-        <div class="incoming-number-value" id="incoming-number-value">1-833-959-3932</div>
-        <div class="incoming-number-sub">Saving this number now may help you recognize the call quickly. If your call ends unexpectedly, Sam may follow up by text to the number you provided.</div>
+      <!-- URGENT branch only: the 833 callback/text number -->
+      <div class="number-card" id="number-card" style="display:none;">
+        <div class="number-label" id="number-label"></div>
+        <div class="number-value" id="number-value">1-833-959-3932</div>
+        <div class="number-sub" id="number-sub"></div>
+        <a class="number-save-btn" id="number-save-btn" href="#" style="display:none;"></a>
       </div>
 
-      <div class="expect-call-card" id="expect-call-card">
-        <div class="expect-call-title">Sam will call you to continue</div>
-        <div class="expect-call-copy">Please keep your phone nearby and answer the call when it comes through. The call will come from 1-833-959-3932.</div>
+      <!-- ROUTINE branch only: call / text Sam now -->
+      <div class="routine-actions" id="routine-actions" style="display:none;">
+        <a class="routine-action-btn" id="routine-call-btn" href="#"></a>
+        <a class="routine-action-btn" id="routine-text-btn" href="#"></a>
       </div>
 
-      <div class="handoff-image-shell">
-        <img class="handoff-image" src="intake-sam-handoff.jpg" alt="Calm dental care coordinator speaking on the phone" />
+      <!-- URGENT branch only: unknown-number warning -->
+      <div class="warn-strip" id="handoff-warn-strip" style="display:none;">
+        <span class="warn-strip-icon">&#9888;</span>
+        <span class="warn-strip-text"><strong id="warn-strip-strong"></strong><span id="warn-strip-rest"></span></span>
       </div>
 
-      <div class="handoff-copy" id="handoff-copy">
-        Sam is our AI dental assistant. Whether it's a dental concern or a general question, Sam will gather the details and our dental team will follow up with you directly.
+      <!-- ROUTINE branch only: direct booking link -->
+      <div class="booking-strip" id="handoff-booking-strip" style="display:none;">
+        <span class="booking-strip-icon">&#128197;</span>
+        <span class="booking-strip-content">
+          <strong id="booking-strip-title"></strong>
+          <a class="booking-strip-link" id="booking-strip-link" href="#" target="_blank" rel="noopener"></a>
+        </span>
       </div>
 
-      <div class="handoff-panel">
-        <div class="handoff-panel-title">What happens now</div>
-        <div class="handoff-panel-copy" id="handoff-panel-copy">Your intake has been received.</div>
+      <!-- Both branches: what happens next -->
+      <div class="handoff-steps">
+        <div class="next-kicker" id="next-kicker">What happens next</div>
+        <ol class="next-step-list">
+          <li class="next-step"><span class="next-step-num">1</span><span class="next-step-text" id="next-step-1"></span></li>
+          <li class="next-step"><span class="next-step-num">2</span><span class="next-step-text" id="next-step-2"></span></li>
+          <li class="next-step"><span class="next-step-num">3</span><span class="next-step-text" id="next-step-3"></span></li>
+        </ol>
       </div>
 
-      <div class="call-actions" id="call-actions"></div>
       <div class="case-status" id="success-case-id">Intake submitted successfully</div>
     </section>
 
@@ -803,10 +1247,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     var SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
     var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
     var INTAKE_TRIGGER_URL = SUPABASE_URL + "/functions/v1/intake-trigger";
+    var INITIATE_ROUTINE_CONTACT_URL = SUPABASE_URL + "/functions/v1/initiate-routine-contact";
     var INTAKE_SECRET = "af0ca85c19cd7dbd62ba2d03bf7e0cda6dc04f84048d3b8f";
     var EXPECTED_CALLER_NUMBER_DISPLAY = "1-833-959-3932";
     var FALLBACK_DIAL_NUMBER_DISPLAY = "1-833-959-3932";
     var FALLBACK_DIAL_NUMBER_HREF = "tel:+18339593932";
+    // ROUTINE handoff: General Sam (admin) voice line patients may call now.
+    // Distinct from the 833 number, which is the post-intake callback/SMS source
+    // and is NEVER advertised as an inbound clinical line (CLAUDE.md invariant).
+    var ROUTINE_CALL_NUMBER_DISPLAY = "1-365-906-2075";
+    var ROUTINE_CALL_NUMBER_HREF = "tel:+13659062075";
+    var ROUTINE_TEXT_NUMBER_HREF = "sms:+18339593932";
+    // MaxAssist / RecallMax public online-booking link (spec §4.3 Option A).
+    var MAXASSIST_BOOKING_URL = "https://can10.recallmax.com/rsm/request/public/bookOnline/patient/layout.html?a=6vwQ4CKrzA0hTsFBEfww2Qa2x_vNpsBtWX";
 
     if (!window.supabase || !window.supabase.createClient) {
       alert("Supabase library failed to load.");
@@ -821,11 +1274,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       en: {
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
         heroTitle: "How can Martindale Dental", heroAccent: "help you?",
-        heroSub: "Whether it's a cleaning, a dental emergency, or just a question \u2014 describe what you need and our team will follow up with you directly.",
+        heroSub: "Whether it's a cleaning, a toothache, or a question \u2014 Sam, our AI assistant, gathers your details so our dental team has everything they need to help you.",
         heroCost: "This service is available at no cost.", heroResponse: "Available 24/7 · Reviewed by our dental team",
         heroBtn: "Start assessment",
         trustSecure: "Secure and private",
-        trustSam: "Speak first with Sam, our AI dental triage assistant",
+        trustSam: "Sam, our AI assistant, gathers your details so our dental team can help you faster",
         trustDentist: "Our dental team will follow up with you directly",
         warningPanel: "If you have trouble breathing, uncontrolled bleeding, major swelling, or serious facial trauma, seek emergency care immediately by calling 911.",
         flowTitle: "Next step: speak with Sam",
@@ -847,7 +1300,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelEmail: "Email address", emailOptional: "(optional)", placeholderEmail: "For follow-up communications only",
         sectionConcern: "How can we help?",
         labelComplaint: "Tell us what you need",
-        placeholderComplaint: "e.g. I'd like to book a cleaning / My tooth broke after a fall / I have a question about insurance",
+        placeholderComplaint: "e.g. My tooth broke after a fall / I have severe tooth pain / My gum is swollen",
         labelOnset: "When did this start?",
         onsetSelect: "Select one", onsetToday: "Today", onsetDays: "Within the last few days", onsetWeek: "About a week ago", onsetMore: "More than a week ago", onsetUnsure: "Not sure", onsetNA: "Not applicable",
         labelRedFlags: "Are any of these happening right now?",
@@ -885,7 +1338,38 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         expectCopy: "Please keep your phone nearby and answer the call when it comes through. The call will come from 1-833-959-3932.",
         expectCopySms: "Please keep your phone nearby and reply to Sam's text messages.",
         valName: "Please enter your full name.", valNameShort: "Please enter a valid full name.", valDob: "Please enter your date of birth.", valDobInvalid: "Please enter a valid date of birth.", valDobFuture: "Date of birth cannot be in the future.", valPhone: "Please enter your phone number.", valPhoneInvalid: "Please enter a valid 10-digit phone number, or 11 digits starting with 1.", valCity: "Please enter your city.", valComplaint: "Please describe how we can help you today.", valComplaintShort: "Please provide a little more detail about your concern.", valOnset: "Please tell us when this started.", valRedFlags: "Please select at least one option under current symptoms, or choose 'None of the above.'", valMedical: "Please select at least one option under relevant medical information, or choose 'None of the above.'", valMedicalOther: "Please tell us more about the other important medical condition.", valConsent: "Please confirm the acknowledgement before continuing.",
-        callBannerTitle: "Continuing from your call with Sam", callBannerBody: "A few more details so our dental team can review your case.", samMentionedLabel: "Sam mentioned", samMentionedEditPrompt: "Is this still right? Edit above if needed."
+        callBannerTitle: "Continuing from your call with Sam", callBannerBody: "A few more details so our dental team can review your case.", samMentionedLabel: "Sam mentioned", samMentionedEditPrompt: "Is this still right? Edit above if needed.",
+        // ── BIFURCATION v2 keys (intake rebuild 2026-05-19) ──
+        choiceQuestion: "What brings you in today?",
+        choiceUrgentTitle: "Something hurts or feels wrong", choiceUrgentDesc: "Pain, swelling, an injury, or something that started recently.",
+        choiceRoutineTitle: "A booking, question, or routine concern", choiceRoutineDesc: "Appointment, insurance, cleaning, or a general inquiry.",
+        formTitleRoutine: "Tell us what you need", formSubRoutine: "A few details and we'll connect you with Sam to take it from there.",
+        labelComplaintRoutine: "How can we help you?", placeholderComplaintRoutine: "e.g. I'd like to book a cleaning / I have a question about my insurance",
+        btnContinueSam: "Continue with Sam",
+        channelHelper: "Voice clinical triage is currently English only. Sam can text with you in any language above.",
+        savingLabel: "Saving\u2026",
+        handoffTitleVoice: "Your details are with our dental team.", handoffSubVoice: "Sam will call you to gather a few guided clinical details.",
+        handoffTitleText: "Your details are with our dental team.", handoffSubText: "Sam will text you with a few guided clinical questions.",
+        handoffTitleRoutine: "Got it. Our team has your inquiry.", handoffSubRoutine: "Talk to Sam now \u2014 your details are already loaded, so you can pick up where you left off.",
+        handoffTitleRoutineVoice: "Sam is calling you now.", handoffSubRoutineVoice: "Pick up when Sam calls \u2014 your details are already loaded, so you can carry on from here.",
+        handoffTitleRoutineText: "Sam is texting you now.", handoffSubRoutineText: "Watch for Sam's text \u2014 your details are already loaded, so you can carry on from here.",
+        nextStepRoutineContactVoice: "Sam calls you and picks up right where the form left off \u2014 no need to repeat yourself.",
+        nextStepRoutineContactText: "Sam texts you and picks up right where the form left off \u2014 no need to repeat yourself.",
+        numberLabelCall: "Sam will call you from", numberLabelText: "Sam will text you from",
+        numberSubCall: "Save this number so it doesn't go to voicemail.", numberSubText: "Save this number so messages don't go to spam.",
+        warnStripCallStrong: "Don't ignore an unknown number", warnStripCallRest: " \u2014 Sam's call comes from the 833 number above.",
+        warnStripTextStrong: "Watch for an unknown number", warnStripTextRest: " \u2014 Sam's first text comes from the 833 number above.",
+        saveContactsBtn: "Add to contacts",
+        nextKicker: "What happens next",
+        nextStepCall1: "Sam calls and walks through a short set of clinical questions \u2014 pain, swelling, history, red flags.",
+        nextStepText1: "Sam texts you and walks through a short set of clinical questions \u2014 pain, swelling, history, red flags.",
+        nextStep2Urgent: "Our dental team reviews your case once Sam has gathered your details.",
+        nextStep3Urgent: "You'll get a booking link to schedule your follow-up appointment \u2014 or next-step guidance if your case needs urgent attention.",
+        nextStep1Routine: "Sam continues where the form left off \u2014 by call or text, your choice.",
+        nextStep2Routine: "Sam captures any extra details and a booking time if you want one.",
+        nextStep3Routine: "Our dental team reviews and confirms back to you.",
+        bookingStripTitle: "Already know you want to book?", bookingStripLink: "Book directly with Martindale \u2192",
+        prefillHelper: "Pre-filled from your conversation with Sam \u2014 edit if needed."
       },
       ar: {
         heroKicker: "عيادة مارتنديل لطب الأسنان \u00b7 جاكسون سكوير",
@@ -916,7 +1400,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelEmail: "البريد الإلكتروني", emailOptional: "(اختياري)", placeholderEmail: "للمتابعة فقط",
         sectionConcern: "كيف يمكننا مساعدتك؟",
         labelComplaint: "أخبرنا بما تحتاجه",
-        placeholderComplaint: "مثال: أريد حجز تنظيف / كُسر سني بعد سقوط / لدي سؤال عن التأمين",
+        placeholderComplaint: "مثال: كُسر سني بعد سقوط / أعاني من ألم شديد في الأسنان / لثتي متورمة",
         labelOnset: "متى بدأ هذا؟",
         onsetSelect: "اختر", onsetToday: "اليوم", onsetDays: "خلال الأيام القليلة الماضية", onsetWeek: "منذ حوالي أسبوع", onsetMore: "منذ أكثر من أسبوع", onsetUnsure: "غير متأكد", onsetNA: "لا ينطبق",
         labelRedFlags: "هل يحدث أي من هذا الآن؟",
@@ -954,7 +1438,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         expectCopy: "يرجى إبقاء هاتفك قريبا والرد على رسائل سام النصية.",
         expectCopySms: "يرجى إبقاء هاتفك قريبا والرد على رسائل سام النصية.",
         valName: "يرجى إدخال اسمك الكامل.", valNameShort: "يرجى إدخال اسم صالح.", valDob: "يرجى إدخال تاريخ ميلادك.", valDobInvalid: "يرجى إدخال تاريخ ميلاد صالح.", valDobFuture: "تاريخ الميلاد لا يمكن أن يكون في المستقبل.", valPhone: "يرجى إدخال رقم هاتفك.", valPhoneInvalid: "يرجى إدخال رقم هاتف صالح من 10 أرقام.", valCity: "يرجى إدخال مدينتك.", valComplaint: "يرجى وصف ما يزعجك اليوم.", valComplaintShort: "يرجى تقديم المزيد من التفاصيل.", valOnset: "يرجى إخبارنا متى بدأ هذا.", valRedFlags: "يرجى اختيار خيار واحد على الأقل أو 'لا شيء مما سبق'.", valMedical: "يرجى اختيار خيار واحد على الأقل أو 'لا شيء مما سبق'.", valMedicalOther: "يرجى إخبارنا بالمزيد عن الحالة الطبية.", valConsent: "يرجى تأكيد الموافقة قبل المتابعة.",
-        callBannerTitle: "متابعة لاتصالك مع سام", callBannerBody: "بعض التفاصيل الإضافية حتى يتمكن فريق طب الأسنان لدينا من مراجعة حالتك.", samMentionedLabel: "ذكر سام", samMentionedEditPrompt: "هل هذا لا يزال صحيحاً؟ عدّل أعلاه عند الحاجة."
+        callBannerTitle: "متابعة لاتصالك مع سام", callBannerBody: "بعض التفاصيل الإضافية حتى يتمكن فريق طب الأسنان لدينا من مراجعة حالتك.", samMentionedLabel: "ذكر سام", samMentionedEditPrompt: "هل هذا لا يزال صحيحاً؟ عدّل أعلاه عند الحاجة.",
+        choiceQuestion: "ما الذي أتى بك اليوم؟", choiceUrgentTitle: "هناك ألم أو شيء غير طبيعي", choiceUrgentDesc: "ألم أو تورم أو إصابة أو شيء بدأ مؤخراً.", choiceRoutineTitle: "حجز موعد أو سؤال أو أمر روتيني", choiceRoutineDesc: "موعد أو تأمين أو تنظيف أو استفسار عام.",
+        formTitleRoutine: "أخبرنا بما تحتاجه", formSubRoutine: "بعض التفاصيل وسنوصلك بـ سام لمتابعة الأمر.", labelComplaintRoutine: "كيف يمكننا مساعدتك؟", placeholderComplaintRoutine: "مثال: أريد حجز موعد تنظيف / لدي سؤال حول التأمين", btnContinueSam: "المتابعة مع سام", channelHelper: "الفرز السريري الصوتي متاح حالياً بالإنجليزية فقط. يمكن لـ سام مراسلتك نصياً بأي لغة أعلاه.", savingLabel: "جارٍ الحفظ\u2026",
+        handoffTitleVoice: "تفاصيلك الآن مع فريق طب الأسنان لدينا.", handoffSubVoice: "سيتصل بك سام لجمع بعض التفاصيل السريرية الموجهة.", handoffTitleText: "تفاصيلك الآن مع فريق طب الأسنان لدينا.", handoffSubText: "سيراسلك سام نصياً ببعض الأسئلة السريرية الموجهة.", handoffTitleRoutine: "تم. فريقنا لديه استفسارك.", handoffSubRoutine: "تحدث مع سام الآن \u2014 تفاصيلك محمّلة بالفعل، لذا يمكنك المتابعة من حيث توقفت.",
+        numberLabelCall: "سيتصل بك سام من", numberLabelText: "سيراسلك سام من", numberSubCall: "احفظ هذا الرقم حتى لا تذهب المكالمة إلى البريد الصوتي.", numberSubText: "احفظ هذا الرقم حتى لا تذهب الرسائل إلى البريد العشوائي.",
+        warnStripCallStrong: "لا تتجاهل رقماً غير معروف", warnStripCallRest: " \u2014 مكالمة سام تأتي من رقم 833 أعلاه.", warnStripTextStrong: "انتبه لرقم غير معروف", warnStripTextRest: " \u2014 أول رسالة من سام تأتي من رقم 833 أعلاه.", saveContactsBtn: "إضافة إلى جهات الاتصال",
+        nextKicker: "ماذا يحدث بعد ذلك", nextStepCall1: "يتصل سام ويطرح مجموعة قصيرة من الأسئلة السريرية \u2014 ألم، تورم، تاريخ مرضي، علامات تحذيرية.", nextStepText1: "يراسلك سام نصياً ويطرح مجموعة قصيرة من الأسئلة السريرية \u2014 ألم، تورم، تاريخ مرضي، علامات تحذيرية.", nextStep2Urgent: "يراجع فريق طب الأسنان لدينا حالتك بعد أن يجمع سام تفاصيلك.", nextStep3Urgent: "ستحصل على رابط حجز لتحديد موعد المتابعة \u2014 أو إرشادات للخطوة التالية إذا كانت حالتك تحتاج عناية عاجلة.", nextStep1Routine: "يتابع سام من حيث توقف النموذج \u2014 عبر مكالمة أو رسالة، حسب اختيارك.", nextStep2Routine: "يلتقط سام أي تفاصيل إضافية وموعداً للحجز إذا رغبت.", nextStep3Routine: "يراجع فريق طب الأسنان لدينا ويؤكد لك.",
+        bookingStripTitle: "تعرف بالفعل أنك تريد الحجز؟", bookingStripLink: "احجز مباشرة مع Martindale \u2192", prefillHelper: "مُعبأ مسبقاً من محادثتك مع سام \u2014 عدّله إذا لزم."
       },
       hi: {
         heroKicker: "मार्टिंडेल डेंटल \u00b7 जैक्सन स्क्वेयर",
@@ -982,7 +1473,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         labelEmail: "ईमेल पता", emailOptional: "(वैकल्पिक)", placeholderEmail: "केवल फॉलो-अप के लिए",
         sectionConcern: "हम आपकी कैसे मदद कर सकते हैं?",
         labelComplaint: "हमें बताएं आपको क्या चाहिए",
-        placeholderComplaint: "उदा. मैं सफ़ाई बुक करना चाहता हूं / गिरने से मेरा दांत टूट गया / मेरा बीमा के बारे में सवाल है",
+        placeholderComplaint: "उदा. गिरने से मेरा दांत टूट गया / मेरे दांत में तेज़ दर्द है / मेरे मसूड़े सूज गए हैं",
         labelOnset: "यह कब शुरू हुआ?",
         onsetSelect: "चुनें", onsetToday: "आज", onsetDays: "पिछले कुछ दिनों में", onsetWeek: "लगभग एक हफ्ते पहले", onsetMore: "एक हफ्ते से अधिक पहले", onsetUnsure: "पता नहीं", onsetNA: "लागू नहीं",
         labelRedFlags: "क्या अभी इनमें से कुछ हो रहा है?",
@@ -1020,7 +1511,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         expectCopy: "कृपया अपना फोन पास रखें और सैम के मैसेज का जवाब दें।",
         expectCopySms: "कृपया अपना फोन पास रखें और सैम के मैसेज का जवाब दें।",
         valName: "कृपया अपना पूरा नाम दर्ज करें।", valNameShort: "कृपया एक वैध नाम दर्ज करें।", valDob: "कृपया अपनी जन्म तिथि दर्ज करें।", valDobInvalid: "कृपया एक वैध जन्म तिथि दर्ज करें।", valDobFuture: "जन्म तिथि भविष्य में नहीं हो सकती।", valPhone: "कृपया अपना फोन नंबर दर्ज करें।", valPhoneInvalid: "कृपया एक वैध 10 अंकों का फोन नंबर दर्ज करें।", valCity: "कृपया अपना शहर दर्ज करें।", valComplaint: "कृपया बताएं कि आज आपको क्या परेशानी हो रही है।", valComplaintShort: "कृपया थोड़ा और विवरण दें।", valOnset: "कृपया बताएं यह कब शुरू हुआ।", valRedFlags: "कृपया कम से कम एक विकल्प चुनें या 'इनमें से कोई नहीं'।", valMedical: "कृपया कम से कम एक विकल्प चुनें या 'इनमें से कोई नहीं'।", valMedicalOther: "कृपया चिकित्सा स्थिति के बारे में और बताएं।", valConsent: "कृपया जारी रखने से पहले सहमति की पुष्टि करें।",
-        callBannerTitle: "सैम के साथ आपकी कॉल जारी रखना", callBannerBody: "कुछ और विवरण ताकि हमारी डेंटल टीम आपके केस की समीक्षा कर सके।", samMentionedLabel: "सैम ने बताया", samMentionedEditPrompt: "क्या यह अभी भी सही है? आवश्यकता पड़ने पर ऊपर संपादित करें।"
+        callBannerTitle: "सैम के साथ आपकी कॉल जारी रखना", callBannerBody: "कुछ और विवरण ताकि हमारी डेंटल टीम आपके केस की समीक्षा कर सके।", samMentionedLabel: "सैम ने बताया", samMentionedEditPrompt: "क्या यह अभी भी सही है? आवश्यकता पड़ने पर ऊपर संपादित करें।",
+        choiceQuestion: "आज आप किस लिए आए हैं?", choiceUrgentTitle: "कुछ दर्द कर रहा है या ठीक नहीं लग रहा", choiceUrgentDesc: "दर्द, सूजन, चोट, या कुछ जो हाल ही में शुरू हुआ।", choiceRoutineTitle: "बुकिंग, सवाल, या सामान्य चिंता", choiceRoutineDesc: "अपॉइंटमेंट, बीमा, सफाई, या सामान्य पूछताछ।",
+        formTitleRoutine: "हमें बताएं आपको क्या चाहिए", formSubRoutine: "कुछ विवरण और हम आपको सैम से जोड़ देंगे जो आगे संभाल लेगा।", labelComplaintRoutine: "हम आपकी कैसे मदद कर सकते हैं?", placeholderComplaintRoutine: "जैसे: मैं सफाई बुक करना चाहता हूं / मेरा बीमा के बारे में सवाल है", btnContinueSam: "सैम के साथ जारी रखें", channelHelper: "वॉइस क्लिनिकल ट्राइएज फिलहाल केवल अंग्रेज़ी में है। सैम आपसे ऊपर दी किसी भी भाषा में टेक्स्ट कर सकता है।", savingLabel: "सहेजा जा रहा है\u2026",
+        handoffTitleVoice: "आपके विवरण हमारी डेंटल टीम के पास हैं।", handoffSubVoice: "सैम आपको कुछ निर्देशित क्लिनिकल विवरण लेने के लिए कॉल करेगा।", handoffTitleText: "आपके विवरण हमारी डेंटल टीम के पास हैं।", handoffSubText: "सैम आपको कुछ निर्देशित क्लिनिकल सवालों के साथ टेक्स्ट करेगा।", handoffTitleRoutine: "समझ गए। हमारी टीम के पास आपकी पूछताछ है।", handoffSubRoutine: "अभी सैम से बात करें \u2014 आपके विवरण पहले से लोड हैं, तो आप जहां छोड़ा था वहीं से जारी रख सकते हैं।",
+        numberLabelCall: "सैम आपको इस नंबर से कॉल करेगा", numberLabelText: "सैम आपको इस नंबर से टेक्स्ट करेगा", numberSubCall: "यह नंबर सहेजें ताकि कॉल वॉइसमेल में न जाए।", numberSubText: "यह नंबर सहेजें ताकि संदेश स्पैम में न जाएं।",
+        warnStripCallStrong: "किसी अनजान नंबर को नज़रअंदाज़ न करें", warnStripCallRest: " \u2014 सैम की कॉल ऊपर दिए 833 नंबर से आती है।", warnStripTextStrong: "किसी अनजान नंबर पर ध्यान दें", warnStripTextRest: " \u2014 सैम का पहला टेक्स्ट ऊपर दिए 833 नंबर से आता है।", saveContactsBtn: "संपर्कों में जोड़ें",
+        nextKicker: "आगे क्या होगा", nextStepCall1: "सैम कॉल करता है और कुछ छोटे क्लिनिकल सवाल पूछता है \u2014 दर्द, सूजन, इतिहास, चेतावनी संकेत।", nextStepText1: "सैम आपको टेक्स्ट करता है और कुछ छोटे क्लिनिकल सवाल पूछता है \u2014 दर्द, सूजन, इतिहास, चेतावनी संकेत।", nextStep2Urgent: "सैम द्वारा आपके विवरण लेने के बाद हमारी डेंटल टीम आपके केस की समीक्षा करती है।", nextStep3Urgent: "आपको फॉलो-अप अपॉइंटमेंट शेड्यूल करने के लिए बुकिंग लिंक मिलेगा \u2014 या यदि आपके केस को तत्काल ध्यान चाहिए तो अगली-कदम मार्गदर्शन।", nextStep1Routine: "सैम वहीं से जारी रखता है जहां फॉर्म छूटा \u2014 कॉल या टेक्स्ट, आपकी मर्ज़ी।", nextStep2Routine: "सैम कोई अतिरिक्त विवरण और चाहें तो बुकिंग समय दर्ज करता है।", nextStep3Routine: "हमारी डेंटल टीम समीक्षा करती है और आपको पुष्टि करती है।",
+        bookingStripTitle: "पहले से जानते हैं कि बुक करना चाहते हैं?", bookingStripLink: "Martindale के साथ सीधे बुक करें \u2192", prefillHelper: "सैम के साथ आपकी बातचीत से पहले से भरा \u2014 ज़रूरत हो तो बदलें।"
       },
       pa: {
         heroKicker: "ਮਾਰਟਿੰਡੇਲ ਡੈਂਟਲ \u00b7 ਜੈਕਸਨ ਸਕੁਆਇਰ",
@@ -1039,7 +1537,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         sectionAbout: "ਤੁਹਾਡੇ ਬਾਰੇ", labelName: "ਪੂਰਾ ਨਾਮ", placeholderName: "ਪਹਿਲਾ ਅਤੇ ਆਖਰੀ ਨਾਮ", labelDob: "ਜਨਮ ਮਿਤੀ", labelPhone: "ਫੋਨ ਨੰਬਰ", placeholderPhone: "10 ਅੰਕਾਂ ਦਾ ਨੰਬਰ",
         phoneHelper: "ਸਬਮਿਟ ਕਰਨ ਤੋਂ ਬਾਅਦ ਸੈਮ ਇਸ ਨੰਬਰ ਤੇ ਕਾਲ ਕਰੇਗਾ।", phoneHelperSms: "ਸਬਮਿਟ ਕਰਨ ਤੋਂ ਬਾਅਦ ਸੈਮ ਇਸ ਨੰਬਰ ਤੇ ਮੈਸੇਜ ਕਰੇਗਾ।",
         labelCity: "ਸ਼ਹਿਰ", placeholderCity: "ਸ਼ਹਿਰ", labelEmail: "ਈਮੇਲ", emailOptional: "(ਵਿਕਲਪਿਕ)", placeholderEmail: "ਸਿਰਫ਼ ਫਾਲੋ-ਅੱਪ ਲਈ",
-        sectionConcern: "ਅਸੀਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦੇ ਹਾਂ?", labelComplaint: "ਸਾਨੂੰ ਦੱਸੋ ਤੁਹਾਨੂੰ ਕੀ ਚਾਹੀਦਾ ਹੈ", placeholderComplaint: "ਉਦਾ. ਮੈਂ ਸਫ਼ਾਈ ਬੁੱਕ ਕਰਨਾ ਚਾਹੁੰਦਾ ਹਾਂ / ਡਿੱਗਣ ਨਾਲ ਮੇਰਾ ਦੰਦ ਟੁੱਟ ਗਿਆ / ਬੀਮੇ ਬਾਰੇ ਸਵਾਲ ਹੈ",
+        sectionConcern: "ਅਸੀਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦੇ ਹਾਂ?", labelComplaint: "ਸਾਨੂੰ ਦੱਸੋ ਤੁਹਾਨੂੰ ਕੀ ਚਾਹੀਦਾ ਹੈ", placeholderComplaint: "ਉਦਾ. ਡਿੱਗਣ ਨਾਲ ਮੇਰਾ ਦੰਦ ਟੁੱਟ ਗਿਆ / ਮੇਰੇ ਦੰਦ ਵਿੱਚ ਤੇਜ਼ ਦਰਦ ਹੈ / ਮੇਰੇ ਮਸੂੜੇ ਸੁੱਜੇ ਹਨ",
         labelOnset: "ਇਹ ਕਦੋਂ ਸ਼ੁਰੂ ਹੋਇਆ?", onsetSelect: "ਚੁਣੋ", onsetToday: "ਅੱਜ", onsetDays: "ਪਿਛਲੇ ਕੁਝ ਦਿਨਾਂ ਵਿੱਚ", onsetWeek: "ਲਗਭਗ ਇੱਕ ਹਫ਼ਤਾ ਪਹਿਲਾਂ", onsetMore: "ਇੱਕ ਹਫ਼ਤੇ ਤੋਂ ਵੱਧ ਪਹਿਲਾਂ", onsetUnsure: "ਪੱਕਾ ਨਹੀਂ", onsetNA: "ਲਾਗੂ ਨਹੀਂ",
         labelRedFlags: "ਕੀ ਹੁਣ ਇਹਨਾਂ ਵਿੱਚੋਂ ਕੁਝ ਹੋ ਰਿਹਾ ਹੈ?",
         rfBreathing: "ਸਾਹ ਲੈਣ ਜਾਂ ਨਿਗਲਣ ਵਿੱਚ ਮੁਸ਼ਕਲ", rfBleeding: "ਬੰਦ ਨਾ ਹੋਣ ਵਾਲਾ ਖੂਨ", rfSwelling: "ਚਿਹਰੇ ਤੇ ਸੋਜ", rfFever: "ਬੁਖਾਰ ਜਾਂ ਬਿਮਾਰ ਮਹਿਸੂਸ", rfTrauma: "ਦੁਰਘਟਨਾ ਤੋਂ ਸੱਟ", rfAvulsion: "ਦੰਦ ਪੂਰੀ ਤਰ੍ਹਾਂ ਨਿਕਲ ਗਿਆ", rfNone: "ਇਹਨਾਂ ਵਿੱਚੋਂ ਕੋਈ ਨਹੀਂ",
@@ -1068,7 +1566,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         expectTitle: "ਸੈਮ ਜਾਰੀ ਰੱਖਣ ਲਈ ਮੈਸੇਜ ਕਰੇਗਾ", expectTitleSms: "ਸੈਮ ਜਾਰੀ ਰੱਖਣ ਲਈ ਮੈਸੇਜ ਕਰੇਗਾ",
         expectCopy: "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਫੋਨ ਨੇੜੇ ਰੱਖੋ ਅਤੇ ਸੈਮ ਦੇ ਮੈਸੇਜ ਦਾ ਜਵਾਬ ਦਿਓ।", expectCopySms: "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਫੋਨ ਨੇੜੇ ਰੱਖੋ ਅਤੇ ਸੈਮ ਦੇ ਮੈਸੇਜ ਦਾ ਜਵਾਬ ਦਿਓ।",
         valName: "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਪੂਰਾ ਨਾਮ ਦਰਜ ਕਰੋ।", valNameShort: "ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਵੈਧ ਨਾਮ ਦਰਜ ਕਰੋ।", valDob: "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣੀ ਜਨਮ ਮਿਤੀ ਦਰਜ ਕਰੋ।", valDobInvalid: "ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਵੈਧ ਜਨਮ ਮਿਤੀ ਦਰਜ ਕਰੋ।", valDobFuture: "ਜਨਮ ਮਿਤੀ ਭਵਿੱਖ ਵਿੱਚ ਨਹੀਂ ਹੋ ਸਕਦੀ।", valPhone: "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਫੋਨ ਨੰਬਰ ਦਰਜ ਕਰੋ।", valPhoneInvalid: "ਕਿਰਪਾ ਕਰਕੇ ਇੱਕ ਵੈਧ 10 ਅੰਕਾਂ ਦਾ ਫੋਨ ਨੰਬਰ ਦਰਜ ਕਰੋ।", valCity: "ਕਿਰਪਾ ਕਰਕੇ ਆਪਣਾ ਸ਼ਹਿਰ ਦਰਜ ਕਰੋ।", valComplaint: "ਕਿਰਪਾ ਕਰਕੇ ਦੱਸੋ ਅੱਜ ਕੀ ਪਰੇਸ਼ਾਨੀ ਹੋ ਰਹੀ ਹੈ।", valComplaintShort: "ਕਿਰਪਾ ਕਰਕੇ ਥੋੜਾ ਹੋਰ ਵੇਰਵਾ ਦਿਓ।", valOnset: "ਕਿਰਪਾ ਕਰਕੇ ਦੱਸੋ ਇਹ ਕਦੋਂ ਸ਼ੁਰੂ ਹੋਇਆ।", valRedFlags: "ਕਿਰਪਾ ਕਰਕੇ ਘੱਟੋ-ਘੱਟ ਇੱਕ ਵਿਕਲਪ ਚੁਣੋ।", valMedical: "ਕਿਰਪਾ ਕਰਕੇ ਘੱਟੋ-ਘੱਟ ਇੱਕ ਵਿਕਲਪ ਚੁਣੋ।", valMedicalOther: "ਕਿਰਪਾ ਕਰਕੇ ਡਾਕਟਰੀ ਸਥਿਤੀ ਬਾਰੇ ਹੋਰ ਦੱਸੋ।", valConsent: "ਕਿਰਪਾ ਕਰਕੇ ਜਾਰੀ ਰੱਖਣ ਤੋਂ ਪਹਿਲਾਂ ਸਹਿਮਤੀ ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ।",
-        callBannerTitle: "ਸੈਮ ਨਾਲ ਤੁਹਾਡੀ ਕਾਲ ਜਾਰੀ", callBannerBody: "ਕੁਝ ਹੋਰ ਵੇਰਵੇ ਤਾਂ ਜੋ ਸਾਡੀ ਡੈਂਟਲ ਟੀਮ ਤੁਹਾਡੇ ਕੇਸ ਦੀ ਸਮੀਖਿਆ ਕਰ ਸਕੇ।", samMentionedLabel: "ਸੈਮ ਨੇ ਦੱਸਿਆ", samMentionedEditPrompt: "ਕੀ ਇਹ ਅਜੇ ਵੀ ਸਹੀ ਹੈ? ਲੋੜ ਪੈਣ 'ਤੇ ਉੱਪਰ ਸੰਪਾਦਿਤ ਕਰੋ।"
+        callBannerTitle: "ਸੈਮ ਨਾਲ ਤੁਹਾਡੀ ਕਾਲ ਜਾਰੀ", callBannerBody: "ਕੁਝ ਹੋਰ ਵੇਰਵੇ ਤਾਂ ਜੋ ਸਾਡੀ ਡੈਂਟਲ ਟੀਮ ਤੁਹਾਡੇ ਕੇਸ ਦੀ ਸਮੀਖਿਆ ਕਰ ਸਕੇ।", samMentionedLabel: "ਸੈਮ ਨੇ ਦੱਸਿਆ", samMentionedEditPrompt: "ਕੀ ਇਹ ਅਜੇ ਵੀ ਸਹੀ ਹੈ? ਲੋੜ ਪੈਣ 'ਤੇ ਉੱਪਰ ਸੰਪਾਦਿਤ ਕਰੋ।",
+        choiceQuestion: "ਅੱਜ ਤੁਸੀਂ ਕਿਸ ਲਈ ਆਏ ਹੋ?", choiceUrgentTitle: "ਕੁਝ ਦਰਦ ਕਰ ਰਿਹਾ ਹੈ ਜਾਂ ਠੀਕ ਨਹੀਂ ਲੱਗ ਰਿਹਾ", choiceUrgentDesc: "ਦਰਦ, ਸੋਜ, ਸੱਟ, ਜਾਂ ਕੁਝ ਜੋ ਹਾਲ ਹੀ ਵਿੱਚ ਸ਼ੁਰੂ ਹੋਇਆ।", choiceRoutineTitle: "ਬੁਕਿੰਗ, ਸਵਾਲ, ਜਾਂ ਆਮ ਚਿੰਤਾ", choiceRoutineDesc: "ਅਪੌਇੰਟਮੈਂਟ, ਬੀਮਾ, ਸਫਾਈ, ਜਾਂ ਆਮ ਪੁੱਛਗਿੱਛ।",
+        formTitleRoutine: "ਸਾਨੂੰ ਦੱਸੋ ਤੁਹਾਨੂੰ ਕੀ ਚਾਹੀਦਾ ਹੈ", formSubRoutine: "ਕੁਝ ਵੇਰਵੇ ਅਤੇ ਅਸੀਂ ਤੁਹਾਨੂੰ ਸੈਮ ਨਾਲ ਜੋੜ ਦੇਵਾਂਗੇ ਜੋ ਅੱਗੇ ਸੰਭਾਲ ਲਵੇਗਾ।", labelComplaintRoutine: "ਅਸੀਂ ਤੁਹਾਡੀ ਕਿਵੇਂ ਮਦਦ ਕਰ ਸਕਦੇ ਹਾਂ?", placeholderComplaintRoutine: "ਜਿਵੇਂ: ਮੈਂ ਸਫਾਈ ਬੁੱਕ ਕਰਨੀ ਹੈ / ਮੇਰਾ ਬੀਮੇ ਬਾਰੇ ਸਵਾਲ ਹੈ", btnContinueSam: "ਸੈਮ ਨਾਲ ਜਾਰੀ ਰੱਖੋ", channelHelper: "ਵੌਇਸ ਕਲੀਨਿਕਲ ਟ੍ਰਾਈਏਜ ਫਿਲਹਾਲ ਸਿਰਫ ਅੰਗਰੇਜ਼ੀ ਵਿੱਚ ਹੈ। ਸੈਮ ਤੁਹਾਡੇ ਨਾਲ ਉੱਪਰ ਦਿੱਤੀ ਕਿਸੇ ਵੀ ਭਾਸ਼ਾ ਵਿੱਚ ਟੈਕਸਟ ਕਰ ਸਕਦਾ ਹੈ।", savingLabel: "ਸੰਭਾਲਿਆ ਜਾ ਰਿਹਾ ਹੈ\u2026",
+        handoffTitleVoice: "ਤੁਹਾਡੇ ਵੇਰਵੇ ਸਾਡੀ ਡੈਂਟਲ ਟੀਮ ਕੋਲ ਹਨ।", handoffSubVoice: "ਸੈਮ ਤੁਹਾਨੂੰ ਕੁਝ ਨਿਰਦੇਸ਼ਿਤ ਕਲੀਨਿਕਲ ਵੇਰਵੇ ਲੈਣ ਲਈ ਕਾਲ ਕਰੇਗਾ।", handoffTitleText: "ਤੁਹਾਡੇ ਵੇਰਵੇ ਸਾਡੀ ਡੈਂਟਲ ਟੀਮ ਕੋਲ ਹਨ।", handoffSubText: "ਸੈਮ ਤੁਹਾਨੂੰ ਕੁਝ ਨਿਰਦੇਸ਼ਿਤ ਕਲੀਨਿਕਲ ਸਵਾਲਾਂ ਨਾਲ ਟੈਕਸਟ ਕਰੇਗਾ।", handoffTitleRoutine: "ਸਮਝ ਗਏ। ਸਾਡੀ ਟੀਮ ਕੋਲ ਤੁਹਾਡੀ ਪੁੱਛਗਿੱਛ ਹੈ।", handoffSubRoutine: "ਹੁਣੇ ਸੈਮ ਨਾਲ ਗੱਲ ਕਰੋ \u2014 ਤੁਹਾਡੇ ਵੇਰਵੇ ਪਹਿਲਾਂ ਹੀ ਲੋਡ ਹਨ, ਤਾਂ ਤੁਸੀਂ ਜਿੱਥੋਂ ਛੱਡਿਆ ਸੀ ਉੱਥੋਂ ਜਾਰੀ ਰੱਖ ਸਕਦੇ ਹੋ।",
+        numberLabelCall: "ਸੈਮ ਤੁਹਾਨੂੰ ਇਸ ਨੰਬਰ ਤੋਂ ਕਾਲ ਕਰੇਗਾ", numberLabelText: "ਸੈਮ ਤੁਹਾਨੂੰ ਇਸ ਨੰਬਰ ਤੋਂ ਟੈਕਸਟ ਕਰੇਗਾ", numberSubCall: "ਇਹ ਨੰਬਰ ਸੰਭਾਲੋ ਤਾਂ ਜੋ ਕਾਲ ਵੌਇਸਮੇਲ ਵਿੱਚ ਨਾ ਜਾਵੇ।", numberSubText: "ਇਹ ਨੰਬਰ ਸੰਭਾਲੋ ਤਾਂ ਜੋ ਸੁਨੇਹੇ ਸਪੈਮ ਵਿੱਚ ਨਾ ਜਾਣ।",
+        warnStripCallStrong: "ਕਿਸੇ ਅਣਜਾਣ ਨੰਬਰ ਨੂੰ ਅਣਡਿੱਠ ਨਾ ਕਰੋ", warnStripCallRest: " \u2014 ਸੈਮ ਦੀ ਕਾਲ ਉੱਪਰ ਦਿੱਤੇ 833 ਨੰਬਰ ਤੋਂ ਆਉਂਦੀ ਹੈ।", warnStripTextStrong: "ਕਿਸੇ ਅਣਜਾਣ ਨੰਬਰ ਵੱਲ ਧਿਆਨ ਦਿਓ", warnStripTextRest: " \u2014 ਸੈਮ ਦਾ ਪਹਿਲਾ ਟੈਕਸਟ ਉੱਪਰ ਦਿੱਤੇ 833 ਨੰਬਰ ਤੋਂ ਆਉਂਦਾ ਹੈ।", saveContactsBtn: "ਸੰਪਰਕਾਂ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ",
+        nextKicker: "ਅੱਗੇ ਕੀ ਹੁੰਦਾ ਹੈ", nextStepCall1: "ਸੈਮ ਕਾਲ ਕਰਦਾ ਹੈ ਅਤੇ ਕੁਝ ਛੋਟੇ ਕਲੀਨਿਕਲ ਸਵਾਲ ਪੁੱਛਦਾ ਹੈ \u2014 ਦਰਦ, ਸੋਜ, ਇਤਿਹਾਸ, ਚੇਤਾਵਨੀ ਸੰਕੇਤ।", nextStepText1: "ਸੈਮ ਤੁਹਾਨੂੰ ਟੈਕਸਟ ਕਰਦਾ ਹੈ ਅਤੇ ਕੁਝ ਛੋਟੇ ਕਲੀਨਿਕਲ ਸਵਾਲ ਪੁੱਛਦਾ ਹੈ \u2014 ਦਰਦ, ਸੋਜ, ਇਤਿਹਾਸ, ਚੇਤਾਵਨੀ ਸੰਕੇਤ।", nextStep2Urgent: "ਸੈਮ ਦੁਆਰਾ ਤੁਹਾਡੇ ਵੇਰਵੇ ਲੈਣ ਤੋਂ ਬਾਅਦ ਸਾਡੀ ਡੈਂਟਲ ਟੀਮ ਤੁਹਾਡੇ ਕੇਸ ਦੀ ਸਮੀਖਿਆ ਕਰਦੀ ਹੈ।", nextStep3Urgent: "ਤੁਹਾਨੂੰ ਫਾਲੋ-ਅੱਪ ਅਪੌਇੰਟਮੈਂਟ ਸ਼ਡਿਊਲ ਕਰਨ ਲਈ ਬੁਕਿੰਗ ਲਿੰਕ ਮਿਲੇਗਾ \u2014 ਜਾਂ ਜੇ ਤੁਹਾਡੇ ਕੇਸ ਨੂੰ ਤੁਰੰਤ ਧਿਆਨ ਚਾਹੀਦਾ ਹੈ ਤਾਂ ਅਗਲੇ-ਕਦਮ ਦੀ ਮਾਰਗਦਰਸ਼ਨ।", nextStep1Routine: "ਸੈਮ ਉੱਥੋਂ ਜਾਰੀ ਰੱਖਦਾ ਹੈ ਜਿੱਥੋਂ ਫਾਰਮ ਛੁੱਟਿਆ \u2014 ਕਾਲ ਜਾਂ ਟੈਕਸਟ, ਤੁਹਾਡੀ ਮਰਜ਼ੀ।", nextStep2Routine: "ਸੈਮ ਕੋਈ ਵਾਧੂ ਵੇਰਵੇ ਅਤੇ ਚਾਹੋ ਤਾਂ ਬੁਕਿੰਗ ਸਮਾਂ ਦਰਜ ਕਰਦਾ ਹੈ।", nextStep3Routine: "ਸਾਡੀ ਡੈਂਟਲ ਟੀਮ ਸਮੀਖਿਆ ਕਰਦੀ ਹੈ ਅਤੇ ਤੁਹਾਨੂੰ ਪੁਸ਼ਟੀ ਕਰਦੀ ਹੈ।",
+        bookingStripTitle: "ਪਹਿਲਾਂ ਹੀ ਜਾਣਦੇ ਹੋ ਕਿ ਬੁੱਕ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?", bookingStripLink: "Martindale ਨਾਲ ਸਿੱਧਾ ਬੁੱਕ ਕਰੋ \u2192", prefillHelper: "ਸੈਮ ਨਾਲ ਤੁਹਾਡੀ ਗੱਲਬਾਤ ਤੋਂ ਪਹਿਲਾਂ ਭਰਿਆ \u2014 ਲੋੜ ਹੋਵੇ ਤਾਂ ਬਦਲੋ।"
       },
       fr: {
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
@@ -1087,7 +1592,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         sectionAbout: "A propos de vous", labelName: "Nom complet", placeholderName: "Prenom et nom", labelDob: "Date de naissance", labelPhone: "Numero de telephone", placeholderPhone: "Numero a 10 chiffres",
         phoneHelper: "Sam appellera ce numero peu apres votre soumission.", phoneHelperSms: "Sam enverra un message a ce numero peu apres votre soumission.",
         labelCity: "Ville", placeholderCity: "Ville", labelEmail: "Adresse courriel", emailOptional: "(facultatif)", placeholderEmail: "Pour le suivi uniquement",
-        sectionConcern: "Comment pouvons-nous vous aider?", labelComplaint: "Dites-nous ce dont vous avez besoin", placeholderComplaint: "ex. Je voudrais r\u00e9server un nettoyage / Ma dent s'est cass\u00e9e apr\u00e8s une chute / J'ai une question sur l'assurance",
+        sectionConcern: "Comment pouvons-nous vous aider?", labelComplaint: "Dites-nous ce dont vous avez besoin", placeholderComplaint: "ex. Ma dent s'est cass\u00e9e apr\u00e8s une chute / J'ai une forte douleur dentaire / Ma gencive est enfl\u00e9e",
         labelOnset: "Quand cela a-t-il commence?", onsetSelect: "Choisir", onsetToday: "Aujourd'hui", onsetDays: "Ces derniers jours", onsetWeek: "Il y a environ une semaine", onsetMore: "Il y a plus d'une semaine", onsetUnsure: "Pas certain", onsetNA: "Sans objet",
         labelRedFlags: "Est-ce que l'un de ces problemes se produit en ce moment?",
         rfBreathing: "Difficulte a respirer ou a avaler", rfBleeding: "Saignement incontrole", rfSwelling: "Gonflement facial", rfFever: "Fievre ou malaise", rfTrauma: "Blessure suite a un accident ou une chute", rfAvulsion: "Dent completement arrachee", rfNone: "Aucun de ces problemes",
@@ -1116,7 +1621,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         expectTitle: "Sam vous envoie un message pour continuer", expectTitleSms: "Sam vous envoie un message pour continuer",
         expectCopy: "Gardez votre telephone a portee de main et repondez aux messages de Sam.", expectCopySms: "Gardez votre telephone a portee de main et repondez aux messages de Sam.",
         valName: "Veuillez entrer votre nom complet.", valNameShort: "Veuillez entrer un nom valide.", valDob: "Veuillez entrer votre date de naissance.", valDobInvalid: "Veuillez entrer une date de naissance valide.", valDobFuture: "La date de naissance ne peut pas etre dans le futur.", valPhone: "Veuillez entrer votre numero de telephone.", valPhoneInvalid: "Veuillez entrer un numero de telephone valide a 10 chiffres.", valCity: "Veuillez entrer votre ville.", valComplaint: "Veuillez decrire ce qui vous derange aujourd'hui.", valComplaintShort: "Veuillez fournir un peu plus de details.", valOnset: "Veuillez nous dire quand cela a commence.", valRedFlags: "Veuillez selectionner au moins une option ou 'Aucun'.", valMedical: "Veuillez selectionner au moins une option ou 'Aucun'.", valMedicalOther: "Veuillez en dire plus sur la condition medicale.", valConsent: "Veuillez confirmer avant de continuer.",
-        callBannerTitle: "Suite de votre appel avec Sam", callBannerBody: "Quelques details supplementaires pour que notre equipe dentaire puisse examiner votre cas.", samMentionedLabel: "Sam a mentionne", samMentionedEditPrompt: "Est-ce toujours exact? Modifiez ci-dessus si necessaire."
+        callBannerTitle: "Suite de votre appel avec Sam", callBannerBody: "Quelques details supplementaires pour que notre equipe dentaire puisse examiner votre cas.", samMentionedLabel: "Sam a mentionne", samMentionedEditPrompt: "Est-ce toujours exact? Modifiez ci-dessus si necessaire.",
+        choiceQuestion: "Qu'est-ce qui vous amene aujourd'hui?", choiceUrgentTitle: "Quelque chose fait mal ou ne va pas", choiceUrgentDesc: "Douleur, gonflement, blessure, ou quelque chose qui a commence recemment.", choiceRoutineTitle: "Un rendez-vous, une question, ou un souci courant", choiceRoutineDesc: "Rendez-vous, assurance, nettoyage, ou demande generale.",
+        formTitleRoutine: "Dites-nous ce dont vous avez besoin", formSubRoutine: "Quelques details et nous vous mettrons en relation avec Sam pour la suite.", labelComplaintRoutine: "Comment pouvons-nous vous aider?", placeholderComplaintRoutine: "ex. Je veux prendre un rendez-vous de nettoyage / J'ai une question sur mon assurance", btnContinueSam: "Continuer avec Sam", channelHelper: "Le triage clinique vocal est actuellement en anglais seulement. Sam peut vous ecrire par texto dans toutes les langues ci-dessus.", savingLabel: "Enregistrement\u2026",
+        handoffTitleVoice: "Vos details sont entre les mains de notre equipe dentaire.", handoffSubVoice: "Sam vous appellera pour recueillir quelques details cliniques guides.", handoffTitleText: "Vos details sont entre les mains de notre equipe dentaire.", handoffSubText: "Sam vous enverra un texto avec quelques questions cliniques guidees.", handoffTitleRoutine: "C'est note. Notre equipe a votre demande.", handoffSubRoutine: "Parlez a Sam maintenant \u2014 vos details sont deja charges, vous pouvez reprendre la ou vous en etiez.",
+        numberLabelCall: "Sam vous appellera depuis", numberLabelText: "Sam vous enverra un texto depuis", numberSubCall: "Enregistrez ce numero pour que l'appel n'aille pas a la messagerie vocale.", numberSubText: "Enregistrez ce numero pour que les messages n'aillent pas dans les indesirables.",
+        warnStripCallStrong: "N'ignorez pas un numero inconnu", warnStripCallRest: " \u2014 l'appel de Sam provient du numero 833 ci-dessus.", warnStripTextStrong: "Surveillez un numero inconnu", warnStripTextRest: " \u2014 le premier texto de Sam provient du numero 833 ci-dessus.", saveContactsBtn: "Ajouter aux contacts",
+        nextKicker: "Ce qui se passe ensuite", nextStepCall1: "Sam appelle et parcourt une courte serie de questions cliniques \u2014 douleur, gonflement, antecedents, signes d'alerte.", nextStepText1: "Sam vous envoie un texto et parcourt une courte serie de questions cliniques \u2014 douleur, gonflement, antecedents, signes d'alerte.", nextStep2Urgent: "Notre equipe dentaire examine votre cas une fois que Sam a recueilli vos details.", nextStep3Urgent: "Vous recevrez un lien de reservation pour planifier votre rendez-vous de suivi \u2014 ou des conseils sur la prochaine etape si votre cas necessite une attention urgente.", nextStep1Routine: "Sam continue la ou le formulaire s'est arrete \u2014 par appel ou texto, a votre choix.", nextStep2Routine: "Sam recueille tout detail supplementaire et une heure de rendez-vous si vous le souhaitez.", nextStep3Routine: "Notre equipe dentaire examine et vous confirme.",
+        bookingStripTitle: "Vous savez deja que vous voulez reserver?", bookingStripLink: "Reservez directement avec Martindale \u2192", prefillHelper: "Pre-rempli a partir de votre conversation avec Sam \u2014 modifiez si necessaire."
       },
       fa: {
         heroKicker: "مارتیندیل دنتال \u00b7 جکسون اسکوئر",
@@ -1135,7 +1647,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         sectionAbout: "درباره شما", labelName: "نام کامل", placeholderName: "نام و نام خانوادگی", labelDob: "تاریخ تولد", labelPhone: "شماره تلفن", placeholderPhone: "شماره 10 رقمی",
         phoneHelper: "سام پس از ارسال با این شماره تماس خواهد گرفت.", phoneHelperSms: "سام پس از ارسال به این شماره پیام خواهد داد.",
         labelCity: "شهر", placeholderCity: "شهر", labelEmail: "آدرس ایمیل", emailOptional: "(اختیاری)", placeholderEmail: "فقط برای پیگیری",
-        sectionConcern: "چگونه می‌توانیم کمک کنیم؟", labelComplaint: "به ما بگویید چه نیاز دارید", placeholderComplaint: "مثال: می‌خواهم نوبت تمیز کردن رزرو کنم / دندانم بعد از افتادن شکست / سوالی درباره بیمه دارم",
+        sectionConcern: "چگونه می‌توانیم کمک کنیم؟", labelComplaint: "به ما بگویید چه نیاز دارید", placeholderComplaint: "مثال: دندانم بعد از افتادن شکست / دندانم خیلی درد می‌کند / لثه‌ام ورم کرده",
         labelOnset: "این کی شروع شد؟", onsetSelect: "انتخاب کنید", onsetToday: "امروز", onsetDays: "چند روز گذشته", onsetWeek: "حدود یک هفته پیش", onsetMore: "بیش از یک هفته پیش", onsetUnsure: "مطمئن نیستم", onsetNA: "قابل اجرا نیست",
         labelRedFlags: "آیا هم اکنون هر یک از این موارد رخ می دهد؟",
         rfBreathing: "مشکل در تنفس یا بلع", rfBleeding: "خونریزی غیرقابل کنترل", rfSwelling: "تورم صورت", rfFever: "تب یا احساس بیماری", rfTrauma: "آسیب ناشی از تصادف یا سقوط", rfAvulsion: "دندان کاملا کنده شده", rfNone: "هیچکدام از موارد بالا",
@@ -1163,7 +1675,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         expectTitle: "سام برای ادامه پیام می‌دهد", expectTitleSms: "سام برای ادامه پیام می‌دهد",
         expectCopy: "لطفا تلفن خود را نزدیک نگه دارید و به پیام های سام پاسخ دهید.", expectCopySms: "لطفا تلفن خود را نزدیک نگه دارید و به پیام های سام پاسخ دهید.",
         valName: "لطفا نام کامل خود را وارد کنید.", valNameShort: "لطفا یک نام معتبر وارد کنید.", valDob: "لطفا تاریخ تولد خود را وارد کنید.", valDobInvalid: "لطفا یک تاریخ تولد معتبر وارد کنید.", valDobFuture: "تاریخ تولد نمی تواند در آینده باشد.", valPhone: "لطفا شماره تلفن خود را وارد کنید.", valPhoneInvalid: "لطفا یک شماره تلفن 10 رقمی معتبر وارد کنید.", valCity: "لطفا شهر خود را وارد کنید.", valComplaint: "لطفا توضیح دهید امروز چه چیزی شما را اذیت می کند.", valComplaintShort: "لطفا کمی بیشتر توضیح دهید.", valOnset: "لطفا بگویید این کی شروع شد.", valRedFlags: "لطفا حداقل یک گزینه را انتخاب کنید.", valMedical: "لطفا حداقل یک گزینه را انتخاب کنید.", valMedicalOther: "لطفا در مورد وضعیت پزشکی بیشتر بگویید.", valConsent: "لطفا قبل از ادامه تایید کنید.",
-        callBannerTitle: "ادامه تماس شما با سام", callBannerBody: "چند جزئیات بیشتر تا تیم دندانپزشکی ما بتواند پرونده شما را بررسی کند.", samMentionedLabel: "سام اشاره کرد", samMentionedEditPrompt: "آیا هنوز درست است؟ در صورت نیاز در بالا ویرایش کنید."
+        callBannerTitle: "ادامه تماس شما با سام", callBannerBody: "چند جزئیات بیشتر تا تیم دندانپزشکی ما بتواند پرونده شما را بررسی کند.", samMentionedLabel: "سام اشاره کرد", samMentionedEditPrompt: "آیا هنوز درست است؟ در صورت نیاز در بالا ویرایش کنید.",
+        choiceQuestion: "امروز برای چه چیزی آمده‌اید؟", choiceUrgentTitle: "جایی درد دارد یا درست به نظر نمی‌رسد", choiceUrgentDesc: "درد، تورم، آسیب، یا چیزی که اخیراً شروع شده.", choiceRoutineTitle: "رزرو نوبت، پرسش، یا موضوع معمول", choiceRoutineDesc: "نوبت، بیمه، جرم‌گیری، یا پرسش عمومی.",
+        formTitleRoutine: "به ما بگویید به چه نیاز دارید", formSubRoutine: "چند جزئیات و ما شما را به سام وصل می‌کنیم تا ادامه دهد.", labelComplaintRoutine: "چگونه می‌توانیم کمکتان کنیم؟", placeholderComplaintRoutine: "مثال: می‌خواهم نوبت جرم‌گیری بگیرم / درباره بیمه‌ام سوال دارم", btnContinueSam: "ادامه با سام", channelHelper: "تریاژ بالینی صوتی در حال حاضر فقط به انگلیسی است. سام می‌تواند به هر زبانی که در بالا آمده با شما پیامک کند.", savingLabel: "در حال ذخیره\u2026",
+        handoffTitleVoice: "جزئیات شما نزد تیم دندانپزشکی ماست.", handoffSubVoice: "سام با شما تماس می‌گیرد تا چند جزئیات بالینی هدایت‌شده را جمع‌آوری کند.", handoffTitleText: "جزئیات شما نزد تیم دندانپزشکی ماست.", handoffSubText: "سام برای شما چند پرسش بالینی هدایت‌شده پیامک می‌کند.", handoffTitleRoutine: "متوجه شدیم. تیم ما درخواست شما را دارد.", handoffSubRoutine: "همین حالا با سام صحبت کنید \u2014 جزئیات شما از قبل بارگذاری شده، پس می‌توانید از همان‌جا که رها کردید ادامه دهید.",
+        numberLabelCall: "سام از این شماره با شما تماس می‌گیرد", numberLabelText: "سام از این شماره به شما پیامک می‌دهد", numberSubCall: "این شماره را ذخیره کنید تا تماس به پست صوتی نرود.", numberSubText: "این شماره را ذخیره کنید تا پیام‌ها به هرزنامه نروند.",
+        warnStripCallStrong: "یک شماره ناشناس را نادیده نگیرید", warnStripCallRest: " \u2014 تماس سام از شماره 833 بالا می‌آید.", warnStripTextStrong: "مراقب یک شماره ناشناس باشید", warnStripTextRest: " \u2014 اولین پیامک سام از شماره 833 بالا می‌آید.", saveContactsBtn: "افزودن به مخاطبین",
+        nextKicker: "بعد چه می‌شود", nextStepCall1: "سام تماس می‌گیرد و مجموعه‌ای کوتاه از پرسش‌های بالینی را مرور می‌کند \u2014 درد، تورم، سابقه، علائم هشدار.", nextStepText1: "سام به شما پیامک می‌دهد و مجموعه‌ای کوتاه از پرسش‌های بالینی را مرور می‌کند \u2014 درد، تورم، سابقه، علائم هشدار.", nextStep2Urgent: "تیم دندانپزشکی ما پس از آنکه سام جزئیات شما را جمع‌آوری کرد، پرونده شما را بررسی می‌کند.", nextStep3Urgent: "یک لینک رزرو برای تعیین نوبت پیگیری دریافت می‌کنید \u2014 یا اگر پرونده شما به توجه فوری نیاز دارد، راهنمایی گام بعدی.", nextStep1Routine: "سام از همان‌جا که فرم رها شد ادامه می‌دهد \u2014 با تماس یا پیامک، به انتخاب شما.", nextStep2Routine: "سام هر جزئیات اضافی و در صورت تمایل زمان رزرو را ثبت می‌کند.", nextStep3Routine: "تیم دندانپزشکی ما بررسی و به شما تأیید می‌کند.",
+        bookingStripTitle: "از قبل می‌دانید که می‌خواهید رزرو کنید؟", bookingStripLink: "مستقیماً با Martindale رزرو کنید \u2192", prefillHelper: "از گفتگوی شما با سام از پیش پر شده \u2014 در صورت نیاز ویرایش کنید."
       },
       so: {
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
@@ -1181,7 +1700,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         sectionAbout: "Adiga ku saabsan", labelName: "Magaca oo buuxa", placeholderName: "Magaca hore iyo kan dambe", labelDob: "Taariikhda dhalashada", labelPhone: "Lambarka taleefanka", placeholderPhone: "Lambar 10 nambar ah",
         phoneHelper: "Sam ayaa wici doona lambarkaan ka dib markii aad dirto.", phoneHelperSms: "Sam ayaa fariin u diri doona lambarkaan ka dib markii aad dirto.",
         labelCity: "Magaalada", placeholderCity: "Magaalada", labelEmail: "Ciwaanka iimaylka", emailOptional: "(ikhtiyaari)", placeholderEmail: "Kaliya la socodsiinta",
-        sectionConcern: "Sidee kugu caawin karnaa?", labelComplaint: "Noo sheeg waxa aad u baahan tahay", placeholderComplaint: "Tusaale: Waxaan rabaa inaan ballansado nadiifinta / Ilkahaygu wuu jabay markii aan dhacay / Su'aal ayaan ka qabaa caymiska",
+        sectionConcern: "Sidee kugu caawin karnaa?", labelComplaint: "Noo sheeg waxa aad u baahan tahay", placeholderComplaint: "Tusaale: Iligaygu wuu jabay markii aan dhacay / Ilig xanuun daran ayaan qabaa / Cidiyahaygu way barareen",
         labelOnset: "Goorma ayay bilaabatay?", onsetSelect: "Dooro", onsetToday: "Maanta", onsetDays: "Dhowr maalmood ee la soo dhaafay", onsetWeek: "Qiyaastii toddobaad ka hor", onsetMore: "Ka badan toddobaad ka hor", onsetUnsure: "Lama hubo", onsetNA: "Ma khuseyso",
         labelRedFlags: "Ma dhacayaan kuwan hadda?",
         rfBreathing: "Dhibaato neefsasho ama liqid", rfBleeding: "Dhiig aan joogsan karin", rfSwelling: "Bararka wajiga", rfFever: "Qandho ama dareen xanuun", rfTrauma: "Dhaawac shil ama dhicis", rfAvulsion: "Ilko dhammaystiran oo soo baxday", rfNone: "Midkoodna ma ahan",
@@ -1208,7 +1727,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         expectTitle: "Sam wuxuu kuu soo dirayaa fariin si aad u sii wadato", expectTitleSms: "Sam wuxuu kuu soo dirayaa fariin si aad u sii wadato",
         expectCopy: "Fadlan taleefankaaga u hay meel dhow oo ka jawaab fariimaha Sam.", expectCopySms: "Fadlan taleefankaaga u hay meel dhow oo ka jawaab fariimaha Sam.",
         valName: "Fadlan geli magacaaga oo buuxa.", valNameShort: "Fadlan geli magac sax ah.", valDob: "Fadlan geli taariikhda dhalashada.", valDobInvalid: "Fadlan geli taariikh sax ah.", valDobFuture: "Taariikhda dhalashada ma noqon karto mustaqbalka.", valPhone: "Fadlan geli lambarka taleefankaaga.", valPhoneInvalid: "Fadlan geli lambar taleefan sax ah oo 10 nambar ah.", valCity: "Fadlan geli magaaladaada.", valComplaint: "Fadlan sharax waxa ku dhibaya maanta.", valComplaintShort: "Fadlan bixin faahfaahin dheeraad ah.", valOnset: "Fadlan noo sheeg goorma ay bilaabatay.", valRedFlags: "Fadlan dooro ugu yaraan hal ikhtiyaar.", valMedical: "Fadlan dooro ugu yaraan hal ikhtiyaar.", valMedicalOther: "Fadlan wax badan ka sheeg xaaladda caafimaadka.", valConsent: "Fadlan xaqiiji ogolaanshaha ka hor intaadan sii wadin.",
-        callBannerTitle: "Ka sii wadid wicitaankii Sam", callBannerBody: "Faahfaahin yar oo dheeraad ah si kooxda dhakhtarrada ilkahayagu ay u dib u eegi karaan kiiskaaga.", samMentionedLabel: "Sam wuxuu xusay", samMentionedEditPrompt: "Ma weli waa sax? Wax ka beddel kor haddii loo baahdo."
+        callBannerTitle: "Ka sii wadid wicitaankii Sam", callBannerBody: "Faahfaahin yar oo dheeraad ah si kooxda dhakhtarrada ilkahayagu ay u dib u eegi karaan kiiskaaga.", samMentionedLabel: "Sam wuxuu xusay", samMentionedEditPrompt: "Ma weli waa sax? Wax ka beddel kor haddii loo baahdo.",
+        choiceQuestion: "Maxaa maanta ku keenay?", choiceUrgentTitle: "Wax baa xanuunaya ama aan sax ahayn", choiceUrgentDesc: "Xanuun, barar, dhaawac, ama wax dhawaan bilaabmay.", choiceRoutineTitle: "Ballan, su'aal, ama arrin caadi ah", choiceRoutineDesc: "Ballan, caymis, nadiifin, ama weydiin guud.",
+        formTitleRoutine: "Noo sheeg waxaad u baahan tahay", formSubRoutine: "Dhowr faahfaahin ah ayaan kugu xiri doonnaa Sam si uu u sii wato.", labelComplaintRoutine: "Sidee baan kuu caawin karnaa?", placeholderComplaintRoutine: "tusaale: Waxaan rabaa inaan ballan nadiifin qabsado / Waxaan su'aal ka qabaa caymiskayga", btnContinueSam: "Sii wad Sam", channelHelper: "Kala-saaridda caafimaad ee codka hadda waa Ingiriisi oo keliya. Sam wuxuu kugu qori karaa fariin luqad kasta oo kor ku xusan.", savingLabel: "Waa la kaydinayaa\u2026",
+        handoffTitleVoice: "Faahfaahintaada waxay la joogtaa kooxdayada ilkaha.", handoffSubVoice: "Sam wuu ku soo wici doonaa si uu u ururiyo dhowr faahfaahin caafimaad oo la hagayo.", handoffTitleText: "Faahfaahintaada waxay la joogtaa kooxdayada ilkaha.", handoffSubText: "Sam wuxuu kuu soo qori doonaa fariin dhowr su'aalood oo caafimaad oo la hagayo.", handoffTitleRoutine: "Waa la fahmay. Kooxdayadu waxay haystaa weydiintaada.", handoffSubRoutine: "Hadda la hadal Sam \u2014 faahfaahintaada horay ayaa loo soo geliyey, sidaas darteed waxaad ka sii wadi kartaa meeshii aad ka tagtay.",
+        numberLabelCall: "Sam wuxuu kaa soo wici doonaa", numberLabelText: "Sam wuxuu kuu soo qori doonaa", numberSubCall: "Kaydi lambarkan si wicitaanku aanu u gelin codka boostada.", numberSubText: "Kaydi lambarkan si fariimuhu aanay u gelin spam-ka.",
+        warnStripCallStrong: "Ha iska indho-tirin lambar aan la aqoon", warnStripCallRest: " \u2014 wicitaanka Sam wuxuu ka yimaadaa lambarka 833 ee kor ku xusan.", warnStripTextStrong: "Fiiri lambar aan la aqoon", warnStripTextRest: " \u2014 fariinta ugu horeysa ee Sam waxay ka timaadaa lambarka 833 ee kor ku xusan.", saveContactsBtn: "Ku dar xiriiriyayaasha",
+        nextKicker: "Waxa xiga", nextStepCall1: "Sam wuu wacaa wuxuuna ku maraa su'aalo caafimaad oo gaaban \u2014 xanuun, barar, taariikh, calaamado digniin.", nextStepText1: "Sam wuu ku soo qoraa wuxuuna ku maraa su'aalo caafimaad oo gaaban \u2014 xanuun, barar, taariikh, calaamado digniin.", nextStep2Urgent: "Kooxdayada ilkahu waxay dib u eegaan kiiskaaga ka dib markii Sam uu ururiyo faahfaahintaada.", nextStep3Urgent: "Waxaad heli doontaa link ballan si aad u qorsheyso ballantaada xiga \u2014 ama hagid tallaabada xigta haddii kiiskaagu u baahan yahay daryeel degdeg ah.", nextStep1Routine: "Sam wuxuu ka sii wataa meeshii foomku ka joogsaday \u2014 wicitaan ama fariin, doorashadaada.", nextStep2Routine: "Sam wuxuu qabtaa faahfaahin dheeraad ah iyo wakhti ballan haddii aad rabto.", nextStep3Routine: "Kooxdayada ilkahu way dib u eegaan oo ay kuu xaqiijiyaan.",
+        bookingStripTitle: "Horay u og inaad rabto inaad ballan qabsato?", bookingStripLink: "Si toos ah ula ballan qabso Martindale \u2192", prefillHelper: "Horay looga buuxiyey wadahadalkaaga Sam \u2014 wax ka beddel haddii loo baahdo."
       },
       es: {
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
@@ -1226,7 +1752,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         sectionAbout: "Sobre usted", labelName: "Nombre completo", placeholderName: "Nombre y apellido", labelDob: "Fecha de nacimiento", labelPhone: "Numero de telefono", placeholderPhone: "Numero de 10 digitos",
         phoneHelper: "Sam llamara a este numero poco despues de enviar.", phoneHelperSms: "Sam enviara un mensaje a este numero poco despues de enviar.",
         labelCity: "Ciudad", placeholderCity: "Ciudad", labelEmail: "Correo electronico", emailOptional: "(opcional)", placeholderEmail: "Solo para seguimiento",
-        sectionConcern: "\u00bfC\u00f3mo podemos ayudarle?", labelComplaint: "D\u00edganos lo que necesita", placeholderComplaint: "Ej. Quiero reservar una limpieza / Mi diente se rompi\u00f3 tras una ca\u00edda / Tengo una pregunta sobre el seguro",
+        sectionConcern: "\u00bfC\u00f3mo podemos ayudarle?", labelComplaint: "D\u00edganos lo que necesita", placeholderComplaint: "Ej. Mi diente se rompi\u00f3 tras una ca\u00edda / Tengo un fuerte dolor de muela / Tengo la enc\u00eda hinchada",
         labelOnset: "Cuando comenzo esto?", onsetSelect: "Seleccionar", onsetToday: "Hoy", onsetDays: "En los ultimos dias", onsetWeek: "Hace aproximadamente una semana", onsetMore: "Hace mas de una semana", onsetUnsure: "No estoy seguro", onsetNA: "No aplica",
         labelRedFlags: "Esta experimentando alguno de estos ahora?",
         rfBreathing: "Dificultad para respirar o tragar", rfBleeding: "Sangrado incontrolable", rfSwelling: "Hinchazon facial", rfFever: "Fiebre o malestar", rfTrauma: "Lesion por accidente o caida", rfAvulsion: "Diente completamente desprendido", rfNone: "Ninguno de los anteriores",
@@ -1254,7 +1780,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         expectTitle: "Sam le enviara un mensaje para continuar", expectTitleSms: "Sam le enviara un mensaje para continuar",
         expectCopy: "Por favor tenga su telefono cerca y responda a los mensajes de Sam.", expectCopySms: "Por favor tenga su telefono cerca y responda a los mensajes de Sam.",
         valName: "Por favor ingrese su nombre completo.", valNameShort: "Por favor ingrese un nombre valido.", valDob: "Por favor ingrese su fecha de nacimiento.", valDobInvalid: "Por favor ingrese una fecha de nacimiento valida.", valDobFuture: "La fecha de nacimiento no puede ser en el futuro.", valPhone: "Por favor ingrese su numero de telefono.", valPhoneInvalid: "Por favor ingrese un numero de telefono valido de 10 digitos.", valCity: "Por favor ingrese su ciudad.", valComplaint: "Por favor describa que le esta molestando hoy.", valComplaintShort: "Por favor proporcione un poco mas de detalle.", valOnset: "Por favor diganos cuando comenzo esto.", valRedFlags: "Por favor seleccione al menos una opcion o 'Ninguno'.", valMedical: "Por favor seleccione al menos una opcion o 'Ninguno'.", valMedicalOther: "Por favor diganos mas sobre la condicion medica.", valConsent: "Por favor confirme antes de continuar.",
-        callBannerTitle: "Continuando desde su llamada con Sam", callBannerBody: "Algunos detalles mas para que nuestro equipo dental pueda revisar su caso.", samMentionedLabel: "Sam menciono", samMentionedEditPrompt: "Esto sigue siendo correcto? Edite arriba si es necesario."
+        callBannerTitle: "Continuando desde su llamada con Sam", callBannerBody: "Algunos detalles mas para que nuestro equipo dental pueda revisar su caso.", samMentionedLabel: "Sam menciono", samMentionedEditPrompt: "Esto sigue siendo correcto? Edite arriba si es necesario.",
+        choiceQuestion: "Que le trae hoy?", choiceUrgentTitle: "Algo duele o no se siente bien", choiceUrgentDesc: "Dolor, hinchazon, una lesion, o algo que empezo recientemente.", choiceRoutineTitle: "Una cita, una pregunta, o un asunto de rutina", choiceRoutineDesc: "Cita, seguro, limpieza, o consulta general.",
+        formTitleRoutine: "Diganos que necesita", formSubRoutine: "Algunos detalles y le conectaremos con Sam para continuar.", labelComplaintRoutine: "Como podemos ayudarle?", placeholderComplaintRoutine: "ej. Quiero reservar una limpieza / Tengo una pregunta sobre mi seguro", btnContinueSam: "Continuar con Sam", channelHelper: "El triaje clinico por voz esta actualmente solo en ingles. Sam puede enviarle mensajes de texto en cualquier idioma de arriba.", savingLabel: "Guardando\u2026",
+        handoffTitleVoice: "Sus datos estan con nuestro equipo dental.", handoffSubVoice: "Sam le llamara para recopilar algunos detalles clinicos guiados.", handoffTitleText: "Sus datos estan con nuestro equipo dental.", handoffSubText: "Sam le enviara un mensaje de texto con algunas preguntas clinicas guiadas.", handoffTitleRoutine: "Entendido. Nuestro equipo tiene su consulta.", handoffSubRoutine: "Hable con Sam ahora \u2014 sus datos ya estan cargados, asi que puede continuar donde lo dejo.",
+        numberLabelCall: "Sam le llamara desde", numberLabelText: "Sam le enviara mensajes desde", numberSubCall: "Guarde este numero para que la llamada no vaya al buzon de voz.", numberSubText: "Guarde este numero para que los mensajes no vayan a spam.",
+        warnStripCallStrong: "No ignore un numero desconocido", warnStripCallRest: " \u2014 la llamada de Sam viene del numero 833 de arriba.", warnStripTextStrong: "Este atento a un numero desconocido", warnStripTextRest: " \u2014 el primer mensaje de Sam viene del numero 833 de arriba.", saveContactsBtn: "Anadir a contactos",
+        nextKicker: "Que sucede despues", nextStepCall1: "Sam llama y recorre un breve conjunto de preguntas clinicas \u2014 dolor, hinchazon, historial, senales de alerta.", nextStepText1: "Sam le envia un mensaje y recorre un breve conjunto de preguntas clinicas \u2014 dolor, hinchazon, historial, senales de alerta.", nextStep2Urgent: "Nuestro equipo dental revisa su caso una vez que Sam ha recopilado sus datos.", nextStep3Urgent: "Recibira un enlace de reserva para programar su cita de seguimiento \u2014 o orientacion sobre el siguiente paso si su caso necesita atencion urgente.", nextStep1Routine: "Sam continua donde quedo el formulario \u2014 por llamada o mensaje, usted elige.", nextStep2Routine: "Sam recopila cualquier detalle adicional y una hora de cita si lo desea.", nextStep3Routine: "Nuestro equipo dental revisa y le confirma.",
+        bookingStripTitle: "Ya sabe que quiere reservar?", bookingStripLink: "Reserve directamente con Martindale \u2192", prefillHelper: "Pre-rellenado a partir de su conversacion con Sam \u2014 edite si es necesario."
       },
       zh: {
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
@@ -1272,7 +1805,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         sectionAbout: "关于您", labelName: "全名", placeholderName: "姓名", labelDob: "出生日期", labelPhone: "电话号码", placeholderPhone: "10位数号码",
         phoneHelper: "提交后Sam将拨打此号码。", phoneHelperSms: "提交后Sam将向此号码发送消息。",
         labelCity: "城市", placeholderCity: "城市", labelEmail: "电子邮箱", emailOptional: "（可选）", placeholderEmail: "仅用于后续联系",
-        sectionConcern: "我们如何帮助您？", labelComplaint: "告诉我们您需要什么", placeholderComplaint: "例如：我想预约洗牙 / 摔倒后牙齿断了 / 我有关于保险的问题",
+        sectionConcern: "我们如何帮助您？", labelComplaint: "告诉我们您需要什么", placeholderComplaint: "例如：摔倒后牙齿断了 / 我牙疼得厉害 / 我的牙龈肿了",
         labelOnset: "这是什么时候开始的？", onsetSelect: "请选择", onsetToday: "今天", onsetDays: "最近几天", onsetWeek: "大约一周前", onsetMore: "一周以上前", onsetUnsure: "不确定", onsetNA: "不适用",
         labelRedFlags: "您现在是否有以下情况？",
         rfBreathing: "呼吸或吞咽困难", rfBleeding: "无法控制的出血", rfSwelling: "面部肿胀", rfFever: "发烧或感觉不适", rfTrauma: "事故或跌倒造成的伤害", rfAvulsion: "牙齿完全脱落", rfNone: "以上都没有",
@@ -1300,11 +1833,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         expectTitle: "Sam正在发送消息", expectTitleSms: "Sam正在发送消息",
         expectCopy: "请将手机放在身边并回复Sam的消息。", expectCopySms: "请将手机放在身边并回复Sam的消息。",
         valName: "请输入您的全名。", valNameShort: "请输入有效的姓名。", valDob: "请输入您的出生日期。", valDobInvalid: "请输入有效的出生日期。", valDobFuture: "出生日期不能是未来的日期。", valPhone: "请输入您的电话号码。", valPhoneInvalid: "请输入有效的10位电话号码。", valCity: "请输入您的城市。", valComplaint: "请描述今天什么在困扰您。", valComplaintShort: "请提供更多细节。", valOnset: "请告诉我们这是什么时候开始的。", valRedFlags: "请至少选择一个选项或'以上都没有'。", valMedical: "请至少选择一个选项或'以上都没有'。", valMedicalOther: "请告诉我们更多关于医疗状况的信息。", valConsent: "请在继续之前确认。",
-        callBannerTitle: "继续您与Sam的通话", callBannerBody: "再补充几个细节，以便我们的牙科团队审核您的病例。", samMentionedLabel: "Sam提到", samMentionedEditPrompt: "这还正确吗？如有需要请在上方编辑。"
+        callBannerTitle: "继续您与Sam的通话", callBannerBody: "再补充几个细节，以便我们的牙科团队审核您的病例。", samMentionedLabel: "Sam提到", samMentionedEditPrompt: "这还正确吗？如有需要请在上方编辑。",
+        choiceQuestion: "您今天因何而来？", choiceUrgentTitle: "有疼痛或感觉不对劲", choiceUrgentDesc: "疼痛、肿胀、受伤，或最近出现的问题。", choiceRoutineTitle: "预约、咨询或常规事项", choiceRoutineDesc: "预约、保险、洗牙或一般咨询。",
+        formTitleRoutine: "告诉我们您的需求", formSubRoutine: "提供一些信息，我们会将您接入Sam继续处理。", labelComplaintRoutine: "我们能为您做些什么？", placeholderComplaintRoutine: "例如：我想预约洗牙 / 我有关于保险的问题", btnContinueSam: "继续联系Sam", channelHelper: "语音临床分诊目前仅支持英语。Sam可以用上述任何语言与您短信交流。", savingLabel: "正在保存\u2026",
+        handoffTitleVoice: "您的信息已交给我们的牙科团队。", handoffSubVoice: "Sam将致电您，收集一些引导式的临床细节。", handoffTitleText: "您的信息已交给我们的牙科团队。", handoffSubText: "Sam将向您发送短信，询问一些引导式的临床问题。", handoffTitleRoutine: "收到。我们的团队已收到您的咨询。", handoffSubRoutine: "立即与Sam交谈\u2014\u2014您的信息已加载，可以从上次中断处继续。",
+        numberLabelCall: "Sam将从此号码致电您", numberLabelText: "Sam将从此号码向您发短信", numberSubCall: "请保存此号码，以免来电转入语音信箱。", numberSubText: "请保存此号码，以免短信被归为垃圾信息。",
+        warnStripCallStrong: "请勿忽略陌生号码", warnStripCallRest: "\u2014\u2014Sam的来电来自上方的833号码。", warnStripTextStrong: "请留意陌生号码", warnStripTextRest: "\u2014\u2014Sam的首条短信来自上方的833号码。", saveContactsBtn: "添加到联系人",
+        nextKicker: "接下来会怎样", nextStepCall1: "Sam来电并询问一组简短的临床问题\u2014\u2014疼痛、肿胀、病史、警示症状。", nextStepText1: "Sam向您发短信并询问一组简短的临床问题\u2014\u2014疼痛、肿胀、病史、警示症状。", nextStep2Urgent: "在Sam收集您的信息后，我们的牙科团队会审核您的病例。", nextStep3Urgent: "您将收到预约链接来安排复诊\u2014\u2014如果您的病例需要紧急关注，则会收到下一步指引。", nextStep1Routine: "Sam从表格中断处继续\u2014\u2014通过来电或短信，由您选择。", nextStep2Routine: "Sam会记录任何额外信息，并在您需要时安排预约时间。", nextStep3Routine: "我们的牙科团队会审核并向您确认。",
+        bookingStripTitle: "已经确定要预约了？", bookingStripLink: "直接通过Martindale预约 \u2192", prefillHelper: "已根据您与Sam的对话预填\u2014\u2014如有需要请修改。"
       }
     };
 
     var RTL_LANGS = ["ar", "fa"];
+    // §4.1.1 single source of truth for supported non-English languages.
+    // To add future langs (ur, ro, uk per Afaf): add the code here + a T section + a LANG_BANNER entry. No other code changes.
+    var supportedLangs = ["ar", "es", "fr", "fa", "hi", "pa", "so", "zh"];
+    // Banner copy keyed by DETECTED language (shown in that language's own script). §9.
+    var LANG_BANNER = {
+      ar: "هذه الصفحة متوفرة أيضاً بالعربية.",
+      es: "Esta pagina tambien esta disponible en Espanol.",
+      fr: "Cette page est aussi disponible en Francais.",
+      fa: "این صفحه به فارسی نیز در دسترس است.",
+      hi: "यह पेज हिंदी में भी उपलब्ध है।",
+      pa: "ਇਹ ਪੰਨਾ ਪੰਜਾਬੀ ਵਿੱਚ ਵੀ ਉਪਲਬਧ ਹੈ।",
+      so: "Boggan wuxuu sidoo kale ku diyaar yahay Soomaali.",
+      zh: "本页面也提供中文版本。"
+    };
+    // Switch/Dismiss labels in the DETECTED language (banner is pre-language-choice, so don't rely on currentLang).
+    var LANG_BANNER_SWITCH = {
+      ar: "تبديل", es: "Cambiar", fr: "Changer", fa: "تغییر",
+      hi: "बदलें", pa: "ਬਦਲੋ", so: "Beddel", zh: "切换"
+    };
 
     function isSmsMode() { return currentLang !== "en" || preferredChannel === "sms"; }
 
@@ -1323,14 +1882,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       document.documentElement.setAttribute("lang", lang);
       var sms = isSmsMode();
 
-      // Lang bar active state
-      document.querySelectorAll(".lang-btn").forEach(function(btn) {
+      // Language toggle: update menu active state + current-language label
+      var langNames = { en:"English", ar:"العربية", hi:"हिन्दी", pa:"ਪੰਜਾਬੀ", fr:"Français", fa:"فارسی", so:"Soomaali", es:"Español", zh:"中文" };
+      document.querySelectorAll(".lang-menu-item").forEach(function(btn) {
         btn.classList.toggle("active", btn.getAttribute("data-lang") === lang);
       });
+      var curLabel = document.getElementById("lang-toggle-current");
+      if (curLabel) curLabel.textContent = langNames[lang] || "English";
 
-      // Text Sam button visibility
-      var textBtn = document.getElementById("intake-text-btn");
-      if (textBtn) textBtn.classList.toggle("hidden", lang !== "en");
+      // (Submit-button visibility by language is handled by updateSubmitArea(),
+      //  invoked via selectInquiryType() at the end of this function.)
 
       // Welcome screen
       var heroKicker = document.getElementById("hero-kicker");
@@ -1440,7 +2001,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       // Buttons
       document.getElementById("back-to-welcome-btn").textContent = t("btnBack");
-      document.getElementById("intake-submit-btn").textContent = sms ? t("btnSubmitSms") : t("btnSubmit");
+
+      // Bifurcation choice cards
+      var setCardText = function(id, key) { var el = document.getElementById(id); if (el) el.textContent = t(key); };
+      setCardText("choice-label", "choiceQuestion");
+      setCardText("choice-urgent-title", "choiceUrgentTitle");
+      setCardText("choice-urgent-desc", "choiceUrgentDesc");
+      setCardText("choice-routine-title", "choiceRoutineTitle");
+      setCardText("choice-routine-desc", "choiceRoutineDesc");
+
+      // Re-apply branch-conditional copy (title/sub/complaint label) and re-render the
+      // submit area in the new language. Reads the current inquiry type so a mid-form
+      // language switch preserves the selected branch rather than resetting it.
+      var curType = (document.getElementById("inquiry-type") || {}).value || "clinical";
+      selectInquiryType(curType);
 
       // Medical/coverage helpers
       var medHelper = document.getElementById("med-helper");
@@ -1466,12 +2040,31 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     // Language bar click handler
-    document.getElementById("lang-bar").addEventListener("click", function(e) {
-      var btn = e.target.closest(".lang-btn");
-      if (!btn) return;
-      var lang = btn.getAttribute("data-lang");
-      if (lang && T[lang]) applyLanguage(lang);
-    });
+    // Compact language toggle + dropdown (replaces nine-pill bar)
+    (function() {
+      var toggle = document.getElementById("lang-toggle");
+      var menu = document.getElementById("lang-menu");
+      if (!toggle || !menu) return;
+      toggle.addEventListener("click", function(e) {
+        e.stopPropagation();
+        var open = menu.classList.toggle("open");
+        toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+      menu.addEventListener("click", function(e) {
+        var item = e.target.closest(".lang-menu-item");
+        if (!item) return;
+        var lang = item.getAttribute("data-lang");
+        if (lang && T[lang]) applyLanguage(lang);
+        menu.classList.remove("open");
+        toggle.setAttribute("aria-expanded", "false");
+      });
+      document.addEventListener("click", function(e) {
+        if (!menu.contains(e.target) && e.target !== toggle && !toggle.contains(e.target)) {
+          menu.classList.remove("open");
+          toggle.setAttribute("aria-expanded", "false");
+        }
+      });
+    })();
 
     // ── Variant system ───────────────────────────────────────────
     var VARIANTS = {
@@ -1540,11 +2133,55 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     var srcParam = urlParams.get("src");
     var variantSrc = srcParam || (variantKey ? "lp_" + variantKey : null);
 
-    // Auto-select language from URL param (e.g., ?lang=ar from Jackson Square page)
-    var langParam = urlParams.get("lang");
-    if (langParam && T[langParam]) {
-      applyLanguage(langParam);
+    // ── LANGUAGE RESOLUTION (§4.1.1) ────────────────────────────────────
+    // Precedence: (1) ?lang= URL param wins and persists; (2) stored
+    // vd_lang_choice applies silently; (3) browser-language match shows a
+    // first-visit banner offering to switch; (4) default English.
+    // Rod's ads do NOT tag ?lang= yet, so browser-detect is the primary
+    // non-English entry path.
+    function persistLangChoice(code) {
+      try { localStorage.setItem("vd_lang_choice", code); } catch (e) {}
     }
+    function showLangBanner(detected) {
+      var banner = document.getElementById("lang-banner");
+      var textEl = document.getElementById("lang-banner-text");
+      var switchBtn = document.getElementById("lang-banner-switch");
+      var dismissBtn = document.getElementById("lang-banner-dismiss");
+      if (!banner || !textEl || !switchBtn || !dismissBtn) return;
+      textEl.textContent = LANG_BANNER[detected] || ("This page is also available in " + detected + ".");
+      textEl.setAttribute("dir", RTL_LANGS.indexOf(detected) >= 0 ? "rtl" : "ltr");
+      switchBtn.textContent = LANG_BANNER_SWITCH[detected] || "Switch";
+      banner.classList.add("show");
+      switchBtn.onclick = function() {
+        persistLangChoice(detected);
+        applyLanguage(detected);
+        banner.classList.remove("show");
+      };
+      dismissBtn.onclick = function() {
+        persistLangChoice("en");
+        banner.classList.remove("show");
+      };
+    }
+    (function resolveLanguage() {
+      var langParam = urlParams.get("lang");
+      if (langParam && T[langParam]) {
+        applyLanguage(langParam);
+        persistLangChoice(langParam);
+        return;
+      }
+      var stored = null;
+      try { stored = localStorage.getItem("vd_lang_choice"); } catch (e) {}
+      if (stored && T[stored]) {
+        if (stored !== "en") applyLanguage(stored);
+        return; // stored choice (incl. "en") suppresses the banner
+      }
+      // First visit, no URL param: detect browser language.
+      var nav = (navigator.languages && navigator.languages[0]) || navigator.language || "";
+      var detected = nav.toLowerCase().split("-")[0];
+      if (supportedLangs.indexOf(detected) >= 0 && T[detected]) {
+        showLangBanner(detected); // stay in English until the user chooses
+      }
+    })();
     var welcomeScreen = document.getElementById("screen-welcome");
     var formScreen = document.getElementById("screen-form");
     var handoffScreen = document.getElementById("screen-handoff");
@@ -1709,7 +2346,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     setupExclusiveCheckboxes();
     setupPhoneFormatting();
-    setupIntakeSubmit();
+    // On-load: initialize the default (URGENT/clinical) branch. This renders the
+    // submit area via updateSubmitArea() → wireSubmitButtons(), so the dynamic
+    // buttons exist and are wired before any interaction. Replaces setupIntakeSubmit().
+    selectInquiryType("clinical");
 
     function setupExclusiveCheckboxes() {
       var redFlagNone = document.getElementById("rf-none");
@@ -1811,13 +2451,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     //   symptom keywords. This ensures non-English speakers always see the
     //   onset field (since the English regex won't match their language),
     //   while preserving the smooth UX for English admin requests.
-    var SYMPTOM_KEYWORDS = /\b(pain|painful|hurt|ache|aching|sore|tender|throb|sharp|burn|sting|discomfort|uncomfortable|swell|swollen|puffy|inflam|bump|lump|broke|broken|crack|fractur|shatter|split|snap|chip|bleed|blood|bled|knock|loose|wobbly|wiggly|shift|moved|moving|sensitive|hot|cold|infect|fever|abscess|pus|drain|trauma|fall|fell|impact|hit|struck|punch|accident|collision|injur|numb|tingl|extract|pull|remov|filling|crown|cap|wisdom|cavity|decay|rotten|emergency|urgent|gum)|fell.out|came.out|came.off|broke.off|knocked.out|lost.{0,6}(tooth|teeth|filling|crown|cap)/i;
+    var SYMPTOM_KEYWORDS = /toothache|tooth.?ache|tooth.?pain|\b(pain|painful|hurt|ache|aching|sore|tender|throb|sharp|burn|sting|discomfort|uncomfortable|swell|swollen|puffy|inflam|bump|lump|broke|broken|crack|fractur|shatter|split|snap|chip|bleed|blood|bled|knock|loose|wobbly|wiggly|shift|moved|moving|sensitive|hot|cold|infect|fever|abscess|pus|drain|trauma|fall|fell|impact|hit|struck|punch|accident|collision|injur|numb|tingl|extract|pull|remov|filling|crown|cap|wisdom|cavity|decay|rotten|emergency|urgent|gum)|fell.out|came.out|came.off|broke.off|knocked.out|lost.{0,6}(tooth|teeth|filling|crown|cap)/i;
     var ADMIN_KEYWORDS = /\b(book|booking|appointment|cleaning|checkup|schedule|reschedul|cost|price|fee|insurance|coverage|hours|open|location|address|directions|parking|new patient|consult|consultation|cdcp|odsp|ow)\b/i;
     var onsetWrapper = document.getElementById("onset-wrapper");
     var onsetSelect = document.getElementById("onset-bucket");
     var ccTextarea = document.getElementById("chief-complaint");
 
     function updateOnsetVisibility() {
+      // Guard: these module vars are assigned later in the script; an early
+      // init-time applyLanguage() may reach here before assignment.
+      if (!onsetWrapper || !onsetSelect || !ccTextarea) return;
+      // On ROUTINE branch, onset is always hidden (handled by selectInquiryType).
+      if (document.getElementById("inquiry-type").value === "admin") return;
       var text = ccTextarea.value.trim();
       var isAdminOnly = text.length > 2 && ADMIN_KEYWORDS.test(text) && !SYMPTOM_KEYWORDS.test(text);
       if (isAdminOnly) {
@@ -1829,7 +2474,152 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       }
     }
     ccTextarea.addEventListener("input", updateOnsetVisibility);
+
+    /* Optional urgency nudge: routine-declared + symptom keywords -> gentle,
+     * non-blocking suggestion to switch. Never auto-switches; patient decides.
+     * Preserves the patient-declared architecture; this is a prompt, not a gate. */
+    var urgencyNudgeEl = document.getElementById("urgency-nudge");
+    var urgencyNudgeDismissed = false;
+    function evaluateUrgencyNudge() {
+      if (!urgencyNudgeEl) return;
+      var isAdmin = document.getElementById("inquiry-type").value === "admin";
+      var text = ccTextarea.value.trim();
+      var looksClinical = text.length > 2 && SYMPTOM_KEYWORDS.test(text);
+      urgencyNudgeEl.style.display = (isAdmin && looksClinical && !urgencyNudgeDismissed) ? "flex" : "none";
+    }
+    ccTextarea.addEventListener("input", evaluateUrgencyNudge);
+    (function() {
+      var sw = document.getElementById("urgency-nudge-switch");
+      var dm = document.getElementById("urgency-nudge-dismiss");
+      if (sw) sw.addEventListener("click", function() {
+        urgencyNudgeEl.style.display = "none";
+        selectInquiryType("clinical");
+        try { document.getElementById("choice-urgent").scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) {}
+      });
+      if (dm) dm.addEventListener("click", function() {
+        urgencyNudgeDismissed = true;
+        urgencyNudgeEl.style.display = "none";
+      });
+    })();
+
+    /* Scroll reveals for below-the-fold welcome blocks (Apple-flair).
+     * Guarded by reduced-motion; falls back to instant reveal if unsupported. */
+    (function() {
+      var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var els = document.querySelectorAll(".mk-reveal");
+      if (!els.length) return;
+      if (reduce || !("IntersectionObserver" in window)) {
+        els.forEach(function(e) { e.classList.add("mk-revealed"); });
+        return;
+      }
+      var io = new IntersectionObserver(function(entries) {
+        entries.forEach(function(en) {
+          if (en.isIntersecting) { en.target.classList.add("mk-revealed"); io.unobserve(en.target); }
+        });
+      }, { threshold: 0.12 });
+      els.forEach(function(e) { io.observe(e); });
+    })();
+
     updateOnsetVisibility();
+
+    /* BIFURCATION_REBUILD_2026_05_19 — patient-declared urgency routing.
+     * Toggles conditional clinical sections, channel-choice submit, and copy
+     * based on the patient's self-declared inquiry type. This is the single
+     * urgency-routing decision point (no algorithmic detection). */
+    function selectInquiryType(type) {
+      var inquiryField = document.getElementById("inquiry-type");
+      inquiryField.value = type;
+      var isClinical = (type === "clinical");
+
+      // Card selected states
+      document.getElementById("choice-urgent").classList.toggle("selected", isClinical);
+      document.getElementById("choice-routine").classList.toggle("selected", !isClinical);
+
+      // Clinical-only sections — hidden on ROUTINE
+      var clinicalEls = ["redflags-wrapper", "medical-section", "current-meds-section", "coverage-section", "dob-field-wrapper", "city-field-wrapper"];
+      clinicalEls.forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.style.display = isClinical ? "" : "none";
+      });
+
+      // Onset: clinical only (and subject to admin-keyword auto-hide within clinical)
+      var onsetEl = document.getElementById("onset-wrapper");
+      if (onsetEl) {
+        if (isClinical) { onsetEl.style.display = "block"; updateOnsetVisibility(); }
+        else { onsetEl.style.display = "none"; if (onsetSelect) onsetSelect.value = "not_applicable"; }
+      }
+
+      // Avulsion sub-field: clinical only
+      var avEl = document.getElementById("avulsion-time-wrapper");
+      if (avEl && !isClinical) avEl.style.display = "none";
+
+      // Routine-only: best time to reach
+      var btEl = document.getElementById("best-time-wrapper");
+      if (btEl) btEl.style.display = isClinical ? "none" : "block";
+
+      // Copy: title + sub + chief-complaint label/placeholder
+      var titleEl = document.getElementById("form-title");
+      var subEl = document.getElementById("form-sub");
+      var ccLabel = document.querySelector('label[for="chief-complaint"]');
+      if (isClinical) {
+        if (titleEl) titleEl.textContent = t("formTitle");
+        if (subEl) subEl.textContent = t("formSub");
+        if (ccLabel) ccLabel.textContent = t("labelComplaint");
+        if (ccTextarea) ccTextarea.setAttribute("placeholder", t("placeholderComplaint"));
+      } else {
+        if (titleEl) titleEl.textContent = t("formTitleRoutine");
+        if (subEl) subEl.textContent = t("formSubRoutine");
+        if (ccLabel) ccLabel.textContent = t("labelComplaintRoutine");
+        if (ccTextarea) ccTextarea.setAttribute("placeholder", t("placeholderComplaintRoutine"));
+      }
+
+      // Pre-submit note: clinical mentions the 833 callback; routine says the
+      // patient initiates contact (no auto-call, no 833 exposure on routine).
+      var noteClinical = document.getElementById("pre-submit-note-clinical");
+      var noteRoutine = document.getElementById("pre-submit-note-routine");
+      if (noteClinical) noteClinical.style.display = isClinical ? "" : "none";
+      if (noteRoutine) noteRoutine.style.display = isClinical ? "none" : "";
+
+      // Submit area: URGENT = channel choice (lang-gated); ROUTINE = single continue
+      updateSubmitArea(isClinical);
+      if (typeof evaluateUrgencyNudge === "function") evaluateUrgencyNudge();
+    }
+
+    /* Renders the submit button area based on branch + language constraint.
+     * URGENT English: Talk + Text. URGENT non-English: Text only (Emergency Sam
+     * voice is English-only). ROUTINE any language: single Continue button. */
+    function updateSubmitArea(isClinical) {
+      var rightEl = document.getElementById("intake-action-right");
+      var helperEl = document.getElementById("channel-helper");
+      if (!rightEl) return;
+      if (isClinical) {
+        if (currentLang === "en") {
+          rightEl.innerHTML =
+            '<div class="channel-row">' +
+            '<button class="btn-primary" id="intake-talk-btn" type="button">' + escapeHtml(t("btnSubmit")) + '</button>' +
+            '<button class="btn-text-sam" id="intake-text-btn" type="button">' + escapeHtml(t("btnSubmitSms")) + '</button>' +
+            '</div>';
+          if (helperEl) helperEl.style.display = "none";
+        } else {
+          rightEl.innerHTML =
+            '<button class="btn-primary" id="intake-text-btn" type="button" style="width:100%;">' + escapeHtml(t("btnSubmitSms")) + '</button>';
+          if (helperEl) { helperEl.textContent = t("channelHelper"); helperEl.style.display = "block"; }
+        }
+      } else {
+        // ROUTINE: General Sam is multilingual on BOTH voice and text, so show
+        // both channel buttons in every language (unlike URGENT, which hides
+        // Talk for non-English because Emergency Sam voice is English-only).
+        rightEl.innerHTML =
+          '<div class="channel-row">' +
+          '<button class="btn-primary" id="intake-talk-btn" type="button">' + escapeHtml(t("btnSubmit")) + '</button>' +
+          '<button class="btn-text-sam" id="intake-text-btn" type="button">' + escapeHtml(t("btnSubmitSms")) + '</button>' +
+          '</div>';
+        if (helperEl) helperEl.style.display = "none";
+      }
+      wireSubmitButtons();
+    }
+
+    function escapeHtml(s) { var d = document.createElement("div"); d.textContent = s == null ? "" : s; return d.innerHTML; }
 
     function setupPhoneFormatting() {
       var phoneInput = document.getElementById("patient-phone");
@@ -1839,24 +2629,30 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       });
     }
 
-    function setupIntakeSubmit() {
-      document.getElementById("intake-submit-btn").addEventListener("click", function() {
-        preferredChannel = "voice";
-        handleIntakeSubmit();
-      });
-      document.getElementById("intake-text-btn").addEventListener("click", function() {
-        preferredChannel = "sms";
-        handleIntakeSubmit();
-      });
+    function setChannelChosen(val) {
+      var f = document.getElementById("channel-chosen");
+      if (f) f.value = val || "";
     }
 
-    async function handleIntakeSubmit() {
-      var submitBtn = document.getElementById("intake-submit-btn");
-      var textBtn = document.getElementById("intake-text-btn");
+    /* Re-wires the dynamically-rendered submit buttons after every updateSubmitArea()
+     * render. The button set varies by branch + language, so we wire whichever exist
+     * by id. Using onclick (not addEventListener) avoids stacking handlers across
+     * re-renders. This replaces the old setupIntakeSubmit, which hardcoded
+     * #intake-submit-btn / #intake-text-btn that no longer exist on the URGENT branch. */
+    function wireSubmitButtons() {
+      var talkBtn = document.getElementById("intake-talk-btn");   // voice (URGENT en, + ROUTINE all langs)
+      var textBtn = document.getElementById("intake-text-btn");   // text  (URGENT any lang, + ROUTINE all langs)
+      // Both branches now use talk/text. channel_chosen is set to the picked
+      // channel; for ROUTINE the page fires initiate-routine-contact after submit.
+      if (talkBtn) talkBtn.onclick = function() { preferredChannel = "voice"; setChannelChosen("voice"); handleIntakeSubmit(talkBtn); };
+      if (textBtn) textBtn.onclick = function() { preferredChannel = "sms"; setChannelChosen("sms"); handleIntakeSubmit(textBtn); };
+    }
+
+    async function handleIntakeSubmit(clickedBtn) {
       clearIntakeError();
-      submitBtn.disabled = true;
-      if (textBtn) textBtn.disabled = true;
-      submitBtn.textContent = "Saving...";
+      var actionBtns = document.querySelectorAll("#intake-action-right button");
+      actionBtns.forEach(function(b) { b.disabled = true; });
+      if (clickedBtn) clickedBtn.textContent = t("savingLabel");
 
       try {
         var formData = collectIntakeFormData();
@@ -1889,22 +2685,41 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         }
 
         clearFormState();
+
+        // ROUTINE (admin): the patient chose Talk or Text on the form. intake-trigger
+        // does NOT contact them (admin early-return), so the page initiates the
+        // outbound contact here — Sam calls (voice) or texts (sms) from 833 with the
+        // case_id carried through, so she continues from the form. Fire-and-await so
+        // the handoff can reflect success/failure, but don't block the handoff on it.
+        var inqType = document.getElementById("inquiry-type").value;
+        var chosen = document.getElementById("channel-chosen").value;
+        if (inqType === "admin" && (chosen === "voice" || chosen === "sms") && result.case_id) {
+          try {
+            await fetch(INITIATE_ROUTINE_CONTACT_URL, {
+              method: "POST",
+              headers: { "Content-Type": "application/json", "x-vd-secret": INTAKE_SECRET },
+              body: JSON.stringify({ case_id: result.case_id, channel: chosen }),
+            });
+          } catch (e) { /* non-fatal: handoff still instructs the patient */ }
+        }
+
         showHandoff(result.case_id, result.call_initiated === true, false);
       } catch (err) {
         var msg = (err && err.message) ? err.message : "Unexpected error while saving your information.";
         showIntakeError(msg);
       } finally {
-        submitBtn.disabled = false;
-        if (textBtn) textBtn.disabled = false;
-        // For English, submit button is always "Talk to Sam" (text option is separate button)
-        // For non-English, submit button shows SMS label (text button is hidden)
-        var langSms = currentLang !== "en";
-        submitBtn.textContent = langSms ? t("btnSubmitSms") : t("btnSubmit");
+        // Re-render the submit area: restores button labels, re-enables them, and
+        // re-wires click handlers. On success we've already navigated to the handoff
+        // (form hidden), so this is a harmless restore of the now-hidden form.
+        updateSubmitArea(document.getElementById("inquiry-type").value === "clinical");
       }
     }
 
     function collectIntakeFormData() {
       return {
+        inquiryType: (document.getElementById("inquiry-type") || {}).value || "clinical",
+        channelChosen: (document.getElementById("channel-chosen") || {}).value || null,
+        bestTime: getOptionalValue("best-time"),
         patientName: getValue("patient-name"),
         patientDob: getValue("patient-dob"),
         patientPhone: normalizePhone(getValue("patient-phone")),
@@ -1945,20 +2760,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     function validateIntakeFormData(data) {
+      // Fields required on BOTH branches: identity + contact + what's going on + consent.
       if (!data.patientName) return "Please enter your full name.";
       if (data.patientName.length < 2) return "Please enter a valid full name.";
-      if (!data.patientDob) return "Please enter your date of birth.";
-      if (!isValidDateInput(data.patientDob)) return "Please enter a valid date of birth.";
-      if (isFutureDate(data.patientDob)) return "Date of birth cannot be in the future.";
       if (!data.patientPhone) return "Please enter your phone number.";
       if (!looksLikeNorthAmericanPhone(data.patientPhone)) return "Please enter a valid 10-digit phone number, or 11 digits starting with 1.";
-      if (!data.patientCity) return "Please enter your city.";
       if (!data.chiefComplaint) return "Please describe how we can help you today.";
       if (data.chiefComplaint.length < 3) return "Please provide a little more detail about your concern.";
-      if (onsetWrapper.style.display !== "none" && !data.onsetBucket) return "Please tell us when this started.";
-      if (!atLeastOneTrue(data.intakeRedFlags)) return "Please select at least one option under current symptoms, or choose 'None of the above.'";
-      if (!atLeastOneTrue(data.intakeMedicalFlags)) return "Please select at least one option under relevant medical information, or choose 'None of the above.'";
-      if (data.intakeMedicalFlags.other_important_medical_condition && !data.intakeMedicalFlags.other_medical_detail) return "Please tell us more about the other important medical condition.";
+
+      // Clinical-only fields (URGENT branch). On the ROUTINE/admin branch these
+      // inputs are hidden by selectInquiryType, so requiring them would block a
+      // valid booking/inquiry submission. Spec §3 / §5.2: bifurcate validation.
+      if (data.inquiryType === "clinical") {
+        if (!data.patientDob) return "Please enter your date of birth.";
+        if (!isValidDateInput(data.patientDob)) return "Please enter a valid date of birth.";
+        if (isFutureDate(data.patientDob)) return "Date of birth cannot be in the future.";
+        if (!data.patientCity) return "Please enter your city.";
+        if (onsetWrapper && onsetWrapper.style.display !== "none" && !data.onsetBucket) return "Please tell us when this started.";
+        if (!atLeastOneTrue(data.intakeRedFlags)) return "Please select at least one option under current symptoms, or choose 'None of the above.'";
+        if (!atLeastOneTrue(data.intakeMedicalFlags)) return "Please select at least one option under relevant medical information, or choose 'None of the above.'";
+        if (data.intakeMedicalFlags.other_important_medical_condition && !data.intakeMedicalFlags.other_medical_detail) return "Please tell us more about the other important medical condition.";
+      }
+
       if (!data.acknowledged) return "Please confirm the acknowledgement before continuing.";
       return null;
     }
@@ -2002,6 +2825,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         intake_acknowledged_at: new Date().toISOString(),
         patient_language: currentLang,
         preferred_channel: preferredChannel,
+        // Patient-declared bifurcation (spec §3). inquiry_type drives whether
+        // intake-trigger fires Emergency Sam (clinical) vs General Sam (admin).
+        // channel_chosen is the URGENT-branch voice/sms selection, or null on
+        // the ROUTINE branch (channel is picked later on the handoff screen).
+        inquiry_type: data.inquiryType || "clinical",
+        channel_chosen: data.channelChosen || null,
+        // ROUTINE-branch "best time to reach you" select; null on URGENT.
+        // Backend dependency: triage_cases.best_time_bucket TEXT NULL +
+        // intake-trigger must accept this field (handled in item 6).
+        best_time_bucket: data.bestTime || null,
         // When present, intake-trigger should UPDATE the existing case row
         // rather than INSERT a new one. Backend dependency: intake-trigger
         // must handle existing_case_id and merge form data with Sam's
@@ -2011,69 +2844,133 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       };
     }
 
+    // Renders one of three handoff variants (spec §4.3), driven by the
+    // patient-declared bifurcation captured on the form:
+    //   inquiry_type === "admin"            → ROUTINE (+ booking strip)
+    //   inquiry_type === "clinical", voice  → URGENT-voice
+    //   inquiry_type === "clinical", sms    → URGENT-text
+    // The form is hidden (not destroyed), so the hidden fields are still
+    // readable here. callInitiated / isDuplicate are retained for call-site
+    // compatibility; the variant is driven by inquiry_type + channel_chosen.
     function showHandoff(caseId, callInitiated, isDuplicate) {
       formScreen.classList.remove("show");
       handoffScreen.classList.add("show");
 
-      var handoffTitle = document.querySelector(".handoff-title");
-      var handoffCopy = document.getElementById("handoff-copy");
-      var handoffPanelTitle = document.querySelector(".handoff-panel-title");
-      var handoffPanelCopy = document.getElementById("handoff-panel-copy");
+      var inquiryType = (document.getElementById("inquiry-type") || {}).value || "clinical";
+      var channelChosen = (document.getElementById("channel-chosen") || {}).value || "";
+
+      var titleEl = document.getElementById("handoff-title");
+      var subEl = document.getElementById("handoff-sub");
+      var numberCard = document.getElementById("number-card");
+      var numberLabel = document.getElementById("number-label");
+      var numberValue = document.getElementById("number-value");
+      var numberSub = document.getElementById("number-sub");
+      var numberSaveBtn = document.getElementById("number-save-btn");
+      var routineActions = document.getElementById("routine-actions");
+      var routineCallBtn = document.getElementById("routine-call-btn");
+      var routineTextBtn = document.getElementById("routine-text-btn");
+      var warnStrip = document.getElementById("handoff-warn-strip");
+      var warnStrong = document.getElementById("warn-strip-strong");
+      var warnRest = document.getElementById("warn-strip-rest");
+      var bookingStrip = document.getElementById("handoff-booking-strip");
+      var bookingTitle = document.getElementById("booking-strip-title");
+      var bookingLink = document.getElementById("booking-strip-link");
+      var nextKicker = document.getElementById("next-kicker");
+      var step1 = document.getElementById("next-step-1");
+      var step2 = document.getElementById("next-step-2");
+      var step3 = document.getElementById("next-step-3");
       var caseStatus = document.getElementById("success-case-id");
-      var expectCallCard = document.getElementById("expect-call-card");
-      var incomingNumberCard = document.getElementById("incoming-number-card");
-      var incomingNumberValue = document.getElementById("incoming-number-value");
-      var incomingNumberLabel = document.querySelector(".incoming-number-label");
-      var incomingNumberSub = document.querySelector(".incoming-number-sub");
-      var expectCallTitle = document.querySelector(".expect-call-title");
-      var expectCallCopy = document.querySelector(".expect-call-copy");
-      var callActions = document.getElementById("call-actions");
-      var sms = isSmsMode();
 
+      // Reset all variant-specific blocks.
+      numberCard.style.display = "none";
+      numberSaveBtn.style.display = "none";
+      routineActions.style.display = "none";
+      warnStrip.style.display = "none";
+      bookingStrip.style.display = "none";
+      numberValue.textContent = EXPECTED_CALLER_NUMBER_DISPLAY;
+      nextKicker.textContent = t("nextKicker");
       caseStatus.textContent = caseId ? "Case reference: " + caseId : "Intake submitted successfully";
-      incomingNumberValue.textContent = EXPECTED_CALLER_NUMBER_DISPLAY;
 
-      if (sms) {
-        handoffTitle.textContent = t("handoffTitleSms");
-        handoffCopy.textContent = t("handoffCopySms");
-        handoffPanelTitle.textContent = t("handoffPanelTitle");
-        handoffPanelCopy.textContent = t("handoffPanelCopySms");
-        if (incomingNumberLabel) incomingNumberLabel.textContent = t("incomingLabelSms");
-        if (incomingNumberSub) incomingNumberSub.textContent = t("incomingSubSms");
-        if (expectCallTitle) expectCallTitle.textContent = t("expectTitleSms");
-        if (expectCallCopy) expectCallCopy.textContent = t("expectCopySms");
-        expectCallCard.style.display = "block";
-        incomingNumberCard.style.display = "block";
-        callActions.innerHTML = "";
-      } else if (isDuplicate) {
-        handoffTitle.textContent = t("handoffTitle");
-        handoffCopy.textContent = t("handoffCopy");
-        handoffPanelCopy.textContent = "We already have your information. Sam will call the number you provided. If you don't receive a call, please call Sam directly using the number below.";
-        expectCallCard.style.display = "block";
-        incomingNumberCard.style.display = "block";
-        callActions.innerHTML =
-          '<a class="call-btn" href="' + FALLBACK_DIAL_NUMBER_HREF + '">Call Sam now</a>' +
-          '<a class="call-number" href="' + FALLBACK_DIAL_NUMBER_HREF + '">' + FALLBACK_DIAL_NUMBER_DISPLAY + '</a>' +
-          '<div class="call-fallback">If you have already spoken with Sam, no further action is needed.</div>';
-      } else if (callInitiated) {
-        handoffTitle.textContent = t("handoffTitle");
-        handoffCopy.textContent = t("handoffCopy");
-        handoffPanelCopy.textContent = t("handoffPanelCopyCall");
-        expectCallCard.style.display = "block";
-        incomingNumberCard.style.display = "block";
-        callActions.innerHTML =
-          '<div class="call-fallback">If you don\'t receive a call, you can also call ' +
-          '<a class="call-number" href="' + FALLBACK_DIAL_NUMBER_HREF + '">' + FALLBACK_DIAL_NUMBER_DISPLAY + '</a>.</div>';
+      if (inquiryType === "admin") {
+        // ── ROUTINE variant ─────────────────────────────────────────────
+        // The patient chose Talk/Text on the form; the page has already fired
+        // initiate-routine-contact, so Sam is reaching out now from 833. This
+        // mirrors the URGENT handoff: set expectations for the chosen channel,
+        // show the 833 number card, keep the direct-booking option.
+        var routineVoice = (channelChosen === "voice");
+
+        if (routineVoice) {
+          titleEl.textContent = t("handoffTitleRoutineVoice");
+          subEl.textContent = t("handoffSubRoutineVoice");
+          numberLabel.textContent = t("numberLabelCall");
+          numberSub.textContent = t("numberSubCall");
+          warnStrong.textContent = t("warnStripCallStrong");
+          warnRest.textContent = t("warnStripCallRest");
+          step1.textContent = t("nextStepRoutineContactVoice");
+        } else {
+          titleEl.textContent = t("handoffTitleRoutineText");
+          subEl.textContent = t("handoffSubRoutineText");
+          numberLabel.textContent = t("numberLabelText");
+          numberSub.textContent = t("numberSubText");
+          warnStrong.textContent = t("warnStripTextStrong");
+          warnRest.textContent = t("warnStripTextRest");
+          step1.textContent = t("nextStepRoutineContactText");
+        }
+        numberValue.textContent = EXPECTED_CALLER_NUMBER_DISPLAY; // 833 — Sam's number
+        numberCard.style.display = "block";
+        warnStrip.style.display = "flex";
+
+        // vCard to save Sam's 833 number.
+        var rvcard = "BEGIN:VCARD\nVERSION:3.0\nFN:Sam \u2014 Martindale Dental\nORG:Martindale Dental\nTEL;TYPE=CELL,VOICE:+18339593932\nEND:VCARD";
+        numberSaveBtn.href = "data:text/vcard;charset=utf-8," + encodeURIComponent(rvcard);
+        numberSaveBtn.setAttribute("download", "Sam-Martindale.vcf");
+        numberSaveBtn.textContent = t("saveContactsBtn");
+        numberSaveBtn.style.display = "inline-flex";
+
+        // Direct-booking option remains available for routine patients.
+        bookingTitle.textContent = t("bookingStripTitle");
+        bookingLink.textContent = t("bookingStripLink");
+        bookingLink.href = MAXASSIST_BOOKING_URL;
+        bookingStrip.style.display = "flex";
+
+        step2.textContent = t("nextStep2Routine");
+        step3.textContent = t("nextStep3Routine");
       } else {
-        handoffTitle.textContent = t("handoffTitle");
-        handoffCopy.textContent = t("handoffCopy");
-        handoffPanelCopy.textContent = "Your intake has been received. Please call Sam now to continue your triage assessment.";
-        expectCallCard.style.display = "none";
-        incomingNumberCard.style.display = "none";
-        callActions.innerHTML =
-          '<a class="call-btn" href="' + FALLBACK_DIAL_NUMBER_HREF + '">Call Sam now</a>' +
-          '<a class="call-number" href="' + FALLBACK_DIAL_NUMBER_HREF + '">' + FALLBACK_DIAL_NUMBER_DISPLAY + '</a>' +
-          '<div class="call-fallback">If the button above does not work, dial the number shown here.</div>';
+        // ── URGENT variants ─────────────────────────────────────────────
+        // Default channel: explicit choice wins; otherwise fall back to
+        // SMS mode (non-English clinical is always text — Emergency Sam
+        // voice is English-only).
+        var voice = channelChosen ? (channelChosen === "voice") : !isSmsMode();
+
+        if (voice) {
+          titleEl.textContent = t("handoffTitleVoice");
+          subEl.textContent = t("handoffSubVoice");
+          numberLabel.textContent = t("numberLabelCall");
+          numberSub.textContent = t("numberSubCall");
+          warnStrong.textContent = t("warnStripCallStrong");
+          warnRest.textContent = t("warnStripCallRest");
+          step1.textContent = t("nextStepCall1");
+        } else {
+          titleEl.textContent = t("handoffTitleText");
+          subEl.textContent = t("handoffSubText");
+          numberLabel.textContent = t("numberLabelText");
+          numberSub.textContent = t("numberSubText");
+          warnStrong.textContent = t("warnStripTextStrong");
+          warnRest.textContent = t("warnStripTextRest");
+          step1.textContent = t("nextStepText1");
+        }
+        step2.textContent = t("nextStep2Urgent");
+        step3.textContent = t("nextStep3Urgent");
+
+        // vCard so the patient can save the 833 number before Sam reaches out.
+        var vcard = "BEGIN:VCARD\nVERSION:3.0\nFN:Sam \u2014 Martindale Dental\nORG:Martindale Dental\nTEL;TYPE=CELL,VOICE:+18339593932\nEND:VCARD";
+        numberSaveBtn.href = "data:text/vcard;charset=utf-8," + encodeURIComponent(vcard);
+        numberSaveBtn.setAttribute("download", "Sam-Martindale.vcf");
+        numberSaveBtn.textContent = t("saveContactsBtn");
+        numberSaveBtn.style.display = "inline-flex";
+
+        numberCard.style.display = "block";
+        warnStrip.style.display = "flex";
       }
 
       window.scrollTo({ top: 0, behavior: "smooth" });
