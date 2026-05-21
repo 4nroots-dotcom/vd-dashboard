@@ -186,9 +186,9 @@ window.addEventListener('DOMContentLoaded',function(){
 <div class="widget" id="widget-form">
   <div class="widget-header">
     <div class="widget-title" id="widget-title">How can Martindale Dental<br><span class="widget-title-accent" id="widget-accent">help you?</span></div>
-    <div class="widget-sub" id="widget-sub">Whether it's a cleaning, a dental emergency, an appointment request, or just a question &mdash; describe what you need and our team will follow up with you directly.</div>
+    <div class="widget-sub" id="widget-sub">Sam is our AI assistant. Tell Sam what you need &mdash; a cleaning, an appointment, a question, or a dental problem &mdash; and Sam will text or call you right away to help, then pass the right details to our dental team.</div>
     <div class="widget-free" id="widget-free">This service is free.</div>
-    <div class="widget-badge" id="widget-badge">Sam responds in minutes &middot; Available 24/7</div>
+    <div class="widget-badge" id="widget-badge">Sam answers right away &middot; 24/7 &middot; Free</div>
   </div>
 
   <div class="lang-bar" id="lang-bar">
@@ -232,7 +232,7 @@ window.addEventListener('DOMContentLoaded',function(){
       <div class="field">
         <label for="patient-phone" id="lbl-phone">Phone number</label>
         <input class="input" id="patient-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="10-digit number" />
-        <div class="helper phone-helper" id="phone-helper">Sam will call or text this number shortly after you submit.</div>
+        <div class="helper phone-helper" id="phone-helper">Sam will call or text this number after you submit.</div>
       </div>
       <div class="field clinical-only">
         <label for="patient-city" id="lbl-city">City</label>
@@ -374,6 +374,8 @@ window.addEventListener('DOMContentLoaded',function(){
 
   <div id="intake-error" class="error-box"></div>
 
+  <div class="action-hint" id="action-hint" style="font-size:13px; color:var(--text-mid); text-align:center; margin:4px 0 10px; line-height:1.45;">Choose how Sam reaches you — Sam will start helping right away.</div>
+
   <div class="action-bar">
     <button class="btn-text-sam" id="intake-text-btn" type="button">Text Sam instead</button>
     <button class="btn-primary" id="intake-submit-btn" type="button">Talk to Sam</button>
@@ -385,7 +387,7 @@ window.addEventListener('DOMContentLoaded',function(){
 <div class="widget handoff" id="widget-handoff">
   <div class="handoff-icon">&#x2713;</div>
   <div class="handoff-title" id="handoff-title">Next step: answer Sam's call</div>
-  <div class="handoff-copy" id="handoff-copy">Sam will call or text you shortly to continue your assessment. Our dental team will follow up with you directly.</div>
+  <div class="handoff-copy" id="handoff-copy">Sam will text or call you to continue. Please reply to Sam — your details go to our dental team for review.</div>
   <div class="handoff-number" id="handoff-number">1-833-959-3932</div>
   <div class="handoff-sub" id="handoff-sub">Save this number so you recognize Sam's call.</div>
   <div class="powered-by" style="margin-top:24px;">Triage powered by <a href="https://virtualdentist.ai" target="_blank">VirtualDentist.ai</a></div>
@@ -425,11 +427,12 @@ window.addEventListener('DOMContentLoaded',function(){
       phComplaintUrgent: "e.g. My tooth broke after a fall / I have bad tooth pain / My gum is swollen",
       phComplaintRoutine: "e.g. I'd like to book a cleaning / I have a question about insurance / I need a checkup",
       widgetTitle: "How can Martindale Dental", widgetAccent: "help you?",
-      widgetSub: "Whether it's a cleaning, a dental emergency, an appointment request, or just a question \u2014 describe what you need and our team will follow up with you directly.",
-      widgetFree: "This service is free.", widgetBadge: "Sam responds in minutes \u00b7 Available 24/7",
+      widgetSub: "Sam is our AI assistant. Tell Sam what you need \u2014 a cleaning, an appointment, a question, or a dental problem \u2014 and Sam will text or call you right away to help, then pass the right details to our dental team.",
+      widgetFree: "This service is free.", widgetBadge: "Sam answers right away \u00b7 24/7 \u00b7 Free",
+      actionHint: "Choose how Sam reaches you \u2014 Sam will start helping right away.",
       secAbout: "About you", lblName: "Full name", phName: "First and last name", lblDob: "Date of birth",
-      lblPhone: "Phone number", phPhone: "10-digit number", phoneHelper: "Sam will call or text this number shortly after you submit.",
-      phoneHelperSms: "Sam will text this number shortly after you submit.",
+      lblPhone: "Phone number", phPhone: "10-digit number", phoneHelper: "Sam will call or text this number after you submit.",
+      phoneHelperSms: "Sam will text this number after you submit.",
       lblCity: "City", phCity: "City", lblEmail: "Email address", emailOpt: "(optional)", phEmail: "For follow-up communications only",
       secConcern: "How can we help?", lblComplaint: "Tell us what you need",
       phComplaint: "e.g. I'd like to book a cleaning / My tooth broke after a fall / I have a question about insurance",
@@ -461,8 +464,8 @@ window.addEventListener('DOMContentLoaded',function(){
       consentSms: "By continuing, you understand that you will exchange text messages with Sam, an AI dental triage assistant provided by VirtualDentist.ai on behalf of Martindale Dental, and that this service does not replace emergency or in-person dental care.",
       btnSubmit: "Talk to Sam", btnSubmitSms: "Text Sam",
       handoffTitle: "Next step: answer Sam's call", handoffTitleSms: "Next step: check your text messages",
-      handoffCopy: "Sam will call or text you shortly to continue your assessment. Our dental team will follow up with you directly.",
-      handoffCopySms: "Sam will text you shortly in your language. Please reply to Sam's messages. Our dental team will follow up with you directly.",
+      handoffCopy: "Sam will text or call you to continue. Please reply to Sam — your details go to our dental team for review.",
+      handoffCopySms: "Sam will text you in your language. Please reply to Sam — your details go to our dental team for review.",
       handoffSub: "Save this number so you recognize Sam's call.", handoffSubSms: "Save this number so you recognize Sam's message."
     },
     ar: {
@@ -474,8 +477,9 @@ window.addEventListener('DOMContentLoaded',function(){
       phComplaintUrgent: "مثال: انكسر سني / أعاني من ألم شديد في الأسنان / لثتي متورمة",
       phComplaintRoutine: "مثال: أريد حجز تنظيف / لدي سؤال عن التأمين / أحتاج إلى فحص",
       widgetTitle: "كيف يمكن لـ Martindale Dental", widgetAccent: "مساعدتك؟",
-      widgetSub: "سواء كان تنظيف أسنان، حالة طوارئ، أو مجرد سؤال — أخبرنا بما تحتاجه وسيتواصل فريقنا معك مباشرة.",
-      widgetFree: "هذه الخدمة مجانية.", widgetBadge: "سام يرد في دقائق · متاح على مدار الساعة",
+      widgetSub: "سام هو مساعدنا الذكي. أخبر سام بما تحتاجه — تنظيف، موعد، سؤال، أو مشكلة في الأسنان — وسيراسلك سام أو يتصل بك فورًا لمساعدتك، ثم ينقل التفاصيل المناسبة إلى فريق طب الأسنان لدينا.",
+      widgetFree: "هذه الخدمة مجانية.", widgetBadge: "سام يجيب فورًا · على مدار الساعة · مجانًا",
+      actionHint: "اختر كيف يتواصل معك سام — سيبدأ سام بمساعدتك فورًا.",
       secAbout: "معلوماتك", lblName: "الاسم الكامل", phName: "الاسم الأول والأخير", lblDob: "تاريخ الميلاد",
       lblPhone: "رقم الهاتف", phPhone: "رقم من 10 أرقام", phoneHelper: "سيتصل بك سام على هذا الرقم.",
       phoneHelperSms: "سيرسل سام رسالة نصية إلى هذا الرقم.",
@@ -522,8 +526,9 @@ window.addEventListener('DOMContentLoaded',function(){
       phComplaintUrgent: "जैसे: मेरा दांत टूट गया / मेरे दांत में बहुत दर्द है / मेरे मसूड़े सूज गए हैं",
       phComplaintRoutine: "जैसे: मुझे सफाई करवानी है / मेरा बीमा से जुड़ा सवाल है / मुझे जांच चाहिए",
       widgetTitle: "Martindale Dental आपकी कैसे", widgetAccent: "मदद कर सकते हैं?",
-      widgetSub: "चाहे सफ़ाई हो, दांतों की इमरजेंसी हो, या कोई सवाल हो — बताएं आपको क्या चाहिए और हमारी टीम सीधे आपसे संपर्क करेगी।",
-      widgetFree: "यह सेवा निःशुल्क है।", widgetBadge: "सैम मिनटों में जवाब देता है · 24/7 उपलब्ध",
+      widgetSub: "सैम हमारा AI असिस्टेंट है। सैम को बताएं आपको क्या चाहिए — सफ़ाई, अपॉइंटमेंट, सवाल, या दांतों की समस्या — और सैम आपकी मदद के लिए तुरंत आपको मैसेज या कॉल करेगा, फिर सही जानकारी हमारी डेंटल टीम तक पहुंचाएगा।",
+      widgetFree: "यह सेवा निःशुल्क है।", widgetBadge: "सैम तुरंत जवाब देता है · 24/7 · निःशुल्क",
+      actionHint: "चुनें सैम आपसे कैसे संपर्क करे — सैम तुरंत मदद शुरू कर देगा।",
       secAbout: "आपके बारे में", lblName: "पूरा नाम", phName: "पहला और अंतिम नाम", lblDob: "जन्म तिथि",
       lblPhone: "फोन नंबर", phPhone: "10 अंकों का नंबर", phoneHelper: "सैम इस नंबर पर कॉल करेगा।",
       phoneHelperSms: "सैम इस नंबर पर मैसेज करेगा।",
@@ -570,8 +575,9 @@ window.addEventListener('DOMContentLoaded',function(){
       phComplaintUrgent: "ਜਿਵੇਂ: ਮੇਰਾ ਦੰਦ ਟੁੱਟ ਗਿਆ / ਮੇਰੇ ਦੰਦ ਵਿੱਚ ਬਹੁਤ ਦਰਦ ਹੈ / ਮੇਰੇ ਮਸੂੜੇ ਸੁੱਜੇ ਹਨ",
       phComplaintRoutine: "ਜਿਵੇਂ: ਮੈਂ ਸਫਾਈ ਕਰਵਾਉਣੀ ਹੈ / ਮੇਰਾ ਬੀਮੇ ਬਾਰੇ ਸਵਾਲ ਹੈ / ਮੈਨੂੰ ਜਾਂਚ ਚਾਹੀਦੀ ਹੈ",
       widgetTitle: "Martindale Dental ਤੁਹਾਡੀ ਕਿਵੇਂ", widgetAccent: "ਮਦਦ ਕਰ ਸਕਦੇ ਹਨ?",
-      widgetSub: "ਭਾਵੇਂ ਸਫ਼ਾਈ ਹੋਵੇ, ਦੰਦਾਂ ਦੀ ਐਮਰਜੈਂਸੀ ਹੋਵੇ, ਜਾਂ ਕੋਈ ਸਵਾਲ ਹੋਵੇ — ਦੱਸੋ ਤੁਹਾਨੂੰ ਕੀ ਚਾਹੀਦਾ ਹੈ ਅਤੇ ਸਾਡੀ ਟੀਮ ਸਿੱਧੇ ਤੁਹਾਡੇ ਨਾਲ ਸੰਪਰਕ ਕਰੇਗੀ।",
-      widgetFree: "ਇਹ ਸੇਵਾ ਮੁਫ਼ਤ ਹੈ।", widgetBadge: "ਸੈਮ ਮਿੰਟਾਂ ਵਿੱਚ ਜਵਾਬ ਦਿੰਦਾ ਹੈ · 24/7 ਉਪਲਬਧ",
+      widgetSub: "ਸੈਮ ਸਾਡਾ AI ਅਸਿਸਟੈਂਟ ਹੈ। ਸੈਮ ਨੂੰ ਦੱਸੋ ਤੁਹਾਨੂੰ ਕੀ ਚਾਹੀਦਾ ਹੈ — ਸਫ਼ਾਈ, ਮੁਲਾਕਾਤ, ਸਵਾਲ, ਜਾਂ ਦੰਦਾਂ ਦੀ ਸਮੱਸਿਆ — ਅਤੇ ਸੈਮ ਤੁਹਾਡੀ ਮਦਦ ਲਈ ਤੁਰੰਤ ਤੁਹਾਨੂੰ ਮੈਸੇਜ ਜਾਂ ਕਾਲ ਕਰੇਗਾ, ਫਿਰ ਸਹੀ ਵੇਰਵੇ ਸਾਡੀ ਡੈਂਟਲ ਟੀਮ ਤੱਕ ਪਹੁੰਚਾਏਗਾ।",
+      widgetFree: "ਇਹ ਸੇਵਾ ਮੁਫ਼ਤ ਹੈ।", widgetBadge: "ਸੈਮ ਤੁਰੰਤ ਜਵਾਬ ਦਿੰਦਾ ਹੈ · 24/7 · ਮੁਫ਼ਤ",
+      actionHint: "ਚੁਣੋ ਸੈਮ ਤੁਹਾਡੇ ਨਾਲ ਕਿਵੇਂ ਸੰਪਰਕ ਕਰੇ — ਸੈਮ ਤੁਰੰਤ ਮਦਦ ਸ਼ੁਰੂ ਕਰ ਦੇਵੇਗਾ।",
       secAbout: "ਤੁਹਾਡੇ ਬਾਰੇ", lblName: "ਪੂਰਾ ਨਾਮ", phName: "ਪਹਿਲਾ ਅਤੇ ਆਖਰੀ ਨਾਮ", lblDob: "ਜਨਮ ਮਿਤੀ",
       lblPhone: "ਫੋਨ ਨੰਬਰ", phPhone: "10 ਅੰਕਾਂ ਦਾ ਨੰਬਰ", phoneHelper: "ਸੈਮ ਇਸ ਨੰਬਰ ਤੇ ਕਾਲ ਕਰੇਗਾ।",
       phoneHelperSms: "ਸੈਮ ਇਸ ਨੰਬਰ ਤੇ ਮੈਸੇਜ ਕਰੇਗਾ।",
@@ -618,8 +624,9 @@ window.addEventListener('DOMContentLoaded',function(){
       phComplaintUrgent: "p. ex. Ma dent s'est cassée / J'ai une forte douleur dentaire / Ma gencive est enflée",
       phComplaintRoutine: "p. ex. Je voudrais un nettoyage / J'ai une question sur l'assurance / J'ai besoin d'un examen",
       widgetTitle: "Comment Martindale Dental peut", widgetAccent: "vous aider?",
-      widgetSub: "Que ce soit pour un nettoyage, une urgence dentaire ou une simple question \u2014 d\u00e9crivez ce dont vous avez besoin et notre \u00e9quipe vous contactera directement.",
-      widgetFree: "Ce service est gratuit.", widgetBadge: "Sam repond en quelques minutes · Disponible 24/7",
+      widgetSub: "Sam est notre assistant IA. Dites \u00e0 Sam ce dont vous avez besoin \u2014 un nettoyage, un rendez-vous, une question ou un probl\u00e8me dentaire \u2014 et Sam vous \u00e9crira ou vous appellera tout de suite pour vous aider, puis transmettra les bons d\u00e9tails \u00e0 notre \u00e9quipe dentaire.",
+      widgetFree: "Ce service est gratuit.", widgetBadge: "Sam répond tout de suite · 24/7 · Gratuit",
+      actionHint: "Choisissez comment Sam vous contacte — Sam commencera à vous aider tout de suite.",
       secAbout: "A propos de vous", lblName: "Nom complet", phName: "Prenom et nom", lblDob: "Date de naissance",
       lblPhone: "Numero de telephone", phPhone: "Numero a 10 chiffres", phoneHelper: "Sam appellera ce numero.",
       phoneHelperSms: "Sam enverra un message a ce numero.",
@@ -666,8 +673,9 @@ window.addEventListener('DOMContentLoaded',function(){
       phComplaintUrgent: "مثال: دندانم شکست / دندانم خیلی درد می‌کند / لثه‌ام ورم کرده",
       phComplaintRoutine: "مثال: می‌خواهم نوبت جرم‌گیری بگیرم / درباره بیمه سؤال دارم / به معاینه نیاز دارم",
       widgetTitle: "Martindale Dental چگونه می‌تواند", widgetAccent: "به شما کمک کند؟",
-      widgetSub: "چه نظافت دندان باشد، چه فوریت دندانپزشکی، یا فقط یک سوال — بگویید چه نیاز دارید و تیم ما مستقیماً با شما تماس خواهد گرفت.",
-      widgetFree: "این خدمات رایگان است.", widgetBadge: "سام در عرض چند دقیقه پاسخ می دهد · 24/7",
+      widgetSub: "سام دستیار هوش مصنوعی ماست. به سام بگویید چه نیاز دارید — جرم‌گیری، نوبت، سؤال، یا مشکل دندان — و سام فوراً برای کمک به شما پیامک می‌دهد یا تماس می‌گیرد، سپس جزئیات لازم را به تیم دندان‌پزشکی ما می‌رساند.",
+      widgetFree: "این خدمات رایگان است.", widgetBadge: "سام فوراً پاسخ می‌دهد · 24/7 · رایگان",
+      actionHint: "انتخاب کنید سام چگونه با شما تماس بگیرد — سام فوراً به شما کمک می‌کند.",
       secAbout: "درباره شما", lblName: "نام کامل", phName: "نام و نام خانوادگی", lblDob: "تاریخ تولد",
       lblPhone: "شماره تلفن", phPhone: "شماره 10 رقمی", phoneHelper: "سام با این شماره تماس خواهد گرفت.",
       phoneHelperSms: "سام به این شماره پیام خواهد داد.",
@@ -714,8 +722,9 @@ window.addEventListener('DOMContentLoaded',function(){
       phComplaintUrgent: "tusaale: Iligaygu wuu jabay / Ilig xanuun daran ayaan qabaa / Cidiyahaygu way barareen",
       phComplaintRoutine: "tusaale: Waxaan rabaa nadaarid / Su'aal caymis ayaan qabaa / Baaritaan ayaan u baahanahay",
       widgetTitle: "Sidee Martindale Dental", widgetAccent: "kugu caawin karaa?",
-      widgetSub: "Ha ahaato nadiifinta ilkaha, xaalad degdeg ah, ama su'aal — noo sheeg waxa aad u baahan tahay, kooxdayadana si toos ah ayay kuula soo xiriiri doontaa.",
-      widgetFree: "Adeeggan waa bilaash.", widgetBadge: "Sam wuu ku jawaabi doonaa daqiiqado · 24/7",
+      widgetSub: "Sam waa kaaliyahayaga AI. U sheeg Sam waxa aad u baahan tahay \u2014 nadiifin, ballan, su'aal, ama dhibaato ilig \u2014 Sam wuxuu isla markiiba kuu soo qori doonaa ama ku soo wici doonaa si uu kuu caawiyo, ka dibna wuxuu faahfaahinta saxda ah u gudbin doonaa kooxdayada ilkaha.",
+      widgetFree: "Adeeggan waa bilaash.", widgetBadge: "Sam isla markiiba wuu jawaabaa \u00b7 24/7 \u00b7 Bilaash",
+      actionHint: "Dooro sida Sam kuu soo gaaro \u2014 Sam wuxuu isla markiiba bilaabi doonaa inuu ku caawiyo.",
       secAbout: "Adiga ku saabsan", lblName: "Magaca oo buuxa", phName: "Magaca hore iyo kan dambe", lblDob: "Taariikhda dhalashada",
       lblPhone: "Lambarka taleefanka", phPhone: "Lambar 10 nambar ah", phoneHelper: "Sam ayaa wici doona lambarkaan.",
       phoneHelperSms: "Sam ayaa fariin u diri doona lambarkaan.",
@@ -762,8 +771,9 @@ window.addEventListener('DOMContentLoaded',function(){
       phComplaintUrgent: "ej. Se me rompió un diente / Tengo mucho dolor de muela / Tengo la encía hinchada",
       phComplaintRoutine: "ej. Quiero una limpieza / Tengo una pregunta sobre el seguro / Necesito un chequeo",
       widgetTitle: "\u00bfC\u00f3mo puede Martindale Dental", widgetAccent: "ayudarle?",
-      widgetSub: "Ya sea una limpieza, una emergencia dental o solo una pregunta \u2014 describa lo que necesita y nuestro equipo se comunicar\u00e1 directamente con usted.",
-      widgetFree: "Este servicio es gratuito.", widgetBadge: "Sam responde en minutos · Disponible 24/7",
+      widgetSub: "Sam es nuestro asistente de IA. D\u00edgale a Sam lo que necesita \u2014 una limpieza, una cita, una pregunta o un problema dental \u2014 y Sam le enviar\u00e1 un mensaje o le llamar\u00e1 enseguida para ayudarle, y luego pasar\u00e1 los datos correctos a nuestro equipo dental.",
+      widgetFree: "Este servicio es gratuito.", widgetBadge: "Sam responde enseguida \u00b7 24/7 \u00b7 Gratis",
+      actionHint: "Elija c\u00f3mo le contacta Sam \u2014 Sam comenzar\u00e1 a ayudarle enseguida.",
       secAbout: "Sobre usted", lblName: "Nombre completo", phName: "Nombre y apellido", lblDob: "Fecha de nacimiento",
       lblPhone: "Numero de telefono", phPhone: "Numero de 10 digitos", phoneHelper: "Sam llamara a este numero.",
       phoneHelperSms: "Sam enviara un mensaje a este numero.",
@@ -810,8 +820,9 @@ window.addEventListener('DOMContentLoaded',function(){
       phComplaintUrgent: "例如：我的牙齿摔断了 / 我牙疼得厉害 / 我的牙龈肿了",
       phComplaintRoutine: "例如：我想预约洁牙 / 我有保险方面的问题 / 我需要做检查",
       widgetTitle: "Martindale Dental 如何", widgetAccent: "帮助您？",
-      widgetSub: "无论是洗牙、牙科急诊还是咨询 — 告诉我们您需要什么，我们的团队将直接与您联系。",
-      widgetFree: "此服务免费。", widgetBadge: "Sam几分钟内回复 · 全天候服务",
+      widgetSub: "Sam 是我们的 AI 助手。告诉 Sam 您需要什么 — 洗牙、预约、咨询或牙齿问题 — Sam 会立即发短信或来电为您提供帮助，然后将相关信息转交给我们的牙科团队。",
+      widgetFree: "此服务免费。", widgetBadge: "Sam 立即回复 · 全天候 · 免费",
+      actionHint: "Sam 选择 Sam 如何联系您 — Sam 会立即开始为您提供帮助。",
       secAbout: "关于您", lblName: "全名", phName: "姓名", lblDob: "出生日期",
       lblPhone: "电话号码", phPhone: "10位数号码", phoneHelper: "Sam将拨打此号码。",
       phoneHelperSms: "Sam将向此号码发送消息。",
@@ -886,6 +897,8 @@ window.addEventListener('DOMContentLoaded',function(){
     document.getElementById("widget-sub").textContent = t("widgetSub");
     document.getElementById("widget-free").textContent = t("widgetFree");
     document.getElementById("widget-badge").textContent = t("widgetBadge");
+    var actionHintEl = document.getElementById("action-hint");
+    if (actionHintEl) actionHintEl.textContent = t("actionHint");
 
     // Section titles
     document.getElementById("sec-about").textContent = t("secAbout");
@@ -1000,26 +1013,22 @@ window.addEventListener('DOMContentLoaded',function(){
   function toggleMhAllergyAntibiotics() { var w = document.getElementById("mh-allergy-antibiotics-wrapper"); var d = document.getElementById("mh-allergy-antibiotics-detail"); if (document.getElementById("mh-allergy-antibiotics").checked) { w.style.display = "block"; } else { w.style.display = "none"; d.value = ""; } }
   function toggleMhAllergyPain() { var w = document.getElementById("mh-allergy-pain-wrapper"); var d = document.getElementById("mh-allergy-pain-detail"); if (document.getElementById("mh-allergy-pain").checked) { w.style.display = "block"; } else { w.style.display = "none"; d.value = ""; } }
 
-  // Conditional onset: show when complaint mentions symptoms, hide for general inquiries
-  // Word boundary \b at start prevents false positives (e.g. "hit" inside "whitening")
-  // Compound phrases handle "fell out", "came out", "came off" etc.
-  var SYMPTOM_KEYWORDS = /\b(pain|painful|hurt|ache|aching|sore|tender|throb|sharp|burn|sting|discomfort|uncomfortable|swell|swollen|puffy|inflam|bump|lump|broke|broken|crack|fractur|shatter|split|snap|chip|bleed|blood|bled|knock|loose|wobbly|wiggly|shift|moved|moving|sensitive|hot|cold|infect|fever|abscess|pus|drain|trauma|fall|fell|impact|hit|struck|punch|accident|collision|injur|numb|tingl|extract|pull|remov|filling|crown|cap|wisdom|cavity|decay|rotten|emergency|urgent|gum)|fell.out|came.out|came.off|broke.off|knocked.out|lost.{0,6}(tooth|teeth|filling|crown|cap)/i;
-  var onsetWrapper = document.getElementById("onset-wrapper");
-  var onsetSelect = document.getElementById("onset-bucket");
-  var ccTextarea = document.getElementById("chief-complaint");
-
-  function updateOnsetVisibility() {
-    var text = ccTextarea.value.trim();
-    if (text.length > 2 && SYMPTOM_KEYWORDS.test(text)) {
-      onsetWrapper.style.display = "block";
-      if (onsetSelect.value === "not_applicable") onsetSelect.value = "";
-    } else {
-      onsetWrapper.style.display = "none";
-      onsetSelect.value = "not_applicable";
-    }
-  }
-  ccTextarea.addEventListener("input", updateOnsetVisibility);
-  updateOnsetVisibility();
+  // Onset follows the declared urgent/routine branch — no keyword inference.
+  // The patient declares intent (urgent vs routine); onset is a .clinical-only
+  // field, so the .routine-mode CSS rule shows it on the urgent branch and hides
+  // it on the routine branch automatically, exactly like intake.html. The
+  // stored value is kept coherent with the branch in selectType() (and below
+  // for the initial state). (Removed the old SYMPTOM_KEYWORDS auto-detect: it
+  // inferred urgency from the complaint text, which the declared-intent model
+  // makes obsolete, and its word-boundary regex wrongly missed compound words
+  // like "toothache"/"headache" — hiding onset on genuine urgent cases.)
+  (function initOnset() {
+    var onsetSelect = document.getElementById("onset-bucket");
+    if (!onsetSelect) return;
+    var isAdmin = (document.getElementById("inquiry-type").value === "admin");
+    if (isAdmin) onsetSelect.value = "not_applicable";
+    else if (onsetSelect.value === "not_applicable") onsetSelect.value = "";
+  })();
 
   // Phone formatting
   var phoneInput = document.getElementById("patient-phone");
@@ -1050,7 +1059,11 @@ window.addEventListener('DOMContentLoaded',function(){
     if (!isAdmin) {
       var d = getValue("patient-dob"); if (!d) return "Please enter your date of birth.";
       if (!getValue("patient-city")) return "Please enter your city.";
-      if (onsetWrapper.style.display !== "none" && !getValue("onset-bucket")) return "Please tell us when this started.";
+      // Onset is a clinical-only field; on the urgent branch it's always shown,
+      // so require it here (this block only runs when !isAdmin). The
+      // not_applicable sentinel only appears on the routine branch, which is
+      // excluded from this block.
+      if (!getValue("onset-bucket")) return "Please tell us when this started.";
       var rf = { a: isChecked("rf-breathing-swallowing"), b: isChecked("rf-uncontrolled-bleeding"), c: isChecked("rf-facial-swelling"), d: isChecked("rf-fever-unwell"), e: isChecked("rf-trauma"), f: isChecked("rf-avulsion"), g: isChecked("rf-none") };
       if (!atLeastOneTrue(rf)) return "Please select at least one option under current symptoms.";
       var mh = { a: isChecked("mh-allergy-antibiotics"), b: isChecked("mh-allergy-pain"), c: isChecked("mh-allergy-latex"), d: isChecked("mh-blood-thinners"), e: isChecked("mh-diabetes"), f: isChecked("mh-pregnancy"), g: isChecked("mh-immunocompromised"), h: isChecked("mh-other"), i: isChecked("mh-none") };
@@ -1187,6 +1200,13 @@ window.addEventListener('DOMContentLoaded',function(){
       // routine-mode hides clinical-only sections via CSS
       if (isAdmin) widgetEl.classList.add("routine-mode");
       else widgetEl.classList.remove("routine-mode");
+      // Keep onset's stored value coherent with the branch (field shows on
+      // urgent via the .clinical-only CSS rule; no keyword inference).
+      var onsetSel = document.getElementById("onset-bucket");
+      if (onsetSel) {
+        if (isAdmin) onsetSel.value = "not_applicable";
+        else if (onsetSel.value === "not_applicable") onsetSel.value = "";
+      }
       applyComplaintPlaceholder();
       if (window.__vdPostHeight) window.__vdPostHeight(true);
     }
