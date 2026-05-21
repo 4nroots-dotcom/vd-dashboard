@@ -171,6 +171,9 @@ window.addEventListener('DOMContentLoaded',function(){
     .urgency-choice { display: flex; flex-direction: column; gap: 3px; text-align: left; padding: 14px 16px; border-radius: var(--radius); border: 1.5px solid var(--border); background: var(--surface); cursor: pointer; font-family: inherit; transition: border-color 0.15s, background 0.15s; }
     .urgency-choice:hover { border-color: var(--accent); }
     .urgency-choice.selected { border-color: var(--accent); background: rgba(113,187,85,0.08); }
+    /* Urgent selection = amber (matches intake page); routine selection = green */
+    #choice-urgent.selected { border-color: #d97706; background: rgba(217,119,6,0.14); }
+    #choice-routine.selected { border-color: var(--accent); background: rgba(113,187,85,0.10); }
     .urgency-choice-title { font-size: 14px; font-weight: 700; color: var(--text-dark); }
     .urgency-choice-sub { font-size: 12px; color: var(--text-mid); line-height: 1.4; }
     [dir="rtl"] .urgency-choice { text-align: right; }
