@@ -1497,10 +1497,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     // "book a cleaning" call up with empty HPI / "Denied" red-flag rows — see
     // the Dawn / Dr S. cases). We detect non-emergent via the tag in EITHER the
     // top-level column OR structured_output, and render a clean inquiry card.
+    // Source precedence: the lead's ORIGIN wins over the follow-up channel.
+    // A routine widget/form lead that Sam then phoned has BOTH intake_source
+    // 'widget'/'web_form' AND source 'vapi' — Afaf cares where the lead came
+    // from, so origin is checked first; the vapi/sms checks below only catch
+    // true cold-call / cold-text cases (intake_source 'vapi_general_sam' etc.).
     var soTag = (c.structured_output || {});
     var isNonEmergentInquiry = c.triage_tag === "non_emergent_inquiry" || soTag.triage_tag === "non_emergent_inquiry";
     var nonEmergentVia =
       c.intake_source === "widget_contact" ? "the website chat"
+      : c.intake_source === "widget" ? "the booking widget"
       : c.intake_source === "web_form" ? "the intake form"
       : (c.intake_source === "vapi_general_sam" || c.intake_source === "vapi_general_sam_test" || c.intake_source === "general_sam_voice_escalation" || c.source === "vapi" || c.extraction_source === "vapi") ? "a call with Sam"
       : (c.extraction_source === "sms-openai" || c.extraction_source === "sms-claude" || c.sms_transcript) ? "a text conversation with Sam"
@@ -1510,6 +1516,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var nePhone = c.patient_phone
         ? c.patient_phone.replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3") : "—";
       var neRequest = soTag.chief_complaint_quote || soTag.chief_complaint || c.chief_complaint_english || c.chief_complaint || "—";
+      // New-vs-current patient: Sam captures this into structured_output.is_new_patient
+      // (true/false/null). Surface it for the office so the ask isn't wasted.
+      var neNewPatient = (soTag.is_new_patient === true) ? "New patient"
+        : (soTag.is_new_patient === false) ? "Current patient"
+        : null;
       var neCard = document.createElement("div");
       neCard.innerHTML =
         '<div class="contact-card" style="margin:16px;">' +
@@ -1520,6 +1531,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           '<div class="contact-grid">' +
             '<div class="contact-row"><div class="contact-field-label">Name</div><div class="contact-field-value">' + esc(c.patient_name || "—") + '</div></div>' +
             '<div class="contact-row"><div class="contact-field-label">Phone</div><div class="contact-field-value">' + esc(nePhone) + '</div></div>' +
+            (neNewPatient ? '<div class="contact-row"><div class="contact-field-label">Patient Status</div><div class="contact-field-value">' + esc(neNewPatient) + '</div></div>' : '') +
             (c.patient_language && c.patient_language !== "en" ? '<div class="contact-row"><div class="contact-field-label">Language</div><div class="contact-field-value" style="color:#6b46c1;font-weight:600;">' + esc(({"ar":"Arabic","hi":"Hindi","pa":"Punjabi","fr":"French","fa":"Farsi","so":"Somali","es":"Spanish","zh":"Chinese"})[c.patient_language] || c.patient_language) + '</div></div>' : '') +
             '<div class="contact-row" style="grid-column:1/-1"><div class="contact-field-label">Patient Request</div><div class="contact-field-value">' + esc(neRequest) + '</div></div>' +
           '</div>' +
