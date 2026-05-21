@@ -167,6 +167,18 @@ window.addEventListener('DOMContentLoaded',function(){
     [dir="rtl"] .pre-submit-note, [dir="rtl"] .choice span,
     [dir="rtl"] .handoff-copy, [dir="rtl"] .handoff-title { text-align: right; direction: rtl; }
     [dir="rtl"] input, [dir="rtl"] textarea, [dir="rtl"] select { text-align: right; direction: rtl; }
+    .urgency-choices { display: flex; flex-direction: column; gap: 10px; }
+    .urgency-choice { display: flex; flex-direction: column; gap: 3px; text-align: left; padding: 14px 16px; border-radius: var(--radius); border: 1.5px solid var(--border); background: var(--surface); cursor: pointer; font-family: inherit; transition: border-color 0.15s, background 0.15s; }
+    .urgency-choice:hover { border-color: var(--accent); }
+    .urgency-choice.selected { border-color: var(--accent); background: rgba(113,187,85,0.08); }
+    /* Urgent selection = amber (matches intake page); routine selection = green */
+    #choice-urgent.selected { border-color: #d97706; background: rgba(217,119,6,0.14); }
+    #choice-routine.selected { border-color: var(--accent); background: rgba(113,187,85,0.10); }
+    .urgency-choice-title { font-size: 14px; font-weight: 700; color: var(--text-dark); }
+    .urgency-choice-sub { font-size: 12px; color: var(--text-mid); line-height: 1.4; }
+    [dir="rtl"] .urgency-choice { text-align: right; }
+    /* Routine/admin branch hides clinical-only sections */
+    .widget.routine-mode .clinical-only { display: none !important; }
   </style>
 </head>
 <body>
@@ -191,6 +203,21 @@ window.addEventListener('DOMContentLoaded',function(){
     <button class="lang-btn" data-lang="zh" type="button">中文</button>
   </div>
 
+  <div class="section" id="sec-urgency">
+    <div class="section-title" id="sec-urgency-title">What brings you in today?</div>
+    <input type="hidden" id="inquiry-type" value="clinical" />
+    <div class="urgency-choices" id="urgency-choices">
+      <button type="button" class="urgency-choice selected" id="choice-urgent" data-type="clinical">
+        <span class="urgency-choice-title" id="choice-urgent-title">Something hurts or feels wrong</span>
+        <span class="urgency-choice-sub" id="choice-urgent-sub">Pain, swelling, a broken or knocked-out tooth, bleeding, or an injury</span>
+      </button>
+      <button type="button" class="urgency-choice" id="choice-routine" data-type="admin">
+        <span class="urgency-choice-title" id="choice-routine-title">A booking, question, or routine concern</span>
+        <span class="urgency-choice-sub" id="choice-routine-sub">Cleaning, checkup, insurance or coverage question, or general inquiry</span>
+      </button>
+    </div>
+  </div>
+
   <div class="section">
     <div class="section-title" id="sec-about">About you</div>
     <div class="grid-2">
@@ -198,7 +225,7 @@ window.addEventListener('DOMContentLoaded',function(){
         <label for="patient-name" id="lbl-name">Full name</label>
         <input class="input" id="patient-name" type="text" placeholder="First and last name" autocomplete="name" />
       </div>
-      <div class="field">
+      <div class="field clinical-only">
         <label for="patient-dob" id="lbl-dob">Date of birth</label>
         <input class="input" id="patient-dob" type="date" max="" autocomplete="bday" />
       </div>
@@ -207,7 +234,7 @@ window.addEventListener('DOMContentLoaded',function(){
         <input class="input" id="patient-phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="10-digit number" />
         <div class="helper phone-helper" id="phone-helper">Sam will call or text this number shortly after you submit.</div>
       </div>
-      <div class="field">
+      <div class="field clinical-only">
         <label for="patient-city" id="lbl-city">City</label>
         <input class="input" id="patient-city" type="text" placeholder="City" autocomplete="address-level2" />
       </div>
@@ -225,7 +252,7 @@ window.addEventListener('DOMContentLoaded',function(){
       <label for="chief-complaint" id="lbl-complaint">Tell us what you need</label>
       <textarea class="textarea" id="chief-complaint" placeholder="e.g. I'd like to book a cleaning / My tooth broke after a fall / I have a question about insurance"></textarea>
     </div>
-    <div class="field" style="margin-top:10px;" id="onset-wrapper">
+    <div class="field clinical-only" style="margin-top:10px;" id="onset-wrapper">
       <label for="onset-bucket" id="lbl-onset">When did this start?</label>
       <select class="select" id="onset-bucket">
         <option value="">Select one</option>
@@ -237,7 +264,7 @@ window.addEventListener('DOMContentLoaded',function(){
         <option value="not_applicable">Not applicable</option>
       </select>
     </div>
-    <div class="field" style="margin-top:10px;">
+    <div class="field clinical-only" style="margin-top:10px;">
       <label id="lbl-redflags">Are any of these happening right now?</label>
       <div class="check-group">
         <label class="choice"><input type="checkbox" id="rf-breathing-swallowing" /><span id="sp-rf-breathing">Trouble breathing or swallowing</span></label>
@@ -266,7 +293,7 @@ window.addEventListener('DOMContentLoaded',function(){
     </div>
   </div>
 
-  <div class="section">
+  <div class="section clinical-only">
     <div class="section-title" id="sec-medical">Relevant medical information</div>
     <div class="helper" id="med-helper" style="margin-bottom:8px;">Select any that apply.</div>
     <div class="check-group">
@@ -304,7 +331,7 @@ window.addEventListener('DOMContentLoaded',function(){
     </div>
   </div>
 
-  <div class="section">
+  <div class="section clinical-only">
     <div class="section-title" id="sec-current-meds">Current medications</div>
     <div class="helper" id="cur-meds-helper" style="margin-bottom:8px;">List anything you take regularly. Optional.</div>
     <div class="field">
@@ -390,6 +417,13 @@ window.addEventListener('DOMContentLoaded',function(){
   // ── Translations (all 9 languages) ────────────────────────────
   var T = {
     en: {
+      choiceUrgentTitle: "Something hurts or feels wrong",
+      choiceUrgentSub: "Pain, swelling, a broken or knocked-out tooth, bleeding, or an injury",
+      choiceRoutineTitle: "A booking, question, or routine concern",
+      choiceRoutineSub: "Cleaning, checkup, insurance or coverage question, or general inquiry",
+      secUrgencyTitle: "What brings you in today?",
+      phComplaintUrgent: "e.g. My tooth broke after a fall / I have bad tooth pain / My gum is swollen",
+      phComplaintRoutine: "e.g. I'd like to book a cleaning / I have a question about insurance / I need a checkup",
       widgetTitle: "How can Martindale Dental", widgetAccent: "help you?",
       widgetSub: "Whether it's a cleaning, a dental emergency, an appointment request, or just a question \u2014 describe what you need and our team will follow up with you directly.",
       widgetFree: "This service is free.", widgetBadge: "Sam responds in minutes \u00b7 Available 24/7",
@@ -432,6 +466,13 @@ window.addEventListener('DOMContentLoaded',function(){
       handoffSub: "Save this number so you recognize Sam's call.", handoffSubSms: "Save this number so you recognize Sam's message."
     },
     ar: {
+      choiceUrgentTitle: "هناك ألم أو شيء غير طبيعي",
+      choiceUrgentSub: "ألم، تورم، سن مكسور أو مخلوع، نزيف، أو إصابة",
+      choiceRoutineTitle: "حجز موعد، سؤال، أو أمر روتيني",
+      choiceRoutineSub: "تنظيف، فحص، سؤال عن التأمين، أو استفسار عام",
+      secUrgencyTitle: "ما الذي أتى بك اليوم؟",
+      phComplaintUrgent: "مثال: انكسر سني / أعاني من ألم شديد في الأسنان / لثتي متورمة",
+      phComplaintRoutine: "مثال: أريد حجز تنظيف / لدي سؤال عن التأمين / أحتاج إلى فحص",
       widgetTitle: "كيف يمكن لـ Martindale Dental", widgetAccent: "مساعدتك؟",
       widgetSub: "سواء كان تنظيف أسنان، حالة طوارئ، أو مجرد سؤال — أخبرنا بما تحتاجه وسيتواصل فريقنا معك مباشرة.",
       widgetFree: "هذه الخدمة مجانية.", widgetBadge: "سام يرد في دقائق · متاح على مدار الساعة",
@@ -473,6 +514,13 @@ window.addEventListener('DOMContentLoaded',function(){
       handoffSub: "احفظ هذا الرقم لتتعرف على رسالة سام.", handoffSubSms: "احفظ هذا الرقم لتتعرف على رسالة سام."
     },
     hi: {
+      choiceUrgentTitle: "कुछ दर्द हो रहा है या ठीक नहीं लग रहा",
+      choiceUrgentSub: "दर्द, सूजन, टूटा या गिरा हुआ दांत, खून बहना, या चोट",
+      choiceRoutineTitle: "अपॉइंटमेंट, सवाल, या सामान्य बात",
+      choiceRoutineSub: "सफाई, जांच, बीमा से जुड़ा सवाल, या सामान्य पूछताछ",
+      secUrgencyTitle: "आज आप किस लिए आए हैं?",
+      phComplaintUrgent: "जैसे: मेरा दांत टूट गया / मेरे दांत में बहुत दर्द है / मेरे मसूड़े सूज गए हैं",
+      phComplaintRoutine: "जैसे: मुझे सफाई करवानी है / मेरा बीमा से जुड़ा सवाल है / मुझे जांच चाहिए",
       widgetTitle: "Martindale Dental आपकी कैसे", widgetAccent: "मदद कर सकते हैं?",
       widgetSub: "चाहे सफ़ाई हो, दांतों की इमरजेंसी हो, या कोई सवाल हो — बताएं आपको क्या चाहिए और हमारी टीम सीधे आपसे संपर्क करेगी।",
       widgetFree: "यह सेवा निःशुल्क है।", widgetBadge: "सैम मिनटों में जवाब देता है · 24/7 उपलब्ध",
@@ -514,6 +562,13 @@ window.addEventListener('DOMContentLoaded',function(){
       handoffSub: "इस नंबर को सेव करें।", handoffSubSms: "इस नंबर को सेव करें।"
     },
     pa: {
+      choiceUrgentTitle: "ਕੁਝ ਦੁਖਦਾ ਹੈ ਜਾਂ ਠੀਕ ਨਹੀਂ ਲੱਗਦਾ",
+      choiceUrgentSub: "ਦਰਦ, ਸੋਜ, ਟੁੱਟਿਆ ਜਾਂ ਡਿੱਗਿਆ ਦੰਦ, ਖੂਨ ਵਗਣਾ, ਜਾਂ ਸੱਟ",
+      choiceRoutineTitle: "ਮੁਲਾਕਾਤ, ਸਵਾਲ, ਜਾਂ ਆਮ ਗੱਲ",
+      choiceRoutineSub: "ਸਫਾਈ, ਜਾਂਚ, ਬੀਮੇ ਬਾਰੇ ਸਵਾਲ, ਜਾਂ ਆਮ ਪੁੱਛਗਿੱਛ",
+      secUrgencyTitle: "ਅੱਜ ਤੁਸੀਂ ਕਿਸ ਲਈ ਆਏ ਹੋ?",
+      phComplaintUrgent: "ਜਿਵੇਂ: ਮੇਰਾ ਦੰਦ ਟੁੱਟ ਗਿਆ / ਮੇਰੇ ਦੰਦ ਵਿੱਚ ਬਹੁਤ ਦਰਦ ਹੈ / ਮੇਰੇ ਮਸੂੜੇ ਸੁੱਜੇ ਹਨ",
+      phComplaintRoutine: "ਜਿਵੇਂ: ਮੈਂ ਸਫਾਈ ਕਰਵਾਉਣੀ ਹੈ / ਮੇਰਾ ਬੀਮੇ ਬਾਰੇ ਸਵਾਲ ਹੈ / ਮੈਨੂੰ ਜਾਂਚ ਚਾਹੀਦੀ ਹੈ",
       widgetTitle: "Martindale Dental ਤੁਹਾਡੀ ਕਿਵੇਂ", widgetAccent: "ਮਦਦ ਕਰ ਸਕਦੇ ਹਨ?",
       widgetSub: "ਭਾਵੇਂ ਸਫ਼ਾਈ ਹੋਵੇ, ਦੰਦਾਂ ਦੀ ਐਮਰਜੈਂਸੀ ਹੋਵੇ, ਜਾਂ ਕੋਈ ਸਵਾਲ ਹੋਵੇ — ਦੱਸੋ ਤੁਹਾਨੂੰ ਕੀ ਚਾਹੀਦਾ ਹੈ ਅਤੇ ਸਾਡੀ ਟੀਮ ਸਿੱਧੇ ਤੁਹਾਡੇ ਨਾਲ ਸੰਪਰਕ ਕਰੇਗੀ।",
       widgetFree: "ਇਹ ਸੇਵਾ ਮੁਫ਼ਤ ਹੈ।", widgetBadge: "ਸੈਮ ਮਿੰਟਾਂ ਵਿੱਚ ਜਵਾਬ ਦਿੰਦਾ ਹੈ · 24/7 ਉਪਲਬਧ",
@@ -555,6 +610,13 @@ window.addEventListener('DOMContentLoaded',function(){
       handoffSub: "ਇਸ ਨੰਬਰ ਨੂੰ ਸੇਵ ਕਰੋ।", handoffSubSms: "ਇਸ ਨੰਬਰ ਨੂੰ ਸੇਵ ਕਰੋ।"
     },
     fr: {
+      choiceUrgentTitle: "Quelque chose fait mal ou ne va pas",
+      choiceUrgentSub: "Douleur, enflure, dent cassée ou arrachée, saignement ou blessure",
+      choiceRoutineTitle: "Un rendez-vous, une question ou un besoin courant",
+      choiceRoutineSub: "Nettoyage, examen, question d'assurance, ou demande générale",
+      secUrgencyTitle: "Qu'est-ce qui vous amène aujourd'hui?",
+      phComplaintUrgent: "p. ex. Ma dent s'est cassée / J'ai une forte douleur dentaire / Ma gencive est enflée",
+      phComplaintRoutine: "p. ex. Je voudrais un nettoyage / J'ai une question sur l'assurance / J'ai besoin d'un examen",
       widgetTitle: "Comment Martindale Dental peut", widgetAccent: "vous aider?",
       widgetSub: "Que ce soit pour un nettoyage, une urgence dentaire ou une simple question \u2014 d\u00e9crivez ce dont vous avez besoin et notre \u00e9quipe vous contactera directement.",
       widgetFree: "Ce service est gratuit.", widgetBadge: "Sam repond en quelques minutes · Disponible 24/7",
@@ -596,6 +658,13 @@ window.addEventListener('DOMContentLoaded',function(){
       handoffSub: "Enregistrez ce numero.", handoffSubSms: "Enregistrez ce numero."
     },
     fa: {
+      choiceUrgentTitle: "جایی درد می‌کند یا مشکلی هست",
+      choiceUrgentSub: "درد، تورم، دندان شکسته یا افتاده، خونریزی، یا آسیب",
+      choiceRoutineTitle: "نوبت، سؤال، یا موضوع عادی",
+      choiceRoutineSub: "جرم‌گیری، معاینه، سؤال درباره بیمه، یا پرسش عمومی",
+      secUrgencyTitle: "امروز چه کمکی می‌توانیم بکنیم؟",
+      phComplaintUrgent: "مثال: دندانم شکست / دندانم خیلی درد می‌کند / لثه‌ام ورم کرده",
+      phComplaintRoutine: "مثال: می‌خواهم نوبت جرم‌گیری بگیرم / درباره بیمه سؤال دارم / به معاینه نیاز دارم",
       widgetTitle: "Martindale Dental چگونه می‌تواند", widgetAccent: "به شما کمک کند؟",
       widgetSub: "چه نظافت دندان باشد، چه فوریت دندانپزشکی، یا فقط یک سوال — بگویید چه نیاز دارید و تیم ما مستقیماً با شما تماس خواهد گرفت.",
       widgetFree: "این خدمات رایگان است.", widgetBadge: "سام در عرض چند دقیقه پاسخ می دهد · 24/7",
@@ -637,6 +706,13 @@ window.addEventListener('DOMContentLoaded',function(){
       handoffSub: "این شماره را ذخیره کنید.", handoffSubSms: "این شماره را ذخیره کنید."
     },
     so: {
+      choiceUrgentTitle: "Wax baa i xanuunaya ama qaldan",
+      choiceUrgentSub: "Xanuun, bararid, ilig jabay ama ka baxay, dhiig-bax, ama dhaawac",
+      choiceRoutineTitle: "Ballan, su'aal, ama arrin caadi ah",
+      choiceRoutineSub: "Nadaarid, baaritaan, su'aal caymis, ama wax-weydiis guud",
+      secUrgencyTitle: "Maxaa maanta ku keenay?",
+      phComplaintUrgent: "tusaale: Iligaygu wuu jabay / Ilig xanuun daran ayaan qabaa / Cidiyahaygu way barareen",
+      phComplaintRoutine: "tusaale: Waxaan rabaa nadaarid / Su'aal caymis ayaan qabaa / Baaritaan ayaan u baahanahay",
       widgetTitle: "Sidee Martindale Dental", widgetAccent: "kugu caawin karaa?",
       widgetSub: "Ha ahaato nadiifinta ilkaha, xaalad degdeg ah, ama su'aal — noo sheeg waxa aad u baahan tahay, kooxdayadana si toos ah ayay kuula soo xiriiri doontaa.",
       widgetFree: "Adeeggan waa bilaash.", widgetBadge: "Sam wuu ku jawaabi doonaa daqiiqado · 24/7",
@@ -678,6 +754,13 @@ window.addEventListener('DOMContentLoaded',function(){
       handoffSub: "Kaydi lambarkaan.", handoffSubSms: "Kaydi lambarkaan."
     },
     es: {
+      choiceUrgentTitle: "Algo me duele o no está bien",
+      choiceUrgentSub: "Dolor, hinchazón, un diente roto o caído, sangrado o una lesión",
+      choiceRoutineTitle: "Una cita, pregunta o consulta de rutina",
+      choiceRoutineSub: "Limpieza, chequeo, pregunta de seguro o consulta general",
+      secUrgencyTitle: "¿Qué le trae hoy?",
+      phComplaintUrgent: "ej. Se me rompió un diente / Tengo mucho dolor de muela / Tengo la encía hinchada",
+      phComplaintRoutine: "ej. Quiero una limpieza / Tengo una pregunta sobre el seguro / Necesito un chequeo",
       widgetTitle: "\u00bfC\u00f3mo puede Martindale Dental", widgetAccent: "ayudarle?",
       widgetSub: "Ya sea una limpieza, una emergencia dental o solo una pregunta \u2014 describa lo que necesita y nuestro equipo se comunicar\u00e1 directamente con usted.",
       widgetFree: "Este servicio es gratuito.", widgetBadge: "Sam responde en minutos · Disponible 24/7",
@@ -719,6 +802,13 @@ window.addEventListener('DOMContentLoaded',function(){
       handoffSub: "Guarde este numero.", handoffSubSms: "Guarde este numero."
     },
     zh: {
+      choiceUrgentTitle: "有疼痛或不适",
+      choiceUrgentSub: "疼痛、肿胀、牙齿断裂或脱落、出血或受伤",
+      choiceRoutineTitle: "预约、咨询或常规事项",
+      choiceRoutineSub: "洁牙、检查、保险问题或一般咨询",
+      secUrgencyTitle: "今天有什么可以帮您？",
+      phComplaintUrgent: "例如：我的牙齿摔断了 / 我牙疼得厉害 / 我的牙龈肿了",
+      phComplaintRoutine: "例如：我想预约洁牙 / 我有保险方面的问题 / 我需要做检查",
       widgetTitle: "Martindale Dental 如何", widgetAccent: "帮助您？",
       widgetSub: "无论是洗牙、牙科急诊还是咨询 — 告诉我们您需要什么，我们的团队将直接与您联系。",
       widgetFree: "此服务免费。", widgetBadge: "Sam几分钟内回复 · 全天候服务",
@@ -764,6 +854,19 @@ window.addEventListener('DOMContentLoaded',function(){
   function isSmsMode() { return currentLang !== "en" || widgetPreferredChannel === "sms"; }
   function t(key) { var lang = T[currentLang] || T.en; return lang[key] || T.en[key] || key; }
 
+  function applyComplaintPlaceholder() {
+    var el = document.getElementById("chief-complaint");
+    if (!el) return;
+    var typeEl = document.getElementById("inquiry-type");
+    var isAdmin = typeEl && typeEl.value === "admin";
+    // Branch-aware examples: routine shows booking/question examples, urgent
+    // shows symptom examples — so we never prompt a routine patient with
+    // "my tooth broke" or an urgent patient with "book a cleaning".
+    var key = isAdmin ? "phComplaintRoutine" : "phComplaintUrgent";
+    var val = t(key);
+    el.setAttribute("placeholder", val || el.getAttribute("placeholder") || "");
+  }
+
   function applyLanguage(lang) {
     currentLang = lang;
     // Reset channel when switching languages
@@ -788,6 +891,15 @@ window.addEventListener('DOMContentLoaded',function(){
     document.getElementById("sec-about").textContent = t("secAbout");
     document.getElementById("sec-concern").textContent = t("secConcern");
     document.getElementById("sec-medical").textContent = t("secMedical");
+    // Urgency bifurcation choice (translated; native review pending — see TODO)
+    var setTxt = function(id, key) { var el = document.getElementById(id); if (el) el.textContent = t(key); };
+    setTxt("sec-urgency-title", "secUrgencyTitle");
+    setTxt("choice-urgent-title", "choiceUrgentTitle");
+    setTxt("choice-urgent-sub", "choiceUrgentSub");
+    setTxt("choice-routine-title", "choiceRoutineTitle");
+    setTxt("choice-routine-sub", "choiceRoutineSub");
+    // Chief-complaint placeholder is branch-aware — set to match current choice
+    applyComplaintPlaceholder();
     var secCurMeds = document.getElementById("sec-current-meds");
     if (secCurMeds) secCurMeds.textContent = t("secCurrentMeds");
     document.getElementById("sec-coverage").textContent = t("secCoverage");
@@ -927,19 +1039,24 @@ window.addEventListener('DOMContentLoaded',function(){
   function atLeastOneTrue(obj) { for (var k in obj) { if (obj[k] === true) return true; } return false; }
 
   function validate() {
+    var isAdmin = (document.getElementById("inquiry-type").value === "admin");
     var n = getValue("patient-name"); if (!n || n.length < 2) return "Please enter your full name.";
-    var d = getValue("patient-dob"); if (!d) return "Please enter your date of birth.";
     var p = normalizePhone(getValue("patient-phone")); if (!p) return "Please enter your phone number.";
     if (!looksLikeNAPhone(p)) return "Please enter a valid 10-digit phone number.";
-    if (!getValue("patient-city")) return "Please enter your city.";
     var cc = getValue("chief-complaint"); if (!cc || cc.length < 3) return "Please describe how we can help you today.";
-    if (onsetWrapper.style.display !== "none" && !getValue("onset-bucket")) return "Please tell us when this started.";
-    var rf = { a: isChecked("rf-breathing-swallowing"), b: isChecked("rf-uncontrolled-bleeding"), c: isChecked("rf-facial-swelling"), d: isChecked("rf-fever-unwell"), e: isChecked("rf-trauma"), f: isChecked("rf-avulsion"), g: isChecked("rf-none") };
-    if (!atLeastOneTrue(rf)) return "Please select at least one option under current symptoms.";
-    var mh = { a: isChecked("mh-allergy-antibiotics"), b: isChecked("mh-allergy-pain"), c: isChecked("mh-allergy-latex"), d: isChecked("mh-blood-thinners"), e: isChecked("mh-diabetes"), f: isChecked("mh-pregnancy"), g: isChecked("mh-immunocompromised"), h: isChecked("mh-other"), i: isChecked("mh-none") };
-    if (!atLeastOneTrue(mh)) return "Please select at least one option under medical information.";
-    if (isChecked("mh-other") && !getValue("mh-other-detail")) return "Please tell us more about the other medical condition.";
     if (!isChecked("intake-acknowledge")) return "Please confirm the acknowledgement.";
+    // Clinical-only requirements — skipped on the routine/admin branch (those
+    // fields are hidden). Mirrors the intake page's bifurcated validation.
+    if (!isAdmin) {
+      var d = getValue("patient-dob"); if (!d) return "Please enter your date of birth.";
+      if (!getValue("patient-city")) return "Please enter your city.";
+      if (onsetWrapper.style.display !== "none" && !getValue("onset-bucket")) return "Please tell us when this started.";
+      var rf = { a: isChecked("rf-breathing-swallowing"), b: isChecked("rf-uncontrolled-bleeding"), c: isChecked("rf-facial-swelling"), d: isChecked("rf-fever-unwell"), e: isChecked("rf-trauma"), f: isChecked("rf-avulsion"), g: isChecked("rf-none") };
+      if (!atLeastOneTrue(rf)) return "Please select at least one option under current symptoms.";
+      var mh = { a: isChecked("mh-allergy-antibiotics"), b: isChecked("mh-allergy-pain"), c: isChecked("mh-allergy-latex"), d: isChecked("mh-blood-thinners"), e: isChecked("mh-diabetes"), f: isChecked("mh-pregnancy"), g: isChecked("mh-immunocompromised"), h: isChecked("mh-other"), i: isChecked("mh-none") };
+      if (!atLeastOneTrue(mh)) return "Please select at least one option under medical information.";
+      if (isChecked("mh-other") && !getValue("mh-other-detail")) return "Please tell us more about the other medical condition.";
+    }
     return null;
   }
 
@@ -997,6 +1114,8 @@ window.addEventListener('DOMContentLoaded',function(){
         patient_email: getOptionalValue("patient-email"),
         current_medications: getOptionalValue("current-medications"),
         intake_source: getIntakeSource(),
+        inquiry_type: (document.getElementById("inquiry-type").value === "admin") ? "admin" : "clinical",
+        channel_chosen: widgetPreferredChannel,
         intake_version: "widget-v1",
         intake_acknowledged_at: new Date().toISOString(),
         patient_language: currentLang,
@@ -1015,6 +1134,20 @@ window.addEventListener('DOMContentLoaded',function(){
         errEl.textContent = (result && result.error) || "Unable to save your information right now.";
         errEl.classList.add("show");
         return;
+      }
+
+      // ROUTINE (admin): intake-trigger does NOT contact the patient for admin
+      // inquiries, so the widget initiates the outbound Call/Text from 833 with
+      // the case context — same as the standalone intake page.
+      var isAdminSubmit = (document.getElementById("inquiry-type").value === "admin");
+      if (isAdminSubmit && result.case_id && (widgetPreferredChannel === "voice" || widgetPreferredChannel === "sms")) {
+        try {
+          await fetch(SUPABASE_URL + "/functions/v1/initiate-routine-contact", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "x-vd-secret": INTAKE_SECRET },
+            body: JSON.stringify({ case_id: result.case_id, channel: widgetPreferredChannel })
+          });
+        } catch(e) { /* non-fatal: handoff still instructs the patient */ }
       }
 
       // Show handoff
@@ -1041,6 +1174,29 @@ window.addEventListener('DOMContentLoaded',function(){
       btn.textContent = langSms ? t("btnSubmitSms") : t("btnSubmit");
     }
   }
+
+  // Urgency bifurcation: toggle clinical-only fields + inquiry-type.
+  (function() {
+    var widgetEl = document.getElementById("widget-form");
+    var urgentBtn = document.getElementById("choice-urgent");
+    var routineBtn = document.getElementById("choice-routine");
+    var hiddenType = document.getElementById("inquiry-type");
+    function selectType(type) {
+      hiddenType.value = type;
+      var isAdmin = (type === "admin");
+      urgentBtn.classList.toggle("selected", !isAdmin);
+      routineBtn.classList.toggle("selected", isAdmin);
+      // routine-mode hides clinical-only sections via CSS
+      if (isAdmin) widgetEl.classList.add("routine-mode");
+      else widgetEl.classList.remove("routine-mode");
+      applyComplaintPlaceholder();
+      if (window.parent !== window) {
+        try { window.parent.postMessage({ type: "vd-widget-resize", height: document.body.scrollHeight }, "*"); } catch(e) {}
+      }
+    }
+    if (urgentBtn) urgentBtn.addEventListener("click", function() { selectType("clinical"); });
+    if (routineBtn) routineBtn.addEventListener("click", function() { selectType("admin"); });
+  })();
 
   document.getElementById("intake-submit-btn").addEventListener("click", function() {
     widgetPreferredChannel = "voice";
