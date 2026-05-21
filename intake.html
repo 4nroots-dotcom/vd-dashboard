@@ -865,11 +865,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </div>
 
         <div class="mk-how mk-reveal">
-          <div class="mk-how-kicker">Here's what happens</div>
+          <div class="mk-how-kicker" id="mk-how-kicker">Here's what happens</div>
           <div class="mk-steps">
-            <div class="mk-step"><div class="mk-step-num">1</div><div class="mk-step-title">Fill a short form</div><div class="mk-step-body">2 minutes. No account.</div></div>
-            <div class="mk-step"><div class="mk-step-num">2</div><div class="mk-step-title">Sam follows up</div><div class="mk-step-body">A call or text from Sam.</div></div>
-            <div class="mk-step"><div class="mk-step-num">3</div><div class="mk-step-title">Team reviews</div><div class="mk-step-body">Our dentists follow up.</div></div>
+            <div class="mk-step"><div class="mk-step-num">1</div><div class="mk-step-title" id="mk-s1t">Fill a short form</div><div class="mk-step-body" id="mk-s1b">2 minutes. No account.</div></div>
+            <div class="mk-step"><div class="mk-step-num">2</div><div class="mk-step-title" id="mk-s2t">Sam follows up</div><div class="mk-step-body" id="mk-s2b">A call or text from Sam.</div></div>
+            <div class="mk-step"><div class="mk-step-num">3</div><div class="mk-step-title" id="mk-s3t">Team reviews</div><div class="mk-step-body" id="mk-s3b">Our dental team reviews your details.</div></div>
           </div>
         </div>
 
@@ -1272,6 +1272,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     var T = {
       en: {
+        mkHowKicker: "Here's what happens",
+        s1t: "Fill a short form", s1b: "2 minutes. No account.",
+        s2t: "Sam follows up", s2b: "A call or text from Sam.", s2bSms: "A text from Sam.",
+        s3t: "Team reviews", s3b: "Our dental team reviews your details.",
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
         heroTitle: "How can Martindale Dental", heroAccent: "help you?",
         heroSub: "Whether it's a cleaning, a toothache, or a question \u2014 Sam, our AI assistant, gathers your details so our dental team has everything they need to help you.",
@@ -1372,6 +1376,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         prefillHelper: "Pre-filled from your conversation with Sam \u2014 edit if needed."
       },
       ar: {
+        mkHowKicker: "إليك ما يحدث",
+        s1t: "املأ نموذجًا قصيرًا", s1b: "دقيقتان. بدون حساب.",
+        s2t: "سام يتابع معك", s2b: "مكالمة أو رسالة نصية من سام.", s2bSms: "رسالة نصية من سام.",
+        s3t: "الفريق يراجع", s3b: "يراجع فريق طب الأسنان لدينا تفاصيلك.",
         heroKicker: "عيادة مارتنديل لطب الأسنان \u00b7 جاكسون سكوير",
         heroTitle: "كيف يمكن لـ Martindale Dental", heroAccent: "مساعدتك؟",
         heroSub: "سواء كان تنظيف أسنان، حالة طوارئ، أو مجرد سؤال — أخبرنا بما تحتاجه وسيتواصل فريقنا معك مباشرة.",
@@ -1448,6 +1456,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         bookingStripTitle: "تعرف بالفعل أنك تريد الحجز؟", bookingStripLink: "احجز مباشرة مع Martindale \u2192", prefillHelper: "مُعبأ مسبقاً من محادثتك مع سام \u2014 عدّله إذا لزم."
       },
       hi: {
+        mkHowKicker: "आगे क्या होता है",
+        s1t: "एक छोटा फ़ॉर्म भरें", s1b: "2 मिनट। कोई खाता नहीं।",
+        s2t: "सैम संपर्क करती है", s2b: "सैम से कॉल या टेक्स्ट।", s2bSms: "सैम से टेक्स्ट।",
+        s3t: "टीम समीक्षा करती है", s3b: "हमारी डेंटल टीम आपके विवरण की समीक्षा करती है।",
         heroKicker: "मार्टिंडेल डेंटल \u00b7 जैक्सन स्क्वेयर",
         heroTitle: "Martindale Dental आपकी कैसे", heroAccent: "मदद कर सकते हैं?",
         heroSub: "चाहे सफ़ाई हो, दांतों की इमरजेंसी हो, या कोई सवाल हो — बताएं आपको क्या चाहिए और हमारी टीम सीधे आपसे संपर्क करेगी।",
@@ -1521,6 +1533,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         bookingStripTitle: "पहले से जानते हैं कि बुक करना चाहते हैं?", bookingStripLink: "Martindale के साथ सीधे बुक करें \u2192", prefillHelper: "सैम के साथ आपकी बातचीत से पहले से भरा \u2014 ज़रूरत हो तो बदलें।"
       },
       pa: {
+        mkHowKicker: "ਅੱਗੇ ਕੀ ਹੁੰਦਾ ਹੈ",
+        s1t: "ਇੱਕ ਛੋਟਾ ਫਾਰਮ ਭਰੋ", s1b: "2 ਮਿੰਟ। ਕੋਈ ਖਾਤਾ ਨਹੀਂ।",
+        s2t: "ਸਾਮ ਸੰਪਰਕ ਕਰਦੀ ਹੈ", s2b: "ਸਾਮ ਤੋਂ ਕਾਲ ਜਾਂ ਟੈਕਸਟ।", s2bSms: "ਸਾਮ ਤੋਂ ਟੈਕਸਟ।",
+        s3t: "ਟੀਮ ਸਮੀਖਿਆ ਕਰਦੀ ਹੈ", s3b: "ਸਾਡੀ ਡੈਂਟਲ ਟੀਮ ਤੁਹਾਡੇ ਵੇਰਵਿਆਂ ਦੀ ਸਮੀਖਿਆ ਕਰਦੀ ਹੈ।",
         heroKicker: "ਮਾਰਟਿੰਡੇਲ ਡੈਂਟਲ \u00b7 ਜੈਕਸਨ ਸਕੁਆਇਰ",
         heroTitle: "Martindale Dental ਤੁਹਾਡੀ ਕਿਵੇਂ", heroAccent: "ਮਦਦ ਕਰ ਸਕਦੇ ਹਨ?",
         heroSub: "ਭਾਵੇਂ ਸਫ਼ਾਈ ਹੋਵੇ, ਦੰਦਾਂ ਦੀ ਐਮਰਜੈਂਸੀ ਹੋਵੇ, ਜਾਂ ਕੋਈ ਸਵਾਲ ਹੋਵੇ — ਦੱਸੋ ਤੁਹਾਨੂੰ ਕੀ ਚਾਹੀਦਾ ਹੈ ਅਤੇ ਸਾਡੀ ਟੀਮ ਸਿੱਧੇ ਤੁਹਾਡੇ ਨਾਲ ਸੰਪਰਕ ਕਰੇਗੀ।",
@@ -1576,6 +1592,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         bookingStripTitle: "ਪਹਿਲਾਂ ਹੀ ਜਾਣਦੇ ਹੋ ਕਿ ਬੁੱਕ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?", bookingStripLink: "Martindale ਨਾਲ ਸਿੱਧਾ ਬੁੱਕ ਕਰੋ \u2192", prefillHelper: "ਸੈਮ ਨਾਲ ਤੁਹਾਡੀ ਗੱਲਬਾਤ ਤੋਂ ਪਹਿਲਾਂ ਭਰਿਆ \u2014 ਲੋੜ ਹੋਵੇ ਤਾਂ ਬਦਲੋ।"
       },
       fr: {
+        mkHowKicker: "Voici ce qui se passe",
+        s1t: "Remplissez un court formulaire", s1b: "2 minutes. Sans compte.",
+        s2t: "Sam vous recontacte", s2b: "Un appel ou un texto de Sam.", s2bSms: "Un texto de Sam.",
+        s3t: "L'équipe examine", s3b: "Notre équipe dentaire examine vos renseignements.",
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
         heroTitle: "Comment Martindale Dental peut", heroAccent: "vous aider?",
         heroSub: "Que ce soit pour un nettoyage, une urgence dentaire ou une simple question \u2014 d\u00e9crivez ce dont vous avez besoin et notre \u00e9quipe vous contactera directement.",
@@ -1631,6 +1651,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         bookingStripTitle: "Vous savez deja que vous voulez reserver?", bookingStripLink: "Reservez directement avec Martindale \u2192", prefillHelper: "Pre-rempli a partir de votre conversation avec Sam \u2014 modifiez si necessaire."
       },
       fa: {
+        mkHowKicker: "چه اتفاقی می‌افتد",
+        s1t: "یک فرم کوتاه پر کنید", s1b: "۲ دقیقه. بدون حساب.",
+        s2t: "سام پیگیری می‌کند", s2b: "تماس یا پیامک از سام.", s2bSms: "پیامک از سام.",
+        s3t: "تیم بررسی می‌کند", s3b: "تیم دندان‌پزشکی ما اطلاعات شما را بررسی می‌کند.",
         heroKicker: "مارتیندیل دنتال \u00b7 جکسون اسکوئر",
         heroTitle: "Martindale Dental چگونه می‌تواند", heroAccent: "به شما کمک کند؟",
         heroSub: "چه نظافت دندان باشد، چه فوریت دندانپزشکی، یا فقط یک سوال — بگویید چه نیاز دارید و تیم ما مستقیماً با شما تماس خواهد گرفت.",
@@ -1685,6 +1709,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         bookingStripTitle: "از قبل می‌دانید که می‌خواهید رزرو کنید؟", bookingStripLink: "مستقیماً با Martindale رزرو کنید \u2192", prefillHelper: "از گفتگوی شما با سام از پیش پر شده \u2014 در صورت نیاز ویرایش کنید."
       },
       so: {
+        mkHowKicker: "Waxa dhacaya",
+        s1t: "Buuxi foom gaaban", s1b: "2 daqiiqo. Akoon ma loo baahna.",
+        s2t: "Sam ayaa kula soo xidhiidha", s2b: "Wac ama qoraal ka yimid Sam.", s2bSms: "Qoraal ka yimid Sam.",
+        s3t: "Kooxdu way eegtaa", s3b: "Kooxdayada ilkaha ayaa dib u eegta faahfaahintaada.",
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
         heroTitle: "Sidee Martindale Dental", heroAccent: "kugu caawin karaa?",
         heroSub: "Ha ahaato nadiifinta ilkaha, xaalad degdeg ah, ama su'aal — noo sheeg waxa aad u baahan tahay, kooxdayadana si toos ah ayay kuula soo xiriiri doontaa.",
@@ -1737,6 +1765,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         bookingStripTitle: "Horay u og inaad rabto inaad ballan qabsato?", bookingStripLink: "Si toos ah ula ballan qabso Martindale \u2192", prefillHelper: "Horay looga buuxiyey wadahadalkaaga Sam \u2014 wax ka beddel haddii loo baahdo."
       },
       es: {
+        mkHowKicker: "Esto es lo que sucede",
+        s1t: "Complete un formulario breve", s1b: "2 minutos. Sin cuenta.",
+        s2t: "Sam le contacta", s2b: "Una llamada o un mensaje de Sam.", s2bSms: "Un mensaje de Sam.",
+        s3t: "El equipo revisa", s3b: "Nuestro equipo dental revisa su información.",
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
         heroTitle: "\u00bfC\u00f3mo puede Martindale Dental", heroAccent: "ayudarle?",
         heroSub: "Ya sea una limpieza, una emergencia dental o solo una pregunta \u2014 describa lo que necesita y nuestro equipo se comunicar\u00e1 directamente con usted.",
@@ -1790,6 +1822,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         bookingStripTitle: "Ya sabe que quiere reservar?", bookingStripLink: "Reserve directamente con Martindale \u2192", prefillHelper: "Pre-rellenado a partir de su conversacion con Sam \u2014 edite si es necesario."
       },
       zh: {
+        mkHowKicker: "接下来会发生什么",
+        s1t: "填写一份简短表格", s1b: "2分钟。无需账户。",
+        s2t: "Sam 跟进", s2b: "Sam 来电或短信。", s2bSms: "Sam 发来短信。",
+        s3t: "团队审阅", s3b: "我们的牙科团队审阅您的信息。",
         heroKicker: "Martindale Dental \u00b7 Jackson Square",
         heroTitle: "Martindale Dental 如何", heroAccent: "帮助您？",
         heroSub: "无论是洗牙、牙科急诊还是咨询 — 告诉我们您需要什么，我们的团队将直接与您联系。",
@@ -1920,6 +1956,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       if (warningPanel) warningPanel.textContent = t("warningPanel");
       if (flowTitle) flowTitle.textContent = sms ? t("flowTitleSms") : t("flowTitle");
       if (flowCopy) flowCopy.textContent = sms ? t("flowCopySms") : t("flowCopy");
+
+      // "Here's what happens" three-step cards — localized like the Sam
+      // integration block (which had id-wired cards; intake's were static
+      // English until now). Step-3 is review-only, NO callback promise.
+      var mkHowKicker = document.getElementById("mk-how-kicker");
+      if (mkHowKicker) mkHowKicker.textContent = t("mkHowKicker");
+      var mkStepIds = ["mk-s1t","mk-s1b","mk-s2t","mk-s2b","mk-s3t","mk-s3b"];
+      var mkStepKeys = ["s1t","s1b","s2t","s2b","s3t","s3b"];
+      for (var mi = 0; mi < mkStepIds.length; mi++) {
+        var mkEl = document.getElementById(mkStepIds[mi]);
+        if (mkEl) {
+          // step 2 body mentions "call or text"; in SMS-only languages, say text
+          var mkVal = t(mkStepKeys[mi]);
+          if (sms && mkStepKeys[mi] === "s2b") mkVal = t("s2bSms");
+          mkEl.textContent = mkVal;
+        }
+      }
       // Legal note: translate the disclaimer text, keep address in English
       var legalDisclaimer = document.getElementById("legal-disclaimer");
       if (legalDisclaimer) legalDisclaimer.textContent = t("legalNote");
