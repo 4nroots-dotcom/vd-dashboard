@@ -39,6 +39,19 @@ body {
 .q-block { margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #eef1f6; }
 .q-block:last-of-type { border-bottom: none; margin-bottom: 0; }
 .q-label { font-size: 14px; font-weight: 600; color: #1a2b40; margin-bottom: 12px; line-height: 1.4; }
+
+/* NPS 0-10 scale */
+.nps-scale { display: flex; flex-wrap: wrap; gap: 6px; }
+.nps-btn {
+  flex: 1 1 auto; min-width: 30px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid #d0dae8; background: #f7f9fc; border-radius: 8px;
+  font-size: 14px; font-weight: 600; color: #1a2b40; cursor: pointer;
+  transition: all 0.15s ease; -webkit-tap-highlight-color: transparent; user-select: none;
+}
+.nps-btn.active { background: #1b4d2e; border-color: #1b4d2e; color: #ffffff; }
+
+/* Stars (Sam helpfulness) */
 .stars { display: flex; gap: 8px; }
 .star {
   width: 40px; height: 40px; cursor: pointer; border-radius: 8px;
@@ -49,6 +62,7 @@ body {
 }
 .star.active { background: #1b4d2e; border-color: #1b4d2e; }
 .star-labels { display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; color: #7f96b8; }
+
 .radio-group { display: flex; flex-direction: column; gap: 8px; }
 .radio-opt {
   display: flex; align-items: center; gap: 12px;
@@ -104,25 +118,19 @@ textarea::placeholder { color: #a0b4cc; }
   </div>
 
   <div class="card-body" id="survey-form">
-    <div class="survey-title">How was your experience?</div>
-    <div class="survey-sub">Your feedback helps us improve care for everyone. Takes less than a minute.</div>
+    <div class="survey-title" id="s-title">How was your experience?</div>
+    <div class="survey-sub" id="s-sub">Your feedback helps us improve care for everyone. Takes less than a minute.</div>
 
-    <!-- Q1: Overall satisfaction -->
+    <!-- Q1: NPS 0-10 (nps_score) — the headline metric -->
     <div class="q-block">
-      <div class="q-label">1. Overall, how satisfied were you with your experience at Martindale Dental?</div>
-      <div class="stars">
-        <div class="star" data-q="overall" data-v="1">&#9733;</div>
-        <div class="star" data-q="overall" data-v="2">&#9733;</div>
-        <div class="star" data-q="overall" data-v="3">&#9733;</div>
-        <div class="star" data-q="overall" data-v="4">&#9733;</div>
-        <div class="star" data-q="overall" data-v="5">&#9733;</div>
-      </div>
-      <div class="star-labels"><span>Poor</span><span>Excellent</span></div>
+      <div class="q-label" id="s-q-nps">1. How likely are you to recommend Martindale Dental to a friend or family member?</div>
+      <div class="nps-scale" id="nps-scale"><!-- buttons injected --></div>
+      <div class="star-labels"><span id="s-nps-low">Not at all likely</span><span id="s-nps-high">Extremely likely</span></div>
     </div>
 
-    <!-- Q2: Sam rating (sam_satisfaction_score) -->
+    <!-- Q2: Sam helpfulness (sam_satisfaction_score) -->
     <div class="q-block">
-      <div class="q-label">2. How helpful was Sam, our virtual dental assistant, in gathering your information?</div>
+      <div class="q-label" id="s-q-sam">2. How helpful was Sam, our virtual dental assistant, in gathering your information?</div>
       <div class="stars">
         <div class="star" data-q="sam" data-v="1">&#9733;</div>
         <div class="star" data-q="sam" data-v="2">&#9733;</div>
@@ -130,138 +138,392 @@ textarea::placeholder { color: #a0b4cc; }
         <div class="star" data-q="sam" data-v="4">&#9733;</div>
         <div class="star" data-q="sam" data-v="5">&#9733;</div>
       </div>
-      <div class="star-labels"><span>Not helpful</span><span>Very helpful</span></div>
+      <div class="star-labels"><span id="s-sam-low">Not helpful</span><span id="s-sam-high">Very helpful</span></div>
     </div>
 
     <!-- Q3: Timely follow-up (timely_response: yes/somewhat/no) -->
     <div class="q-block">
-      <div class="q-label">3. Did our dental team follow up with you in a timely way?</div>
+      <div class="q-label" id="s-q-followup">3. Did our dental team follow up with you in a timely way?</div>
       <div class="radio-group">
         <div class="radio-opt" data-q="followup" data-v="yes">
-          <div class="radio-dot"></div>Yes, promptly
+          <div class="radio-dot"></div><span id="s-fu-yes">Yes, promptly</span>
         </div>
         <div class="radio-opt" data-q="followup" data-v="somewhat">
-          <div class="radio-dot"></div>Somewhat &mdash; there was a bit of a wait
+          <div class="radio-dot"></div><span id="s-fu-somewhat">Somewhat &mdash; there was a bit of a wait</span>
         </div>
         <div class="radio-opt" data-q="followup" data-v="no">
-          <div class="radio-dot"></div>No &mdash; I&rsquo;m still waiting to hear back
+          <div class="radio-dot"></div><span id="s-fu-no">No &mdash; I&rsquo;m still waiting to hear back</span>
         </div>
       </div>
     </div>
 
-    <!-- Q4: Return likelihood (return_likelihood) -->
+    <!-- Q4: Free text (survey_feedback) -->
     <div class="q-block">
-      <div class="q-label">4. How likely are you to use this service again for a future dental concern?</div>
-      <div class="stars">
-        <div class="star" data-q="return" data-v="1">&#9733;</div>
-        <div class="star" data-q="return" data-v="2">&#9733;</div>
-        <div class="star" data-q="return" data-v="3">&#9733;</div>
-        <div class="star" data-q="return" data-v="4">&#9733;</div>
-        <div class="star" data-q="return" data-v="5">&#9733;</div>
-      </div>
-      <div class="star-labels"><span>Unlikely</span><span>Definitely</span></div>
-    </div>
-
-    <!-- Q5: Free text (survey_feedback) -->
-    <div class="q-block">
-      <div class="q-label">5. Anything else you&rsquo;d like to share? <span style="font-weight:400;color:#7f96b8;">(optional)</span></div>
+      <div class="q-label" id="s-q-feedback">4. Anything else you&rsquo;d like to share? <span style="font-weight:400;color:#7f96b8;" id="s-optional">(optional)</span></div>
       <textarea id="q-freetext" placeholder="Your feedback is always read and appreciated."></textarea>
     </div>
 
     <button class="submit-btn" id="submit-btn" onclick="submitSurvey()">Submit feedback</button>
-    <div class="error-msg" id="error-msg">Something went wrong. Please try again.</div>
+    <div class="error-msg" id="error-msg"></div>
   </div>
 
   <div class="thankyou" id="thankyou">
     <div class="thankyou-icon">&#10003;</div>
-    <div class="thankyou-title">Thank you!</div>
-    <div class="thankyou-sub">Your feedback has been received.<br><br>Martindale Dental &mdash; Jackson Square, Hamilton</div>
+    <div class="thankyou-title" id="s-ty-title">Thank you!</div>
+    <div class="thankyou-sub" id="s-ty-sub">Your feedback has been received.<br><br>Martindale Dental &mdash; Jackson Square, Hamilton</div>
   </div>
 </div>
 
 <script>
-  var answers = { overall: null, sam: null, followup: null, return: null };
+  // ---- Config -------------------------------------------------------------
+  var SUPABASE_URL = 'https://zjwnqryeefegqfmamaqd.supabase.co';
+  // Public anon key — used ONLY to pass the edge-function gateway (verify_jwt).
+  // The privileged write happens inside survey-submit as service role; the anon
+  // key grants no table access (RLS denies anon).
+  var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI';
 
+  // ---- i18n ---------------------------------------------------------------
+  // English populated. To add a language: add a key (e.g. 'fr') with the same
+  // shape. survey-trigger should append &lang=<patient_language> to the URL;
+  // unknown/missing lang falls back to 'en'.
+  var STRINGS = {
+    en: {
+      title: 'How was your experience?',
+      sub: 'Your feedback helps us improve care for everyone. Takes less than a minute.',
+      qNps: '1. How likely are you to recommend Martindale Dental to a friend or family member?',
+      npsLow: 'Not at all likely', npsHigh: 'Extremely likely',
+      qSam: '2. How helpful was Sam, our virtual dental assistant, in gathering your information?',
+      samLow: 'Not helpful', samHigh: 'Very helpful',
+      qFollowup: '3. Did our dental team follow up with you in a timely way?',
+      fuYes: 'Yes, promptly',
+      fuSomewhat: 'Somewhat \u2014 there was a bit of a wait',
+      fuNo: 'No \u2014 I\u2019m still waiting to hear back',
+      qFeedback: '4. Anything else you\u2019d like to share? ',
+      optional: '(optional)',
+      placeholder: 'Your feedback is always read and appreciated.',
+      submit: 'Submit feedback',
+      submitting: 'Submitting\u2026',
+      tyTitle: 'Thank you!',
+      tySub: 'Your feedback has been received.<br><br>Martindale Dental \u2014 Jackson Square, Hamilton',
+      errNps: 'Please answer the first question before submitting.',
+      errGeneric: 'Something went wrong. Please try again.',
+      errInvalid: 'This survey link is no longer valid.'
+    },
+    // NOTE: the 8 non-English blocks below are AI-produced for short, non-clinical
+    // survey copy. Recommend a native-speaker pass before wide rollout — esp.
+    // ar/fa (RTL) and so/pa. English is ready as-is.
+    es: {
+      title: '\u00bfC\u00f3mo fue su experiencia?',
+      sub: 'Sus comentarios nos ayudan a mejorar la atenci\u00f3n para todos. Toma menos de un minuto.',
+      qNps: '1. \u00bfQu\u00e9 tan probable es que recomiende Martindale Dental a un amigo o familiar?',
+      npsLow: 'Nada probable', npsHigh: 'Muy probable',
+      qSam: '2. \u00bfQu\u00e9 tan \u00fatil fue Sam, nuestro asistente dental virtual, para recopilar su informaci\u00f3n?',
+      samLow: 'Nada \u00fatil', samHigh: 'Muy \u00fatil',
+      qFollowup: '3. \u00bfNuestro equipo dental le dio seguimiento de manera oportuna?',
+      fuYes: 'S\u00ed, con prontitud',
+      fuSomewhat: 'M\u00e1s o menos \u2014 hubo un poco de espera',
+      fuNo: 'No \u2014 todav\u00eda estoy esperando una respuesta',
+      qFeedback: '4. \u00bfAlgo m\u00e1s que le gustar\u00eda compartir? ',
+      optional: '(opcional)',
+      placeholder: 'Sus comentarios siempre se leen y se agradecen.',
+      submit: 'Enviar comentarios',
+      submitting: 'Enviando\u2026',
+      tyTitle: '\u00a1Gracias!',
+      tySub: 'Hemos recibido sus comentarios.<br><br>Martindale Dental \u2014 Jackson Square, Hamilton',
+      errNps: 'Por favor responda la primera pregunta antes de enviar.',
+      errGeneric: 'Algo sali\u00f3 mal. Por favor intente de nuevo.',
+      errInvalid: 'Este enlace de encuesta ya no es v\u00e1lido.'
+    },
+    fr: {
+      title: 'Comment s\u2019est pass\u00e9e votre exp\u00e9rience\u202f?',
+      sub: 'Vos commentaires nous aident \u00e0 am\u00e9liorer les soins pour tous. Cela prend moins d\u2019une minute.',
+      qNps: '1. Quelle est la probabilit\u00e9 que vous recommandiez Martindale Dental \u00e0 un ami ou un membre de votre famille\u202f?',
+      npsLow: 'Pas du tout probable', npsHigh: 'Extr\u00eamement probable',
+      qSam: '2. Dans quelle mesure Sam, notre assistant dentaire virtuel, vous a-t-il aid\u00e9 \u00e0 recueillir vos informations\u202f?',
+      samLow: 'Pas utile', samHigh: 'Tr\u00e8s utile',
+      qFollowup: '3. Notre \u00e9quipe dentaire a-t-elle assur\u00e9 un suivi rapide\u202f?',
+      fuYes: 'Oui, rapidement',
+      fuSomewhat: 'Plus ou moins \u2014 il y a eu un peu d\u2019attente',
+      fuNo: 'Non \u2014 j\u2019attends toujours une r\u00e9ponse',
+      qFeedback: '4. Souhaitez-vous partager autre chose\u202f? ',
+      optional: '(facultatif)',
+      placeholder: 'Vos commentaires sont toujours lus et appr\u00e9ci\u00e9s.',
+      submit: 'Envoyer mes commentaires',
+      submitting: 'Envoi en cours\u2026',
+      tyTitle: 'Merci\u202f!',
+      tySub: 'Vos commentaires ont bien \u00e9t\u00e9 re\u00e7us.<br><br>Martindale Dental \u2014 Jackson Square, Hamilton',
+      errNps: 'Veuillez r\u00e9pondre \u00e0 la premi\u00e8re question avant d\u2019envoyer.',
+      errGeneric: 'Une erreur s\u2019est produite. Veuillez r\u00e9essayer.',
+      errInvalid: 'Ce lien de sondage n\u2019est plus valide.'
+    },
+    ar: {
+      title: '\u0643\u064a\u0641 \u0643\u0627\u0646\u062a \u062a\u062c\u0631\u0628\u062a\u0643\u061f',
+      sub: '\u062a\u0633\u0627\u0639\u062f\u0646\u0627 \u0645\u0644\u0627\u062d\u0638\u0627\u062a\u0643 \u0639\u0644\u0649 \u062a\u062d\u0633\u064a\u0646 \u0627\u0644\u0631\u0639\u0627\u064a\u0629 \u0644\u0644\u062c\u0645\u064a\u0639. \u062a\u0633\u062a\u063a\u0631\u0642 \u0623\u0642\u0644 \u0645\u0646 \u062f\u0642\u064a\u0642\u0629.',
+      qNps: '1. \u0645\u0627 \u0645\u062f\u0649 \u0627\u062d\u062a\u0645\u0627\u0644 \u0623\u0646 \u062a\u0648\u0635\u064a \u0628\u0639\u064a\u0627\u062f\u0629 Martindale Dental \u0644\u0635\u062f\u064a\u0642 \u0623\u0648 \u0623\u062d\u062f \u0623\u0641\u0631\u0627\u062f \u0627\u0644\u0639\u0627\u0626\u0644\u0629\u061f',
+      npsLow: '\u063a\u064a\u0631 \u0645\u062d\u062a\u0645\u0644 \u0625\u0637\u0644\u0627\u0642\u0627\u064b', npsHigh: '\u0645\u062d\u062a\u0645\u0644 \u062c\u062f\u0627\u064b',
+      qSam: '2. \u0645\u0627 \u0645\u062f\u0649 \u0641\u0627\u0626\u062f\u0629 \u0633\u0627\u0645\u060c \u0645\u0633\u0627\u0639\u062f\u0646\u0627 \u0627\u0644\u0630\u0643\u064a \u0644\u0644\u0623\u0633\u0646\u0627\u0646\u060c \u0641\u064a \u062c\u0645\u0639 \u0645\u0639\u0644\u0648\u0645\u0627\u062a\u0643\u061f',
+      samLow: '\u063a\u064a\u0631 \u0645\u0641\u064a\u062f', samHigh: '\u0645\u0641\u064a\u062f \u062c\u062f\u0627\u064b',
+      qFollowup: '3. \u0647\u0644 \u062a\u0627\u0628\u0639 \u0641\u0631\u064a\u0642 \u0627\u0644\u0623\u0633\u0646\u0627\u0646 \u0644\u062f\u064a\u0646\u0627 \u0645\u0639\u0643 \u0641\u064a \u0627\u0644\u0648\u0642\u062a \u0627\u0644\u0645\u0646\u0627\u0633\u0628\u061f',
+      fuYes: '\u0646\u0639\u0645\u060c \u0628\u0633\u0631\u0639\u0629',
+      fuSomewhat: '\u0625\u0644\u0649 \u062d\u062f\u064d \u0645\u0627 \u2014 \u0643\u0627\u0646 \u0647\u0646\u0627\u0643 \u0628\u0639\u0636 \u0627\u0644\u0627\u0646\u062a\u0638\u0627\u0631',
+      fuNo: '\u0644\u0627 \u2014 \u0645\u0627 \u0632\u0644\u062a \u0623\u0646\u062a\u0638\u0631 \u0627\u0644\u0631\u062f',
+      qFeedback: '4. \u0647\u0644 \u0647\u0646\u0627\u0643 \u0623\u064a \u0634\u064a\u0621 \u0622\u062e\u0631 \u062a\u0648\u062f \u0645\u0634\u0627\u0631\u0643\u062a\u0647\u061f ',
+      optional: '(\u0627\u062e\u062a\u064a\u0627\u0631\u064a)',
+      placeholder: '\u0646\u0642\u0631\u0623 \u0645\u0644\u0627\u062d\u0638\u0627\u062a\u0643 \u062f\u0627\u0626\u0645\u0627\u064b \u0648\u0646\u0642\u062f\u0651\u0631\u0647\u0627.',
+      submit: '\u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0645\u0644\u0627\u062d\u0638\u0627\u062a',
+      submitting: '\u062c\u0627\u0631\u064d \u0627\u0644\u0625\u0631\u0633\u0627\u0644\u2026',
+      tyTitle: '\u0634\u0643\u0631\u0627\u064b \u0644\u0643!',
+      tySub: '\u062a\u0645 \u0627\u0633\u062a\u0644\u0627\u0645 \u0645\u0644\u0627\u062d\u0638\u0627\u062a\u0643.<br><br>Martindale Dental \u2014 Jackson Square, Hamilton',
+      errNps: '\u064a\u0631\u062c\u0649 \u0627\u0644\u0625\u062c\u0627\u0628\u0629 \u0639\u0644\u0649 \u0627\u0644\u0633\u0624\u0627\u0644 \u0627\u0644\u0623\u0648\u0644 \u0642\u0628\u0644 \u0627\u0644\u0625\u0631\u0633\u0627\u0644.',
+      errGeneric: '\u062d\u062f\u062b \u062e\u0637\u0623 \u0645\u0627. \u064a\u0631\u062c\u0649 \u0627\u0644\u0645\u062d\u0627\u0648\u0644\u0629 \u0645\u0631\u0629 \u0623\u062e\u0631\u0649.',
+      errInvalid: '\u0644\u0645 \u064a\u0639\u062f \u0631\u0627\u0628\u0637 \u0627\u0644\u0627\u0633\u062a\u0628\u064a\u0627\u0646 \u0635\u0627\u0644\u062d\u0627\u064b.'
+    },
+    zh: {
+      title: '\u60a8\u7684\u4f53\u9a8c\u5982\u4f55\uff1f',
+      sub: '\u60a8\u7684\u53cd\u9988\u6709\u52a9\u4e8e\u6211\u4eec\u4e3a\u6bcf\u4f4d\u60a3\u8005\u6539\u5584\u670d\u52a1\u3002\u53ea\u9700\u4e0d\u5230\u4e00\u5206\u949f\u3002',
+      qNps: '1. \u60a8\u5411\u4eb2\u53cb\u63a8\u8350 Martindale Dental \u7684\u53ef\u80fd\u6027\u6709\u591a\u5927\uff1f',
+      npsLow: '\u5b8c\u5168\u4e0d\u53ef\u80fd', npsHigh: '\u975e\u5e38\u53ef\u80fd',
+      qSam: '2. \u6211\u4eec\u7684\u865a\u62df\u7259\u79d1\u52a9\u624b Sam \u5728\u6536\u96c6\u60a8\u7684\u4fe1\u606f\u65b9\u9762\u6709\u591a\u5927\u5e2e\u52a9\uff1f',
+      samLow: '\u6ca1\u6709\u5e2e\u52a9', samHigh: '\u975e\u5e38\u6709\u5e2e\u52a9',
+      qFollowup: '3. \u6211\u4eec\u7684\u7259\u79d1\u56e2\u961f\u662f\u5426\u53ca\u65f6\u4e0e\u60a8\u8ddf\u8fdb\uff1f',
+      fuYes: '\u662f\u7684\uff0c\u5f88\u53ca\u65f6',
+      fuSomewhat: '\u4e00\u822c \u2014 \u7b49\u4e86\u4e00\u4f1a\u513f',
+      fuNo: '\u6ca1\u6709 \u2014 \u6211\u4ecd\u5728\u7b49\u5f85\u56de\u590d',
+      qFeedback: '4. \u8fd8\u6709\u4ec0\u4e48\u60f3\u544a\u8bc9\u6211\u4eec\u7684\u5417\uff1f ',
+      optional: '\uff08\u9009\u586b\uff09',
+      placeholder: '\u6211\u4eec\u4e00\u5b9a\u4f1a\u9605\u8bfb\u5e76\u611f\u8c22\u60a8\u7684\u53cd\u9988\u3002',
+      submit: '\u63d0\u4ea4\u53cd\u9988',
+      submitting: '\u63d0\u4ea4\u4e2d\u2026',
+      tyTitle: '\u8c22\u8c22\uff01',
+      tySub: '\u6211\u4eec\u5df2\u6536\u5230\u60a8\u7684\u53cd\u9988\u3002<br><br>Martindale Dental \u2014 Jackson Square, Hamilton',
+      errNps: '\u63d0\u4ea4\u524d\u8bf7\u56de\u7b54\u7b2c\u4e00\u4e2a\u95ee\u9898\u3002',
+      errGeneric: '\u51fa\u4e86\u70b9\u95ee\u9898\uff0c\u8bf7\u91cd\u8bd5\u3002',
+      errInvalid: '\u6b64\u95ee\u5377\u94fe\u63a5\u5df2\u5931\u6548\u3002'
+    },
+    pa: {
+      title: '\u0a24\u0a41\u0a39\u0a3e\u0a21\u0a3e \u0a05\u0a28\u0a41\u0a2d\u0a35 \u0a15\u0a3f\u0a39\u0a4b \u0a1c\u0a3f\u0a39\u0a3e \u0a30\u0a3f\u0a39\u0a3e?',
+      sub: '\u0a24\u0a41\u0a39\u0a3e\u0a21\u0a40 \u0a30\u0a3e\u0a319 \u0a38\u0a3e\u0a28\u0a42\u0a70 \u0a38\u0a3e\u0a30\u0a3f\u0a06\u0a02 \u0a32\u0a08 \u0a26\u0a47\u0a16\u0a2d\u0a3e\u0a32 \u0a2c\u0a3f\u0a39\u0a24\u0a30 \u0a2c\u0a23\u0a3e\u0a09\u0a23 \u0a35\u0a3f\u0a71\u0a1a \u0a2e\u0a26\u0a26 \u0a15\u0a30\u0a26\u0a40 \u0a39\u0a48\u0964 \u0a07\u0a38 \u0a35\u0a3f\u0a71\u0a1a \u0a07\u0a71\u0a15 \u0a2e\u0a3f\u0a70\u0a1f \u0a24\u0a4b\u0a02 \u0a35\u0a40 \u0a18\u0a71\u0a1f \u0a38\u0a2e\u0a3e\u0a02 \u0a32\u0a71\u0a17\u0a26\u0a3e \u0a39\u0a48\u0964',
+      qNps: '1. \u0a24\u0a41\u0a38\u0a40\u0a02 Martindale Dental \u0a26\u0a40 \u0a38\u0a3f\u0a5e\u0a3e\u0a30\u0a36 \u0a15\u0a3f\u0a38\u0a47 \u0a26\u0a4b\u0a38\u0a24 \u0a1c\u0a3e\u0a02 \u0a2a\u0a30\u0a3f\u0a35\u0a3e\u0a30\u0a15 \u0a2e\u0a48\u0a02\u0a2c\u0a30 \u0a28\u0a42\u0a70 \u0a15\u0a30\u0a28 \u0a26\u0a40 \u0a15\u0a3f\u0a70\u0a28\u0a40 \u0a38\u0a70\u0a2d\u0a3e\u0a35\u0a28\u0a3e \u0a30\u0a71\u0a16\u0a26\u0a47 \u0a39\u0a4b?',
+      npsLow: '\u0a2c\u0a3f\u0a32\u0a15\u0a41\u0a32 \u0a38\u0a70\u0a2d\u0a3e\u0a35\u0a28\u0a3e \u0a28\u0a39\u0a40\u0a02', npsHigh: '\u0a2c\u0a39\u0a41\u0a24 \u0a1c\u0a3c\u0a3f\u0a06\u0a26\u0a3e \u0a38\u0a70\u0a2d\u0a3e\u0a35\u0a28\u0a3e',
+      qSam: '2. \u0a24\u0a41\u0a39\u0a3e\u0a21\u0a40 \u0a1c\u0a3e\u0a23\u0a15\u0a3e\u0a30\u0a40 \u0a07\u0a15\u0a71\u0a20\u0a40 \u0a15\u0a30\u0a28 \u0a35\u0a3f\u0a71\u0a1a \u0a38\u0a3e\u0a21\u0a47 \u0a35\u0a30\u0a1a\u0a41\u0a05\u0a32 \u0a21\u0a48\u0a02\u0a1f\u0a32 \u0a05\u0a38\u0a3f\u0a38\u0a1f\u0a48\u0a02\u0a1f \u0a38\u0a48\u0a2e \u0a28\u0a47 \u0a15\u0a3f\u0a70\u0a28\u0a40 \u0a2e\u0a26\u0a26 \u0a15\u0a40\u0a24\u0a40?',
+      samLow: '\u0a2e\u0a26\u0a26\u0a17\u0a3e\u0a30 \u0a28\u0a39\u0a40\u0a02', samHigh: '\u0a2c\u0a39\u0a41\u0a24 \u0a2e\u0a26\u0a26\u0a17\u0a3e\u0a30',
+      qFollowup: '3. \u0a15\u0a40 \u0a38\u0a3e\u0a21\u0a40 \u0a21\u0a48\u0a02\u0a1f\u0a32 \u0a1f\u0a40\u0a2e \u0a28\u0a47 \u0a24\u0a41\u0a39\u0a3e\u0a21\u0a47 \u0a28\u0a3e\u0a32 \u0a38\u0a2e\u0a47\u0a02 \u0a38\u0a3f\u0a30 \u0a5e\u0a3e\u0a32\u0a4b-\u0a05\u0a71\u0a2a \u0a15\u0a40\u0a24\u0a3e?',
+      fuYes: '\u0a39\u0a3e\u0a02, \u0a1c\u0a32\u0a26\u0a40',
+      fuSomewhat: '\u0a15\u0a41\u0a1d \u0a39\u0a71\u0a26 \u0a24\u0a71\u0a15 \u2014 \u0a25\u0a4b\u0a5c\u0a4d\u0a39\u0a3e \u0a07\u0a70\u0a24\u0a1c\u0a3c\u0a3e\u0a30 \u0a15\u0a30\u0a28\u0a3e \u0a2a\u0a3f\u0a06',
+      fuNo: '\u0a28\u0a39\u0a40\u0a02 \u2014 \u0a2e\u0a48\u0a02 \u0a05\u0a1c\u0a47 \u0a35\u0a40 \u0a1c\u0a35\u0a3e\u0a2c \u0a26\u0a40 \u0a09\u0a21\u0a40\u0a15 \u0a15\u0a30 \u0a30\u0a3f\u0a39\u0a3e \u0a39\u0a3e\u0a02',
+      qFeedback: '4. \u0a15\u0a40 \u0a24\u0a41\u0a38\u0a40\u0a02 \u0a39\u0a4b\u0a30 \u0a15\u0a41\u0a1d \u0a38\u0a3e\u0a02\u0a1d\u0a3e \u0a15\u0a30\u0a28\u0a3e \u0a1a\u0a3e\u0a39\u0a4b\u0a17\u0a47? ',
+      optional: '(\u0a35\u0a3f\u0a15\u0a32\u0a2a\u0a3f\u0a15)',
+      placeholder: '\u0a24\u0a41\u0a39\u0a3e\u0a21\u0a40 \u0a30\u0a3e\u0a319 \u0a39\u0a2e\u0a47\u0a36\u0a3e \u0a2a\u0a5c\u0a4d\u0a39\u0a40 \u0a05\u0a24\u0a47 \u0a38\u0a30\u0a3e\u0a39\u0a40 \u0a1c\u0a3e\u0a02\u0a26\u0a40 \u0a39\u0a48\u0964',
+      submit: '\u0a30\u0a3e\u0a319 \u0a2d\u0a47\u0a1c\u0a4b',
+      submitting: '\u0a2d\u0a47\u0a1c\u0a3f\u0a06 \u0a1c\u0a3e \u0a30\u0a3f\u0a39\u0a3e \u0a39\u0a48\u2026',
+      tyTitle: '\u0a27\u0a70\u0a28\u0a35\u0a3e\u0a26!',
+      tySub: '\u0a24\u0a41\u0a39\u0a3e\u0a21\u0a40 \u0a30\u0a3e\u0a319 \u0a2e\u0a3f\u0a32 \u0a17\u0a08 \u0a39\u0a48\u0964<br><br>Martindale Dental \u2014 Jackson Square, Hamilton',
+      errNps: '\u0a2d\u0a47\u0a1c\u0a23 \u0a24\u0a4b\u0a02 \u0a2a\u0a39\u0a3f\u0a32\u0a3e\u0a02 \u0a15\u0a3f\u0a30\u0a2a\u0a3e \u0a15\u0a30\u0a15\u0a47 \u0a2a\u0a39\u0a3f\u0a32\u0a47 \u0a38\u0a35\u0a3e\u0a32 \u0a26\u0a3e \u0a1c\u0a35\u0a3e\u0a2c \u0a26\u0a3f\u0a13\u0964',
+      errGeneric: '\u0a15\u0a41\u0a1d \u0a17\u0a32\u0a24 \u0a39\u0a4b \u0a17\u0a3f\u0a06\u0964 \u0a15\u0a3f\u0a30\u0a2a\u0a3e \u0a15\u0a30\u0a15\u0a47 \u0a26\u0a41\u0a2c\u0a3e\u0a30\u0a3e \u0a15\u0a4b\u0a36\u0a3f\u0a36 \u0a15\u0a30\u0a4b\u0964',
+      errInvalid: '\u0a07\u0a39 \u0a38\u0a30\u0a35\u0a47 \u0a32\u0a3f\u0a70\u0a15 \u0a39\u0a41\u0a23 \u0a35\u0a48\u0a27 \u0a28\u0a39\u0a40\u0a02 \u0a39\u0a48\u0964'
+    },
+    hi: {
+      title: '\u0906\u092a\u0915\u093e \u0905\u0928\u0941\u092d\u0935 \u0915\u0948\u0938\u093e \u0930\u0939\u093e?',
+      sub: '\u0906\u092a\u0915\u0940 \u092a\u094d\u0930\u0924\u093f\u0915\u094d\u0930\u093f\u092f\u093e \u0939\u092e\u0947\u0902 \u0938\u092d\u0940 \u0915\u0947 \u0932\u093f\u090f \u0926\u0947\u0916\u092d\u093e\u0932 \u092c\u0947\u0939\u0924\u0930 \u092c\u0928\u093e\u0928\u0947 \u092e\u0947\u0902 \u092e\u0926\u0926 \u0915\u0930\u0924\u0940 \u0939\u0948\u0964 \u0907\u0938\u092e\u0947\u0902 \u090f\u0915 \u092e\u093f\u0928\u091f \u0938\u0947 \u092d\u0940 \u0915\u092e \u0938\u092e\u092f \u0932\u0917\u0924\u093e \u0939\u0948\u0964',
+      qNps: '1. \u0906\u092a Martindale Dental \u0915\u0940 \u0938\u093f\u092b\u093c\u093e\u0930\u093f\u0936 \u0915\u093f\u0938\u0940 \u092e\u093f\u0924\u094d\u0930 \u092f\u093e \u092a\u0930\u093f\u0935\u093e\u0930 \u0915\u0947 \u0938\u0926\u0938\u094d\u092f \u0915\u094b \u0915\u0930\u0928\u0947 \u0915\u0940 \u0915\u093f\u0924\u0928\u0940 \u0938\u0902\u092d\u093e\u0935\u0928\u093e \u0930\u0916\u0924\u0947 \u0939\u0948\u0902?',
+      npsLow: '\u092c\u093f\u0932\u094d\u0915\u0941\u0932 \u0938\u0902\u092d\u093e\u0935\u0928\u093e \u0928\u0939\u0940\u0902', npsHigh: '\u0905\u0924\u094d\u092f\u0927\u093f\u0915 \u0938\u0902\u092d\u093e\u0935\u0928\u093e',
+      qSam: '2. \u0906\u092a\u0915\u0940 \u091c\u093e\u0928\u0915\u093e\u0930\u0940 \u090f\u0915\u0924\u094d\u0930 \u0915\u0930\u0928\u0947 \u092e\u0947\u0902 \u0939\u092e\u093e\u0930\u0947 \u0935\u0930\u094d\u091a\u0941\u0905\u0932 \u0921\u0947\u0902\u091f\u0932 \u0905\u0938\u093f\u0938\u094d\u091f\u0947\u0902\u091f \u0938\u0948\u092e \u0928\u0947 \u0915\u093f\u0924\u0928\u0940 \u092e\u0926\u0926 \u0915\u0940?',
+      samLow: '\u092e\u0926\u0926\u0917\u093e\u0930 \u0928\u0939\u0940\u0902', samHigh: '\u092c\u0939\u0941\u0924 \u092e\u0926\u0926\u0917\u093e\u0930',
+      qFollowup: '3. \u0915\u094d\u092f\u093e \u0939\u092e\u093e\u0930\u0940 \u0921\u0947\u0902\u091f\u0932 \u091f\u0940\u092e \u0928\u0947 \u0906\u092a\u0938\u0947 \u0938\u092e\u092f \u092a\u0930 \u092b\u093c\u0949\u0932\u094b-\u0905\u092a \u0915\u093f\u092f\u093e?',
+      fuYes: '\u0939\u093e\u0902, \u0924\u0941\u0930\u0902\u0924',
+      fuSomewhat: '\u0915\u0941\u091b \u0939\u0926 \u0924\u0915 \u2014 \u0925\u094b\u095c\u093e \u0907\u0902\u0924\u091c\u093c\u093e\u0930 \u0915\u0930\u0928\u093e \u092a\u095c\u093e',
+      fuNo: '\u0928\u0939\u0940\u0902 \u2014 \u092e\u0948\u0902 \u0905\u092c \u092d\u0940 \u091c\u0935\u093e\u092c \u0915\u093e \u0907\u0902\u0924\u091c\u093c\u093e\u0930 \u0915\u0930 \u0930\u0939\u093e \u0939\u0942\u0902',
+      qFeedback: '4. \u0915\u094d\u092f\u093e \u0906\u092a \u0915\u0941\u091b \u0914\u0930 \u0938\u093e\u091d\u093e \u0915\u0930\u0928\u093e \u091a\u093e\u0939\u0947\u0902\u0917\u0947? ',
+      optional: '(\u0935\u0948\u0915\u0932\u094d\u092a\u093f\u0915)',
+      placeholder: '\u0906\u092a\u0915\u0940 \u092a\u094d\u0930\u0924\u093f\u0915\u094d\u0930\u093f\u092f\u093e \u0939\u092e\u0947\u0936\u093e \u092a\u095d\u0940 \u0914\u0930 \u0938\u0930\u093e\u0939\u0940 \u091c\u093e\u0924\u0940 \u0939\u0948\u0964',
+      submit: '\u092a\u094d\u0930\u0924\u093f\u0915\u094d\u0930\u093f\u092f\u093e \u092d\u0947\u091c\u0947\u0902',
+      submitting: '\u092d\u0947\u091c\u093e \u091c\u093e \u0930\u0939\u093e \u0939\u0948\u2026',
+      tyTitle: '\u0927\u0928\u094d\u092f\u0935\u093e\u0926!',
+      tySub: '\u0906\u092a\u0915\u0940 \u092a\u094d\u0930\u0924\u093f\u0915\u094d\u0930\u093f\u092f\u093e \u092a\u094d\u0930\u093e\u092a\u094d\u0924 \u0939\u094b \u0917\u0908 \u0939\u0948\u0964<br><br>Martindale Dental \u2014 Jackson Square, Hamilton',
+      errNps: '\u092d\u0947\u091c\u0928\u0947 \u0938\u0947 \u092a\u0939\u0932\u0947 \u0915\u0943\u092a\u092f\u093e \u092a\u0939\u0932\u0947 \u092a\u094d\u0930\u0936\u094d\u0928 \u0915\u093e \u0909\u0924\u094d\u0924\u0930 \u0926\u0947\u0902\u0964',
+      errGeneric: '\u0915\u0941\u091b \u0917\u0932\u0924 \u0939\u094b \u0917\u092f\u093e\u0964 \u0915\u0943\u092a\u092f\u093e \u092a\u0941\u0928\u0903 \u092a\u094d\u0930\u092f\u093e\u0938 \u0915\u0930\u0947\u0902\u0964',
+      errInvalid: '\u092f\u0939 \u0938\u0930\u094d\u0935\u0947\u0915\u094d\u0937\u0923 \u0932\u093f\u0902\u0915 \u0905\u092c \u092e\u093e\u0928\u094d\u092f \u0928\u0939\u0940\u0902 \u0939\u0948\u0964'
+    },
+    fa: {
+      title: '\u062a\u062c\u0631\u0628\u0647 \u0634\u0645\u0627 \u0686\u06af\u0648\u0646\u0647 \u0628\u0648\u062f\u061f',
+      sub: '\u0628\u0627\u0632\u062e\u0648\u0631\u062f \u0634\u0645\u0627 \u0628\u0647 \u0645\u0627 \u06a9\u0645\u06a9 \u0645\u06cc\u200c\u06a9\u0646\u062f \u0645\u0631\u0627\u0642\u0628\u062a \u0631\u0627 \u0628\u0631\u0627\u06cc \u0647\u0645\u0647 \u0628\u0647\u062a\u0631 \u06a9\u0646\u06cc\u0645. \u06a9\u0645\u062a\u0631 \u0627\u0632 \u06cc\u06a9 \u062f\u0642\u06cc\u0642\u0647 \u0637\u0648\u0644 \u0645\u06cc\u200c\u06a9\u0634\u062f.',
+      qNps: '1. \u0686\u0642\u062f\u0631 \u0627\u062d\u062a\u0645\u0627\u0644 \u062f\u0627\u0631\u062f Martindale Dental \u0631\u0627 \u0628\u0647 \u06cc\u06a9 \u062f\u0648\u0633\u062a \u06cc\u0627 \u0639\u0636\u0648 \u062e\u0627\u0646\u0648\u0627\u062f\u0647 \u062a\u0648\u0635\u06cc\u0647 \u06a9\u0646\u06cc\u062f\u061f',
+      npsLow: '\u0627\u0635\u0644\u0627\u064b \u0645\u062d\u062a\u0645\u0644 \u0646\u06cc\u0633\u062a', npsHigh: '\u0628\u0633\u06cc\u0627\u0631 \u0645\u062d\u062a\u0645\u0644',
+      qSam: '2. \u062f\u0633\u062a\u06cc\u0627\u0631 \u0645\u062c\u0627\u0632\u06cc \u062f\u0646\u062f\u0627\u0646\u200c\u067e\u0632\u0634\u06a9\u06cc \u0645\u0627\u060c \u0633\u0627\u0645\u060c \u062f\u0631 \u062c\u0645\u0639\u200c\u0622\u0648\u0631\u06cc \u0627\u0637\u0644\u0627\u0639\u0627\u062a \u0634\u0645\u0627 \u0686\u0642\u062f\u0631 \u0645\u0641\u06cc\u062f \u0628\u0648\u062f\u061f',
+      samLow: '\u0645\u0641\u06cc\u062f \u0646\u0628\u0648\u062f', samHigh: '\u0628\u0633\u06cc\u0627\u0631 \u0645\u0641\u06cc\u062f',
+      qFollowup: '3. \u0622\u06cc\u0627 \u062a\u06cc\u0645 \u062f\u0646\u062f\u0627\u0646\u200c\u067e\u0632\u0634\u06a9\u06cc \u0645\u0627 \u0628\u0647\u200c\u0645\u0648\u0642\u0639 \u0628\u0627 \u0634\u0645\u0627 \u067e\u06cc\u06af\u06cc\u0631\u06cc \u06a9\u0631\u062f\u061f',
+      fuYes: '\u0628\u0644\u0647\u060c \u0628\u0647\u200c\u0633\u0631\u0639\u062a',
+      fuSomewhat: '\u062a\u0627 \u062d\u062f\u06cc \u2014 \u06a9\u0645\u06cc \u0627\u0646\u062a\u0638\u0627\u0631 \u0648\u062c\u0648\u062f \u062f\u0627\u0634\u062a',
+      fuNo: '\u062e\u06cc\u0631 \u2014 \u0647\u0646\u0648\u0632 \u0645\u0646\u062a\u0638\u0631 \u067e\u0627\u0633\u062e \u0647\u0633\u062a\u0645',
+      qFeedback: '4. \u0622\u06cc\u0627 \u0686\u06cc\u0632 \u062f\u06cc\u06af\u0631\u06cc \u0647\u0633\u062a \u06a9\u0647 \u0628\u062e\u0648\u0627\u0647\u06cc\u062f \u0628\u0627 \u0645\u0627 \u062f\u0631 \u0645\u06cc\u0627\u0646 \u0628\u06af\u0630\u0627\u0631\u06cc\u062f\u061f ',
+      optional: '(\u0627\u062e\u062a\u06cc\u0627\u0631\u06cc)',
+      placeholder: '\u0628\u0627\u0632\u062e\u0648\u0631\u062f \u0634\u0645\u0627 \u0647\u0645\u06cc\u0634\u0647 \u062e\u0648\u0627\u0646\u062f\u0647 \u0648 \u0642\u062f\u0631\u062f\u0627\u0646\u06cc \u0645\u06cc\u200c\u0634\u0648\u062f.',
+      submit: '\u0627\u0631\u0633\u0627\u0644 \u0628\u0627\u0632\u062e\u0648\u0631\u062f',
+      submitting: '\u062f\u0631 \u062d\u0627\u0644 \u0627\u0631\u0633\u0627\u0644\u2026',
+      tyTitle: '\u0645\u062a\u0634\u06a9\u0631\u06cc\u0645!',
+      tySub: '\u0628\u0627\u0632\u062e\u0648\u0631\u062f \u0634\u0645\u0627 \u062f\u0631\u06cc\u0627\u0641\u062a \u0634\u062f.<br><br>Martindale Dental \u2014 Jackson Square, Hamilton',
+      errNps: '\u0644\u0637\u0641\u0627\u064b \u0642\u0628\u0644 \u0627\u0632 \u0627\u0631\u0633\u0627\u0644 \u0628\u0647 \u067e\u0631\u0633\u0634 \u0627\u0648\u0644 \u067e\u0627\u0633\u062e \u062f\u0647\u06cc\u062f.',
+      errGeneric: '\u0645\u0634\u06a9\u0644\u06cc \u067e\u06cc\u0634 \u0622\u0645\u062f. \u0644\u0637\u0641\u0627\u064b \u062f\u0648\u0628\u0627\u0631\u0647 \u062a\u0644\u0627\u0634 \u06a9\u0646\u06cc\u062f.',
+      errInvalid: '\u0627\u06cc\u0646 \u067e\u06cc\u0648\u0646\u062f \u0646\u0638\u0631\u0633\u0646\u062c\u06cc \u062f\u06cc\u06af\u0631 \u0645\u0639\u062a\u0628\u0631 \u0646\u06cc\u0633\u062a.'
+    },
+    so: {
+      title: 'Sidee bay ahayd waayo-aragnimadaada?',
+      sub: 'Jawaabtaadu waxay naga caawisaa inaan daryeelka u wanaajinno qof walba. Waxay qaadanaysaa wax ka yar daqiiqad.',
+      qNps: '1. Intee in le\u2019eg ayay u badan tahay inaad Martindale Dental ku talisid saaxiib ama qof qoyska ka mid ah?',
+      npsLow: 'Suuragal maaha gabi ahaan', npsHigh: 'Aad u suurtagal ah',
+      qSam: '2. Intee in le\u2019eg ayuu Sam, kaaliyahayaga ilkaha ee virtual-ka ah, kaaga caawiyay ururinta macluumaadkaaga?',
+      samLow: 'Faa\u2019iido maleh', samHigh: 'Aad u faa\u2019iido badan',
+      qFollowup: '3. Kooxdayada ilkuhu ma kula soo xidhiidheen si waqti ku habboon?',
+      fuYes: 'Haa, si degdeg ah',
+      fuSomewhat: 'Xoogaa \u2014 waxaa jiray sugitaan yar',
+      fuNo: 'Maya \u2014 weli waxaan sugayaa jawaab',
+      qFeedback: '4. Ma jiraa wax kale oo aad jeclaan lahayd inaad nala wadaagto? ',
+      optional: '(ikhtiyaari)',
+      placeholder: 'Jawaabtaada had iyo jeer waa la akhriyaa waana lagu mahadiyaa.',
+      submit: 'Dir jawaabta',
+      submitting: 'Waa la dirayaa\u2026',
+      tyTitle: 'Mahadsanid!',
+      tySub: 'Jawaabtaada waa la helay.<br><br>Martindale Dental \u2014 Jackson Square, Hamilton',
+      errNps: 'Fadlan ka jawaab su\u2019aasha koowaad ka hor inta aanad dirin.',
+      errGeneric: 'Wax baa khaldamay. Fadlan isku day mar kale.',
+      errInvalid: 'Linkigan sahanku hadda ma shaqaynayo.'
+    }
+  };
+
+  function getParam(name) { return new URLSearchParams(window.location.search).get(name) || ''; }
+  var LANG = getParam('lang').toLowerCase();
+  var T = STRINGS[LANG] || STRINGS.en;
+
+  function setText(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; }
+  function setHtml(id, val) { var el = document.getElementById(id); if (el) el.innerHTML = val; }
+
+  function applyStrings() {
+    if (LANG === 'ar' || LANG === 'fa') document.documentElement.setAttribute('dir', 'rtl');
+    setText('s-title', T.title);
+    setText('s-sub', T.sub);
+    setText('s-q-nps', T.qNps);
+    setText('s-nps-low', T.npsLow);
+    setText('s-nps-high', T.npsHigh);
+    setText('s-q-sam', T.qSam);
+    setText('s-sam-low', T.samLow);
+    setText('s-sam-high', T.samHigh);
+    setText('s-q-followup', T.qFollowup);
+    setText('s-fu-yes', T.fuYes);
+    setHtml('s-fu-somewhat', T.fuSomewhat);
+    setHtml('s-fu-no', T.fuNo);
+    setHtml('s-q-feedback', T.qFeedback + '<span style="font-weight:400;color:#7f96b8;">' + T.optional + '</span>');
+    var ta = document.getElementById('q-freetext'); if (ta) ta.setAttribute('placeholder', T.placeholder);
+    var btn = document.getElementById('submit-btn'); if (btn) btn.textContent = T.submit;
+    setText('s-ty-title', T.tyTitle);
+    setHtml('s-ty-sub', T.tySub);
+  }
+
+  // ---- Build NPS 0-10 scale ----------------------------------------------
+  var answers = { nps: null, sam: null, followup: null };
+
+  (function buildNps() {
+    var scale = document.getElementById('nps-scale');
+    for (var i = 0; i <= 10; i++) {
+      var b = document.createElement('div');
+      b.className = 'nps-btn';
+      b.setAttribute('data-v', String(i));
+      b.textContent = String(i);
+      b.addEventListener('click', function() {
+        var v = parseInt(this.getAttribute('data-v'), 10);
+        answers.nps = v;
+        document.querySelectorAll('#nps-scale .nps-btn').forEach(function(el) {
+          el.classList.toggle('active', parseInt(el.getAttribute('data-v'), 10) === v);
+        });
+      });
+      scale.appendChild(b);
+    }
+  })();
+
+  // ---- Stars (Sam) — cumulative highlight ---------------------------------
   document.querySelectorAll('.star').forEach(function(star) {
     star.addEventListener('click', function() {
-      var q = this.getAttribute('data-q');
-      var v = parseInt(this.getAttribute('data-v'));
-      answers[q] = v;
-      document.querySelectorAll('[data-q="' + q + '"]').forEach(function(s) {
-        if (parseInt(s.getAttribute('data-v')) <= v) s.classList.add('active');
-        else s.classList.remove('active');
+      var v = parseInt(this.getAttribute('data-v'), 10);
+      answers.sam = v;
+      document.querySelectorAll('[data-q="sam"]').forEach(function(s) {
+        s.classList.toggle('active', parseInt(s.getAttribute('data-v'), 10) <= v);
       });
     });
   });
 
+  // ---- Radio (timely follow-up) -------------------------------------------
   document.querySelectorAll('.radio-opt').forEach(function(opt) {
     opt.addEventListener('click', function() {
-      var q = this.getAttribute('data-q');
-      answers[q] = this.getAttribute('data-v');
-      document.querySelectorAll('[data-q="' + q + '"]').forEach(function(o) { o.classList.remove('active'); });
+      answers.followup = this.getAttribute('data-v');
+      document.querySelectorAll('[data-q="followup"]').forEach(function(o) { o.classList.remove('active'); });
       this.classList.add('active');
     });
   });
 
-  function getToken() {
-    return new URLSearchParams(window.location.search).get('token') || '';
-  }
-
+  // ---- Submit -------------------------------------------------------------
   async function submitSurvey() {
     var btn = document.getElementById('submit-btn');
     var errEl = document.getElementById('error-msg');
     errEl.style.display = 'none';
 
-    if (!answers.overall) {
-      errEl.textContent = 'Please rate your overall experience (question 1).';
+    if (answers.nps === null) {
+      errEl.textContent = T.errNps;
+      errEl.style.display = 'block';
+      return;
+    }
+
+    var token = getParam('token');
+    if (!token) {
+      errEl.textContent = T.errInvalid;
       errEl.style.display = 'block';
       return;
     }
 
     btn.disabled = true;
-    btn.textContent = 'Submitting...';
+    btn.textContent = T.submitting;
 
-    var token = getToken();
-    var supabaseUrl = 'https://zjwnqryeefegqfmamaqd.supabase.co';
-    var anonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM3MjA2OTUsImV4cCI6MjA1OTI5NjY5NX0.Qqf9oHkk9ZOhGl8PZo_lxMzSFYoovST5a1MJiDcDjvE';
+    var payload = {
+      survey_token: token,
+      nps_score: answers.nps,
+      sam_satisfaction_score: answers.sam,
+      timely_response: answers.followup,
+      survey_feedback: document.getElementById('q-freetext').value.trim() || null
+    };
 
     try {
-      // Update triage_cases row matching the survey_token
-      // Columns: satisfaction_score, sam_satisfaction_score, timely_response, return_likelihood, survey_feedback
-      var updatePayload = {
-        satisfaction_score: answers.overall,
-        sam_satisfaction_score: answers.sam,
-        timely_response: answers.followup,
-        return_likelihood: answers.return,
-        survey_feedback: document.getElementById('q-freetext').value.trim() || null
-      };
+      var resp = await fetch(SUPABASE_URL + '/functions/v1/survey-submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': ANON_KEY,
+          'Authorization': 'Bearer ' + ANON_KEY
+        },
+        body: JSON.stringify(payload)
+      });
 
-      var resp = await fetch(
-        supabaseUrl + '/rest/v1/triage_cases?survey_token=eq.' + encodeURIComponent(token),
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': anonKey,
-            'Authorization': 'Bearer ' + anonKey,
-            'Prefer': 'return=minimal'
-          },
-          body: JSON.stringify(updatePayload)
-        }
-      );
+      var result = null;
+      try { result = await resp.json(); } catch (e) { /* ignore parse error */ }
 
-      if (!resp.ok) throw new Error('Response ' + resp.status);
+      if (resp.ok && result && result.ok) {
+        document.getElementById('survey-form').style.display = 'none';
+        document.getElementById('thankyou').style.display = 'block';
+        return;
+      }
 
-      document.getElementById('survey-form').style.display = 'none';
-      document.getElementById('thankyou').style.display = 'block';
+      // Surface the server's message when it's the invalid-link case.
+      btn.disabled = false;
+      btn.textContent = T.submit;
+      errEl.textContent = (resp.status === 404) ? T.errInvalid : T.errGeneric;
+      errEl.style.display = 'block';
 
     } catch (e) {
       btn.disabled = false;
-      btn.textContent = 'Submit feedback';
-      errEl.textContent = 'Something went wrong. Please try again.';
+      btn.textContent = T.submit;
+      errEl.textContent = T.errGeneric;
       errEl.style.display = 'block';
     }
   }
+
+  applyStrings();
 </script>
 
 </body>
