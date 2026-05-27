@@ -1086,6 +1086,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     // Fire survey trigger edge function
     try {
+      // patient_language drives the survey page language (?lang=). The case is
+      // already loaded in currentCases; default to "en" if absent.
+      var caseLang = (currentCases.find(function(x) { return x.id === caseId; }) || {}).patient_language || "en";
       await fetch(SUPABASE_URL + "/functions/v1/survey-trigger", {
         method: "POST",
         headers: {
@@ -1097,7 +1100,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           patient_name: patientName,
           patient_phone: patientPhone,
           patient_email: patientEmail || null,
-          survey_token: surveyToken
+          survey_token: surveyToken,
+          patient_language: caseLang
         })
       });
     } catch(e) {
