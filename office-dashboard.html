@@ -870,6 +870,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="revenue-bar" id="booking-bar" style="display:none;">
         <span class="revenue-bar-label">Booked?</span>
         <button class="book-btn" id="book-new" type="button">New patient</button>
+        <button class="book-btn" id="book-existing" type="button">Existing patient</button>
         <button class="book-btn" id="book-further" type="button">Further treatment</button>
         <button class="book-btn" id="book-none" type="button">Not booked</button>
         <span class="revenue-save-status" id="booking-status"></span>
@@ -1155,11 +1156,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   function setBookingButtons(c) {
     var booked = c.final_disposition === "booked" || c.appointment_booked === true || (c.revenue_generated != null && Number(c.revenue_generated) > 0);
     var further = c.subsequent_appointment_booked === true;
-    var none = !!c.final_disposition && c.final_disposition !== "booked" && !booked;
-    var bn = document.getElementById("book-new"), bf = document.getElementById("book-further"), bx = document.getElementById("book-none");
-    if (!bn || !bf || !bx) return;
-    bn.classList.toggle("active", booked && !further);
-    bf.classList.toggle("active", further);
+    var existing = c.is_existing_patient === true;
+    var none = !booked && !!c.final_disposition && c.final_disposition !== "booked";
+    var bn = document.getElementById("book-new"), be = document.getElementById("book-existing"), bf = document.getElementById("book-further"), bx = document.getElementById("book-none");
+    if (!bn || !be || !bf || !bx) return;
+    bn.classList.toggle("active", booked && !further && !existing);
+    be.classList.toggle("active", booked && !further && existing);
+    bf.classList.toggle("active", booked && further);
     bx.classList.toggle("active", none);
     bx.classList.toggle("none-active", none);
   }
@@ -1167,18 +1170,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   async function saveBooking(caseId, kind) {
     var statusEl = document.getElementById("booking-status");
     statusEl.textContent = "Saving..."; statusEl.className = "revenue-save-status";
-    var patch;
-    if (kind === "new") patch = { final_disposition: "booked", appointment_booked: true, subsequent_appointment_booked: false };
-    else if (kind === "further") patch = { final_disposition: "booked", appointment_booked: true, subsequent_appointment_booked: true };
-    else patch = { final_disposition: "not_booked", appointment_booked: false, subsequent_appointment_booked: false };
+    var booked = kind !== "none";
+    var patch = {
+      final_disposition: booked ? "booked" : "not_booked",
+      appointment_booked: booked,
+      subsequent_appointment_booked: kind === "further"
+    };
     var result = await sb.from("triage_cases").update(patch).eq("id", caseId);
     if (result.error) {
       statusEl.textContent = "Error saving"; statusEl.className = "revenue-save-status err";
       setTimeout(function() { statusEl.textContent = ""; statusEl.className = "revenue-save-status"; }, 2500);
       return;
     }
+    // new-vs-existing lives in a separately-migrated column; written as its own
+    // guarded update so a pre-migration deploy still saves the booking itself.
+    var existingVal = (kind === "existing" || kind === "further") ? true : (kind === "new" ? false : null);
+    try { await sb.from("triage_cases").update({ is_existing_patient: existingVal }).eq("id", caseId); } catch (e) {}
     var c = currentCases.find(function(x) { return x.id === caseId; });
-    if (c) { c.final_disposition = patch.final_disposition; c.appointment_booked = patch.appointment_booked; c.subsequent_appointment_booked = patch.subsequent_appointment_booked; setBookingButtons(c); }
+    if (c) { c.final_disposition = patch.final_disposition; c.appointment_booked = patch.appointment_booked; c.subsequent_appointment_booked = patch.subsequent_appointment_booked; c.is_existing_patient = existingVal; setBookingButtons(c); }
     statusEl.textContent = "\u2713 Saved"; statusEl.className = "revenue-save-status ok";
     setTimeout(function() { statusEl.textContent = ""; statusEl.className = "revenue-save-status"; }, 2500);
   }
@@ -1475,13 +1484,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     revStatus.className = "revenue-save-status";
     revSaveBtn.onclick = function() { saveRevenue(c.id, revenueInput.value.trim()); };
 
-    // Booking outcome (front-desk owned — feeds the "Booked" metric)
+    // Office-owned fields (office_note + is_existing_patient) live in separately
+    // migrated columns. Fetched here and guarded so a pre-migration deploy can't
+    // break case loading; they self-enable once the columns exist.
+    var officeNoteVal = c.office_note || "";
+    try {
+      var onr = await sb.from("triage_cases").select("office_note, is_existing_patient").eq("id", c.id).maybeSingle();
+      if (onr && onr.data && !onr.error) {
+        officeNoteVal = onr.data.office_note || "";
+        c.office_note = officeNoteVal;
+        c.is_existing_patient = onr.data.is_existing_patient;
+      }
+    } catch (e) { /* columns not migrated yet */ }
+
+    // Booking outcome (front-desk owned — feeds the "Booked" / new-vs-existing metrics)
     var bookingBar = document.getElementById("booking-bar");
     bookingBar.style.display = "flex";
     var bookStatus = document.getElementById("booking-status");
     bookStatus.textContent = ""; bookStatus.className = "revenue-save-status";
     setBookingButtons(c);
     document.getElementById("book-new").onclick = function() { saveBooking(c.id, "new"); };
+    document.getElementById("book-existing").onclick = function() { saveBooking(c.id, "existing"); };
     document.getElementById("book-further").onclick = function() { saveBooking(c.id, "further"); };
     document.getElementById("book-none").onclick = function() { saveBooking(c.id, "none"); };
 
@@ -1491,13 +1514,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     var noteSaveBtn = document.getElementById("office-note-save");
     var noteStatus = document.getElementById("office-note-status");
     noteBar.style.display = "flex";
-    var officeNoteVal = c.office_note || "";
-    // Fetched separately + guarded so a pre-migration deploy (no office_note
-    // column yet) can't break case loading; self-enables once the column exists.
-    try {
-      var onr = await sb.from("triage_cases").select("office_note").eq("id", c.id).maybeSingle();
-      if (onr && onr.data && !onr.error) { officeNoteVal = onr.data.office_note || ""; if (c) c.office_note = officeNoteVal; }
-    } catch (e) { /* column not migrated yet — leave empty */ }
     noteInput.value = officeNoteVal;
     noteStatus.textContent = ""; noteStatus.className = "revenue-save-status";
     noteSaveBtn.onclick = function() { saveOfficeNote(c.id, noteInput.value); };
