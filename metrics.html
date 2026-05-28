@@ -252,14 +252,12 @@
       // Human first response: first dashboard outbound (sender_email present) minus case created_at.
       var firstHuman={};sms.forEach(function(m){if(!m.case_id||!m.sender_email)return;var t=new Date(m.sent_at).getTime();if(!firstHuman[m.case_id]||t<firstHuman[m.case_id])firstHuman[m.case_id]=t;});
       var resp=[];cases.forEach(function(c){var fh=firstHuman[c.id];if(!fh)return;var mins=(fh-new Date(c.created_at).getTime())/60000;if(Number.isFinite(mins)&&mins>=0)resp.push(mins);});
-      var review=cases.filter(function(c){return c.reviewed_at&&c.created_at;}).map(function(c){return (new Date(c.reviewed_at)-new Date(c.created_at))/60000;}).filter(function(n){return Number.isFinite(n)&&n>=0;});
       html+='<div class="cards">'+
         card("Sam capture · General (voice)",fmtDur(median(genDur)),genDur.length?("median, n="+genDur.length):"no engaged calls yet")+
         card("Sam capture · Emergency",fmtDur(median(emDur)),emDur.length?("median, n="+emDur.length):"no callbacks yet")+
         card("Human first response",resp.length?fmtMins(median(resp)):"—",resp.length?("median, n="+resp.length):"no dashboard replies yet")+
-        card("Clinical review",review.length?fmtMins(median(review)):"—",review.length?("median, n="+review.length):"none reviewed yet")+
         '</div>';
-      html+='<div class="note-line">Human response = first text sent from a dashboard vs. when the case landed; dashboard texts only (a phone callback off-system won\u2019t show). "Clinical review" is when a dentist marked the case reviewed \u2014 not when the patient came in.</div>';
+      html+='<div class="note-line">Human response = first text sent from a dashboard vs. when the case landed (dashboard texts only; a phone callback off-system won\u2019t show). Review/closure latency is deliberately left out until reviewed_at is split into "dentist reviewed" vs "patient seen" \u2014 today it fires days later at closure, so it measures throughput, not responsiveness, and doesn\u2019t belong here.</div>';
 
       /* ===== Q3 — WHAT DID IT PRODUCE ===== */
       html+=qhead("3","What did it produce","Bookings, retention, satisfaction, cost \u2014 the diligence view");
