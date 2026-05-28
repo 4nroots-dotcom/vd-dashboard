@@ -65,6 +65,12 @@
     .hours{display:flex;align-items:flex-end;gap:3px;height:60px;margin-top:6px;}
     .hour-bar{flex:1;background:var(--cyan);opacity:.5;border-radius:2px 2px 0 0;min-height:2px;}
     .hours-axis{display:flex;justify-content:space-between;font-size:10px;color:var(--text-faint);margin-top:4px;}
+    .trend{display:flex;align-items:stretch;gap:4px;height:132px;margin:8px 0 2px;}
+    .trend-col{flex:1;display:flex;flex-direction:column;min-width:0;}
+    .trend-bar{flex:1;width:72%;max-width:26px;margin:0 auto;display:flex;flex-direction:column;justify-content:flex-end;border-radius:3px 3px 0 0;overflow:hidden;}
+    .trend-bar span{display:block;width:100%;}
+    .trend-cases{font-size:11px;color:var(--text-secondary);text-align:center;margin-top:5px;}
+    .trend-date{font-size:9px;color:var(--text-faint);text-align:center;margin-top:1px;}
     .flag-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;}
     .flag{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 10px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-secondary);}
     .flag b{font-weight:600;}
@@ -124,6 +130,8 @@
     function fmtDur(s){if(s==null)return "—";s=Math.round(s);return Math.floor(s/60)+"m "+(s%60)+"s";}
     function fmtMins(m){if(m==null)return "—";if(m<1)return "<1 min";if(m>=60)return Math.floor(m/60)+"h "+Math.round(m%60)+"m";return Math.round(m)+" min";}
     function getSO(c){var so=c.structured_output;if(!so)return {};if(typeof so==="string"){try{return JSON.parse(so);}catch(e){return {};}}return so;}
+    function getContras(c){var r=c.contradictions;if(!r)return [];if(typeof r==="string"){try{r=JSON.parse(r);}catch(e){return [];}}return Array.isArray(r)?r:[];}
+    var CONTRA_LABELS={fever:"Fever",feeling_unwell:"Feeling unwell",swelling:"Swelling",trauma:"Trauma",bleeding:"Bleeding",uncontrolled_bleeding:"Uncontrolled bleeding",breathing_swallowing:"Airway / swallowing",difficulty_breathing_or_swallowing:"Airway / swallowing",immunocompromised:"Immunocompromised",pregnant:"Pregnancy",anticoagulant:"Blood thinners",recent_extraction:"Recent extraction"};
     function laneOf(c){if(c.source==="vapi"&&GENERAL_INBOUND_SOURCES[c.intake_source])return "general";if(c.source==="vapi")return "emergency";return "form_only";}
     function isAssistantEnd(r){r=(r||"").toLowerCase();return r.indexOf("assistant")!==-1||r.indexOf("end-call")!==-1;}
 
@@ -155,7 +163,7 @@
 
     async function runQueries(since){
       var ctq=sb.from("call_transcripts").select("id,vapi_call_id,ended_reason,duration_seconds,intake_source,created_at");
-      var tcq=sb.from("triage_cases").select("id,created_at,severity,triage_tag,intake_source,source,extraction_source,duration_seconds,ended_reason,structured_output,triage_completed_at,reviewed_at,final_disposition,appointment_booked,subsequent_appointment_booked,revenue_generated,nps_score,nps_submitted_at,patient_language,vapi_call_id");
+      var tcq=sb.from("triage_cases").select("id,created_at,severity,triage_tag,intake_source,source,extraction_source,duration_seconds,ended_reason,structured_output,triage_completed_at,reviewed_at,final_disposition,appointment_booked,subsequent_appointment_booked,revenue_generated,nps_score,nps_submitted_at,sam_satisfaction_score,timely_response,contradictions,patient_language,vapi_call_id,patient_phone");
       var smsq=sb.from("sms_log").select("case_id,direction,sender_email,sent_at").eq("direction","outbound");
       if(since){ctq=ctq.gte("created_at",since);tcq=tcq.gte("created_at",since);smsq=smsq.gte("sent_at",since);}
       return Promise.all([ctq,tcq,smsq]);
@@ -187,6 +195,7 @@
     function laneLabel(text,color){return '<div class="lane-label"><span class="lane-dot" style="background:'+color+'"></span>'+escHtml(text)+'</div>';}
     function bar(name,count,total,color){var p=pct(count,total);return '<div class="bar-row"><span class="bar-name">'+escHtml(name)+'</span><span class="bar-track"><span class="bar-fill" style="width:'+p+'%;background:'+color+'"></span></span><span class="bar-val">'+count+' · '+p+'%</span></div>';}
     function sevBars(arr,color){var sev={critical:0,urgent:0,routine:0};arr.forEach(function(c){var s=(c.severity||"").toLowerCase();if(sev[s]!=null)sev[s]++;});var t=arr.length;return bar("Critical",sev.critical,t,"var(--critical)")+bar("Urgent",sev.urgent,t,"var(--urgent)")+bar("Routine",sev.routine,t,"var(--routine)");}
+    function sevBarsU(arr){var sev={critical:0,urgent:0,routine:0,unset:0};arr.forEach(function(c){var s=(c.severity||"").toLowerCase();if(s==="critical"||s==="urgent"||s==="routine")sev[s]++;else sev.unset++;});var t=arr.length;return bar("Critical",sev.critical,t,"var(--critical)")+bar("Urgent",sev.urgent,t,"var(--urgent)")+bar("Routine",sev.routine,t,"var(--routine)")+bar("Untriaged",sev.unset,t,"var(--text-faint)");}
 
     function render(calls,cases,sms){
       var general=cases.filter(function(c){return laneOf(c)==="general";});
@@ -217,16 +226,63 @@
         '</div>';
       html+='<div class="note-line">Test calls (yours / Ranu\u2019s) are excluded only where tagged; untagged test hangups still sit in this bucket until caller_number lands, so the hangup share reads slightly high.</div>';
 
-      // Emergency Sam post-form lane (from triage_cases)
+      // Daily trend — the time dimension: is the hangup share actually falling?
+      (function(){
+        var days={};
+        function bk(d){var t=new Date(d);return t.getFullYear()+"-"+("0"+(t.getMonth()+1)).slice(-2)+"-"+("0"+t.getDate()).slice(-2);}
+        calls.forEach(function(c){var k=bk(c.created_at);if(!days[k])days[k]={c:0,h:0,e:0,g:0,cases:0};var r=(c.ended_reason||"").toLowerCase();var d=Number(c.duration_seconds)||0;days[k].c++;if(r.indexOf("silence")!==-1||r.indexOf("not-found")!==-1||r.indexOf("error")!==-1||r.indexOf("pipeline")!==-1)days[k].e++;else if(r.indexOf("customer-ended")!==-1&&d<15)days[k].h++;else days[k].g++;});
+        cases.forEach(function(c){var k=bk(c.created_at);if(!days[k])days[k]={c:0,h:0,e:0,g:0,cases:0};days[k].cases++;});
+        var keys=Object.keys(days).sort();if(keys.length>21)keys=keys.slice(keys.length-21);
+        var maxC=1;keys.forEach(function(k){if(days[k].c>maxC)maxC=days[k].c;});
+        var avail=tot>0?Math.round((tot-sysf)/tot*100):100;
+        html+='<div class="panel"><div class="panel-title">Daily trend \u2014 availability '+avail+'% over the window; bars show calls (cyan engaged \u00B7 amber hangup \u00B7 red error), number = documented cases</div>';
+        if(!keys.length)html+='<div class="empty">No calls in this window.</div>';
+        else{
+          html+='<div class="trend">';
+          keys.forEach(function(k){var d=days[k];var hp=d.c?Math.round(d.h/d.c*100):0;
+            html+='<div class="trend-col" title="'+k+": "+d.c+" calls, "+hp+'% hangup, '+d.cases+' cases"><div class="trend-bar">'+
+              '<span style="height:'+Math.round(d.e/maxC*100)+'%;background:var(--danger)"></span>'+
+              '<span style="height:'+Math.round(d.h/maxC*100)+'%;background:var(--urgent)"></span>'+
+              '<span style="height:'+Math.round(d.g/maxC*100)+'%;background:var(--cyan)"></span>'+
+              '</div><div class="trend-cases">'+d.cases+'</div><div class="trend-date">'+k.slice(5)+'</div></div>';
+          });
+          html+='</div><div class="note-line">Watch the amber band shrink after the v1.4.21 deploy \u2014 that\u2019s the hangup-rate question answered visually. A red band is an availability dip (the Vapi outage would show here). With only a few days live, read this as early signal, not yet a trend.</div>';
+        }
+        html+='</div>';
+      })();
+
+      // Emergency Sam voice callbacks (source=vapi, post-form)
       var emComplete=emergency.filter(function(c){return isAssistantEnd(c.ended_reason);}).length;
-      html+=laneLabel("Emergency Sam — post-form callbacks","var(--urgent)");
+      html+=laneLabel("Emergency Sam — post-form voice callbacks","var(--urgent)");
       html+='<div class="cards">'+
-        card("Callbacks made",emergency.length,"form completed \u2192 Sam called")+
+        card("Voice callbacks made",emergency.length,"form completed \u2192 Sam called")+
         card("Sam completed the call",emComplete+' <small>'+pct(emComplete,emergency.length)+'%</small>',"assistant ended the call")+
-        card("Form intakes, no callback",formOnly.length,"routine, SMS-only, or not yet called")+
         '</div>';
-      html+='<div class="panel"><div class="panel-title">Form intakes with no voice callback — severity split (watch for urgent cases that should have been called)</div>'+
-        (formOnly.length?sevBars(formOnly):'<div class="empty">None in this window.</div>')+'</div>';
+
+      // SMS triage lane — patient chose text intake (source!=vapi, SMS extraction).
+      // These are COMPLETED triages, not missed callbacks.
+      var smsDone=formOnly.filter(function(c){return c.extraction_source==="sms-openai"||c.extraction_source==="sms-claude";});
+      // Phones engaged anywhere (voice, SMS, or any assigned severity) — used to
+      // drop stale pre-triage form-hits that duplicate an already-engaged patient.
+      var engagedPhones={};
+      cases.forEach(function(c){var ph=(c.patient_phone||"").replace(/\D/g,"").slice(-10);if(!ph)return;if(c.source==="vapi"||c.extraction_source==="sms-openai"||c.extraction_source==="sms-claude")engagedPhones[ph]=true;});
+      // Genuinely untriaged: no voice, no SMS, not a walk-in (in_office = present),
+      // and not a duplicate of a patient engaged elsewhere.
+      var untouched=formOnly.filter(function(c){
+        if(c.extraction_source==="sms-openai"||c.extraction_source==="sms-claude")return false;
+        if(c.intake_source==="in_office")return false;
+        var ph=(c.patient_phone||"").replace(/\D/g,"").slice(-10);
+        if(ph&&engagedPhones[ph])return false;
+        return true;});
+      html+=laneLabel("SMS triage — patient chose text","var(--cyan)");
+      html+='<div class="cards">'+
+        card("Triaged via SMS",smsDone.length,"completed text intake \u2014 patient\u2019s choice, not a missed call")+
+        card("Forms not yet triaged",untouched.length,"no voice, no SMS \u2014 office follow-up")+
+        '</div>';
+      html+='<div class="panel"><div class="panel-title">SMS-triaged cases by severity \u2014 emergencies handled over text at the patient\u2019s choice</div>'+
+        (smsDone.length?sevBars(smsDone):'<div class="empty">None in this window.</div>')+'</div>';
+      html+='<div class="panel"><div class="panel-title">Forms not yet triaged \u2014 the real follow-up list (walk-ins &amp; SMS-completed excluded, deduped by phone)</div>'+
+        (untouched.length?sevBarsU(untouched):'<div class="empty">None \u2014 every remote form was triaged.</div>')+'</div>';
 
       // Where intakes came from (campaign attribution)
       var srcCounts={};cases.concat([]).forEach(function(c){if(laneOf(c)!=="general"){var s=c.intake_source||"unknown";srcCounts[s]=(srcCounts[s]||0)+1;}});
@@ -235,6 +291,21 @@
       html+='<div class="panel"><div class="panel-title">Where intakes came from ('+srcTotal+' form-origin cases)</div>';
       if(!srcEntries.length)html+='<div class="empty">No form-origin intakes in this window.</div>';
       else srcEntries.forEach(function(e){html+=bar(SRC_LABELS[e[0]]||e[0],e[1],srcTotal,"var(--cyan)");});
+      html+='</div>';
+
+      // Languages — multilingual intake (core differentiator). Restored from the
+      // old page; non-English urgent intake is SMS-by-design, so SMS completion
+      // is the right success measure, not a voice callback.
+      var langLabels={en:"English",ar:"Arabic",hi:"Hindi",pa:"Punjabi",fr:"French",fa:"Farsi",so:"Somali",es:"Spanish",zh:"Chinese"};
+      var langCounts={};cases.forEach(function(c){var l=c.patient_language||"en";langCounts[l]=(langCounts[l]||0)+1;});
+      var langKeys=Object.keys(langCounts).sort(function(a,b){return langCounts[b]-langCounts[a];});
+      var nonEng=cases.filter(function(c){return c.patient_language&&c.patient_language!=="en";});
+      var nonEngSms=nonEng.filter(function(c){return c.extraction_source==="sms-openai"||c.extraction_source==="sms-claude";});
+      html+='<div class="panel"><div class="panel-title">Languages \u2014 '+langKeys.length+' in this window ('+nonEng.length+' non-English)</div>';
+      var ctot=cases.length;
+      langKeys.forEach(function(l){html+=bar(langLabels[l]||l,langCounts[l],ctot,l==="en"?"var(--text-faint)":"var(--cyan)");});
+      if(nonEng.length)html+='<div class="note-line">Non-English cases completed via SMS triage: '+nonEngSms.length+' of '+nonEng.length+' ('+pct(nonEngSms.length,nonEng.length)+'%). Non-English urgent intake is SMS-by-design, so SMS completion \u2014 not a voice callback \u2014 is the success measure here.</div>';
+      else html+='<div class="note-line">No non-English cases in this window.</div>';
       html+='</div>';
 
       // When calls came in (General inbound, by hour)
@@ -253,9 +324,9 @@
       var firstHuman={};sms.forEach(function(m){if(!m.case_id||!m.sender_email)return;var t=new Date(m.sent_at).getTime();if(!firstHuman[m.case_id]||t<firstHuman[m.case_id])firstHuman[m.case_id]=t;});
       var resp=[];cases.forEach(function(c){var fh=firstHuman[c.id];if(!fh)return;var mins=(fh-new Date(c.created_at).getTime())/60000;if(Number.isFinite(mins)&&mins>=0)resp.push(mins);});
       html+='<div class="cards">'+
-        card("Sam capture · General (voice)",fmtDur(median(genDur)),genDur.length?("median, n="+genDur.length):"no engaged calls yet")+
-        card("Sam capture · Emergency",fmtDur(median(emDur)),emDur.length?("median, n="+emDur.length):"no callbacks yet")+
-        card("Human first response",resp.length?fmtMins(median(resp)):"—",resp.length?("median, n="+resp.length):"no dashboard replies yet")+
+        card("Sam capture · General (voice)",fmtDur(median(genDur)),genDur.length?("median, n="+genDur.length+(genDur.length<5?" \u00B7 small sample":"")):"no engaged calls yet")+
+        card("Sam capture · Emergency",fmtDur(median(emDur)),emDur.length?("median, n="+emDur.length+(emDur.length<5?" \u00B7 small sample":"")):"no callbacks yet")+
+        card("Human first response",resp.length?fmtMins(median(resp)):"—",resp.length?("median, n="+resp.length+(resp.length<5?" \u00B7 small sample":"")):"no dashboard replies yet")+
         '</div>';
       html+='<div class="note-line">Human response = first text sent from a dashboard vs. when the case landed (dashboard texts only; a phone callback off-system won\u2019t show). Review/closure latency is deliberately left out until reviewed_at is split into "dentist reviewed" vs "patient seen" \u2014 today it fires days later at closure, so it measures throughput, not responsiveness, and doesn\u2019t belong here.</div>';
 
@@ -276,7 +347,7 @@
         card("NPS",nps!=null?(nps>0?"+"+nps:String(nps)):"—",npsRows.length?("n="+npsRows.length):"no survey responses yet")+
         card("Revenue recorded",revTotal>0?("$"+revTotal.toLocaleString()):"—",revRows.length?("n="+revRows.length+" cases"):"none entered yet")+
         '</div>';
-      html+='<div class="note-line">"Booked" infers from disposition or recorded revenue, since the front desk has no booking control yet \u2014 the office-dashboard toggle (booked + new vs. returning) is the fix that makes this a clean, front-desk-owned number.</div>';
+      html+='<div class="note-line">"Booked" counts confirmed front-desk bookings plus any case with recorded revenue. New-vs-existing patient is now captured by the office-dashboard buttons too \u2014 a new/returning split can surface here once a few dispositions accumulate.</div>';
 
       // Disposition breakdown
       var dispo={};allCases.forEach(function(c){if(c.final_disposition){dispo[c.final_disposition]=(dispo[c.final_disposition]||0)+1;}});
@@ -287,12 +358,42 @@
       else dispoEntries.forEach(function(e){html+=bar(e[0].replace(/_/g," "),e[1],dispoTotal,"var(--cyan)");});
       html+='</div>';
 
+      // Patient survey — rehauled schema (nps_score 0-10, sam_satisfaction 1-5,
+      // timely_response yes/somewhat/no). Empty until responses arrive; the
+      // pipeline was silently failing under RLS until recently fixed.
+      var samRows=allCases.filter(function(c){return Number.isInteger(c.sam_satisfaction_score);});
+      var samAvg=samRows.length?(samRows.reduce(function(s,c){return s+c.sam_satisfaction_score;},0)/samRows.length).toFixed(1):null;
+      var tRows=allCases.filter(function(c){return c.timely_response;});
+      var tYes=tRows.filter(function(c){return c.timely_response==="yes";}).length;
+      var tSw=tRows.filter(function(c){return c.timely_response==="somewhat";}).length;
+      var tNo=tRows.filter(function(c){return c.timely_response==="no";}).length;
+      html+='<div class="panel"><div class="panel-title">Patient survey ('+npsRows.length+' response'+(npsRows.length===1?"":"s")+')</div>';
+      if(!npsRows.length)html+='<div class="empty">No survey responses yet \u2014 the survey write path was recently fixed; responses will populate here as patients reply.</div>';
+      else{
+        html+='<div class="cards">'+
+          card("NPS",nps!=null?(nps>0?"+"+nps:String(nps)):"\u2014","n="+npsRows.length+(npsRows.length<5?" \u00B7 small sample":""))+
+          card("Sam satisfaction",samAvg!=null?(samAvg+" / 5"):"\u2014",samRows.length?("n="+samRows.length):"no data")+
+          card("Felt response timely",tRows.length?(pct(tYes,tRows.length)+"% yes"):"\u2014",tRows.length?("n="+tRows.length):"no data")+
+          '</div>';
+        if(tRows.length)html+=bar("Yes",tYes,tRows.length,"var(--routine)")+bar("Somewhat",tSw,tRows.length,"var(--urgent)")+bar("No",tNo,tRows.length,"var(--critical)");
+      }
+      html+='</div>';
+
       // Red-flag frequency across clinical cases (from structured_output)
       var f={Fever:0,Swelling:0,Trauma:0,"Airway concern":0,Bleeding:0,"Nocturnal pain":0,"Cold lingers":0,Immunocompromised:0};
       clinical.forEach(function(c){var so=getSO(c);if(so.fever)f.Fever++;if(so.swelling||so.swelling_present)f.Swelling++;if(so.trauma)f.Trauma++;if(so.difficulty_breathing_or_swallowing)f["Airway concern"]++;if(so.uncontrolled_bleeding)f.Bleeding++;if(so.nocturnal_pain)f["Nocturnal pain"]++;if(so.cold_pain_lingers_over_10_seconds)f["Cold lingers"]++;if(so.immunocompromised)f.Immunocompromised++;});
       html+='<div class="panel"><div class="panel-title">Clinical red flags ('+clinical.length+' cases with Sam involvement)</div><div class="flag-grid">';
       Object.keys(f).forEach(function(k){html+='<div class="flag">'+escHtml(k)+'<b>'+f[k]+'</b></div>';});
       html+='</div></div>';
+
+      // Form-vs-triage discrepancies (contradictions) — the deterministic-safety
+      // evidence: where the live triage found something the intake form did not.
+      var contraCases=0,contraFields={};
+      allCases.forEach(function(c){var arr=getContras(c);if(arr.length){contraCases++;arr.forEach(function(it){var fld=(it&&it.field)||"unknown";contraFields[fld]=(contraFields[fld]||0)+1;});}});
+      html+='<div class="panel"><div class="panel-title">Form-vs-triage discrepancies caught ('+contraCases+' of '+allCases.length+' cases)</div>';
+      if(!contraCases)html+='<div class="empty">No discrepancies recorded in this window.</div>';
+      else{var ck=Object.keys(contraFields).sort(function(a,b){return contraFields[b]-contraFields[a];});ck.forEach(function(fld){html+=bar(CONTRA_LABELS[fld]||fld.replace(/_/g," "),contraFields[fld],contraCases,"var(--urgent)");});}
+      html+='<div class="note-line">Mismatches between the patient\u2019s intake form and what Sam found on the call or text \u2014 e.g. swelling that emerged in conversation but was not on the form. This is the case for live triage over a static form, and the clearest evidence for the deterministic-safety layer.</div></div>';
 
       html+='<div class="panel"><div class="panel-title">Unit economics — cost to run vs. value created</div><div class="empty">Pending real vendor rates. Cost-per-call and cost-per-case compute here from call duration and message counts once actual Vapi / OpenAI / ElevenLabs / Azure / Twilio usage is read for the window, calibrated monthly against invoices. No placeholder figures until the rates are real.</div></div>';
 
