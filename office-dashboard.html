@@ -439,6 +439,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .revenue-save-status { font-size: 11px; color: var(--text-muted); transition: color 0.3s; }
     .revenue-save-status.ok { color: #00c87a; }
     .revenue-save-status.err { color: #e84545; }
+    .book-btn { background: rgba(255,255,255,0.07); border:1px solid var(--border); color: var(--text-secondary); border-radius:6px; font-size:12px; font-weight:600; padding:5px 11px; cursor:pointer; white-space:nowrap; transition:all .15s; }
+    .book-btn:hover { border-color: rgba(0,200,232,0.35); }
+    .book-btn.active { background: rgba(0,200,232,0.15); border-color: rgba(0,200,232,0.5); color: var(--cyan); }
+    .book-btn.active.none-active { background: rgba(232,69,69,0.12); border-color: rgba(232,69,69,0.4); color:#e84545; }
+    .office-note-input { flex:1; min-width:200px; background: rgba(255,255,255,0.07); border:1px solid var(--border); border-radius:6px; color: var(--text-primary); font-size:13px; padding:6px 10px; outline:none; resize:vertical; min-height:34px; max-height:160px; font-family:inherit; line-height:1.4; }
+    .office-note-input:focus { border-color: rgba(0,200,232,0.35); }
+    .office-note-input::placeholder { color: var(--text-muted); }
 
     /* ── SMS ──────────────────────────────────────────────────────── */
     .sms-banner { display: flex; gap: 10px; background: rgba(240,165,0,0.09); border: 1px solid rgba(240,165,0,0.28); border-radius: 8px; padding: 10px 14px; margin: 8px 20px 0; font-size: 13px; color: #c08020; line-height: 1.5; flex-shrink: 0; }
@@ -608,7 +615,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     /* ---- PRINT ---- */
     @media print {
       .auth-screen, .header, .case-list-panel, .note-toolbar, .note-placeholder,
-      .revenue-bar, #sms-case-banner, .sms-modal-overlay { display: none !important; }
+      .revenue-bar, #sms-case-banner, .sms-modal-overlay, #booking-bar, #note-bar { display: none !important; }
 
       html, body, .app, .body, .note-panel, .note-scroll {
         display: block !important;
@@ -860,6 +867,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <span class="revenue-save-status" id="revenue-save-status"></span>
       </div>
 
+      <div class="revenue-bar" id="booking-bar" style="display:none;">
+        <span class="revenue-bar-label">Booked?</span>
+        <button class="book-btn" id="book-new" type="button">New patient</button>
+        <button class="book-btn" id="book-further" type="button">Further treatment</button>
+        <button class="book-btn" id="book-none" type="button">Not booked</button>
+        <span class="revenue-save-status" id="booking-status"></span>
+      </div>
+
+      <div class="revenue-bar" id="note-bar" style="display:none;align-items:flex-start;">
+        <span class="revenue-bar-label" style="padding-top:7px;">Notes</span>
+        <textarea id="office-note-input" class="office-note-input" placeholder="Front-desk notes &mdash; who you called, what the patient said, follow-up needed&hellip;"></textarea>
+        <button class="revenue-save-btn" id="office-note-save" type="button">Save</button>
+        <span class="revenue-save-status" id="office-note-status"></span>
+      </div>
+
       <div class="note-scroll" id="note-scroll">
         <div class="note-placeholder">
           <div class="placeholder-icon">&#x1F4CB;</div>
@@ -970,9 +992,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     showApp();
-    loadCases();
-    setInterval(loadCases, 90000);
-    document.addEventListener("visibilitychange", function() { if (!document.hidden) loadCases(); });
+    startDashboard();
   }
 
   function showAuth() {
@@ -999,8 +1019,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   sb.auth.getSession().then(function(res) {
     if (res.data && res.data.session) {
       showApp();
-      loadCases();
+      startDashboard();
     }
+  });
+
+  // Keep the list live when the token silently refreshes in a long-open tab, so
+  // new cases keep appearing without a manual sign-out / sign-in.
+  sb.auth.onAuthStateChange(function(evt) {
+    if ((evt === "TOKEN_REFRESHED" || evt === "SIGNED_IN") && dashboardStarted) loadCases();
   });
 
   // ---- CASES ----
@@ -1126,6 +1152,53 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     });
   }
 
+  function setBookingButtons(c) {
+    var booked = c.final_disposition === "booked" || c.appointment_booked === true || (c.revenue_generated != null && Number(c.revenue_generated) > 0);
+    var further = c.subsequent_appointment_booked === true;
+    var none = !!c.final_disposition && c.final_disposition !== "booked" && !booked;
+    var bn = document.getElementById("book-new"), bf = document.getElementById("book-further"), bx = document.getElementById("book-none");
+    if (!bn || !bf || !bx) return;
+    bn.classList.toggle("active", booked && !further);
+    bf.classList.toggle("active", further);
+    bx.classList.toggle("active", none);
+    bx.classList.toggle("none-active", none);
+  }
+
+  async function saveBooking(caseId, kind) {
+    var statusEl = document.getElementById("booking-status");
+    statusEl.textContent = "Saving..."; statusEl.className = "revenue-save-status";
+    var patch;
+    if (kind === "new") patch = { final_disposition: "booked", appointment_booked: true, subsequent_appointment_booked: false };
+    else if (kind === "further") patch = { final_disposition: "booked", appointment_booked: true, subsequent_appointment_booked: true };
+    else patch = { final_disposition: "not_booked", appointment_booked: false, subsequent_appointment_booked: false };
+    var result = await sb.from("triage_cases").update(patch).eq("id", caseId);
+    if (result.error) {
+      statusEl.textContent = "Error saving"; statusEl.className = "revenue-save-status err";
+      setTimeout(function() { statusEl.textContent = ""; statusEl.className = "revenue-save-status"; }, 2500);
+      return;
+    }
+    var c = currentCases.find(function(x) { return x.id === caseId; });
+    if (c) { c.final_disposition = patch.final_disposition; c.appointment_booked = patch.appointment_booked; c.subsequent_appointment_booked = patch.subsequent_appointment_booked; setBookingButtons(c); }
+    statusEl.textContent = "\u2713 Saved"; statusEl.className = "revenue-save-status ok";
+    setTimeout(function() { statusEl.textContent = ""; statusEl.className = "revenue-save-status"; }, 2500);
+  }
+
+  async function saveOfficeNote(caseId, rawVal) {
+    var statusEl = document.getElementById("office-note-status");
+    var val = (rawVal || "").trim() || null;
+    statusEl.textContent = "Saving..."; statusEl.className = "revenue-save-status";
+    var result = await sb.from("triage_cases").update({ office_note: val }).eq("id", caseId);
+    if (result.error) {
+      statusEl.textContent = "Error saving"; statusEl.className = "revenue-save-status err";
+      setTimeout(function() { statusEl.textContent = ""; statusEl.className = "revenue-save-status"; }, 2500);
+      return;
+    }
+    var c = currentCases.find(function(x) { return x.id === caseId; });
+    if (c) c.office_note = val;
+    statusEl.textContent = "\u2713 Saved"; statusEl.className = "revenue-save-status ok";
+    setTimeout(function() { statusEl.textContent = ""; statusEl.className = "revenue-save-status"; }, 2500);
+  }
+
   async function saveRevenue(caseId, rawVal) {
     var statusEl = document.getElementById("revenue-save-status");
     var val = rawVal ? parseFloat(rawVal) : null;
@@ -1152,18 +1225,60 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   document.getElementById("refresh-btn").addEventListener("click", loadCases);
 
+  // REFACTOR_MARKER_2026_05_28_OFFICE_STABILITY
+  var dashboardStarted = false;
+  var casesPollTimer = null;
+  function isAuthErr(e) {
+    if (!e) return false;
+    var m = ((e.message || "") + " " + (e.code || "")).toLowerCase();
+    return m.indexOf("jwt") !== -1 || m.indexOf("token") !== -1 || m.indexOf("expired") !== -1 || m.indexOf("not authenticated") !== -1 || m.indexOf("permission denied") !== -1;
+  }
+  // Wire polling + visibility refresh ONCE, from whichever path starts the app
+  // (login OR a restored session). Previously these lived only in the login
+  // path, so a long-open / reloaded session never auto-refreshed — the stale
+  // list. Guarded so repeat calls don't stack intervals.
+  function startDashboard() {
+    loadCases();
+    if (dashboardStarted) return;
+    dashboardStarted = true;
+    if (casesPollTimer) clearInterval(casesPollTimer);
+    casesPollTimer = setInterval(loadCases, 90000);
+    document.addEventListener("visibilitychange", function() { if (!document.hidden) loadCases(); });
+  }
+
+  function caseSelect() {
+    return sb
+      .from("triage_cases")
+      .select("id, patient_name, patient_name_english, patient_phone, patient_dob, patient_city, patient_city_english, patient_email, chief_complaint, chief_complaint_english, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at, revenue_generated, sms_transcript, sms_structured_output, has_sms_continuation, sms_received_at, intake_medical_flags, current_medications, clinical_note, patient_language, extraction_source, source, post_triage_escalation, post_triage_last_message_at, triage_tag, final_disposition, appointment_booked, subsequent_appointment_booked")
+      .order("created_at", { ascending: currentSortAsc });
+  }
+
   async function loadCases() {
     document.getElementById("list-count").textContent = "Loading...";
-    document.getElementById("case-list-scroll").innerHTML = "<div class=\"case-empty\">Loading...</div>";
+    // Only show the Loading placeholder when nothing is displayed yet, so a
+    // background poll doesn't blank an already-populated list every tick.
+    if (!currentCases || !currentCases.length) {
+      document.getElementById("case-list-scroll").innerHTML = "<div class=\"case-empty\">Loading...</div>";
+    }
 
-    var result = await sb
-      .from("triage_cases")
-      .select("id, patient_name, patient_name_english, patient_phone, patient_dob, patient_city, patient_city_english, patient_email, chief_complaint, chief_complaint_english, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at, revenue_generated, sms_transcript, sms_structured_output, has_sms_continuation, sms_received_at, intake_medical_flags, current_medications, clinical_note, patient_language, extraction_source, source, post_triage_escalation, post_triage_last_message_at, triage_tag")
-      .order("created_at", { ascending: currentSortAsc });
+    var result = await caseSelect();
+
+    // Self-heal an expired token: refresh the session once and retry, instead of
+    // failing silently. This is why Refresh "did nothing" before — it re-ran the
+    // same dead-token fetch. Now a stale token recovers without a re-login.
+    if (result.error && isAuthErr(result.error)) {
+      try { await sb.auth.refreshSession(); } catch (e) {}
+      result = await caseSelect();
+    }
 
     if (result.error) {
-      document.getElementById("case-list-scroll").innerHTML = "<div class=\"case-empty\">Unable to load cases.<br>Please refresh.</div>";
-      document.getElementById("list-count").textContent = "";
+      if (currentCases && currentCases.length) {
+        // Keep the last good list on screen rather than wiping it on a transient failure.
+        document.getElementById("list-count").textContent = currentCases.length + " (refresh failed)";
+      } else {
+        document.getElementById("case-list-scroll").innerHTML = "<div class=\"case-empty\">Unable to load cases.<br>Please sign out and back in.</div>";
+        document.getElementById("list-count").textContent = "";
+      }
       return;
     }
 
@@ -1360,6 +1475,33 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     revStatus.className = "revenue-save-status";
     revSaveBtn.onclick = function() { saveRevenue(c.id, revenueInput.value.trim()); };
 
+    // Booking outcome (front-desk owned — feeds the "Booked" metric)
+    var bookingBar = document.getElementById("booking-bar");
+    bookingBar.style.display = "flex";
+    var bookStatus = document.getElementById("booking-status");
+    bookStatus.textContent = ""; bookStatus.className = "revenue-save-status";
+    setBookingButtons(c);
+    document.getElementById("book-new").onclick = function() { saveBooking(c.id, "new"); };
+    document.getElementById("book-further").onclick = function() { saveBooking(c.id, "further"); };
+    document.getElementById("book-none").onclick = function() { saveBooking(c.id, "none"); };
+
+    // Office notes (free-text, front-desk owned)
+    var noteBar = document.getElementById("note-bar");
+    var noteInput = document.getElementById("office-note-input");
+    var noteSaveBtn = document.getElementById("office-note-save");
+    var noteStatus = document.getElementById("office-note-status");
+    noteBar.style.display = "flex";
+    var officeNoteVal = c.office_note || "";
+    // Fetched separately + guarded so a pre-migration deploy (no office_note
+    // column yet) can't break case loading; self-enables once the column exists.
+    try {
+      var onr = await sb.from("triage_cases").select("office_note").eq("id", c.id).maybeSingle();
+      if (onr && onr.data && !onr.error) { officeNoteVal = onr.data.office_note || ""; if (c) c.office_note = officeNoteVal; }
+    } catch (e) { /* column not migrated yet — leave empty */ }
+    noteInput.value = officeNoteVal;
+    noteStatus.textContent = ""; noteStatus.className = "revenue-save-status";
+    noteSaveBtn.onclick = function() { saveOfficeNote(c.id, noteInput.value); };
+
     // SMS banner
     // Classification rules:
     //   - SMS-only: case originated and was triaged entirely via text. No voice call.
@@ -1452,6 +1594,46 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }
 
   // ---- NOTE BUILDER ----
+  // Shared SMS thread renderer — used by BOTH the clinical note and the
+  // non-emergent inquiry card so the front desk can always see the dialogue.
+  // Returns a DOM node (with data-sms-thread for live refresh) or null.
+  function buildSmsThreadEl(c, smsRows) {
+    smsRows = smsRows || [];
+    if (!c.sms_transcript && smsRows.length === 0) return null;
+    var smsDiv = document.createElement("div");
+    smsDiv.className = "note-section";
+    var smsInner = "<div class=\"note-section-label\" style=\"color:#c08020;\">&#9888; SMS Conversation</div>";
+    if (c.sms_structured_output) {
+      var sx = c.sms_structured_output;
+      smsInner += "<div class=\"sms-extraction-box\"><div class=\"sms-extraction-label\">AI Extraction from SMS</div>";
+      if (sx.chief_complaint) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Chief complaint</span><span class=\"sms-extraction-val\">" + esc(String(sx.chief_complaint)) + "</span></div>";
+      if (sx.clinical_summary) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Clinical summary</span><span class=\"sms-extraction-val\">" + esc(String(sx.clinical_summary)) + "</span></div>";
+      if (sx.pain_score != null) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Pain score</span><span class=\"sms-extraction-val\">" + esc(String(sx.pain_score)) + "/10</span></div>";
+      if (sx.pain_quality) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Pain quality</span><span class=\"sms-extraction-val\">" + esc(String(sx.pain_quality)) + "</span></div>";
+      if (sx.pain_pattern) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Pain pattern</span><span class=\"sms-extraction-val\">" + esc(String(sx.pain_pattern)) + "</span></div>";
+      if (sx.pain_progression) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Progression</span><span class=\"sms-extraction-val\">" + esc(String(sx.pain_progression)) + "</span></div>";
+      if (sx.cold_sensitivity != null) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Cold sensitivity</span><span class=\"sms-extraction-val\">" + (sx.cold_sensitivity ? "Yes" : "No") + "</span></div>";
+      smsInner += "</div>";
+    }
+    smsInner += "<div data-sms-thread=\"1\">";
+    if (smsRows.length > 0) {
+      smsRows.forEach(function(msg) {
+        var isOut = msg.direction === "outbound";
+        var label = isOut ? (msg.sender_name || "Martindale Dental") : "Patient";
+        var time = msg.sent_at ? new Date(msg.sent_at).toLocaleString("en-CA", { month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" }) : "";
+        smsInner += "<div style=\"padding:6px 0;border-bottom:1px solid #e8eff7;\">" +
+          "<div style=\"font-size:11px;color:#8a9cb8;display:flex;justify-content:space-between;margin-bottom:2px\"><span>" + esc(label) + "</span><span>" + esc(time) + "</span></div>" +
+          "<div style=\"font-size:13px;color:" + (isOut ? "#007a8e" : "#1a2b40") + "\">" + esc(msg.message_body) + "</div>" +
+          "</div>";
+      });
+    } else if (c.sms_transcript) {
+      smsInner += "<div style=\"white-space:pre-wrap;font-size:12px;color:#5a7090;\">" + esc(c.sms_transcript) + "</div>";
+    }
+    smsInner += "</div>";
+    smsDiv.innerHTML = smsInner;
+    return smsDiv;
+  }
+
   function buildNote(c, smsRows) {
     smsRows = smsRows || [];
     var so = c.structured_output || null;
@@ -1541,7 +1723,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           '</div>' +
         '</div>';
       card.appendChild(neCard);
+      var neThread = buildSmsThreadEl(c, smsRows);
       wrap.appendChild(card);
+      if (neThread) wrap.appendChild(neThread);
       return wrap;
     }
 
@@ -1665,45 +1849,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     card.appendChild(body);
 
-    // SMS conversation thread
-    if (c.sms_transcript || smsRows.length > 0) {
-      var smsDiv = document.createElement("div");
-      smsDiv.className = "note-section";
-      var smsInner = "<div class=\"note-section-label\" style=\"color:#c08020;\">&#9888; SMS Conversation</div>";
-      if (c.sms_structured_output) {
-        var sx = c.sms_structured_output;
-        smsInner += "<div class=\"sms-extraction-box\"><div class=\"sms-extraction-label\">AI Extraction from SMS</div>";
-        if (sx.chief_complaint) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Chief complaint</span><span class=\"sms-extraction-val\">" + esc(String(sx.chief_complaint)) + "</span></div>";
-        if (sx.clinical_summary) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Clinical summary</span><span class=\"sms-extraction-val\">" + esc(String(sx.clinical_summary)) + "</span></div>";
-        if (sx.pain_score != null) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Pain score</span><span class=\"sms-extraction-val\">" + esc(String(sx.pain_score)) + "/10</span></div>";
-        if (sx.pain_quality) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Pain quality</span><span class=\"sms-extraction-val\">" + esc(String(sx.pain_quality)) + "</span></div>";
-        if (sx.pain_pattern) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Pain pattern</span><span class=\"sms-extraction-val\">" + esc(String(sx.pain_pattern)) + "</span></div>";
-        if (sx.pain_progression) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Progression</span><span class=\"sms-extraction-val\">" + esc(String(sx.pain_progression)) + "</span></div>";
-        if (sx.cold_sensitivity != null) smsInner += "<div class=\"sms-extraction-row\"><span class=\"sms-extraction-key\">Cold sensitivity</span><span class=\"sms-extraction-val\">" + (sx.cold_sensitivity ? "Yes" : "No") + "</span></div>";
-        smsInner += "</div>";
-      }
-      smsInner += "<div data-sms-thread=\"1\">";
-      if (smsRows.length > 0) {
-        smsRows.forEach(function(msg) {
-          var isOut = msg.direction === "outbound";
-          var label = isOut ? (msg.sender_name || "Martindale Dental") : "Patient";
-          var time = msg.sent_at ? new Date(msg.sent_at).toLocaleString("en-CA", { month:"short", day:"numeric", hour:"2-digit", minute:"2-digit" }) : "";
-          smsInner += "<div style=\"padding:6px 0;border-bottom:1px solid #e8eff7;\">" +
-            "<div style=\"font-size:11px;color:#8a9cb8;display:flex;justify-content:space-between;margin-bottom:2px\"><span>" + esc(label) + "</span><span>" + esc(time) + "</span></div>" +
-            "<div style=\"font-size:13px;color:" + (isOut ? "#007a8e" : "#1a2b40") + "\">" + esc(msg.message_body) + "</div>" +
-            "</div>";
-        });
-      } else if (c.sms_transcript) {
-        smsInner += "<div style=\"white-space:pre-wrap;font-size:12px;color:#5a7090;\">" + esc(c.sms_transcript) + "</div>";
-      }
-      smsInner += "</div>";
-      smsDiv.innerHTML = smsInner;
-      wrap.appendChild(card);
-      wrap.appendChild(smsDiv);
-      return wrap;
-    }
-
+    // SMS conversation thread (shared with the inquiry-card path)
+    var smsThreadEl = buildSmsThreadEl(c, smsRows);
     wrap.appendChild(card);
+    if (smsThreadEl) wrap.appendChild(smsThreadEl);
     return wrap;
   }
 
