@@ -961,15 +961,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         contradictionsHtml +
 
-        '<div class="detail-section"><div class="section-header"><span class="section-title">Clinical Sign-off</span></div><div class="section-body"><div class="review-block signoff-block"><div class="review-block-title">' + (isReviewed ? "Finalized Review" : "Pending Final Review") + '</div><div class="signoff-grid"><div class="signoff-row"><div class="signoff-label">Reviewed by</div><div class="signoff-value">' + escHtml(isReviewed ? reviewerName : resolveReviewerName(currentUser ? currentUser.email : "")) + '</div></div><div class="signoff-row"><div class="signoff-label">Reviewed at</div><div class="signoff-value">' + escHtml(isReviewed ? (reviewedAt || "-") : "Pending final review") + '</div></div><div class="signoff-row"><div class="signoff-label">Final disposition</div><div class="signoff-value">' + escHtml(isReviewed ? finalDispositionLabel : "Pending") + '</div></div>' + (isReviewed ? '<div class="signoff-row"><div class="signoff-label">Revenue generated</div><div class="signoff-value">' + escHtml(revenueDisplay) + '</div></div><div class="signoff-row"><div class="signoff-label">Follow-up booked</div><div class="signoff-value">' + escHtml(followUpDisplay) + '</div></div>' : '') + '<div class="signoff-row"><div class="signoff-label">Status</div><div class="signoff-value">' + escHtml(isReviewed ? "Finalized" : "Not yet finalized") + '</div></div></div></div></div></div>' +
+        '<div class="detail-section"><div class="section-header"><span class="section-title">Clinical Sign-off</span></div><div class="section-body"><div class="review-block signoff-block"><div class="review-block-title">' + (isReviewed ? "Finalized Review" : "Pending Final Review") + '</div><div class="signoff-grid"><div class="signoff-row"><div class="signoff-label">Reviewed by</div><div class="signoff-value">' + escHtml(isReviewed ? reviewerName : resolveReviewerName(currentUser ? currentUser.email : "")) + '</div></div><div class="signoff-row"><div class="signoff-label">Reviewed at</div><div class="signoff-value">' + escHtml(isReviewed ? (reviewedAt || "-") : "Pending final review") + '</div></div><div class="signoff-row"><div class="signoff-label">Final disposition</div><div class="signoff-value">' + escHtml(isReviewed ? finalDispositionLabel : "Pending") + '</div></div>' + '<div class="signoff-row"><div class="signoff-label">Status</div><div class="signoff-value">' + escHtml(isReviewed ? "Finalized" : "Not yet finalized") + '</div></div></div></div></div></div>' +
 
-        '<div class="detail-section review-panel"><div class="section-header"><span class="section-title">Dentist Review</span>' + (isReviewed ? '<span class="detail-state-text reviewed">\u2713 Finalized review ' + escHtml(reviewedAt || "") + '</span>' : isDraft ? '<span class="detail-state-text draft">Draft saved</span>' : '<span class="detail-state-text">Decision required</span>') + '</div><div class="review-grid"><div class="review-block"><div class="review-block-title">Clinical Addendum</div><label class="form-label" for="field-notes">Notes</label><textarea class="form-textarea" id="field-notes" placeholder="Add clinical notes, observations, or follow-up instructions..."' + (isReviewed ? ' readonly style="opacity:0.6"' : '') + '>' + escHtml(c.review_notes || "") + '</textarea><div class="form-helper">Use this for the dentist\'s clinical addendum or follow-up rationale.</div></div>' +
+        '<div class="detail-section review-panel"><div class="section-header"><span class="section-title">Dentist Review</span>' + (isReviewed ? '<span class="detail-state-text reviewed">\u2713 Finalized review ' + escHtml(reviewedAt || "") + '</span>' : isDraft ? '<span class="detail-state-text draft">Draft saved</span>' : '<span class="detail-state-text">Review pending</span>') + '</div><div class="review-grid"><div class="review-block"><div class="review-block-title">Clinical Addendum</div><label class="form-label" for="field-notes">Notes</label><textarea class="form-textarea" id="field-notes" placeholder="Add clinical notes, observations, or follow-up instructions..."' + (isReviewed ? ' readonly style="opacity:0.6"' : '') + '>' + escHtml(c.review_notes || "") + '</textarea><div class="form-helper">Use this for the dentist\'s clinical addendum or follow-up rationale.</div></div>' +
 
-        '<div class="review-block"><div class="review-block-title">Decision</div><div class="decision-grid"><div class="semantic-note"><strong>Semantics:</strong> Mark reviewed only when this case has a finalized operational outcome. "Patient contacted" should reflect real outreach, not intended outreach.</div><div><label class="form-label" for="field-disposition">Final Disposition</label><select class="form-select" id="field-disposition"' + (isReviewed ? ' disabled style="opacity:0.6"' : '') + '><option value="">- Select -</option><option value="booked"' + (c.final_disposition === "booked" ? " selected" : "") + '>Booked appointment</option><option value="referred_er"' + (c.final_disposition === "referred_er" ? " selected" : "") + '>Referred to ER</option><option value="rx_only"' + (c.final_disposition === "rx_only" ? " selected" : "") + '>Prescription only</option><option value="declined"' + (c.final_disposition === "declined" ? " selected" : "") + '>Patient declined care</option><option value="no_response"' + (c.final_disposition === "no_response" ? " selected" : "") + '>No response from patient</option></select><div class="form-helper">This is the dentist\'s final operational outcome for the case.</div></div>' +
+        '<div class="review-block"><div class="review-block-title">Clinical sign-off</div><div class="decision-grid"><div class="semantic-note">Mark reviewed when you have <strong>clinically</strong> reviewed this case. Booking, follow-up, patient contact and revenue are recorded by the front desk on the office dashboard &mdash; not entered here.</div><div><label class="form-label" for="field-action">Clinical action <span style="font-weight:400;color:var(--text-muted);">(optional &mdash; for cases a dentist handles directly, e.g. after-hours)</span></label><select class="form-select" id="field-action"' + (isReviewed ? ' disabled style="opacity:0.6"' : '') + '><option value="">- None -</option><option value="referred_er"' + (c.action_taken === "referred_er" ? " selected" : "") + '>Referred to ER</option><option value="rx"' + (c.action_taken === "rx" ? " selected" : "") + '>Prescribed / Rx sent</option><option value="advised"' + (c.action_taken === "advised" ? " selected" : "") + '>Advised self-care</option><option value="recommend_appt"' + (c.action_taken === "recommend_appt" ? " selected" : "") + '>Recommended in-office appointment</option><option value="other"' + (c.action_taken === "other" ? " selected" : "") + '>Other (see notes)</option></select><div class="form-helper">The dentist\'s clinical handling of this case. Booking outcome is tracked separately by the front desk.</div></div>' +
 
-        '<div class="decision-toggles"><div class="toggle-row"><span class="toggle-label">Prescription issued</span><label class="toggle"><input type="checkbox" id="field-rx"' + (c.prescription_issued ? " checked" : "") + (isReviewed ? " disabled" : "") + '><div class="toggle-track"></div></label></div><div class="toggle-row"><span class="toggle-label">Patient contacted</span><label class="toggle"><input type="checkbox" id="field-contacted"' + (c.contacted_patient_at ? " checked" : "") + (isReviewed ? " disabled" : "") + '><div class="toggle-track"></div></label></div><div class="toggle-row"><span class="toggle-label">Follow-up appointment booked</span><label class="toggle"><input type="checkbox" id="field-followup"' + (c.subsequent_appointment_booked ? " checked" : "") + (isReviewed ? " disabled" : "") + '><div class="toggle-track"></div></label></div></div>' +
+        '<div class="decision-toggles"><div class="toggle-row"><span class="toggle-label">Prescription issued</span><label class="toggle"><input type="checkbox" id="field-rx"' + (c.prescription_issued ? " checked" : "") + (isReviewed ? " disabled" : "") + '><div class="toggle-track"></div></label></div></div>' +
 
-        '<div class="soft-warning" id="decision-soft-warning"></div><div class="decision-note">' + (isReviewed ? "This case is locked as reviewed. You can still export the clinical record below." : "A final disposition is required before marking reviewed. Save Draft if you are not ready to finalize.") + '</div></div></div></div>' +
+        '<div class="decision-note">' + (isReviewed ? "This case is locked as reviewed. You can still export the clinical record below." : "Add any clinical addendum above, then mark reviewed. Save Draft if you are not ready.") + '</div></div></div></div>' +
 
         '<div class="action-band"><div class="action-row">' + actionRowHtml + '</div><div class="save-status" id="save-status"></div><div id="detail-ownership-inline" class="detail-ownership-indicator" style="display:none;"></div></div></div>' +
 
@@ -1119,34 +1119,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     async function saveReview(id, markReviewed) {
       var notesEl = document.getElementById("field-notes");
-      var dispositionEl = document.getElementById("field-disposition");
       var rxEl = document.getElementById("field-rx");
-      var contactedEl = document.getElementById("field-contacted");
-      var followupEl = document.getElementById("field-followup");
       var statusEl = document.getElementById("save-status");
 
-      if (!notesEl || !dispositionEl || !rxEl || !contactedEl || !statusEl) return;
+      if (!notesEl || !rxEl || !statusEl) return;
 
       var notes = notesEl.value.trim();
-      var disposition = dispositionEl.value;
       var rxIssued = rxEl.checked;
-      var contacted = contactedEl.checked;
-      var followupBooked = followupEl ? followupEl.checked : false;
-
-      if (markReviewed && !disposition) { statusEl.textContent = "Please select a final disposition before marking reviewed."; statusEl.className = "save-status error"; dispositionEl.style.borderColor = "rgba(232,69,69,0.5)"; setTimeout(function() { statusEl.textContent = ""; statusEl.className = "save-status"; dispositionEl.style.borderColor = ""; }, 3000); return; }
+      var actionEl = document.getElementById("field-action");
+      var clinicalAction = actionEl ? (actionEl.value || null) : null;
 
       statusEl.textContent = "Saving...";
       statusEl.className = "save-status";
 
+      // Dentist owns CLINICAL sign-off only. Booking, follow-up, revenue,
+      // patient contact and disposition are recorded by the front desk on the
+      // office dashboard — no longer written here, and not required to review.
       var update = {
         review_notes: notes || null,
-        final_disposition: disposition || null,
         prescription_issued: rxIssued,
-        action_taken: disposition || null,
-        subsequent_appointment_booked: followupBooked
+        action_taken: clinicalAction
       };
 
-      if (contacted) { update.contacted_patient_at = (currentCase && currentCase.contacted_patient_at) ? currentCase.contacted_patient_at : new Date().toISOString(); } else { update.contacted_patient_at = null; }
       if (markReviewed) { update.review_status = "reviewed"; update.reviewed_at = new Date().toISOString(); update.reviewed_by = currentUser ? (currentUser.email || null) : null; } else { update.review_status = "draft"; }
 
       try {
