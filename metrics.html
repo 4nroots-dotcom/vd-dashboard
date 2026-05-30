@@ -164,7 +164,7 @@
     async function runQueries(since){
       var ctq=sb.from("call_transcripts").select("id,vapi_call_id,ended_reason,duration_seconds,intake_source,created_at");
       var tcq=sb.from("triage_cases").select("id,created_at,severity,triage_tag,intake_source,source,extraction_source,duration_seconds,ended_reason,structured_output,triage_completed_at,reviewed_at,final_disposition,appointment_booked,subsequent_appointment_booked,revenue_generated,nps_score,nps_submitted_at,sam_satisfaction_score,timely_response,contradictions,patient_language,vapi_call_id,patient_phone");
-      var smsq=sb.from("sms_log").select("case_id,direction,sender_email,sent_at").eq("direction","outbound");
+      var smsq=sb.from("sms_log").select("case_id,direction,sender_email,sender_name,sent_at,created_at");
       if(since){ctq=ctq.gte("created_at",since);tcq=tcq.gte("created_at",since);smsq=smsq.gte("sent_at",since);}
       return Promise.all([ctq,tcq,smsq]);
     }
@@ -331,6 +331,64 @@
         card("Human first response",resp.length?fmtMins(median(resp)):"—",resp.length?("median, n="+resp.length+(resp.length<5?" \u00B7 small sample":"")):"no dashboard replies yet")+
         '</div>';
       html+='<div class="note-line">Human response = first text sent from a dashboard vs. when the case landed (dashboard texts only; a phone callback off-system won\u2019t show). Review/closure latency is deliberately left out until reviewed_at is split into "dentist reviewed" vs "patient seen" \u2014 today it fires days later at closure, so it measures throughput, not responsiveness, and doesn\u2019t belong here.</div>';
+
+      // SMS loop detail — the human side of the text loop. Latency long-tail +
+      // dropped threads (an unanswered patient inbound = a lost booking, the
+      // bread-and-butter of routine revenue). Built from sms_log timestamps only
+      // (case_id, direction, sender, sent_at) — no message bodies; PHI stays in-DB.
+      (function(){
+        // Human outbound = dashboard reply (sender_email present) OR a named human
+        // sender that is not one of Sam's automated senders.
+        var AUTO={"Sam (AI)":1,"Sam (AI, regen)":1,"LocationGate":1,"System (post-triage)":1,"System":1};
+        function isHuman(m){if(m.direction!=="outbound")return false;if(m.sender_email)return true;return m.sender_name&&!AUTO[m.sender_name];}
+        function mt(m){return new Date(m.sent_at||m.created_at).getTime();}
+        // Group all sms rows by case
+        var byCase={};sms.forEach(function(m){if(!m.case_id)return;(byCase[m.case_id]=byCase[m.case_id]||[]).push(m);});
+        // Map case_id -> lane (clinical = general|emergency, else routine) for the split
+        var laneById={};cases.forEach(function(c){laneById[c.id]=(laneOf(c)==="general"||laneOf(c)==="emergency")?"clinical":"routine";});
+        // Map case_id -> booked? (outcome proxy for loop quality — no message bodies read).
+        var bookedById={};cases.forEach(function(c){bookedById[c.id]=(c.final_disposition==="booked"||(typeof c.revenue_generated==="number"&&c.revenue_generated>0));});
+        var lat=[],latClin=[],latRout=[],threads=0,withReply=0,dropped=0,dropClin=0,dropRout=0;
+        // Outcome proxy: of threads that got a human reply, did they convert to a booking?
+        var convAnswered=0,convBooked=0,answeredNoBook=0;
+        Object.keys(byCase).forEach(function(cid){
+          var rows=byCase[cid].slice().sort(function(a,b){return mt(a)-mt(b);});
+          if(!rows.length)return;threads++;
+          var type=laneById[cid]||"routine";
+          // latency: first inbound with no prior human outbound -> next human outbound
+          var waiting=null,matched=null,seenHuman=false;
+          for(var i=0;i<rows.length;i++){var r=rows[i];
+            if(r.direction==="inbound"&&waiting===null&&!seenHuman)waiting=r;
+            if(isHuman(r)){seenHuman=true;if(waiting!==null&&matched===null){matched=r;break;}}}
+          if(waiting&&matched){var mins=(mt(matched)-mt(waiting))/60000;if(Number.isFinite(mins)&&mins>=0&&mins<=10080){lat.push(mins);(type==="clinical"?latClin:latRout).push(mins);}}
+          if(rows.some(isHuman))withReply++;
+          if(rows.some(isHuman)){convAnswered++;if(bookedById[cid])convBooked++;else answeredNoBook++;}
+          var last=rows[rows.length-1];
+          if(last.direction==="inbound"){var lt=mt(last);if(!rows.some(function(x){return isHuman(x)&&mt(x)>lt;})){dropped++;type==="clinical"?dropClin++:dropRout++;}}
+        });
+        function p90(a){if(!a.length)return null;var s=a.slice().sort(function(x,y){return x-y;});return s[Math.min(s.length-1,Math.floor(0.9*s.length))];}
+        html+='<div class="panel"><div class="panel-title">SMS loop \u2014 staff responsiveness (all threads, '+threads+' in window)</div>';
+        if(!threads)html+='<div class="empty">No SMS threads in this window.</div>';
+        else{
+          html+='<div class="cards">'+
+            card("Median response",fmtMins(median(lat)),lat.length?("n="+lat.length+(lat.length<5?" \u00B7 small sample":"")):"no measurable waits")+
+            card("90th percentile",fmtMins(p90(lat)),"long tail \u2014 slowest replies")+
+            card("Median \u00B7 routine",fmtMins(median(latRout)),latRout.length?("n="+latRout.length):"none")+
+            card("Median \u00B7 clinical",fmtMins(median(latClin)),latClin.length?("n="+latClin.length):"none")+
+            '</div>';
+          html+=bar("Threads with a staff reply",withReply,threads,"var(--routine)");
+          html+=bar("Dropped \u2014 last msg unanswered patient",dropped,threads,dropped>0?"var(--danger)":"var(--text-faint)");
+          if(dropped)html+='<div style="margin-top:4px">'+bar("\u00B7 routine (lost bookings)",dropRout,dropped,"var(--urgent)")+bar("\u00B7 clinical (needs follow-up)",dropClin,dropped,"var(--critical)")+'</div>';
+          if(convAnswered){
+            html+='<div style="margin-top:10px"><div class="panel-title" style="margin-bottom:8px">Did the answered threads convert? (outcome proxy)</div>'+
+              bar("Booked after a staff reply",convBooked,convAnswered,"var(--routine)")+
+              bar("Answered but not booked",answeredNoBook,convAnswered,"var(--urgent)")+
+              '</div>';
+          }
+          html+='<div class="note-line">Latency = a patient text left waiting on the office \u2192 the first human reply. A dropped thread ends on an unanswered patient message \u2014 routine drops are lost bookings, the bread-and-butter of practice revenue. Measures staff, not Sam. Timestamps only; no message content leaves the database. The conversion split is an OUTCOME proxy for loop quality (did the answered thread end in a booking) \u2014 NOT a measure of message wording or tone; true conversation-quality scoring requires reading message bodies and is a separate, PHI-gated build.</div>';
+        }
+        html+='</div>';
+      })();
 
       /* ===== Q3 — WHAT DID IT PRODUCE ===== */
       html+=qhead("3","What did it produce","Bookings, retention, satisfaction, cost \u2014 the diligence view");
