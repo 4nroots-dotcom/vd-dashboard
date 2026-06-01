@@ -393,6 +393,17 @@ textarea::placeholder { color: #a0b4cc; }
   function getParam(name) { return new URLSearchParams(window.location.search).get(name) || ''; }
   var LANG = getParam('lang').toLowerCase();
   var T = STRINGS[LANG] || STRINGS.en;
+  var KIND = getParam('kind').toLowerCase();   // 'sam' = post-Sam single-question survey
+  var IS_SAM = KIND === 'sam';
+
+  // Sam-survey question copy. English only for now (the invite SMS is English
+  // too); the per-language survey strings are flagged for a native pass, so the
+  // single Sam question rides English until then.
+  var SAM_Q = {
+    title: 'How was Sam?',
+    sub: 'You just spoke with Sam, our AI assistant. One quick question \u2014 under a minute.',
+    q: 'How likely are you to recommend Sam, our AI assistant, to a friend or family member?'
+  };
 
   function setText(id, val) { var el = document.getElementById(id); if (el) el.textContent = val; }
   function setHtml(id, val) { var el = document.getElementById(id); if (el) el.innerHTML = val; }
@@ -481,7 +492,12 @@ textarea::placeholder { color: #a0b4cc; }
     btn.disabled = true;
     btn.textContent = T.submitting;
 
-    var payload = {
+    var payload = IS_SAM ? {
+      kind: 'sam',
+      survey_token: token,
+      nps_score: answers.nps,          // server routes this to sam_nps_score
+      survey_feedback: null
+    } : {
       survey_token: token,
       nps_score: answers.nps,
       sam_satisfaction_score: answers.sam,
@@ -524,6 +540,21 @@ textarea::placeholder { color: #a0b4cc; }
   }
 
   applyStrings();
+
+  // ── Sam-survey mode: one question (Sam NPS), hide the post-visit questions ──
+  // Reuses the existing 0..10 NPS scale + its submit/validation path; only the
+  // question text changes and Q2 (Sam stars), Q3 (timely), Q4 (free text) hide.
+  if (IS_SAM) {
+    setText('s-title', SAM_Q.title);
+    setText('s-sub', SAM_Q.sub);
+    setText('s-q-nps', SAM_Q.q);
+    // Hide the post-visit-only questions. Each q-label sits in a .q-block.
+    ['s-q-sam', 's-q-followup', 's-q-feedback'].forEach(function (id) {
+      var el = document.getElementById(id);
+      var block = el && el.closest ? el.closest('.q-block') : null;
+      if (block) block.style.display = 'none';
+    });
+  }
 </script>
 
 </body>
