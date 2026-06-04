@@ -1237,6 +1237,21 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   // REFACTOR_MARKER_2026_05_28_OFFICE_STABILITY
   var dashboardStarted = false;
   var casesPollTimer = null;
+  var loadInFlight = false;  // REFRESH_HARDENING_2026_06_04 re-entrancy guard
+  // Proactively keep the access token valid BEFORE querying. Gated on
+  // near-expiry (not every poll) so we don't fire a refresh -> TOKEN_REFRESHED
+  // -> loadCases storm via the onAuthStateChange listener below.
+  async function ensureFreshSession() {
+    try {
+      var r = await sb.auth.getSession();
+      var s = r && r.data ? r.data.session : null;
+      if (!s) return;
+      var now = Math.floor(Date.now() / 1000);
+      if (!s.expires_at || (s.expires_at - now) < 120) {
+        await sb.auth.refreshSession();
+      }
+    } catch (e) { /* non-fatal; loadCases still attempts the query */ }
+  }
   function isAuthErr(e) {
     if (!e) return false;
     var m = ((e.message || "") + " " + (e.code || "")).toLowerCase();
@@ -1263,37 +1278,64 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }
 
   async function loadCases() {
-    document.getElementById("list-count").textContent = "Loading...";
-    // Only show the Loading placeholder when nothing is displayed yet, so a
-    // background poll doesn't blank an already-populated list every tick.
-    if (!currentCases || !currentCases.length) {
-      document.getElementById("case-list-scroll").innerHTML = "<div class=\"case-empty\">Loading...</div>";
-    }
-
-    var result = await caseSelect();
-
-    // Self-heal an expired token: refresh the session once and retry, instead of
-    // failing silently. This is why Refresh "did nothing" before — it re-ran the
-    // same dead-token fetch. Now a stale token recovers without a re-login.
-    if (result.error && isAuthErr(result.error)) {
-      try { await sb.auth.refreshSession(); } catch (e) {}
-      result = await caseSelect();
-    }
-
-    if (result.error) {
-      if (currentCases && currentCases.length) {
-        // Keep the last good list on screen rather than wiping it on a transient failure.
-        document.getElementById("list-count").textContent = currentCases.length + " (refresh failed)";
-      } else {
-        document.getElementById("case-list-scroll").innerHTML = "<div class=\"case-empty\">Unable to load cases.<br>Please sign out and back in.</div>";
-        document.getElementById("list-count").textContent = "";
+    // Re-entrancy guard: a manual refreshSession() fires onAuthStateChange
+    // (TOKEN_REFRESHED), which re-calls loadCases. Without this the proactive
+    // refresh would stack a second concurrent load every cycle.
+    if (loadInFlight) return;
+    loadInFlight = true;
+    try {
+      document.getElementById("list-count").textContent = "Loading...";
+      // Only show the Loading placeholder when nothing is displayed yet, so a
+      // background poll doesn't blank an already-populated list every tick.
+      if (!currentCases || !currentCases.length) {
+        document.getElementById("case-list-scroll").innerHTML = "<div class=\"case-empty\">Loading...</div>";
       }
-      return;
-    }
 
-    currentCases = result.data || [];
-    currentCases.forEach(function(c) { if (c.patient_name_english && c.patient_name_english !== c.patient_name) c.patient_name = c.patient_name_english + " (" + c.patient_name + ")"; if (c.patient_city_english && c.patient_city_english !== c.patient_city) c.patient_city = c.patient_city_english; });
-    applySearchFilter();
+      // REFRESH_HARDENING_2026_06_04: refresh a near-expired token BEFORE the
+      // query. The reactive isAuthErr heal only fires on an explicit auth error;
+      // a lapsed token under RLS can instead return an empty set with NO error,
+      // so the heal never triggers and the list silently blanks. This is why the
+      // prior in-loop self-heal didn't fix the staleness.
+      await ensureFreshSession();
+
+      var hadCases = !!(currentCases && currentCases.length);
+      var result = await caseSelect();
+
+      // Reactive heal #1: explicit auth error -> refresh once and retry.
+      if (result.error && isAuthErr(result.error)) {
+        try { await sb.auth.refreshSession(); } catch (e) {}
+        result = await caseSelect();
+      }
+
+      // Reactive heal #2: success but EMPTY when we previously had cases is the
+      // silent-RLS-lapse signature (no error to catch). Refresh + retry once
+      // before accepting the empty result, so the queue can't silently blank.
+      if (!result.error && hadCases && (!result.data || !result.data.length)) {
+        try { await sb.auth.refreshSession(); } catch (e) {}
+        result = await caseSelect();
+      }
+
+      if (result.error) {
+        if (currentCases && currentCases.length) {
+          // Keep the last good list on screen rather than wiping it on a transient failure.
+          document.getElementById("list-count").textContent = currentCases.length + " (refresh failed)";
+        } else {
+          document.getElementById("case-list-scroll").innerHTML = "<div class=\"case-empty\">Unable to load cases.<br>Please sign out and back in.</div>";
+          document.getElementById("list-count").textContent = "";
+        }
+        return;
+      }
+
+      // TEST_EXCLUSION_2026_06_04: hide test-tagged cases from staff. Keyed on
+      // intake_source ending in "_test" (the deliberate tag set at call time),
+      // NOT phone, so a real patient on a staff-known number is never hidden.
+      // Null-safe: a null/empty intake_source is treated as a real case.
+      currentCases = (result.data || []).filter(function(c) { return !/_test$/.test(c.intake_source || ""); });
+      currentCases.forEach(function(c) { if (c.patient_name_english && c.patient_name_english !== c.patient_name) c.patient_name = c.patient_name_english + " (" + c.patient_name + ")"; if (c.patient_city_english && c.patient_city_english !== c.patient_city) c.patient_city = c.patient_city_english; });
+      applySearchFilter();
+    } finally {
+      loadInFlight = false;
+    }
   }
 
   function doSearch(val) {
