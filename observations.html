@@ -1,782 +1,521 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
-<title>VirtualDentist.ai - Observations</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>VirtualDentist.ai - Daily Observations</title>
+  <!-- DEPLOY MARKER: OBSERVATIONS_V1_2026_06_04 -->
+  <!--
+    DAILY OBSERVATIONS PAGE (v1, fresh build 2026-06-04)
+    Purpose: the daily transcript-audit habit, productized. One day at a
+    time: honest call dispositions (6-bucket taxonomy), clinical roster,
+    stalled cases, duplicate-phone clusters, dropped SMS threads, and the
+    raw transcripts inline. "Copy digest" produces the paste-ready block
+    for the daily-ops-log Claude workflow.
+    Disposition taxonomy (ratified 2026-06-03):
+      handled / routed / engaged-patient-ended / greeting-drop / system / unclassified
+    Collision-era rule: before 2026-06-04, ended_reason
+    assistant-said-end-call-phrase was triggerable by Sam saying
+    "take care of ..." (config bug, fixed 2026-06-03 ~23:00 ET). Pre-fix
+    phrase-ended calls whose transcript contains "take care of" and no
+    closing signature classify as SYSTEM (collision kill), not handled.
+  -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    html, body { background: #071323; min-height: 100%; }
+    :root {
+      --navy-0: #071323; --navy-1: #0a1628; --navy-2: #0f2044; --navy-3: #17305e;
+      --cyan: #00c8e8; --cyan-soft: #73d7f3; --cyan-dim: #0097b2;
+      --white: #f5f9ff; --text-primary: #e8f0fe; --text-secondary: #b4c7e2;
+      --text-muted: #7f96b8; --text-faint: #5f7597;
+      --border: rgba(255,255,255,0.08); --border-soft: rgba(255,255,255,0.05);
+      --surface: rgba(255,255,255,0.035); --surface-2: rgba(255,255,255,0.02); --surface-3: rgba(255,255,255,0.05);
+      --shadow-md: 0 14px 32px rgba(0,0,0,0.18);
+      --critical: #e84545; --urgent: #f0a500; --routine: #00c87a;
+      --warning: #f0a500; --danger: #e84545; --success: #00c87a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top center, rgba(51,108,190,0.16), transparent 28%),
+                  radial-gradient(circle at bottom left, rgba(0,200,232,0.06), transparent 24%),
+                  linear-gradient(180deg, var(--navy-0) 0%, var(--navy-1) 100%);
+      color: var(--text-primary); font-size: 14px; line-height: 1.5; min-height: 100vh; overscroll-behavior: none;
+    }
+    button, input, a { font: inherit; }
+    a { color: var(--cyan-soft); text-decoration: none; }
+    .hidden { display: none !important; }
 
-<style>
-  html, body {
-    background: #071323;
-    height: 100%;
-  }
-  :root {
-    --navy-0: #071323;
-    --navy-1: #0a1628;
-    --navy-2: #0f2044;
-    --navy-3: #17305e;
-    --cyan: #00c8e8;
-    --cyan-soft: #73d7f3;
-    --cyan-dim: #0097b2;
-    --cyan-faint: rgba(0, 200, 232, 0.08);
-    --critical: #e84545;
-    --urgent: #f0a500;
-    --routine: #00c87a;
-    --good: #00c87a;
-    --warn: #f0a500;
-    --bad: #e84545;
-    --white: #f5f9ff;
-    --text-primary: #e8f0fe;
-    --text-secondary: #a8bdd8;
-    --text-muted: #6a80a0;
-    --text-faint: #90a6c4;
-    --border: rgba(255, 255, 255, 0.07);
-    --border-soft: rgba(255, 255, 255, 0.05);
-    --border-active: rgba(0, 200, 232, 0.3);
-    --surface: rgba(255, 255, 255, 0.03);
-    --surface-hover: rgba(255, 255, 255, 0.06);
-    --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.22);
-    --shadow-card: 0 12px 28px rgba(0, 0, 0, 0.14);
-  }
+    /* auth */
+    .auth-wrap { max-width: 380px; margin: 12vh auto 0; padding: 0 16px; }
+    .auth-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; box-shadow: var(--shadow-md); }
+    .auth-card h1 { font-family: "DM Serif Display", serif; font-size: 22px; margin-bottom: 4px; }
+    .auth-card p { color: var(--text-muted); font-size: 13px; margin-bottom: 18px; }
+    .auth-card input { width: 100%; background: var(--navy-1); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); padding: 10px 12px; margin-bottom: 10px; }
+    .auth-card button { width: 100%; background: var(--cyan); border: none; border-radius: 8px; color: #04222b; font-weight: 700; padding: 11px; cursor: pointer; }
+    .auth-err { display: none; color: var(--danger); font-size: 13px; margin-top: 10px; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    /* shell */
+    .shell { max-width: 1180px; margin: 0 auto; padding: 18px 16px 60px; }
+    .topbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .topbar h1 { font-family: "DM Serif Display", serif; font-size: 24px; margin-right: 8px; }
+    .topbar .spacer { flex: 1; }
+    .ctrl { background: var(--surface-3); border: 1px solid var(--border); border-radius: 8px; color: var(--text-primary); padding: 7px 12px; cursor: pointer; }
+    .ctrl:hover { border-color: var(--cyan-dim); }
+    input[type="date"].ctrl { color-scheme: dark; }
+    .ctrl.primary { background: var(--cyan); color: #04222b; font-weight: 700; border: none; }
+    .muted { color: var(--text-muted); font-size: 12.5px; }
+    .faint { color: var(--text-faint); font-size: 12px; }
 
-  body {
-    font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    background: linear-gradient(180deg, var(--navy-0) 0%, var(--navy-1) 100%);
-    color: var(--text-primary);
-    font-size: 14px;
-    line-height: 1.55;
-    min-height: 100vh;
-  }
+    /* cards */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 16px; box-shadow: var(--shadow-md); }
+    .card h2 { font-family: "DM Serif Display", serif; font-size: 18px; margin-bottom: 4px; }
+    .card .note { color: var(--text-faint); font-size: 12px; margin-bottom: 12px; }
 
-  .app {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 32px 24px 80px;
-  }
+    /* disposition tiles */
+    .headline { display: flex; flex-wrap: wrap; gap: 14px; align-items: stretch; margin-bottom: 14px; }
+    .big-tile { flex: 1 1 220px; background: var(--surface-3); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+    .big-tile .v { font-size: 34px; font-weight: 700; color: var(--cyan-soft); }
+    .big-tile .l { color: var(--text-secondary); font-size: 13px; }
+    .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+    .tile { background: var(--surface-2); border: 1px solid var(--border-soft); border-radius: 10px; padding: 10px 12px; }
+    .tile .v { font-size: 22px; font-weight: 700; }
+    .tile .l { color: var(--text-muted); font-size: 12px; }
+    .tile.t-handled .v { color: var(--success); }
+    .tile.t-routed .v { color: var(--cyan-soft); }
+    .tile.t-engaged .v { color: var(--text-secondary); }
+    .tile.t-drop .v { color: var(--urgent); }
+    .tile.t-system .v { color: var(--danger); }
+    .tile.t-unk .v { color: var(--text-faint); }
 
-  /* ───── Header ───── */
-  .page-head {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 16px;
-    padding-bottom: 20px;
-    margin-bottom: 28px;
-    border-bottom: 1px solid var(--border);
-    flex-wrap: wrap;
-  }
-  .brand-eyebrow {
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-  }
-  h1 {
-    font-family: "DM Serif Display", serif;
-    font-size: 34px;
-    font-weight: 400;
-    letter-spacing: -0.01em;
-    color: var(--white);
-    line-height: 1.1;
-  }
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 12px;
-  }
-  .last-loaded {
-    font-family: ui-monospace, monospace;
-    color: var(--text-muted);
-    font-size: 11px;
-  }
-  .btn-ghost {
-    background: var(--cyan-faint);
-    border: 1px solid rgba(0, 200, 232, 0.22);
-    color: var(--cyan);
-    font-family: "DM Sans", sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    padding: 7px 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.15s, border-color 0.15s;
-  }
-  .btn-ghost:hover { background: rgba(0, 200, 232, 0.14); border-color: rgba(0, 200, 232, 0.38); }
-  .btn-ghost:disabled { opacity: 0.5; cursor: default; }
-
-  /* ───── Intro ───── */
-  .intro {
-    font-size: 14px;
-    color: var(--text-secondary);
-    max-width: 720px;
-    margin-bottom: 36px;
-    line-height: 1.65;
-  }
-  .intro strong { color: var(--text-primary); font-weight: 600; }
-
-  /* ───── Observation cards ───── */
-  .observation {
-    margin-bottom: 18px;
-    padding: 22px 24px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    box-shadow: var(--shadow-card);
-    position: relative;
-    overflow: hidden;
-  }
-  .observation::before {
-    content: "";
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-    background: var(--border-active);
-  }
-  .observation.status-good::before    { background: var(--good); }
-  .observation.status-warn::before    { background: var(--warn); }
-  .observation.status-bad::before     { background: var(--bad); }
-  .observation.status-unknown::before { background: var(--text-muted); }
-
-  .obs-head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 8px;
-    flex-wrap: wrap;
-  }
-  .obs-title {
-    font-family: "DM Serif Display", serif;
-    font-size: 20px;
-    font-weight: 400;
-    color: var(--white);
-    letter-spacing: -0.005em;
-    line-height: 1.2;
-  }
-  .obs-status {
-    font-family: ui-monospace, monospace;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 3px 9px;
-    border-radius: 4px;
-    flex-shrink: 0;
-  }
-  .obs-status.good    { background: rgba(0, 200, 122, 0.1);  color: var(--good); border: 1px solid rgba(0, 200, 122, 0.3); }
-  .obs-status.warn    { background: rgba(240, 165, 0, 0.1);  color: var(--warn); border: 1px solid rgba(240, 165, 0, 0.3); }
-  .obs-status.bad     { background: rgba(232, 69, 69, 0.12); color: var(--bad);  border: 1px solid rgba(232, 69, 69, 0.35); }
-  .obs-status.unknown { background: rgba(255,255,255,0.04);  color: var(--text-muted); border: 1px solid var(--border); }
-  .obs-status.loading { background: var(--cyan-faint);       color: var(--cyan); border: 1px solid rgba(0, 200, 232, 0.2); }
-
-  .obs-explainer {
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin-bottom: 16px;
-    line-height: 1.6;
-  }
-
-  .obs-data {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 12px;
-    margin-bottom: 14px;
-  }
-  .metric {
-    background: var(--surface);
-    border: 1px solid var(--border-soft);
-    border-radius: 8px;
-    padding: 12px 14px;
-  }
-  .metric-label {
-    font-family: ui-monospace, monospace;
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 4px;
-  }
-  .metric-value {
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--text-primary);
-    font-variant-numeric: tabular-nums;
-    font-family: "DM Sans", sans-serif;
-    line-height: 1.1;
-  }
-  .metric-value.danger { color: var(--bad); }
-  .metric-value.warn { color: var(--warn); }
-  .metric-value.good { color: var(--good); }
-  .metric-sub {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-top: 3px;
-    font-family: ui-monospace, monospace;
-  }
-
-  .obs-action {
-    font-size: 12.5px;
-    color: var(--text-secondary);
-    padding: 10px 14px;
-    background: var(--surface);
-    border-radius: 6px;
-    border-left: 2px solid rgba(0, 200, 232, 0.25);
-    margin-top: 12px;
-    line-height: 1.55;
-  }
-  .obs-action strong { color: var(--text-primary); font-weight: 600; }
-
-  details.obs-detail {
-    margin-top: 12px;
-    font-size: 12px;
-  }
-  details.obs-detail summary {
-    cursor: pointer;
-    color: var(--text-muted);
-    font-family: ui-monospace, monospace;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    font-size: 10px;
-    padding: 4px 0;
-    list-style: none;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  details.obs-detail summary::before {
-    content: "▸";
-    display: inline-block;
-    transition: transform 0.15s;
-    font-size: 9px;
-  }
-  details.obs-detail[open] summary::before { transform: rotate(90deg); }
-  details.obs-detail summary:hover { color: var(--cyan); }
-  details.obs-detail[open] summary { color: var(--cyan); }
-
-  .obs-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    font-size: 12px;
-    font-family: ui-monospace, monospace;
-  }
-  .obs-table th, .obs-table td {
-    text-align: left;
-    padding: 7px 10px;
-    border-bottom: 1px solid var(--border-soft);
-  }
-  .obs-table th {
-    color: var(--text-muted);
-    font-weight: 700;
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .obs-table td { color: var(--text-secondary); }
-  .obs-table tr:last-child td { border-bottom: none; }
-
-  /* ───── Auth ───── */
-  .auth-wrap {
-    max-width: 380px;
-    margin: 80px auto;
-    padding: 32px;
-    background: var(--navy-2);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    box-shadow: var(--shadow-soft);
-  }
-  .auth-title {
-    font-family: "DM Serif Display", serif;
-    font-size: 22px;
-    color: var(--white);
-    margin-bottom: 18px;
-    font-weight: 400;
-  }
-  .auth-wrap input {
-    width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text-primary);
-    padding: 11px 14px;
-    border-radius: 6px;
-    font-family: "DM Sans", sans-serif;
-    font-size: 14px;
-    margin-bottom: 12px;
-  }
-  .auth-wrap input:focus { outline: none; border-color: var(--cyan); background: var(--surface-hover); }
-  .auth-wrap button {
-    width: 100%;
-    background: var(--cyan);
-    color: var(--navy-0);
-    border: none;
-    padding: 12px;
-    border-radius: 6px;
-    font-family: "DM Sans", sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-  }
-  .auth-wrap button:hover { background: var(--cyan-soft); }
-  .auth-error { color: var(--bad); font-size: 12px; margin-top: 8px; min-height: 16px; }
-
-  .loading-text {
-    color: var(--text-muted);
-    font-style: italic;
-    font-size: 13px;
-  }
-
-  /* ───── Footnote ───── */
-  .footnote {
-    margin-top: 44px;
-    padding: 18px 20px;
-    background: var(--surface);
-    border: 1px solid var(--border-soft);
-    border-radius: 8px;
-    color: var(--text-muted);
-    font-size: 12px;
-    line-height: 1.7;
-  }
-  .footnote strong { color: var(--text-secondary); font-weight: 600; }
-
-  /* ───── Mobile ───── */
-  @media (max-width: 640px) {
-    .app { padding: 24px 16px 60px; }
-    h1 { font-size: 28px; }
-    .obs-title { font-size: 18px; }
-    .metric-value { font-size: 20px; }
-  }
-</style>
+    /* tables */
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; color: var(--text-faint); font-weight: 600; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.04em; padding: 6px 8px; border-bottom: 1px solid var(--border); }
+    td { padding: 7px 8px; border-bottom: 1px solid var(--border-soft); vertical-align: top; color: var(--text-secondary); }
+    tr:last-child td { border-bottom: none; }
+    .chip { display: inline-block; border-radius: 999px; padding: 1px 9px; font-size: 11.5px; font-weight: 600; border: 1px solid var(--border); white-space: nowrap; }
+    .c-handled { color: var(--success); border-color: rgba(0,200,122,0.4); }
+    .c-routed { color: var(--cyan-soft); border-color: rgba(0,200,232,0.4); }
+    .c-engaged { color: var(--text-secondary); }
+    .c-drop { color: var(--urgent); border-color: rgba(240,165,0,0.4); }
+    .c-system { color: var(--danger); border-color: rgba(232,69,69,0.45); }
+    .c-unk { color: var(--text-faint); }
+    .c-test { color: var(--text-faint); border-style: dashed; }
+    .sev { font-weight: 700; text-transform: uppercase; font-size: 11px; }
+    .sev-critical { color: var(--critical); } .sev-urgent { color: var(--urgent); }
+    .sev-routine { color: var(--routine); } .sev-null { color: var(--text-faint); }
+    details.tx { margin-top: 4px; }
+    details.tx summary { cursor: pointer; color: var(--cyan-dim); font-size: 12px; }
+    details.tx pre { white-space: pre-wrap; background: var(--navy-1); border: 1px solid var(--border-soft); border-radius: 8px; padding: 10px; margin-top: 6px; color: var(--text-secondary); font-size: 12px; font-family: "DM Sans", sans-serif; }
+    .empty { color: var(--text-faint); font-size: 13px; padding: 6px 0; }
+    .cluster { border: 1px solid rgba(240,165,0,0.35); border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; background: rgba(240,165,0,0.05); }
+    .loading { color: var(--text-muted); padding: 30px 0; text-align: center; }
+    #toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); background: var(--navy-3); border: 1px solid var(--cyan-dim); color: var(--text-primary); border-radius: 10px; padding: 10px 18px; display: none; z-index: 50; }
+  </style>
 </head>
 <body>
 
-<div id="auth-screen" style="display:none;">
-  <div class="auth-wrap">
-    <div class="auth-title">Observations</div>
-    <input type="email" id="auth-email" placeholder="Email" autocomplete="email" />
-    <input type="password" id="auth-password" placeholder="Password" autocomplete="current-password" />
-    <button id="auth-btn" type="button">Sign In</button>
-    <div class="auth-error" id="auth-error"></div>
-  </div>
-</div>
-
-<div class="app" id="app" style="display:none;">
-  <div class="page-head">
-    <div>
-      <div class="brand-eyebrow">VirtualDentist · Weekly Review</div>
-      <h1>Observations</h1>
-    </div>
-    <div class="header-right">
-      <span class="last-loaded" id="last-loaded">—</span>
-      <button class="btn-ghost" id="refresh-btn" type="button">Refresh</button>
-      <button class="btn-ghost" id="signout-btn" type="button">Sign Out</button>
+  <div class="auth-wrap" id="auth-view">
+    <div class="auth-card">
+      <h1>Daily Observations</h1>
+      <p>VirtualDentist.ai - staff sign-in</p>
+      <input id="auth-email" type="email" placeholder="Email" autocomplete="username" />
+      <input id="auth-password" type="password" placeholder="Password" autocomplete="current-password" />
+      <button id="auth-btn" type="button">Sign In</button>
+      <div class="auth-err" id="auth-error"></div>
     </div>
   </div>
 
-  <div class="intro">
-    A weekly review of the observations-dependent decisions built into the system.
-    Each section shows the current signal, what it means, and what to do if numbers
-    trend the wrong way. The point is to close loose ends with data rather than
-    remember them — open this page once a week and take action on anything marked
-    <strong style="color:var(--warn)">WARN</strong> or
-    <strong style="color:var(--bad)">BAD</strong>.
+  <div class="shell hidden" id="app-view">
+    <div class="topbar">
+      <h1>Daily Observations</h1>
+      <button class="ctrl" id="prev-day" type="button">&larr;</button>
+      <input class="ctrl" type="date" id="day-pick" />
+      <button class="ctrl" id="next-day" type="button">&rarr;</button>
+      <button class="ctrl" id="today-btn" type="button">Today</button>
+      <div class="spacer"></div>
+      <button class="ctrl primary" id="copy-digest" type="button">Copy digest</button>
+      <button class="ctrl" id="refresh-btn" type="button">&#8635;</button>
+      <a class="ctrl" href="ddsdashboard.html">Dashboard</a>
+      <button class="ctrl" id="signout-btn" type="button">Sign out</button>
+    </div>
+    <div class="muted" id="status-line" style="margin-bottom:14px;"></div>
+    <div id="panels"><div class="loading">Loading...</div></div>
   </div>
 
-  <div id="observations"></div>
-
-  <div class="footnote">
-    <strong>Adding a new observation:</strong> when a new observation-dependent
-    decision is introduced, add a section to this page. The pattern is:
-    explainer → query → status calculation → suggested action. Cost of
-    adding one more observation should stay near zero.<br/><br/>
-    <strong>Loose-end principle:</strong> any observation whose signal is
-    WARN or BAD for more than 14 days without resolution means either the
-    prompt-only fix isn't working, or the decision has been forgotten —
-    both are signals to revisit.
-  </div>
-</div>
+  <div id="toast"></div>
 
 <script>
-  const SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
-  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+var SUPABASE_URL = "https://zjwnqryeefegqfmamaqd.supabase.co";
+var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
 
-  let currentUser = null;
+// Collision-kill era boundary: the "take care" End Call Phrase hotfix
+// shipped 2026-06-03 ~23:00 ET. Phrase-ended calls BEFORE this instant
+// could be Sam hanging up mid-conversation. After it, phrase-ends are
+// trustworthy.
+var COLLISION_FIX_ISO = "2026-06-04T03:00:00Z"; // 2026-06-03 23:00 ET
 
-  function esc(s) {
-    if (s === null || s === undefined) return "";
-    return String(s)
-      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+var CLOSING_RE = /(bye for now|hang in there|emergency room or call 911|emergency room or call nine one one|you're all set|glad i could help|take care\.)/i;
+var TAKE_CARE_OF_RE = /take care of/i;
+var SYSTEM_REASON_RE = /(pipeline|provider|error|failed|no-available|db-)/i;
+
+var TRIAGE_TAG_LABELS = { facial_trauma_high_energy: "Facial trauma (high energy)", post_extraction_possible_dry_socket: "Post-extraction / dry socket", pericoronitis_possible: "Pericoronitis", suspected_odontogenic_infection: "Odontogenic infection", broken_tooth_trauma_low_energy: "Broken tooth (low energy)", suspected_irreversible_pulpitis: "Irreversible pulpitis", soft_tissue_lesion_unspecified: "Soft tissue lesion", tooth_structure_loss_no_pain: "Tooth structure loss (no pain)", routine_dental_pain: "Routine dental pain", acute_dental_pain_unspecified: "Acute dental pain (unspecified)", non_emergent_inquiry: "Non-emergent inquiry" };
+
+if (!window.supabase || !window.supabase.createClient) {
+  document.getElementById("auth-error").style.display = "block";
+  document.getElementById("auth-error").textContent = "Supabase library failed to load.";
+  throw new Error("Supabase library missing");
+}
+var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+var lastDigest = "";
+
+// ---------- auth ----------
+document.getElementById("auth-btn").addEventListener("click", handleLogin);
+document.getElementById("auth-email").addEventListener("keydown", function(e){ if (e.key === "Enter") handleLogin(); });
+document.getElementById("auth-password").addEventListener("keydown", function(e){ if (e.key === "Enter") handleLogin(); });
+document.getElementById("signout-btn").addEventListener("click", async function(){ await sb.auth.signOut(); location.reload(); });
+
+async function handleLogin() {
+  var email = document.getElementById("auth-email").value.trim();
+  var password = document.getElementById("auth-password").value;
+  var errEl = document.getElementById("auth-error");
+  errEl.style.display = "none";
+  if (!email || !password) { errEl.textContent = "Enter both email and password."; errEl.style.display = "block"; return; }
+  var r = await sb.auth.signInWithPassword({ email: email, password: password });
+  if (r.error || !r.data || !r.data.user) { errEl.textContent = (r.error && r.error.message) || "Sign-in failed."; errEl.style.display = "block"; return; }
+  showApp();
+}
+
+sb.auth.getSession().then(function(r){ if (r.data && r.data.session) showApp(); });
+
+function showApp() {
+  document.getElementById("auth-view").classList.add("hidden");
+  document.getElementById("app-view").classList.remove("hidden");
+  if (!document.getElementById("day-pick").value) setDay(todayStr());
+  loadDay();
+}
+
+// ---------- date handling ----------
+// Day boundaries are the VIEWER's local midnight. All users are in the
+// practice timezone (America/Toronto), so viewer-local == practice-local.
+function todayStr() {
+  var d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+}
+function setDay(s) { document.getElementById("day-pick").value = s; }
+function shiftDay(n) {
+  var v = document.getElementById("day-pick").value || todayStr();
+  var d = new Date(v + "T12:00:00");
+  d.setDate(d.getDate() + n);
+  setDay(d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0"));
+  loadDay();
+}
+function dayRange() {
+  var v = document.getElementById("day-pick").value || todayStr();
+  var start = new Date(v + "T00:00:00");
+  var end = new Date(start.getTime() + 24*3600*1000);
+  return { label: v, startISO: start.toISOString(), endISO: end.toISOString() };
+}
+document.getElementById("prev-day").addEventListener("click", function(){ shiftDay(-1); });
+document.getElementById("next-day").addEventListener("click", function(){ shiftDay(1); });
+document.getElementById("today-btn").addEventListener("click", function(){ setDay(todayStr()); loadDay(); });
+document.getElementById("day-pick").addEventListener("change", loadDay);
+document.getElementById("refresh-btn").addEventListener("click", loadDay);
+document.getElementById("copy-digest").addEventListener("click", copyDigest);
+
+// ---------- helpers ----------
+function esc(s) { return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function tLocal(iso) { if (!iso) return ""; var d = new Date(iso); return String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0"); }
+function last4(p) { return p ? "..." + String(p).replace(/\D/g,"").slice(-4) : ""; }
+function isTest(src) { return !!(src && /_test$/.test(src)); }
+function sevHtml(s) { var c = s ? ("sev-" + s) : "sev-null"; return '<span class="sev ' + c + '">' + esc(s || "pending") + "</span>"; }
+function tagLabel(t) { return TRIAGE_TAG_LABELS[t] || t || ""; }
+function toast(msg) { var el = document.getElementById("toast"); el.textContent = msg; el.style.display = "block"; setTimeout(function(){ el.style.display = "none"; }, 2200); }
+
+// ---------- the disposition classifier (ratified taxonomy) ----------
+// Buckets: handled | routed | engaged | drop | system | unclassified
+// Methodology is rendered on the page so the formula is never hidden.
+function classifyCall(c) {
+  var r = c.ended_reason || "";
+  var t = c.transcript || "";
+  var dur = c.duration_seconds || 0;
+  var hasClosing = CLOSING_RE.test(t);
+  var userTurns = (t.match(/^User:/gm) || []).length;
+  var preFix = c.created_at < COLLISION_FIX_ISO;
+
+  if (r === "assistant-forwarded-call") return "routed";
+  if (r === "assistant-said-end-call-phrase" || r === "assistant-ended-call") {
+    if (preFix && TAKE_CARE_OF_RE.test(t) && !hasClosing) return "system"; // collision kill
+    return "handled";
   }
-
-  // ─── AUTH ───────────────────────────────────────────────────────
-  function showAuth() {
-    document.getElementById("auth-screen").style.display = "block";
-    document.getElementById("app").style.display = "none";
+  if (r === "customer-ended-call") {
+    if (hasClosing) return "handled";
+    if (userTurns >= 1 && dur >= 15) return "engaged";
+    return "drop";
   }
-  function showApp(user) {
-    currentUser = user;
-    document.getElementById("auth-screen").style.display = "none";
-    document.getElementById("app").style.display = "block";
-    loadAllObservations();
+  if (r === "silence-timed-out") {
+    if (hasClosing) return "handled";
+    if (userTurns >= 1) return "engaged";
+    return "drop";
   }
+  if (SYSTEM_REASON_RE.test(r)) return "system";
+  return "unclassified";
+}
+function isCollisionKill(c) {
+  return (c.ended_reason === "assistant-said-end-call-phrase" || c.ended_reason === "assistant-ended-call") &&
+         c.created_at < COLLISION_FIX_ISO && TAKE_CARE_OF_RE.test(c.transcript || "") && !CLOSING_RE.test(c.transcript || "");
+}
+var BUCKET_LABELS = { handled: "Handled end-to-end", routed: "Routed to office", engaged: "Engaged, patient ended", drop: "Greeting drop-off", system: "System error", unclassified: "Unclassified" };
+var CHIP_CLASS = { handled: "c-handled", routed: "c-routed", engaged: "c-engaged", drop: "c-drop", system: "c-system", unclassified: "c-unk" };
 
-  document.getElementById("auth-btn").addEventListener("click", handleLogin);
-  document.getElementById("auth-password").addEventListener("keydown", (e) => {
-    if (e.key === "Enter") handleLogin();
-  });
-  document.getElementById("signout-btn").addEventListener("click", () => {
-    sb.auth.signOut().then(() => showAuth());
-  });
-  document.getElementById("refresh-btn").addEventListener("click", loadAllObservations);
+// ---------- data load ----------
+var state = { calls: [], cases: [], sms: [], threadCases: {} };
 
-  async function handleLogin() {
-    const email = document.getElementById("auth-email").value.trim();
-    const password = document.getElementById("auth-password").value;
-    const btn = document.getElementById("auth-btn");
-    const errEl = document.getElementById("auth-error");
-    errEl.textContent = "";
-    if (!email || !password) { errEl.textContent = "Enter both email and password."; return; }
-    btn.disabled = true; btn.textContent = "Signing in...";
-    try {
-      const { data, error } = await sb.auth.signInWithPassword({ email, password });
-      if (error) { errEl.textContent = error.message || "Sign-in failed."; return; }
-      if (!data?.user) { errEl.textContent = "Sign-in returned no user."; return; }
-      const { data: reviewer } = await sb.from("allowed_reviewers")
-        .select("can_access_dentist_dashboard")
-        .eq("email", data.user.email)
-        .maybeSingle();
-      if (!reviewer?.can_access_dentist_dashboard) {
-        await sb.auth.signOut();
-        errEl.textContent = "This account does not have access.";
-        return;
-      }
-      showApp(data.user);
-    } catch (e) {
-      errEl.textContent = e.message || "Unexpected error.";
-    } finally {
-      btn.disabled = false; btn.textContent = "Sign In";
+async function loadDay() {
+  var p = document.getElementById("panels");
+  p.innerHTML = '<div class="loading">Loading...</div>';
+  var r = dayRange();
+  document.getElementById("status-line").textContent = "";
+  try {
+    var callsQ = sb.from("call_transcripts")
+      .select("created_at,ended_reason,duration_seconds,caller_number,intake_source,transcript")
+      .gte("created_at", r.startISO).lt("created_at", r.endISO)
+      .order("created_at", { ascending: true });
+    var casesQ = sb.from("triage_cases")
+      .select("id,created_at,inquiry_type,severity,triage_tag,extraction_source,intake_source,final_disposition,reviewed_at,contacted_patient_at,patient_language,patient_name,patient_phone,chief_complaint,sms_fallback_sent_at,has_sms_continuation,review_status")
+      .gte("created_at", r.startISO).lt("created_at", r.endISO)
+      .order("created_at", { ascending: true });
+    var smsQ = sb.from("sms_log")
+      .select("case_id,direction,sent_at,sender_name")
+      .gte("created_at", r.startISO).lt("created_at", r.endISO)
+      .order("sent_at", { ascending: true });
+
+    var res = await Promise.all([callsQ, casesQ, smsQ]);
+    for (var i = 0; i < res.length; i++) {
+      if (res[i].error) throw new Error(["calls","cases","sms_log"][i] + ": " + res[i].error.message);
     }
-  }
+    state.calls = res[0].data || [];
+    state.cases = res[1].data || [];
+    state.sms = res[2].data || [];
 
-  sb.auth.getSession().then(({ data }) => {
-    if (data.session?.user) showApp(data.session.user);
-    else showAuth();
+    // fetch case rows referenced by today's SMS but created earlier
+    var known = {}; state.cases.forEach(function(c){ known[c.id] = c; });
+    var missing = [];
+    state.sms.forEach(function(m){ if (m.case_id && !known[m.case_id] && missing.indexOf(m.case_id) < 0) missing.push(m.case_id); });
+    state.threadCases = Object.assign({}, known);
+    if (missing.length > 0) {
+      var extra = await sb.from("triage_cases")
+        .select("id,patient_name,patient_phone,inquiry_type,severity,review_status,final_disposition")
+        .in("id", missing.slice(0, 200));
+      if (!extra.error && extra.data) extra.data.forEach(function(c){ state.threadCases[c.id] = c; });
+    }
+    render(r);
+  } catch (e) {
+    p.innerHTML = '<div class="card"><h2>Load failed</h2><div class="note">' + esc(e.message) + "</div></div>";
+  }
+}
+
+// ---------- derivations ----------
+function derive(r) {
+  var real = state.calls.filter(function(c){ return !isTest(c.intake_source); });
+  var tests = state.calls.length - real.length;
+  var buckets = { handled: [], routed: [], engaged: [], drop: [], system: [], unclassified: [] };
+  real.forEach(function(c){ buckets[classifyCall(c)].push(c); });
+  var kills = buckets.system.filter(isCollisionKill).length;
+  var headlineNum = buckets.handled.length + buckets.routed.length;
+  var headlinePct = real.length ? Math.round(100 * headlineNum / real.length) : 0;
+
+  var realCases = state.cases.filter(function(c){ return !isTest(c.intake_source); });
+  var sev = { critical: [], urgent: [], routine: [], pending: [] };
+  realCases.forEach(function(c){ (c.severity ? sev[c.severity] : sev.pending).push(c); });
+  var needsHuman = realCases.filter(function(c){ return c.inquiry_type === "clinical" && !c.reviewed_at; })
+    .sort(function(a,b){ var o = { critical:0, urgent:1, routine:2 }; return (o[a.severity] ?? 3) - (o[b.severity] ?? 3); });
+
+  // clusters: phones with >1 case today
+  var byPhone = {};
+  realCases.forEach(function(c){ if (!c.patient_phone) return; (byPhone[c.patient_phone] = byPhone[c.patient_phone] || []).push(c); });
+  var clusters = Object.keys(byPhone).filter(function(p){ return byPhone[p].length > 1; })
+    .map(function(p){ return { phone: p, cases: byPhone[p], pending: byPhone[p].filter(function(c){ return !c.severity; }).length }; });
+
+  // dropped threads: last message of the day on a case is patient inbound
+  var lastByCase = {};
+  state.sms.forEach(function(m){ if (m.case_id) lastByCase[m.case_id] = m; });
+  var dropped = Object.keys(lastByCase).filter(function(id){ return lastByCase[id].direction === "inbound"; })
+    .map(function(id){ return { case_id: id, at: lastByCase[id].sent_at, c: state.threadCases[id] || {} }; });
+
+  return { real: real, tests: tests, buckets: buckets, kills: kills, headlineNum: headlineNum, headlinePct: headlinePct,
+           realCases: realCases, sev: sev, needsHuman: needsHuman, clusters: clusters, dropped: dropped };
+}
+
+// ---------- render ----------
+function render(r) {
+  var d = derive(r);
+  var h = "";
+
+  // 1) Disposition headline
+  h += '<div class="card"><h2>Call dispositions</h2>' +
+    '<div class="note">Real inbound calls only (tests excluded at source by intake_source tag). Headline = (handled + routed) / all real calls. ' +
+    'Pre-' + COLLISION_FIX_ISO.slice(0,10) + ' phrase-ended calls saying "take care of..." with no closing are collision kills (config bug, fixed 2026-06-03) and count as system errors. ' +
+    'Routed = transfers; the asked-for-person vs capability-gap split is pending transfer_reason instrumentation.</div>' +
+    '<div class="headline">' +
+      '<div class="big-tile"><div class="v">' + d.headlinePct + '%</div><div class="l">Handled or correctly routed (' + d.headlineNum + '/' + d.real.length + ' real calls)</div></div>' +
+      '<div class="big-tile"><div class="v">' + d.real.length + '</div><div class="l">Real calls (' + d.tests + ' test call' + (d.tests === 1 ? "" : "s") + ' excluded)</div></div>' +
+    '</div><div class="tiles">';
+  ["handled","routed","engaged","drop","system","unclassified"].forEach(function(b){
+    var extra = (b === "system" && d.kills > 0) ? (" (" + d.kills + " collision)") : "";
+    h += '<div class="tile t-' + (b === "engaged" ? "engaged" : b === "drop" ? "drop" : b === "unclassified" ? "unk" : b) + '">' +
+         '<div class="v">' + d.buckets[b].length + '</div><div class="l">' + BUCKET_LABELS[b] + extra + '</div></div>';
   });
+  h += "</div></div>";
 
-  // ─── OBSERVATIONS REGISTRY ──────────────────────────────────────
-  const OBSERVATIONS = [
-    {
-      key: "voice_compliance_audit",
-      title: "Voice Compliance Audit",
-      explainer:
-        "Tracks Sam asking about fields already captured on the intake form (onset, immunocompromised, pregnancy, blood thinners, safety screen, chief complaint). Violations are logged by rapid-processor. Open rows that stay unresolved for 14+ days indicate prompt fixes aren't sticking or decisions have been forgotten.",
-      action:
-        "If WARN or BAD: query the voice_compliance_audit_summary view, review the top violation types, and tag each row's resolution_status when handled.",
-      async run() {
-        const { data, error } = await sb
-          .from("voice_compliance_audit_summary")
-          .select("*");
-        if (error) return { status: "unknown", metrics: [{ label: "Error", value: error.message.slice(0, 40) }] };
-
-        const rows = data || [];
-        const totalOpen = rows.reduce((s, r) => s + (r.open_count || 0), 0);
-        const totalAll = rows.reduce((s, r) => s + (r.total_count || 0), 0);
-
-        const { count: staleCount } = await sb
-          .from("voice_compliance_audit")
-          .select("id", { count: "exact", head: true })
-          .in("resolution_status", ["open", "escalated_to_gate_build"])
-          .lt("created_at", new Date(Date.now() - 14 * 864e5).toISOString());
-
-        let status = "good";
-        if (staleCount > 0) status = "bad";
-        else if (totalOpen > 5) status = "warn";
-        else if (totalAll === 0) status = "unknown";
-
-        const metrics = [
-          { label: "Open violations", value: totalOpen, tone: totalOpen > 5 ? "warn" : (totalOpen > 0 ? "" : "good") },
-          { label: "Stale (>14 days)", value: staleCount || 0, tone: (staleCount || 0) > 0 ? "danger" : "good" },
-          { label: "Total logged", value: totalAll },
-          { label: "Violation types", value: rows.length },
-        ];
-
-        let detail = "";
-        if (rows.length > 0) {
-          detail = '<table class="obs-table"><thead><tr><th>Type</th><th>Open</th><th>Resolved</th><th>Wont Fix</th><th>Escalated</th><th>Last Seen</th></tr></thead><tbody>';
-          for (const r of rows) {
-            const last = r.last_seen_at ? new Date(r.last_seen_at).toLocaleDateString() : "—";
-            detail += `<tr><td>${esc(r.violation_type)}</td><td>${r.open_count || 0}</td><td>${r.resolved_count || 0}</td><td>${r.wont_fix_count || 0}</td><td>${r.escalated_count || 0}</td><td>${esc(last)}</td></tr>`;
-          }
-          detail += "</tbody></table>";
-        } else {
-          detail = '<div class="loading-text">No violations logged yet — either Sam is compliant, or no voice calls have flowed since the audit was deployed.</div>';
-        }
-
-        return { status, metrics, detail };
-      },
-    },
-
-    {
-      key: "voice_fallback_conversion",
-      title: "Voice → SMS Fallback Conversion",
-      explainer:
-        "When a voice call cuts off mid-triage, the system sends a recovery SMS so the patient can complete by text. This measures whether patients engage with that recovery. Low reply rate means patients are being lost despite the fallback firing.",
-      action:
-        "If BAD (<30% reply rate over 10+ fallbacks): recovery SMS isn't working — consider building the in-call SMS handoff trigger (Vapi tool call). If WARN (30–60%): prompt edit landed but could be stronger. GOOD (>60%): fix working.",
-      async run() {
-        const since = new Date(Date.now() - 30 * 864e5).toISOString();
-        const { data: fallbackCases, error } = await sb
-          .from("triage_cases")
-          .select("id, sms_fallback_sent_at, patient_phone")
-          .not("sms_fallback_sent_at", "is", null)
-          .gte("sms_fallback_sent_at", since);
-        if (error) return { status: "unknown", metrics: [{ label: "Error", value: error.message.slice(0, 40) }] };
-
-        const total = (fallbackCases || []).length;
-        if (total === 0) {
-          return {
-            status: "unknown",
-            metrics: [
-              { label: "Fallbacks (30d)", value: 0 },
-              { label: "Reply rate", value: "—" },
-            ],
-            detail: '<div class="loading-text">No fallback events in the last 30 days.</div>',
-          };
-        }
-
-        const caseIds = fallbackCases.map(c => c.id);
-        const { data: replies } = await sb
-          .from("sms_log")
-          .select("case_id, created_at")
-          .in("case_id", caseIds)
-          .eq("direction", "inbound");
-
-        const repliedCaseIds = new Set();
-        for (const c of fallbackCases) {
-          const fbTime = new Date(c.sms_fallback_sent_at).getTime();
-          const hasReply = (replies || []).some(r =>
-            r.case_id === c.id && new Date(r.created_at).getTime() > fbTime
-          );
-          if (hasReply) repliedCaseIds.add(c.id);
-        }
-
-        const replied = repliedCaseIds.size;
-        const rate = total > 0 ? (replied / total) : 0;
-
-        let status = "unknown";
-        if (total < 5) status = "unknown";
-        else if (rate >= 0.6) status = "good";
-        else if (rate >= 0.3) status = "warn";
-        else status = "bad";
-
-        return {
-          status,
-          metrics: [
-            { label: "Fallbacks (30d)", value: total },
-            { label: "Replied", value: replied, tone: rate >= 0.6 ? "good" : (rate >= 0.3 ? "warn" : "danger") },
-            { label: "Reply rate", value: Math.round(rate * 100) + "%", tone: rate >= 0.6 ? "good" : (rate >= 0.3 ? "warn" : "danger") },
-          ],
-        };
-      },
-    },
-
-    {
-      key: "post_triage_escalations",
-      title: "Post-Triage Escalations",
-      explainer:
-        "When a patient sends a follow-up SMS after triage closes with escalation language ('unbearable', 'worse', 'swelling spreading'), the system flags it and fires dual-channel alerts. This shows active escalations and whether they're being reviewed promptly.",
-      action:
-        "If WARN: one or more escalations active for >2 hours unreviewed — open the dentist dashboard and respond. If BAD: >6 hours — review process broken.",
-      async run() {
-        const { data, error } = await sb
-          .from("triage_cases")
-          .select("id, patient_name, post_triage_last_message_at, post_triage_escalation_alerted_at, reviewed_at")
-          .eq("post_triage_escalation", true)
-          .order("post_triage_last_message_at", { ascending: false });
-        if (error) return { status: "unknown", metrics: [{ label: "Error", value: error.message.slice(0, 40) }] };
-
-        const all = data || [];
-        const activeUnreviewed = all.filter(r => !r.reviewed_at);
-        const now = Date.now();
-        const stale2h = activeUnreviewed.filter(r => {
-          const t = r.post_triage_last_message_at ? new Date(r.post_triage_last_message_at).getTime() : now;
-          return (now - t) > 2 * 3600 * 1000;
-        });
-        const stale6h = activeUnreviewed.filter(r => {
-          const t = r.post_triage_last_message_at ? new Date(r.post_triage_last_message_at).getTime() : now;
-          return (now - t) > 6 * 3600 * 1000;
-        });
-
-        let status = "good";
-        if (stale6h.length > 0) status = "bad";
-        else if (stale2h.length > 0) status = "warn";
-
-        return {
-          status,
-          metrics: [
-            { label: "Total escalations", value: all.length },
-            { label: "Active (unreviewed)", value: activeUnreviewed.length, tone: activeUnreviewed.length > 0 ? "warn" : "good" },
-            { label: "Stale >2h", value: stale2h.length, tone: stale2h.length > 0 ? "warn" : "good" },
-            { label: "Stale >6h", value: stale6h.length, tone: stale6h.length > 0 ? "danger" : "good" },
-          ],
-        };
-      },
-    },
-
-    {
-      key: "cases_stuck_in_queue",
-      title: "Cases Stuck In Queue",
-      explainer:
-        "Cases with review_status='new' sitting more than 24 hours without review. Most should be handled within hours — anything older indicates a gap in the review workflow or a case that fell off the radar.",
-      action:
-        "If WARN (>3 stale): queue isn't being worked consistently. If BAD (>10 stale): real operational gap — walk the queue with Afaf and identify why specific cases are sitting.",
-      async run() {
-        const cutoff24h = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
-        const cutoff72h = new Date(Date.now() - 72 * 3600 * 1000).toISOString();
-
-        const { count: stale24, error: err1 } = await sb
-          .from("triage_cases")
-          .select("id", { count: "exact", head: true })
-          .eq("review_status", "new")
-          .lt("created_at", cutoff24h);
-        if (err1) return { status: "unknown", metrics: [{ label: "Error", value: err1.message.slice(0, 40) }] };
-
-        const { count: stale72 } = await sb
-          .from("triage_cases")
-          .select("id", { count: "exact", head: true })
-          .eq("review_status", "new")
-          .lt("created_at", cutoff72h);
-
-        let status = "good";
-        if ((stale24 || 0) > 10) status = "bad";
-        else if ((stale24 || 0) > 3) status = "warn";
-
-        return {
-          status,
-          metrics: [
-            { label: "Stale >24h", value: stale24 || 0, tone: (stale24 || 0) > 3 ? "warn" : "good" },
-            { label: "Stale >72h", value: stale72 || 0, tone: (stale72 || 0) > 0 ? "danger" : "good" },
-          ],
-        };
-      },
-    },
-
-    {
-      key: "extract_sms_errors",
-      title: "SMS Extraction Error Rate",
-      explainer:
-        "Cases where extract-sms failed to produce a clinical record (review_status='sms_extract_error'). These triaged but their structured data couldn't be built — they land in the queue with a raw transcript but no severity. Non-zero counts indicate OpenAI errors, schema drift, or new bugs.",
-      action:
-        "If WARN (any errors in 7d): inspect each case's transcript and error. If BAD (>5 in 7d): systemic issue — pause deploys until investigated.",
-      async run() {
-        const since = new Date(Date.now() - 7 * 864e5).toISOString();
-        const { count, error } = await sb
-          .from("triage_cases")
-          .select("id", { count: "exact", head: true })
-          .eq("review_status", "sms_extract_error")
-          .gte("created_at", since);
-        if (error) return { status: "unknown", metrics: [{ label: "Error", value: error.message.slice(0, 40) }] };
-
-        let status = "good";
-        if ((count || 0) > 5) status = "bad";
-        else if ((count || 0) > 0) status = "warn";
-
-        return {
-          status,
-          metrics: [
-            { label: "Errors (7d)", value: count || 0, tone: (count || 0) > 5 ? "danger" : ((count || 0) > 0 ? "warn" : "good") },
-          ],
-        };
-      },
-    },
-
-    {
-      key: "ttr_metric",
-      title: "Time to Dentist Review",
-      explainer:
-        "[Not yet built] Distribution of time from triage completion (severity set, extraction done) to dentist acknowledgment (reviewed_at). Measures operational responsiveness — the part 123Dentist and DSOs will ask about.",
-      action:
-        "Build the triage_completed_at column and wire it into rapid-processor + extract-sms + office-dashboard. Then this section becomes real data.",
-      async run() {
-        return {
-          status: "unknown",
-          metrics: [{ label: "Status", value: "Not built" }],
-          detail: '<div class="loading-text">TTR metric requires adding <code>triage_completed_at</code> column. Pinned as item #5.</div>',
-        };
-      },
-    },
-  ];
-
-  // ─── RENDERING ──────────────────────────────────────────────────
-  function renderObservation(obs, result) {
-    const metricsHtml = (result.metrics || []).map(m => `
-      <div class="metric">
-        <div class="metric-label">${esc(m.label)}</div>
-        <div class="metric-value ${m.tone || ""}">${esc(m.value)}</div>
-        ${m.sub ? `<div class="metric-sub">${esc(m.sub)}</div>` : ""}
-      </div>
-    `).join("");
-    return `
-      <div class="observation status-${result.status}" id="obs-${obs.key}">
-        <div class="obs-head">
-          <div class="obs-title">${esc(obs.title)}</div>
-          <div class="obs-status ${result.status}">${result.status.toUpperCase()}</div>
-        </div>
-        <div class="obs-explainer">${obs.explainer}</div>
-        <div class="obs-data">${metricsHtml}</div>
-        ${result.detail ? `<details class="obs-detail"><summary>Detail</summary>${result.detail}</details>` : ""}
-        <div class="obs-action"><strong>Action:</strong> ${obs.action}</div>
-      </div>
-    `;
+  // 2) Clinical day
+  h += '<div class="card"><h2>Clinical day</h2>' +
+    '<div class="note">Cases created this day. Critical ' + d.sev.critical.length + ' / urgent ' + d.sev.urgent.length +
+    ' / routine ' + d.sev.routine.length + ' / pending ' + d.sev.pending.length +
+    '. Unreviewed clinical (needs a human): ' + d.needsHuman.length + '.</div>';
+  if (d.realCases.length === 0) h += '<div class="empty">No cases.</div>';
+  else {
+    h += '<table><tr><th>Time</th><th>Severity</th><th>Tag</th><th>Patient</th><th>Complaint</th><th>Source</th><th>Status</th></tr>';
+    d.realCases.forEach(function(c){
+      var status = c.final_disposition ? esc(c.final_disposition)
+        : c.contacted_patient_at ? "contacted"
+        : c.reviewed_at ? "reviewed"
+        : esc(c.review_status || "new");
+      h += "<tr><td>" + tLocal(c.created_at) + "</td><td>" + sevHtml(c.severity) + "</td><td>" + esc(tagLabel(c.triage_tag)) +
+           "</td><td>" + esc(c.patient_name || "") + " <span class='faint'>" + last4(c.patient_phone) + "</span></td><td>" +
+           esc((c.chief_complaint || "").slice(0, 90)) + "</td><td class='faint'>" + esc(c.intake_source || "") +
+           "</td><td>" + status + "</td></tr>";
+    });
+    h += "</table>";
   }
+  h += "</div>";
 
-  function renderLoading(obs) {
-    return `
-      <div class="observation status-unknown" id="obs-${obs.key}">
-        <div class="obs-head">
-          <div class="obs-title">${esc(obs.title)}</div>
-          <div class="obs-status loading">Loading…</div>
-        </div>
-        <div class="obs-explainer">${obs.explainer}</div>
-      </div>
-    `;
+  // 3) Duplicate clusters
+  h += '<div class="card"><h2>Duplicate-case clusters</h2>' +
+    '<div class="note">Phones with more than one case this day. One patient episode fragmented across rows (the 2026-06-03 pattern): the real classification, staff contact, and booking confirmation can land on different siblings. Episode-level dedupe is the planned fix; until then, review these together.</div>';
+  if (d.clusters.length === 0) h += '<div class="empty">No multi-case phones.</div>';
+  else d.clusters.forEach(function(cl){
+    h += '<div class="cluster"><strong>' + last4(cl.phone) + "</strong> - " + cl.cases.length + " cases" +
+         (cl.pending ? " (" + cl.pending + " pending)" : "") + "<br/>";
+    cl.cases.forEach(function(c){
+      h += '<span class="faint">' + tLocal(c.created_at) + "</span> " + sevHtml(c.severity) + " " +
+           esc(c.patient_name || "") + " <span class='faint'>" + esc(c.review_status || "") +
+           (c.final_disposition ? " / " + esc(c.final_disposition) : "") + "</span><br/>";
+    });
+    h += "</div>";
+  });
+  h += "</div>";
+
+  // 4) Stalled
+  var stalled = d.sev.pending;
+  h += '<div class="card"><h2>Stalled / incomplete intakes</h2>' +
+    '<div class="note">Severity still null - intake started, triage never finished. SMS fallback and continuation flags shown.</div>';
+  if (stalled.length === 0) h += '<div class="empty">None.</div>';
+  else {
+    h += "<table><tr><th>Time</th><th>Patient</th><th>Source</th><th>Complaint</th><th>Flags</th></tr>";
+    stalled.forEach(function(c){
+      var flags = [];
+      if (c.has_sms_continuation) flags.push("sms-continued");
+      if (c.sms_fallback_sent_at) flags.push("fallback-sent");
+      h += "<tr><td>" + tLocal(c.created_at) + "</td><td>" + esc(c.patient_name || "") + " <span class='faint'>" + last4(c.patient_phone) +
+           "</span></td><td class='faint'>" + esc(c.intake_source || "") + "</td><td>" + esc((c.chief_complaint || "").slice(0, 80)) +
+           "</td><td class='faint'>" + flags.join(", ") + "</td></tr>";
+    });
+    h += "</table>";
   }
+  h += "</div>";
 
-  async function loadAllObservations() {
-    const container = document.getElementById("observations");
-    container.innerHTML = OBSERVATIONS.map(renderLoading).join("");
-
-    const results = await Promise.all(OBSERVATIONS.map(async (obs) => {
-      try {
-        const r = await obs.run();
-        return { obs, result: r };
-      } catch (e) {
-        return { obs, result: { status: "unknown", metrics: [{ label: "Error", value: String(e).slice(0, 40) }] } };
-      }
-    }));
-
-    const order = { bad: 0, warn: 1, unknown: 2, good: 3 };
-    results.sort((a, b) => (order[a.result.status] ?? 9) - (order[b.result.status] ?? 9));
-
-    container.innerHTML = results.map(({ obs, result }) => renderObservation(obs, result)).join("");
-
-    document.getElementById("last-loaded").textContent =
-      "Loaded " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  // 5) Dropped threads
+  h += '<div class="card"><h2>Open SMS threads (last message = patient, unanswered)</h2>' +
+    '<div class="note">Caveat (the Sharen lesson): a final inbound can be a booking CONFIRMATION, not a dropped thread - read it before acting. Post-triage auto-acks already answer clinical follow-ups.</div>';
+  if (d.dropped.length === 0) h += '<div class="empty">None.</div>';
+  else {
+    h += "<table><tr><th>Last msg</th><th>Patient</th><th>Severity</th><th>Case status</th></tr>";
+    d.dropped.forEach(function(t){
+      h += "<tr><td>" + tLocal(t.at) + "</td><td>" + esc(t.c.patient_name || "") + " <span class='faint'>" + last4(t.c.patient_phone) +
+           "</span></td><td>" + sevHtml(t.c.severity) + "</td><td class='faint'>" + esc(t.c.review_status || "") +
+           (t.c.final_disposition ? " / " + esc(t.c.final_disposition) : "") + "</td></tr>";
+    });
+    h += "</table>";
   }
+  h += "</div>";
+
+  // 6) Calls with transcripts (the audit)
+  h += '<div class="card"><h2>Every call, with transcript</h2>' +
+    '<div class="note">The transcript-audit habit, in the page. Disposition chips use the taxonomy above; expand any row to read the call.</div>';
+  if (state.calls.length === 0) h += '<div class="empty">No calls.</div>';
+  else {
+    h += "<table><tr><th>Time</th><th>Caller</th><th>Disposition</th><th>Ended reason</th><th>Secs</th></tr>";
+    state.calls.forEach(function(c){
+      var test = isTest(c.intake_source);
+      var b = test ? null : classifyCall(c);
+      var chip = test ? '<span class="chip c-test">test</span>'
+        : '<span class="chip ' + CHIP_CLASS[b] + '">' + BUCKET_LABELS[b] + (isCollisionKill(c) ? " (collision)" : "") + "</span>";
+      h += "<tr><td>" + tLocal(c.created_at) + "</td><td>" + last4(c.caller_number) + "</td><td>" + chip +
+           "</td><td class='faint'>" + esc(c.ended_reason || "") + "</td><td>" + Math.round(c.duration_seconds || 0) + "</td></tr>";
+      h += '<tr><td colspan="5"><details class="tx"><summary>transcript</summary><pre>' + esc(c.transcript || "(empty)") + "</pre></details></td></tr>";
+    });
+    h += "</table>";
+  }
+  h += "</div>";
+
+  document.getElementById("panels").innerHTML = h;
+  document.getElementById("status-line").textContent = "Loaded " + r.label + " - " + state.calls.length + " calls, " +
+    state.cases.length + " cases, " + state.sms.length + " SMS rows. Live data; recent rows may still mature.";
+  lastDigest = buildDigest(r, d);
+}
+
+// ---------- digest ----------
+function buildDigest(r, d) {
+  var L = [];
+  L.push("=== DAILY OBSERVATIONS - " + r.label + " ===");
+  L.push("CALLS (real): " + d.real.length +
+    " | handled " + d.buckets.handled.length +
+    " | routed " + d.buckets.routed.length +
+    " | engaged-patient-ended " + d.buckets.engaged.length +
+    " | greeting drops " + d.buckets.drop.length +
+    " | system " + d.buckets.system.length + (d.kills ? " (incl " + d.kills + " collision kills)" : "") +
+    " | unclassified " + d.buckets.unclassified.length +
+    " | tests excluded " + d.tests);
+  L.push("HEADLINE handled-or-routed: " + d.headlinePct + "% (" + d.headlineNum + "/" + d.real.length + ")");
+  L.push("CASES: " + d.realCases.length + " created | critical " + d.sev.critical.length +
+    " | urgent " + d.sev.urgent.length + " | routine " + d.sev.routine.length + " | pending " + d.sev.pending.length);
+  if (d.needsHuman.length) {
+    L.push("NEEDS HUMAN (unreviewed clinical):");
+    d.needsHuman.forEach(function(c){ L.push("  - " + (c.severity || "pending").toUpperCase() + " " + (c.patient_name || "?") + " " + last4(c.patient_phone) + " - " + (c.chief_complaint || "").slice(0, 70)); });
+  }
+  if (d.sev.pending.length) {
+    L.push("STALLED (severity null):");
+    d.sev.pending.forEach(function(c){ L.push("  - " + tLocal(c.created_at) + " " + (c.patient_name || "?") + " " + last4(c.patient_phone) + " [" + (c.intake_source || "") + "]"); });
+  }
+  if (d.clusters.length) {
+    L.push("CLUSTERS (multi-case phones):");
+    d.clusters.forEach(function(cl){ L.push("  - " + last4(cl.phone) + " x" + cl.cases.length + (cl.pending ? " (" + cl.pending + " pending)" : "")); });
+  }
+  if (d.dropped.length) {
+    L.push("OPEN THREADS (verify not booking confirmations):");
+    d.dropped.forEach(function(t){ L.push("  - " + (t.c.patient_name || t.case_id.slice(0,8)) + " last inbound " + tLocal(t.at)); });
+  }
+  L.push("(paste this block into the Claude ops session for the daily-ops-log entry)");
+  return L.join("\n");
+}
+
+function copyDigest() {
+  if (!lastDigest) { toast("Load a day first"); return; }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(lastDigest).then(function(){ toast("Digest copied"); },
+      function(){ fallbackCopy(); });
+  } else fallbackCopy();
+}
+function fallbackCopy() {
+  var ta = document.createElement("textarea");
+  ta.value = lastDigest; document.body.appendChild(ta); ta.select();
+  try { document.execCommand("copy"); toast("Digest copied"); } catch (e) { toast("Copy failed - select manually"); }
+  document.body.removeChild(ta);
+}
 </script>
-
 </body>
 </html>
