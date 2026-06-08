@@ -118,6 +118,7 @@
     details.sec[open]>summary:after{content:"\25B4";}
     details.sec>.sec-body{padding:0 18px 16px;}
     @media(max-width:600px){.hero-rate{font-size:40px;}.fnum{font-size:22px;}.why-num{font-size:20px;min-width:42px;}}
+    .chip-note{font-size:11px;color:var(--text-faint);margin-top:9px;line-height:1.45;}
     .loading{padding:60px 0;text-align:center;color:var(--text-muted);}
     .bar-name{width:230px;}
     .date-input{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:12px;padding:6px 8px;color-scheme:dark;}
@@ -301,11 +302,13 @@
       var wkCur=obSlice(nowMs-wkMs,nowMs),wkPrev=obSlice(nowMs-2*wkMs,nowMs-wkMs);
       var wokOk=(wkCur.eng>=10&&wkPrev.eng>=10);
       function schip(label,curV,prevV,goodWhenUp){
-        if(!wokOk)return '<span class="schip" title="needs at least 10 engaged calls in each of the last two weeks">'+escHtml(label)+': not enough data yet</span>';
-        var d=curV-prevV;var dir=d>=5?"up":(d<=-10?"down":"flat");
-        var cls=dir==="flat"?"":(((dir==="up")===goodWhenUp)?"up":"down");
-        var arrow=d>0?"\u25B2":(d<0?"\u25BC":"\u2192");
-        return '<span class="schip '+cls+'" title="last 7 days vs the 7 before: '+prevV+'% \u2192 '+curV+'%">'+escHtml(label)+' '+arrow+' '+(d>0?"+":"")+d+'pp</span>';
+        if(!wokOk)return '<span class="schip" title="needs at least 10 engaged calls in each of the last two weeks">'+escHtml(label)+' \u00B7 not enough data yet</span>';
+        var d=curV-prevV;
+        var word,cls,arrow;
+        if(Math.abs(d)<3){word="steady";cls="";arrow="\u2192";}
+        else if((d>0)===goodWhenUp){word="better";cls="up";arrow=d>0?"\u25B2":"\u25BC";}
+        else{word="worse";cls="down";arrow=d>0?"\u25B2":"\u25BC";}
+        return '<span class="schip '+cls+'" title="last 7 days vs the previous 7, in percentage points: '+prevV+'% \u2192 '+curV+'%">'+escHtml(label)+' \u00B7 '+word+' '+arrow+' '+(d>0?"+":"")+d+' pts</span>';
       }
       var hCur=pct(wkCur.han,wkCur.eng),hPrev=pct(wkPrev.han,wkPrev.eng);
       var dCur=pct(wkCur.drop,wkCur.eng),dPrev=pct(wkPrev.drop,wkPrev.eng);
@@ -320,11 +323,12 @@
         schip("Capability gaps",gCur,gPrev,false)+
         schip("Availability",aCur,aPrev,true)+
         '</div>';
+      html+='<div class="chip-note">Each chip compares the last 7 days with the previous 7. Green “better” = moving the right way · red “worse” = needs attention · grey = roughly steady. “pts” = percentage points (a move from 40% to 42% is +2 pts).</div>';
       if(wokOk&&(hCur-hPrev)<=-10){html+='<div class="alert-banner">\u26A0 Handled rate fell '+(hPrev-hCur)+'pp week-over-week ('+hPrev+'% \u2192 '+hCur+'%). Deterministic rule fired (\u226510pp drop, \u226510 engaged calls both weeks) \u2014 worth investigating before it compounds.</div>';}
       html+='<div class="funnel">'+
         '<div class="fblock"><div class="fnum">'+calls.length+'</div><div class="flabel">calls in</div></div>'+
         '<div class="farrow">\u2192</div>'+
-        '<div class="fblock"><div class="fnum">\u2212'+(obNoise+obSysErr)+'</div><div class="flabel">noise \u2014 '+obNoise+' hangups &lt;15s \u00B7 '+obSysErr+' errors</div></div>'+
+        '<div class="fblock"><div class="fnum">\u2212'+(obNoise+obSysErr)+'</div><div class="flabel">noise \u2014 '+obNoise+' '+(obNoise===1?'hangup':'hangups')+' &lt;15s \u00B7 '+obSysErr+' '+(obSysErr===1?'error':'errors')+'</div></div>'+
         '<div class="farrow">\u2192</div>'+
         '<div class="fblock"><div class="fnum">'+obEngaged+'</div><div class="flabel">engaged \u2014 real conversations</div></div>'+
         '<div class="farrow">\u2192</div>'+
