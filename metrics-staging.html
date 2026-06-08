@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VirtualDentist.ai — Operational Metrics</title>
+  <!-- REFACTOR_MARKER_2026_05_28_METRICS_V3_LANES -->
+  <!-- SAM_USAGE_TILE_2026_06_07 : goal headline + captured-outcome breakdown (reads call_transcripts.outcome_bucket et al., written by general-sam-tools v1.6.6+) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root{
+      --navy-0:#071323;--navy-1:#0a1628;--cyan:#00c8e8;
+      --text-primary:#e8f0fe;--text-secondary:#b4c7e2;--text-muted:#7f96b8;--text-faint:#5f7597;
+      --border:rgba(255,255,255,0.08);--surface:rgba(255,255,255,0.035);--surface-2:rgba(255,255,255,0.02);
+      --critical:#e84545;--urgent:#f0a500;--routine:#00c87a;--ok:#00c87a;--warn:#f0a500;--danger:#e84545;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+    html,body{background:var(--navy-0);min-height:100%;}
+    body{font-family:"DM Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at top center,rgba(51,108,190,0.16),transparent 28%),linear-gradient(180deg,var(--navy-0),var(--navy-1));color:var(--text-primary);font-size:14px;line-height:1.5;min-height:100vh;}
+    button,input,a{font:inherit;}
+    a{color:var(--cyan);text-decoration:none;}
+    #auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+    .auth-card{width:100%;max-width:380px;background:linear-gradient(180deg,rgba(18,39,81,0.95),rgba(11,27,58,0.95));border:1px solid var(--border);border-radius:18px;padding:36px 30px;}
+    .auth-logo{font-size:18px;font-weight:700;margin-bottom:6px;}
+    .auth-logo span{color:var(--cyan);}
+    .auth-subtitle{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:26px;}
+    .field-label{display:block;font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+    .field-input{width:100%;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:14px;padding:12px 14px;outline:none;margin-bottom:16px;}
+    .field-input:focus{border-color:rgba(0,200,232,0.3);}
+    .btn-primary{width:100%;background:linear-gradient(135deg,#4c8fd2,#69cbe7);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;padding:14px;cursor:pointer;}
+    .btn-primary:disabled{opacity:.55;}
+    .auth-error{background:rgba(232,69,69,0.12);border:1px solid rgba(232,69,69,0.3);border-radius:8px;color:#ff9b9b;font-size:13px;padding:10px 12px;margin-top:12px;display:none;white-space:pre-wrap;}
+    #app{display:none;flex-direction:column;min-height:100vh;}
+    .header{background:rgba(15,32,68,0.94);border-bottom:1px solid var(--border);padding:0 18px;min-height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+    .header-logo{font-size:15px;font-weight:700;}
+    .header-logo span{color:var(--cyan);}
+    .header-right{display:flex;align-items:center;gap:14px;font-size:12px;color:var(--text-muted);}
+    .back-link{border:1px solid var(--border);border-radius:7px;padding:6px 12px;color:var(--text-secondary);}
+    .signout-btn{background:none;border:1px solid var(--border);color:var(--text-secondary);border-radius:7px;padding:6px 12px;cursor:pointer;font-size:12px;}
+    .toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:16px 20px 0;max-width:1100px;margin:0 auto;width:100%;}
+    .period-chips{display:flex;gap:6px;}
+    .chip{font-size:12px;padding:7px 13px;border-radius:8px;border:1px solid var(--border);background:var(--surface-2);color:var(--text-secondary);cursor:pointer;}
+    .chip.active{background:rgba(0,200,232,0.16);border-color:rgba(0,200,232,0.4);color:var(--cyan);}
+    .toolbar-right{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--text-muted);}
+    .refresh-btn{background:none;border:1px solid var(--border);color:var(--text-secondary);border-radius:7px;width:32px;height:32px;cursor:pointer;font-size:15px;}
+    .main{padding:8px 20px 60px;max-width:1100px;margin:0 auto;width:100%;}
+    .qhead{display:flex;align-items:baseline;gap:10px;margin:34px 0 4px;}
+    .qhead-num{font-size:13px;font-weight:700;color:var(--cyan);}
+    .qhead-title{font-size:17px;font-weight:600;}
+    .qhead-sub{font-size:12px;color:var(--text-faint);margin:0 0 14px 24px;}
+    .lane-label{font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 9px;display:flex;align-items:center;gap:8px;}
+    .lane-dot{width:8px;height:8px;border-radius:2px;}
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:12px;}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;}
+    .card-label{font-size:12px;color:var(--text-secondary);margin-bottom:7px;}
+    .card-val{font-size:24px;font-weight:600;line-height:1.1;}
+    .card-val small{font-size:13px;color:var(--text-faint);font-weight:400;}
+    .card-note{font-size:11px;color:var(--text-faint);margin-top:5px;}
+    .panel{background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:12px;}
+    .panel-title{font-size:13px;color:var(--text-secondary);margin-bottom:12px;}
+    .bar-row{display:flex;align-items:center;gap:10px;font-size:13px;margin-bottom:9px;}
+    .bar-name{width:160px;color:var(--text-secondary);flex-shrink:0;}
+    .bar-track{flex:1;height:8px;border-radius:4px;background:rgba(255,255,255,0.06);overflow:hidden;}
+    .bar-fill{display:block;height:100%;border-radius:4px;}
+    .bar-val{width:72px;text-align:right;flex-shrink:0;}
+    .hours{display:flex;align-items:flex-end;gap:3px;height:60px;margin-top:6px;}
+    .hour-bar{flex:1;background:var(--cyan);opacity:.5;border-radius:2px 2px 0 0;min-height:2px;}
+    .hours-axis{display:flex;justify-content:space-between;font-size:10px;color:var(--text-faint);margin-top:4px;}
+    .trend{display:flex;align-items:stretch;gap:4px;height:132px;margin:8px 0 2px;}
+    .trend-col{flex:1;display:flex;flex-direction:column;min-width:0;}
+    .trend-bar{flex:1;width:72%;max-width:26px;margin:0 auto;display:flex;flex-direction:column;justify-content:flex-end;border-radius:3px 3px 0 0;overflow:hidden;}
+    .trend-bar span{display:block;width:100%;}
+    .trend-cases{font-size:11px;color:var(--text-secondary);text-align:center;margin-top:5px;}
+    .trend-date{font-size:9px;color:var(--text-faint);text-align:center;margin-top:1px;}
+    .flag-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;}
+    .flag{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 10px;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-secondary);}
+    .flag b{font-weight:600;}
+    .empty{font-size:13px;color:var(--text-faint);font-style:italic;padding:4px 0;}
+    .note-line{font-size:11px;color:var(--text-faint);margin:-2px 0 14px;}
+    .loading{padding:60px 0;text-align:center;color:var(--text-muted);}
+  </style>
+</head>
+<body>
+  <div id="auth-screen">
+    <div class="auth-card">
+      <div class="auth-logo">Virtual<span>Dentist</span>.ai</div>
+      <div class="auth-subtitle">Operational metrics</div>
+      <label class="field-label" for="auth-email">Email</label>
+      <input class="field-input" id="auth-email" type="email" autocomplete="username" />
+      <label class="field-label" for="auth-password">Password</label>
+      <input class="field-input" id="auth-password" type="password" autocomplete="current-password" />
+      <button class="btn-primary" id="auth-btn" type="button">Sign In</button>
+      <div class="auth-error" id="auth-error"></div>
+    </div>
+  </div>
+  <div id="app">
+    <div class="header">
+      <div class="header-logo">Virtual<span>Dentist</span>.ai</div>
+      <div class="header-right">
+        <a class="back-link" href="ddsdashboard.html">&larr; Dashboard</a>
+        <span id="header-user"></span>
+        <button class="signout-btn" id="signout-btn" type="button">Sign out</button>
+      </div>
+    </div>
+    <div class="toolbar">
+      <div class="period-chips">
+        <button class="chip" id="chip-1" type="button">Today</button>
+        <button class="chip" id="chip-7" type="button">7 days</button>
+        <button class="chip" id="chip-30" type="button">30 days</button>
+        <button class="chip active" id="chip-0" type="button">All time</button>
+      </div>
+      <div class="toolbar-right">
+        <span id="last-updated"></span>
+        <button class="refresh-btn" id="refresh-btn" type="button" title="Refresh">&#8635;</button>
+      </div>
+    </div>
+    <div class="main" id="main"><div class="loading">Loading metrics…</div></div>
+  </div>
+
+  <script>
+    var SUPABASE_URL="https://zjwnqryeefegqfmamaqd.supabase.co";
+    var SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpqd25xcnllZWZlZ3FmbWFtYXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE1MDkwNzEsImV4cCI6MjA4NzA4NTA3MX0.1y6zegT86moJ-Kl3UNkqimd06qV7Ef5Om3s2NpVCtNI";
+    var REVIEWER_NAMES={"4nroots@gmail.com":"Dr. Balaji Swaminath","hamitranu@gmail.com":"Dr. Hamit Ranu"};
+    var GENERAL_INBOUND_SOURCES={"vapi_general_sam":1,"general_sam_voice_escalation":1};
+    var SRC_LABELS={ag1_emergency:"Emergency LP",ag2_afterhours:"After-hours LP",ag5_infection:"Infection LP",web_form:"Website form",in_office:"In-office QR",widget_contact:"Contact widget",widget_chat:"Chat widget",widget:"Widget"};
+
+    function isTest(s){return typeof s==="string"&&s.toLowerCase().indexOf("test")!==-1;}
+    function escHtml(v){if(v==null)return "";return String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+    function median(a){if(!a.length)return null;var s=a.slice().sort(function(x,y){return x-y;});var m=Math.floor(s.length/2);return s.length%2?s[m]:(s[m-1]+s[m])/2;}
+    function pct(n,d){return d>0?Math.round((n/d)*100):0;}
+    function fmtDur(s){if(s==null)return "—";s=Math.round(s);return Math.floor(s/60)+"m "+(s%60)+"s";}
+    function fmtMins(m){if(m==null)return "—";if(m<1)return "<1 min";if(m>=60)return Math.floor(m/60)+"h "+Math.round(m%60)+"m";return Math.round(m)+" min";}
+    function getSO(c){var so=c.structured_output;if(!so)return {};if(typeof so==="string"){try{return JSON.parse(so);}catch(e){return {};}}return so;}
+    function getContras(c){var r=c.contradictions;if(!r)return [];if(typeof r==="string"){try{r=JSON.parse(r);}catch(e){return [];}}return Array.isArray(r)?r:[];}
+    var CONTRA_LABELS={fever:"Fever",feeling_unwell:"Feeling unwell",swelling:"Swelling",trauma:"Trauma",bleeding:"Bleeding",uncontrolled_bleeding:"Uncontrolled bleeding",breathing_swallowing:"Airway / swallowing",difficulty_breathing_or_swallowing:"Airway / swallowing",immunocompromised:"Immunocompromised",pregnant:"Pregnancy",anticoagulant:"Blood thinners",recent_extraction:"Recent extraction"};
+    function laneOf(c){if(c.source==="vapi"&&GENERAL_INBOUND_SOURCES[c.intake_source])return "general";if(c.source==="vapi")return "emergency";return "form_only";}
+    function isAssistantEnd(r){r=(r||"").toLowerCase();return r.indexOf("assistant")!==-1||r.indexOf("end-call")!==-1;}
+
+    if(!window.supabase||!window.supabase.createClient){document.getElementById("auth-error").style.display="block";document.getElementById("auth-error").textContent="Supabase library failed to load.";throw new Error("supabase missing");}
+    var sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+    var currentPeriod=0;
+
+    document.getElementById("auth-btn").addEventListener("click",handleLogin);
+    document.getElementById("signout-btn").addEventListener("click",function(){sb.auth.signOut().finally(function(){location.reload();});});
+    document.getElementById("refresh-btn").addEventListener("click",loadMetrics);
+    [1,7,30,0].forEach(function(d){document.getElementById("chip-"+d).addEventListener("click",function(){setPeriod(d);});});
+    document.getElementById("auth-password").addEventListener("keydown",function(e){if(e.key==="Enter")handleLogin();});
+
+    async function handleLogin(){
+      var email=document.getElementById("auth-email").value.trim();var pw=document.getElementById("auth-password").value;
+      var btn=document.getElementById("auth-btn");var err=document.getElementById("auth-error");err.style.display="none";
+      if(!email||!pw){err.textContent="Enter both email and password.";err.style.display="block";return;}
+      btn.disabled=true;btn.textContent="Signing in…";
+      try{var r=await sb.auth.signInWithPassword({email:email,password:pw});if(r.error){err.textContent=r.error.message||"Sign-in failed.";err.style.display="block";return;}showApp(r.data.user);}
+      catch(e){err.textContent=(e&&e.message)||"Unexpected error.";err.style.display="block";}
+      finally{btn.disabled=false;btn.textContent="Sign In";}
+    }
+    async function init(){try{var r=await sb.auth.getSession();if(r.data&&r.data.session&&r.data.session.user)showApp(r.data.session.user);}catch(e){console.error(e);}}
+    function showApp(user){document.getElementById("auth-screen").style.display="none";document.getElementById("app").style.display="flex";document.getElementById("header-user").textContent=REVIEWER_NAMES[user.email]||user.email||"";loadMetrics();}
+    function setPeriod(d){currentPeriod=d;[1,7,30,0].forEach(function(x){document.getElementById("chip-"+x).classList.toggle("active",x===d);});loadMetrics();}
+    function sinceISO(){if(currentPeriod===0)return null;var s=new Date();if(currentPeriod===1)s.setHours(0,0,0,0);else s.setDate(s.getDate()-currentPeriod);return s.toISOString();}
+
+    function isAuthErr(e){if(!e)return false;var m=((e.message||"")+" "+(e.code||"")).toLowerCase();return m.indexOf("jwt")!==-1||m.indexOf("token")!==-1||m.indexOf("expired")!==-1||m.indexOf("not authenticated")!==-1;}
+
+    async function runQueries(since){
+      var ctq=sb.from("call_transcripts").select("id,vapi_call_id,ended_reason,duration_seconds,intake_source,created_at,outcome_bucket,topic,capability_gap_detail,needs_review");
+      var tcq=sb.from("triage_cases").select("id,created_at,severity,triage_tag,intake_source,source,extraction_source,duration_seconds,ended_reason,structured_output,triage_completed_at,reviewed_at,final_disposition,appointment_booked,subsequent_appointment_booked,revenue_generated,nps_score,nps_submitted_at,sam_satisfaction_score,timely_response,contradictions,patient_language,vapi_call_id,patient_phone");
+      var smsq=sb.from("sms_log").select("case_id,direction,sender_email,sender_name,sent_at,created_at");
+      if(since){ctq=ctq.gte("created_at",since);tcq=tcq.gte("created_at",since);smsq=smsq.gte("sent_at",since);}
+      return Promise.all([ctq,tcq,smsq]);
+    }
+
+    async function loadMetrics(){
+      var main=document.getElementById("main");var rb=document.getElementById("refresh-btn");rb.disabled=true;
+      var since=sinceISO();
+      try{
+        var res=await runQueries(since);
+        // Auth refresh-retry: if a query failed on an expired token, refresh once and retry.
+        if([res[0].error,res[1].error,res[2].error].some(isAuthErr)){
+          try{await sb.auth.refreshSession();}catch(e){}
+          res=await runQueries(since);
+        }
+        var errs=[res[0].error,res[1].error,res[2].error].filter(Boolean);
+        if(errs.length){main.innerHTML='<div class="panel"><div class="panel-title">Could not load some data</div><div class="empty">'+errs.map(function(e){return escHtml(e.message);}).join("<br>")+'</div><div class="note-line">If this mentions permission/RLS on a table, it needs an authenticated SELECT policy + grant. If it mentions JWT/token, sign out and back in.</div></div>';return;}
+        var calls=(res[0].data||[]).filter(function(c){return !isTest(c.intake_source);});
+        var cases=(res[1].data||[]).filter(function(c){return !isTest(c.intake_source);});
+        var sms=res[2].data||[];
+        render(calls,cases,sms);
+        document.getElementById("last-updated").textContent="Updated "+new Date().toLocaleTimeString("en-CA",{hour:"2-digit",minute:"2-digit"});
+      }catch(e){main.innerHTML='<div class="panel"><div class="empty">Unexpected error: '+escHtml((e&&e.message)||"unknown")+'</div></div>';}
+      finally{rb.disabled=false;}
+    }
+
+    function card(label,val,note){return '<div class="card"><div class="card-label">'+escHtml(label)+'</div><div class="card-val">'+val+'</div>'+(note?'<div class="card-note">'+escHtml(note)+'</div>':'')+'</div>';}
+    function qhead(num,title,sub){return '<div class="qhead"><span class="qhead-num">'+num+'</span><span class="qhead-title">'+escHtml(title)+'</span></div>'+(sub?'<div class="qhead-sub">'+escHtml(sub)+'</div>':'');}
+    function laneLabel(text,color){return '<div class="lane-label"><span class="lane-dot" style="background:'+color+'"></span>'+escHtml(text)+'</div>';}
+    function bar(name,count,total,color){var p=pct(count,total);return '<div class="bar-row"><span class="bar-name">'+escHtml(name)+'</span><span class="bar-track"><span class="bar-fill" style="width:'+p+'%;background:'+color+'"></span></span><span class="bar-val">'+count+' · '+p+'%</span></div>';}
+    function sevBars(arr,color){var sev={critical:0,urgent:0,routine:0};arr.forEach(function(c){var s=(c.severity||"").toLowerCase();if(sev[s]!=null)sev[s]++;});var t=arr.length;return bar("Critical",sev.critical,t,"var(--critical)")+bar("Urgent",sev.urgent,t,"var(--urgent)")+bar("Routine",sev.routine,t,"var(--routine)");}
+    function sevBarsU(arr){var sev={critical:0,urgent:0,routine:0,unset:0};arr.forEach(function(c){var s=(c.severity||"").toLowerCase();if(s==="critical"||s==="urgent"||s==="routine")sev[s]++;else sev.unset++;});var t=arr.length;return bar("Critical",sev.critical,t,"var(--critical)")+bar("Urgent",sev.urgent,t,"var(--urgent)")+bar("Routine",sev.routine,t,"var(--routine)")+bar("Untriaged",sev.unset,t,"var(--text-faint)");}
+
+    function render(calls,cases,sms){
+      var general=cases.filter(function(c){return laneOf(c)==="general";});
+      var emergency=cases.filter(function(c){return laneOf(c)==="emergency";});
+      var formOnly=cases.filter(function(c){return laneOf(c)==="form_only";});
+      var html="";
+      var windowLabel=currentPeriod===0?"all time":currentPeriod===1?"today":("last "+currentPeriod+" days");
+      html+='<div class="note-line" style="margin:2px 0 6px;">Showing <b>'+windowLabel+'</b> \u00B7 '+calls.length+' inbound calls \u00B7 '+cases.length+' documented cases</div>';
+
+      /* ===== GOAL — SAM-USAGE RATE (SAM_USAGE_TILE_2026_06_07) ===== */
+      // Reads CAPTURED outcomes (call_transcripts.outcome_bucket, written at
+      // end-of-call by general-sam-tools v1.6.6+; history via the 2026-06-07
+      // backfill). Headline = ENGAGED calls: sub-15s greeting hangups and
+      // system errors are excluded from the denominator because the 80-90%
+      // target is only coherent against callers Sam could actually serve.
+      (function(){
+        function ob(c){return c.outcome_bucket||"unclassified";}
+        var counts={};calls.forEach(function(c){var b=ob(c);counts[b]=(counts[b]||0)+1;});
+        var handled=(counts.completed||0)+(counts.clinical_pivot||0);
+        var noise=0,droppedOther=0;
+        calls.forEach(function(c){if(ob(c)!=="dropped")return;var d=Number(c.duration_seconds)||0;var r=(c.ended_reason||"").toLowerCase();if(r.indexOf("customer-ended")!==-1&&d<15)noise++;else droppedOther++;});
+        var sysErr=counts.system_error||0;
+        var engaged=calls.length-noise-sysErr;
+        var rateB=pct(handled,engaged),rateA=pct(handled,calls.length);
+        var review=calls.filter(function(c){return c.needs_review===true;}).length;
+        var gaps={};calls.forEach(function(c){if(ob(c)==="capability_gap"){var k=c.capability_gap_detail||"other";gaps[k]=(gaps[k]||0)+1;}});
+        html+=qhead("G","Sam-usage rate — goal 80–90%","Captured at end-of-call (deterministic + keyword, v1.6.6+); ambiguity goes to a review queue, never a forced bucket");
+        html+='<div class="cards">'+
+          card("Sam handled",rateB+'%<small> of '+engaged+' engaged</small>',"completed + clinical pivots · target 80–90%")+
+          card("Strict · all calls",rateA+'%<small> of '+calls.length+'</small>',"includes greeting hangups & errors")+
+          card("Awaiting review",String(review),"ambiguous calls — read the transcript")+
+          '</div>';
+        var T=calls.length||1;
+        html+='<div class="panel"><div class="panel-title">Every call, one bucket — nothing hidden</div>'+
+          bar("Sam completed it",counts.completed||0,T,"var(--routine)")+
+          bar("Clinical → intake form (by design)",counts.clinical_pivot||0,T,"var(--cyan)")+
+          bar("Patient chose a human",counts.patient_chose_human||0,T,"var(--cyan)")+
+          bar("Capability gap — needs Dentrix API",counts.capability_gap||0,T,"var(--urgent)")+
+          bar("Transfer — reason in review",counts.transferred_unsplit||0,T,"var(--text-faint)")+
+          bar("Dropped mid-call",droppedOther,T,"var(--critical)")+
+          bar("Greeting hangups <15s (excluded)",noise,T,"var(--text-faint)")+
+          bar("Unclassified — in review queue",counts.unclassified||0,T,"var(--text-faint)")+
+          bar("System errors",sysErr,T,"var(--critical)");
+        var gk=Object.keys(gaps).sort(function(a,b){return gaps[b]-gaps[a];});
+        if(gk.length){html+='<div style="margin-top:10px"><div class="panel-title" style="margin-bottom:8px">Gap detail — the Dentrix roadmap, ranked by demand</div>';gk.forEach(function(k){html+=bar(k.replace(/_/g," "),gaps[k],counts.capability_gap||1,"var(--urgent)");});html+='</div>';}
+        html+='<div class="note-line">Headline excludes sub-15s greeting hangups and system errors — a caller gone in five seconds was never Sam’s to serve, and the 80–90% target presupposes engagement. Unresolved buckets (review / unclassified) count AGAINST Sam, so the rate is a floor that rises as the queue clears. Capability gaps are deliberately their own bucket: that bar is the Dentrix-API roadmap and should shrink as integrations land — it is improvement intel, not failure.</div></div>';
+      })();
+
+      /* ===== Q1 — WHAT CAME IN ===== */
+      html+=qhead("1","What came in","Two lanes: General Sam answers the phone; Emergency Sam calls back after a form");
+
+      // General Sam inbound funnel (from call_transcripts)
+      var tot=calls.length,eng=0,xfer=0,hang=0,sysf=0;
+      calls.forEach(function(c){var r=(c.ended_reason||"").toLowerCase();var d=Number(c.duration_seconds)||0;
+        if(r.indexOf("forward")!==-1)xfer++;
+        else if(r.indexOf("silence")!==-1||r.indexOf("not-found")!==-1||r.indexOf("error")!==-1||r.indexOf("pipeline")!==-1)sysf++;
+        else if(r.indexOf("customer-ended")!==-1&&d<15)hang++;
+        else eng++;});
+      var pastGreeting=tot-hang-sysf;
+      html+=laneLabel("General Sam — inbound calls","var(--cyan)");
+      html+='<div class="cards">'+
+        card("Calls in",tot)+
+        card("Engaged Sam",eng+' <small>'+pct(eng,tot)+'%</small>')+
+        card("Directed to office staff",xfer+' <small>'+pct(xfer,tot)+'%</small>',"transferred to office")+
+        card("Hung up in greeting",hang+' <small>'+pct(hang,tot)+'%</small>',"customer ended <15s")+
+        '</div><div class="cards">'+
+        card("System errors / no answer",sysf+' <small>'+pct(sysf,tot)+'%</small>',"availability signal — outage bucket")+
+        card("Became a documented case",general.length+' <small>of '+pastGreeting+'</small>',"inbound cases / calls past greeting")+
+        '</div>';
+      html+='<div class="note-line">Test calls (yours / Ranu\u2019s) are excluded only where tagged; untagged test hangups still sit in this bucket until caller_number lands, so the hangup share reads slightly high.</div>';
+
+      // Daily trend — the time dimension: is the hangup share actually falling?
+      (function(){
+        var days={};
+        function bk(d){var t=new Date(d);return t.getFullYear()+"-"+("0"+(t.getMonth()+1)).slice(-2)+"-"+("0"+t.getDate()).slice(-2);}
+        calls.forEach(function(c){var k=bk(c.created_at);if(!days[k])days[k]={c:0,h:0,e:0,g:0,cases:0};var r=(c.ended_reason||"").toLowerCase();var d=Number(c.duration_seconds)||0;days[k].c++;if(r.indexOf("silence")!==-1||r.indexOf("not-found")!==-1||r.indexOf("error")!==-1||r.indexOf("pipeline")!==-1)days[k].e++;else if(r.indexOf("customer-ended")!==-1&&d<15)days[k].h++;else days[k].g++;});
+        cases.forEach(function(c){var k=bk(c.created_at);if(!days[k])days[k]={c:0,h:0,e:0,g:0,cases:0};days[k].cases++;});
+        var keys=Object.keys(days).sort();if(keys.length>21)keys=keys.slice(keys.length-21);
+        var maxC=1;keys.forEach(function(k){if(days[k].c>maxC)maxC=days[k].c;});
+        var avail=tot>0?Math.round((tot-sysf)/tot*100):100;
+        html+='<div class="panel"><div class="panel-title">Daily trend \u2014 availability '+avail+'% over the window; bars show calls (cyan engaged \u00B7 amber hangup \u00B7 red error), number = documented cases</div>';
+        if(!keys.length)html+='<div class="empty">No calls in this window.</div>';
+        else{
+          html+='<div class="trend">';
+          keys.forEach(function(k){var d=days[k];var hp=d.c?Math.round(d.h/d.c*100):0;
+            html+='<div class="trend-col" title="'+k+": "+d.c+" calls, "+hp+'% hangup, '+d.cases+' cases"><div class="trend-bar">'+
+              '<span style="height:'+Math.round(d.e/maxC*100)+'%;background:var(--danger)"></span>'+
+              '<span style="height:'+Math.round(d.h/maxC*100)+'%;background:var(--urgent)"></span>'+
+              '<span style="height:'+Math.round(d.g/maxC*100)+'%;background:var(--cyan)"></span>'+
+              '</div><div class="trend-cases">'+d.cases+'</div><div class="trend-date">'+k.slice(5)+'</div></div>';
+          });
+          html+='</div><div class="note-line">Watch the amber band shrink after the v1.4.21 deploy \u2014 that\u2019s the hangup-rate question answered visually. A red band is an availability dip (the Vapi outage would show here). With only a few days live, read this as early signal, not yet a trend.</div>';
+        }
+        html+='</div>';
+      })();
+
+      // Emergency Sam voice callbacks (source=vapi, post-form)
+      var emComplete=emergency.filter(function(c){return isAssistantEnd(c.ended_reason);}).length;
+      html+=laneLabel("Emergency Sam — post-form voice callbacks","var(--urgent)");
+      html+='<div class="cards">'+
+        card("Voice callbacks made",emergency.length,"form completed \u2192 Sam called")+
+        card("Sam completed the call",emComplete+' <small>'+pct(emComplete,emergency.length)+'%</small>',"assistant ended the call")+
+        '</div>';
+
+      // SMS triage lane — patient chose text intake (source!=vapi, SMS extraction).
+      // These are COMPLETED triages, not missed callbacks.
+      var smsDone=formOnly.filter(function(c){return c.extraction_source==="sms-openai"||c.extraction_source==="sms-claude";});
+      // Phones engaged anywhere (voice, SMS, or any assigned severity) — used to
+      // drop stale pre-triage form-hits that duplicate an already-engaged patient.
+      var engagedPhones={};
+      cases.forEach(function(c){var ph=(c.patient_phone||"").replace(/\D/g,"").slice(-10);if(!ph)return;if(c.source==="vapi"||c.extraction_source==="sms-openai"||c.extraction_source==="sms-claude")engagedPhones[ph]=true;});
+      // Genuinely untriaged: no voice, no SMS, not a walk-in (in_office = present),
+      // and not a duplicate of a patient engaged elsewhere.
+      var untouched=formOnly.filter(function(c){
+        if(c.extraction_source==="sms-openai"||c.extraction_source==="sms-claude")return false;
+        if(c.intake_source==="in_office")return false;
+        var ph=(c.patient_phone||"").replace(/\D/g,"").slice(-10);
+        if(ph&&engagedPhones[ph])return false;
+        return true;});
+      html+=laneLabel("SMS triage — patient chose text","var(--cyan)");
+      html+='<div class="cards">'+
+        card("Triaged via SMS",smsDone.length,"completed text intake \u2014 patient\u2019s choice, not a missed call")+
+        card("Forms not yet triaged",untouched.length,"no voice, no SMS \u2014 office follow-up")+
+        '</div>';
+      html+='<div class="panel"><div class="panel-title">SMS-triaged cases by severity \u2014 emergencies handled over text at the patient\u2019s choice</div>'+
+        (smsDone.length?sevBars(smsDone):'<div class="empty">None in this window.</div>')+'</div>';
+      html+='<div class="panel"><div class="panel-title">Forms not yet triaged \u2014 the real follow-up list (walk-ins &amp; SMS-completed excluded, deduped by phone)</div>'+
+        (untouched.length?sevBarsU(untouched):'<div class="empty">None \u2014 every remote form was triaged.</div>')+'</div>';
+
+      // Where intakes came from (campaign attribution)
+      var srcCounts={};cases.concat([]).forEach(function(c){if(laneOf(c)!=="general"){var s=c.intake_source||"unknown";srcCounts[s]=(srcCounts[s]||0)+1;}});
+      var srcEntries=Object.keys(srcCounts).map(function(k){return [k,srcCounts[k]];}).sort(function(a,b){return b[1]-a[1];});
+      var srcTotal=srcEntries.reduce(function(s,e){return s+e[1];},0);
+      html+='<div class="panel"><div class="panel-title">Where intakes came from ('+srcTotal+' form-origin cases)</div>';
+      if(!srcEntries.length)html+='<div class="empty">No form-origin intakes in this window.</div>';
+      else srcEntries.forEach(function(e){html+=bar(SRC_LABELS[e[0]]||e[0],e[1],srcTotal,"var(--cyan)");});
+      html+='</div>';
+
+      // Languages — multilingual intake (core differentiator). Restored from the
+      // old page; non-English urgent intake is SMS-by-design, so SMS completion
+      // is the right success measure, not a voice callback.
+      var langLabels={en:"English",ar:"Arabic",hi:"Hindi",pa:"Punjabi",fr:"French",fa:"Farsi",so:"Somali",es:"Spanish",zh:"Chinese"};
+      var langCounts={};cases.forEach(function(c){var l=c.patient_language||"en";langCounts[l]=(langCounts[l]||0)+1;});
+      var langKeys=Object.keys(langCounts).sort(function(a,b){return langCounts[b]-langCounts[a];});
+      var nonEng=cases.filter(function(c){return c.patient_language&&c.patient_language!=="en";});
+      var nonEngSms=nonEng.filter(function(c){return c.extraction_source==="sms-openai"||c.extraction_source==="sms-claude";});
+      html+='<div class="panel"><div class="panel-title">Languages \u2014 '+langKeys.length+' in this window ('+nonEng.length+' non-English)</div>';
+      var ctot=cases.length;
+      langKeys.forEach(function(l){html+=bar(langLabels[l]||l,langCounts[l],ctot,l==="en"?"var(--text-faint)":"var(--cyan)");});
+      if(nonEng.length)html+='<div class="note-line">Non-English cases completed via SMS triage: '+nonEngSms.length+' of '+nonEng.length+' ('+pct(nonEngSms.length,nonEng.length)+'%). Non-English urgent intake is SMS-by-design, so SMS completion \u2014 not a voice callback \u2014 is the success measure here.</div>';
+      else html+='<div class="note-line">No non-English cases in this window.</div>';
+      html+='</div>';
+
+      // When calls came in (General inbound, by hour)
+      var hours=new Array(24).fill(0),after=0;
+      calls.forEach(function(c){var d=new Date(c.created_at);var h=d.getHours();hours[h]++;var dow=d.getDay();if(dow===0||dow===6||h<8||h>=18)after++;});
+      var maxH=Math.max.apply(null,hours.concat([1]));
+      html+='<div class="panel"><div class="panel-title">When inbound calls came in — '+after+' of '+tot+' ('+pct(after,tot)+'%) after-hours / weekend</div><div class="hours">';
+      hours.forEach(function(n){html+='<span class="hour-bar" style="height:'+Math.round((n/maxH)*100)+'%" title="'+n+'"></span>';});
+      html+='</div><div class="hours-axis"><span>12a</span><span>6a</span><span>12p</span><span>6p</span><span>11p</span></div></div>';
+
+      /* ===== Q2 — HOW FAST DID WE RESPOND ===== */
+      html+=qhead("2","How fast did we respond","Sam\u2019s capture time per lane, then how quickly a human followed up");
+      var genDur=calls.map(function(c){return Number(c.duration_seconds);}).filter(function(n){return Number.isFinite(n)&&n>=15;});
+      var emDur=emergency.map(function(c){return Number(c.duration_seconds);}).filter(function(n){return Number.isFinite(n)&&n>0;});
+      // Human first response: first dashboard outbound (sender_email present) minus case created_at.
+      var firstHuman={};sms.forEach(function(m){if(!m.case_id||!m.sender_email)return;var t=new Date(m.sent_at).getTime();if(!firstHuman[m.case_id]||t<firstHuman[m.case_id])firstHuman[m.case_id]=t;});
+      var resp=[];cases.forEach(function(c){var fh=firstHuman[c.id];if(!fh)return;var mins=(fh-new Date(c.created_at).getTime())/60000;if(Number.isFinite(mins)&&mins>=0)resp.push(mins);});
+      html+='<div class="cards">'+
+        card("Sam capture · General (voice)",fmtDur(median(genDur)),genDur.length?("median, n="+genDur.length+(genDur.length<5?" \u00B7 small sample":"")):"no engaged calls yet")+
+        card("Sam capture · Emergency",fmtDur(median(emDur)),emDur.length?("median, n="+emDur.length+(emDur.length<5?" \u00B7 small sample":"")):"no callbacks yet")+
+        card("Human first response",resp.length?fmtMins(median(resp)):"—",resp.length?("median, n="+resp.length+(resp.length<5?" \u00B7 small sample":"")):"no dashboard replies yet")+
+        '</div>';
+      html+='<div class="note-line">Human response = first text sent from a dashboard vs. when the case landed (dashboard texts only; a phone callback off-system won\u2019t show). Review/closure latency is deliberately left out until reviewed_at is split into "dentist reviewed" vs "patient seen" \u2014 today it fires days later at closure, so it measures throughput, not responsiveness, and doesn\u2019t belong here.</div>';
+
+      // SMS loop detail — the human side of the text loop. Latency long-tail +
+      // dropped threads (an unanswered patient inbound = a lost booking, the
+      // bread-and-butter of routine revenue). Built from sms_log timestamps only
+      // (case_id, direction, sender, sent_at) — no message bodies; PHI stays in-DB.
+      (function(){
+        // Human outbound = dashboard reply (sender_email present) OR a named human
+        // sender that is not one of Sam's automated senders.
+        var AUTO={"Sam (AI)":1,"Sam (AI, regen)":1,"LocationGate":1,"System (post-triage)":1,"System":1};
+        function isHuman(m){if(m.direction!=="outbound")return false;if(m.sender_email)return true;return m.sender_name&&!AUTO[m.sender_name];}
+        function mt(m){return new Date(m.sent_at||m.created_at).getTime();}
+        // Group all sms rows by case
+        var byCase={};sms.forEach(function(m){if(!m.case_id)return;(byCase[m.case_id]=byCase[m.case_id]||[]).push(m);});
+        // Map case_id -> lane (clinical = general|emergency, else routine) for the split
+        var laneById={};cases.forEach(function(c){laneById[c.id]=(laneOf(c)==="general"||laneOf(c)==="emergency")?"clinical":"routine";});
+        // Map case_id -> booked? (outcome proxy for loop quality — no message bodies read).
+        var bookedById={};cases.forEach(function(c){bookedById[c.id]=(c.final_disposition==="booked"||(typeof c.revenue_generated==="number"&&c.revenue_generated>0));});
+        var lat=[],latClin=[],latRout=[],threads=0,withReply=0,dropped=0,dropClin=0,dropRout=0;
+        // Outcome proxy: of threads that got a human reply, did they convert to a booking?
+        var convAnswered=0,convBooked=0,answeredNoBook=0;
+        Object.keys(byCase).forEach(function(cid){
+          var rows=byCase[cid].slice().sort(function(a,b){return mt(a)-mt(b);});
+          if(!rows.length)return;threads++;
+          var type=laneById[cid]||"routine";
+          // latency: first inbound with no prior human outbound -> next human outbound
+          var waiting=null,matched=null,seenHuman=false;
+          for(var i=0;i<rows.length;i++){var r=rows[i];
+            if(r.direction==="inbound"&&waiting===null&&!seenHuman)waiting=r;
+            if(isHuman(r)){seenHuman=true;if(waiting!==null&&matched===null){matched=r;break;}}}
+          if(waiting&&matched){var mins=(mt(matched)-mt(waiting))/60000;if(Number.isFinite(mins)&&mins>=0&&mins<=10080){lat.push(mins);(type==="clinical"?latClin:latRout).push(mins);}}
+          if(rows.some(isHuman))withReply++;
+          if(rows.some(isHuman)){convAnswered++;if(bookedById[cid])convBooked++;else answeredNoBook++;}
+          var last=rows[rows.length-1];
+          if(last.direction==="inbound"){var lt=mt(last);if(!rows.some(function(x){return isHuman(x)&&mt(x)>lt;})){dropped++;type==="clinical"?dropClin++:dropRout++;}}
+        });
+        function p90(a){if(!a.length)return null;var s=a.slice().sort(function(x,y){return x-y;});return s[Math.min(s.length-1,Math.floor(0.9*s.length))];}
+        html+='<div class="panel"><div class="panel-title">SMS loop \u2014 staff responsiveness (all threads, '+threads+' in window)</div>';
+        if(!threads)html+='<div class="empty">No SMS threads in this window.</div>';
+        else{
+          html+='<div class="cards">'+
+            card("Median response",fmtMins(median(lat)),lat.length?("n="+lat.length+(lat.length<5?" \u00B7 small sample":"")):"no measurable waits")+
+            card("90th percentile",fmtMins(p90(lat)),"long tail \u2014 slowest replies")+
+            card("Median \u00B7 routine",fmtMins(median(latRout)),latRout.length?("n="+latRout.length):"none")+
+            card("Median \u00B7 clinical",fmtMins(median(latClin)),latClin.length?("n="+latClin.length):"none")+
+            '</div>';
+          html+=bar("Threads with a staff reply",withReply,threads,"var(--routine)");
+          html+=bar("Dropped \u2014 last msg unanswered patient",dropped,threads,dropped>0?"var(--danger)":"var(--text-faint)");
+          if(dropped)html+='<div style="margin-top:4px">'+bar("\u00B7 routine (lost bookings)",dropRout,dropped,"var(--urgent)")+bar("\u00B7 clinical (needs follow-up)",dropClin,dropped,"var(--critical)")+'</div>';
+          if(convAnswered){
+            html+='<div style="margin-top:10px"><div class="panel-title" style="margin-bottom:8px">Did the answered threads convert? (outcome proxy)</div>'+
+              bar("Booked after a staff reply",convBooked,convAnswered,"var(--routine)")+
+              bar("Answered but not booked",answeredNoBook,convAnswered,"var(--urgent)")+
+              '</div>';
+          }
+          html+='<div class="note-line">Latency = a patient text left waiting on the office \u2192 the first human reply. A dropped thread ends on an unanswered patient message \u2014 routine drops are lost bookings, the bread-and-butter of practice revenue. Measures staff, not Sam. Timestamps only; no message content leaves the database. The conversion split is an OUTCOME proxy for loop quality (did the answered thread end in a booking) \u2014 NOT a measure of message wording or tone; true conversation-quality scoring requires reading message bodies and is a separate, PHI-gated build.</div>';
+        }
+        html+='</div>';
+      })();
+
+      /* ===== Q3 — WHAT DID IT PRODUCE ===== */
+      html+=qhead("3","What did it produce","Bookings, retention, satisfaction, cost \u2014 the diligence view");
+      var clinical=general.concat(emergency); // documented clinical cases that involved Sam
+      var allCases=cases;
+      var booked=allCases.filter(function(c){return c.final_disposition==="booked"||(typeof c.revenue_generated==="number"&&c.revenue_generated>0);}).length;
+      var followUp=allCases.filter(function(c){return c.subsequent_appointment_booked===true;}).length;
+      var npsRows=allCases.filter(function(c){return Number.isInteger(c.nps_score);});
+      var prom=npsRows.filter(function(c){return c.nps_score>=9;}).length,det=npsRows.filter(function(c){return c.nps_score<=6;}).length;
+      var nps=npsRows.length?Math.round(prom/npsRows.length*100-det/npsRows.length*100):null;
+      var revRows=allCases.filter(function(c){return typeof c.revenue_generated==="number"&&c.revenue_generated>0;});
+      var revTotal=revRows.reduce(function(s,c){return s+c.revenue_generated;},0);
+      html+='<div class="cards">'+
+        card("Booked",booked+' <small>of '+allCases.length+'</small>',allCases.length?(pct(booked,allCases.length)+"% \u2014 from disposition / revenue"):"")+
+        card("Further treatment booked",followUp,"retention signal")+
+        card("NPS",nps!=null?(nps>0?"+"+nps:String(nps)):"—",npsRows.length?("n="+npsRows.length):"no survey responses yet")+
+        card("Revenue recorded",revTotal>0?("$"+revTotal.toLocaleString()):"—",revRows.length?("n="+revRows.length+" cases"):"none entered yet")+
+        '</div>';
+      html+='<div class="note-line">"Booked" counts confirmed front-desk bookings plus any case with recorded revenue. New-vs-existing patient is now captured by the office-dashboard buttons too \u2014 a new/returning split can surface here once a few dispositions accumulate.</div>';
+
+      // Disposition breakdown
+      var dispo={};allCases.forEach(function(c){if(c.final_disposition){dispo[c.final_disposition]=(dispo[c.final_disposition]||0)+1;}});
+      var dispoEntries=Object.keys(dispo).map(function(k){return [k,dispo[k]];}).sort(function(a,b){return b[1]-a[1];});
+      var dispoTotal=dispoEntries.reduce(function(s,e){return s+e[1];},0);
+      html+='<div class="panel"><div class="panel-title">Final disposition ('+dispoTotal+' recorded)</div>';
+      if(!dispoTotal)html+='<div class="empty">No dispositions recorded yet.</div>';
+      else dispoEntries.forEach(function(e){html+=bar(e[0].replace(/_/g," "),e[1],dispoTotal,"var(--cyan)");});
+      html+='</div>';
+
+      // Patient survey — rehauled schema (nps_score 0-10, sam_satisfaction 1-5,
+      // timely_response yes/somewhat/no). Empty until responses arrive; the
+      // pipeline was silently failing under RLS until recently fixed.
+      var samRows=allCases.filter(function(c){return Number.isInteger(c.sam_satisfaction_score);});
+      var samAvg=samRows.length?(samRows.reduce(function(s,c){return s+c.sam_satisfaction_score;},0)/samRows.length).toFixed(1):null;
+      var tRows=allCases.filter(function(c){return c.timely_response;});
+      var tYes=tRows.filter(function(c){return c.timely_response==="yes";}).length;
+      var tSw=tRows.filter(function(c){return c.timely_response==="somewhat";}).length;
+      var tNo=tRows.filter(function(c){return c.timely_response==="no";}).length;
+      html+='<div class="panel"><div class="panel-title">Patient survey ('+npsRows.length+' response'+(npsRows.length===1?"":"s")+')</div>';
+      if(!npsRows.length)html+='<div class="empty">No survey responses yet \u2014 the survey write path was recently fixed; responses will populate here as patients reply.</div>';
+      else{
+        html+='<div class="cards">'+
+          card("NPS",nps!=null?(nps>0?"+"+nps:String(nps)):"\u2014","n="+npsRows.length+(npsRows.length<5?" \u00B7 small sample":""))+
+          card("Sam satisfaction",samAvg!=null?(samAvg+" / 5"):"\u2014",samRows.length?("n="+samRows.length):"no data")+
+          card("Felt response timely",tRows.length?(pct(tYes,tRows.length)+"% yes"):"\u2014",tRows.length?("n="+tRows.length):"no data")+
+          '</div>';
+        if(tRows.length)html+=bar("Yes",tYes,tRows.length,"var(--routine)")+bar("Somewhat",tSw,tRows.length,"var(--urgent)")+bar("No",tNo,tRows.length,"var(--critical)");
+      }
+      html+='<div class="note-line">Practice NPS for the Sam-served cohort. There is no pre-Sam baseline, so report this as the cohort\u2019s NPS \u2014 not as an NPS lift Sam caused.</div>';
+      html+='</div>';
+
+      // Red-flag frequency across clinical cases (from structured_output)
+      var f={Fever:0,Swelling:0,Trauma:0,"Airway concern":0,Bleeding:0,"Nocturnal pain":0,"Cold lingers":0,Immunocompromised:0};
+      clinical.forEach(function(c){var so=getSO(c);if(so.fever)f.Fever++;if(so.swelling||so.swelling_present)f.Swelling++;if(so.trauma)f.Trauma++;if(so.difficulty_breathing_or_swallowing)f["Airway concern"]++;if(so.uncontrolled_bleeding)f.Bleeding++;if(so.nocturnal_pain)f["Nocturnal pain"]++;if(so.cold_pain_lingers_over_10_seconds)f["Cold lingers"]++;if(so.immunocompromised)f.Immunocompromised++;});
+      html+='<div class="panel"><div class="panel-title">Clinical red flags ('+clinical.length+' cases with Sam involvement)</div><div class="flag-grid">';
+      Object.keys(f).forEach(function(k){html+='<div class="flag">'+escHtml(k)+'<b>'+f[k]+'</b></div>';});
+      html+='</div></div>';
+
+      // Form-vs-triage discrepancies (contradictions) — the deterministic-safety
+      // evidence: where the live triage found something the intake form did not.
+      var contraCases=0,contraFields={};
+      allCases.forEach(function(c){var arr=getContras(c);if(arr.length){contraCases++;arr.forEach(function(it){var fld=(it&&it.field)||"unknown";contraFields[fld]=(contraFields[fld]||0)+1;});}});
+      html+='<div class="panel"><div class="panel-title">Form-vs-triage discrepancies caught ('+contraCases+' of '+allCases.length+' cases)</div>';
+      if(!contraCases)html+='<div class="empty">No discrepancies recorded in this window.</div>';
+      else{var ck=Object.keys(contraFields).sort(function(a,b){return contraFields[b]-contraFields[a];});ck.forEach(function(fld){html+=bar(CONTRA_LABELS[fld]||fld.replace(/_/g," "),contraFields[fld],contraCases,"var(--urgent)");});}
+      html+='<div class="note-line">Mismatches between the patient\u2019s intake form and what Sam found on the call or text \u2014 e.g. swelling that emerged in conversation but was not on the form. This is the case for live triage over a static form, and the clearest evidence for the deterministic-safety layer.</div></div>';
+
+      // Deterministic safety gate vs LLM — the regulatory centerpiece. The model
+      // proposes sam_severity; the rule-based computeSeverity() gate sets the
+      // final severity. Where the gate is MORE severe than the model, it caught
+      // an under-triage (the immunocompromised URGENT->CRITICAL case).
+      var sevOrder={critical:1,urgent:2,routine:3};
+      var gateRows=allCases.filter(function(c){var so=getSO(c);return so.sam_severity&&c.severity;});
+      var gEsc=0,gAgree=0,gDe=0,gEscDetail={};
+      gateRows.forEach(function(c){var so=getSO(c);var lk=String(so.sam_severity||"").toLowerCase();var fk=String(c.severity||"").toLowerCase();var l=sevOrder[lk]||9,fi=sevOrder[fk]||9;
+        if(fi<l){gEsc++;var k="model "+lk+" \u2192 gate "+fk;gEscDetail[k]=(gEscDetail[k]||0)+1;}
+        else if(fi>l)gDe++; else gAgree++;});
+      html+='<div class="panel"><div class="panel-title">Deterministic safety gate vs model ('+gateRows.length+' cases carry both a model and a gate severity)</div>';
+      if(!gateRows.length)html+='<div class="empty">No cases carry both a model and a gate severity in this window.</div>';
+      else{
+        html+='<div class="cards">'+
+          card("Gate caught under-triage",gEsc+' <small>'+pct(gEsc,gateRows.length)+'%</small>',"rule-based gate raised severity above the model")+
+          card("Gate agreed with model",gAgree+' <small>'+pct(gAgree,gateRows.length)+'%</small>',gDe?(gDe+" softened down"):"")+
+          '</div>';
+        var gk=Object.keys(gEscDetail).sort(function(a,b){return gEscDetail[b]-gEscDetail[a];});
+        gk.forEach(function(k){html+=bar(k,gEscDetail[k],gEsc||1,"var(--critical)");});
+      }
+      html+='<div class="note-line">Where the rule-based gate overrides the model to a higher severity, it caught a potential under-triage \u2014 the deterministic-safety layer doing exactly what it exists for (the immunocompromised URGENT\u2192CRITICAL case is the canonical example). It sits above the model by design, and this is the core regulatory evidence.</div></div>';
+
+      html+='<div class="panel"><div class="panel-title">Unit economics — cost to run vs. value created</div><div class="empty">Pending real vendor rates. Cost-per-call and cost-per-case compute here from call duration and message counts once actual Vapi / OpenAI / ElevenLabs / Azure / Twilio usage is read for the window, calibrated monthly against invoices. No placeholder figures until the rates are real.</div></div>';
+
+      document.getElementById("main").innerHTML=html;
+    }
+    init();
+  </script>
+</body>
+</html>
