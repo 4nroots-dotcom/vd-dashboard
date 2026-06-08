@@ -287,10 +287,11 @@
     function loadBriefingNarrative(){
       var el=document.getElementById("briefing-narrative");if(!el)return;
       sb.from("daily_briefings").select("briefing_date,narrative_md,generated_by").order("briefing_date",{ascending:false}).limit(1).maybeSingle().then(function(res){
-        if(!res||res.error||!res.data)return;
+        if(res&&res.error){el.innerHTML='<div class="briefing-tag">Briefing read error \u2014 '+escHtml(res.error.message)+' (likely a missing SELECT grant on daily_briefings)</div>';return;}
+        if(!res||!res.data)return;
         var b=res.data;
         el.innerHTML='<div class="briefing-tag">Briefing \u00b7 '+escHtml(String(b.briefing_date))+(b.generated_by==="fallback"?' \u00b7 auto':'')+'</div>'+mdToHtml(b.narrative_md);
-      }).catch(function(){});
+      }).catch(function(err){el.innerHTML='<div class="briefing-tag">Briefing unavailable \u2014 '+escHtml((err&&err.message)||"error")+'</div>';});
     }
     async function handleLogin(){
       var email=document.getElementById("auth-email").value.trim();var pw=document.getElementById("auth-password").value;
