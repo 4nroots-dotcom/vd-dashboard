@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>VirtualDentist.ai — Operational Metrics</title>
   <!-- REFACTOR_MARKER_2026_05_28_METRICS_V3_LANES -->
+  <!-- SAM_USAGE_TILE_2026_06_07 : goal headline + captured-outcome breakdown (reads call_transcripts.outcome_bucket et al., written by general-sam-tools v1.6.6+) -->
+  <!-- METRICS_CLARITY_2026_06_07 : ONE headline + funnel sentence (no dual %), Q1 inferred funnel retired (captured buckets are the page-wide definition), daily trend re-keyed to buckets, review-queue list, custom date range, test-exclusion count surfaced -->
+  <!-- UNIFIED_LINEAGE_2026_06_08 : audited + extended in the main thread (engaged-denominator bars, rate-vs-target trend, topics panel); supersedes the 23:50 2026-06-07 build -->
+  <!-- METRICS_REHAUL_2026_06_08 : 10,000ft redesign - hero highlight reel, deterministic WoW red-flag chips + alert banner, visual funnel, stacked gestalt + meaning rows (replaces bar list, jargon card, and dead queue list), collapsible Q1-Q3, Q1 glance cards restored on bucket math -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root{
@@ -76,7 +80,54 @@
     .flag b{font-weight:600;}
     .empty{font-size:13px;color:var(--text-faint);font-style:italic;padding:4px 0;}
     .note-line{font-size:11px;color:var(--text-faint);margin:-2px 0 14px;}
+    .rate-trend{position:relative;display:flex;gap:4px;height:120px;margin:8px 0 2px;}
+    .rate-band{position:absolute;left:0;right:0;bottom:80%;height:10%;background:rgba(0,200,122,0.10);border-top:1px dashed rgba(0,200,122,0.45);border-bottom:1px dashed rgba(0,200,122,0.45);pointer-events:none;}
+    .rate-bar{flex:1;width:72%;max-width:26px;margin:0 auto;display:flex;align-items:flex-end;background:rgba(255,255,255,0.05);border-radius:3px 3px 0 0;overflow:hidden;}
+    .rate-bar span{display:block;width:100%;background:var(--routine);}
+    .hero{background:linear-gradient(135deg,rgba(0,200,232,0.12),rgba(0,200,122,0.07));border:1px solid rgba(0,200,232,0.3);border-radius:16px;padding:20px;margin:8px 0 14px;}
+    .hero-top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;}
+    .hero-rate{font-size:54px;font-weight:700;line-height:1;color:var(--cyan);}
+    .hero-line{font-size:15px;}
+    .hero-goal{font-size:12px;color:var(--text-muted);border:1px solid var(--border);border-radius:999px;padding:4px 10px;white-space:nowrap;}
+    .status-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;}
+    .schip{font-size:12px;border-radius:999px;padding:5px 11px;border:1px solid var(--border);color:var(--text-secondary);}
+    .schip.up{background:rgba(0,200,122,0.14);border-color:rgba(0,200,122,0.45);color:#7fe6b8;}
+    .schip.down{background:rgba(232,69,69,0.16);border-color:rgba(232,69,69,0.5);color:#ff9b9b;}
+    .alert-banner{background:rgba(232,69,69,0.14);border:1px solid rgba(232,69,69,0.5);color:#ffb3b3;border-radius:10px;padding:10px 14px;font-size:13px;margin-top:12px;}
+    .funnel{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;margin-top:16px;}
+    .fblock{flex:1;min-width:120px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:12px;padding:12px 10px;text-align:center;}
+    .fnum{font-size:30px;font-weight:700;}
+    .flabel{font-size:11px;color:var(--text-muted);margin-top:3px;line-height:1.35;}
+    .farrow{align-self:center;color:var(--text-faint);font-size:20px;}
+    .stack{display:flex;height:22px;border-radius:11px;overflow:hidden;background:rgba(255,255,255,0.05);margin-top:16px;}
+    .stack-seg{display:block;height:100%;}
+    .seg-hatch{background:repeating-linear-gradient(45deg,rgba(255,255,255,0.30) 0 4px,rgba(255,255,255,0.10) 4px 8px);}
+    .legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:10px;font-size:13px;color:var(--text-secondary);}
+    .legend b{color:var(--text-primary);font-size:15px;}
+    .ldot{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:7px;vertical-align:-1px;}
+    .why-row{display:flex;gap:14px;align-items:flex-start;padding:11px 0;border-top:1px solid var(--border);}
+    .why-row:first-of-type{border-top:none;}
+    .why-num{font-size:26px;font-weight:700;min-width:54px;text-align:right;flex-shrink:0;}
+    .why-body{font-size:13px;color:var(--text-secondary);line-height:1.5;}
+    .why-body b{color:var(--text-primary);}
+    .why-sub{font-size:12.5px;color:var(--text-muted);margin-top:3px;}
+    details.sec{border:1px solid var(--border);border-radius:12px;margin:14px 0;background:var(--surface-2);}
+    details.sec>summary{cursor:pointer;list-style:none;padding:14px 18px;display:flex;align-items:baseline;gap:10px;}
+    details.sec>summary::-webkit-details-marker{display:none;}
+    details.sec>summary:after{content:"\25BE";margin-left:auto;color:var(--text-faint);}
+    details.sec[open]>summary:after{content:"\25B4";}
+    details.sec>.sec-body{padding:0 18px 16px;}
+    @media(max-width:600px){.hero-rate{font-size:40px;}.fnum{font-size:22px;}.why-num{font-size:20px;min-width:42px;}}
+    .chip-note{font-size:11px;color:var(--text-faint);margin-top:9px;line-height:1.45;}
     .loading{padding:60px 0;text-align:center;color:var(--text-muted);}
+    .bar-name{width:230px;}
+    .date-input{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:12px;padding:6px 8px;color-scheme:dark;}
+    .date-sep{font-size:11px;color:var(--text-faint);}
+    .queue-row{display:flex;gap:10px;font-size:11px;color:var(--text-muted);padding:5px 0;border-top:1px solid var(--border);flex-wrap:wrap;}
+    .queue-row:first-of-type{border-top:none;}
+    .queue-row b{color:var(--text-secondary);font-weight:600;}
+    .queue-id{font-family:ui-monospace,Menlo,monospace;color:var(--text-faint);}
+    @media(max-width:600px){.bar-name{width:118px;font-size:12px;}}
   </style>
 </head>
 <body>
@@ -107,6 +158,9 @@
         <button class="chip" id="chip-7" type="button">7 days</button>
         <button class="chip" id="chip-30" type="button">30 days</button>
         <button class="chip active" id="chip-0" type="button">All time</button>
+        <input class="date-input" id="from-date" type="date" title="From" />
+        <span class="date-sep">to</span>
+        <input class="date-input" id="to-date" type="date" title="To" />
       </div>
       <div class="toolbar-right">
         <span id="last-updated"></span>
@@ -137,12 +191,14 @@
 
     if(!window.supabase||!window.supabase.createClient){document.getElementById("auth-error").style.display="block";document.getElementById("auth-error").textContent="Supabase library failed to load.";throw new Error("supabase missing");}
     var sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-    var currentPeriod=0;
+    var currentPeriod=0; // 1/7/30 days, 0 = all time, -1 = custom from/to range
 
     document.getElementById("auth-btn").addEventListener("click",handleLogin);
     document.getElementById("signout-btn").addEventListener("click",function(){sb.auth.signOut().finally(function(){location.reload();});});
     document.getElementById("refresh-btn").addEventListener("click",loadMetrics);
     [1,7,30,0].forEach(function(d){document.getElementById("chip-"+d).addEventListener("click",function(){setPeriod(d);});});
+    document.getElementById("from-date").addEventListener("change",setCustomRange);
+    document.getElementById("to-date").addEventListener("change",setCustomRange);
     document.getElementById("auth-password").addEventListener("keydown",function(e){if(e.key==="Enter")handleLogin();});
 
     async function handleLogin(){
@@ -156,35 +212,50 @@
     }
     async function init(){try{var r=await sb.auth.getSession();if(r.data&&r.data.session&&r.data.session.user)showApp(r.data.session.user);}catch(e){console.error(e);}}
     function showApp(user){document.getElementById("auth-screen").style.display="none";document.getElementById("app").style.display="flex";document.getElementById("header-user").textContent=REVIEWER_NAMES[user.email]||user.email||"";loadMetrics();}
-    function setPeriod(d){currentPeriod=d;[1,7,30,0].forEach(function(x){document.getElementById("chip-"+x).classList.toggle("active",x===d);});loadMetrics();}
-    function sinceISO(){if(currentPeriod===0)return null;var s=new Date();if(currentPeriod===1)s.setHours(0,0,0,0);else s.setDate(s.getDate()-currentPeriod);return s.toISOString();}
+    function setPeriod(d){currentPeriod=d;document.getElementById("from-date").value="";document.getElementById("to-date").value="";[1,7,30,0].forEach(function(x){document.getElementById("chip-"+x).classList.toggle("active",x===d);});loadMetrics();}
+    function setCustomRange(){var f=document.getElementById("from-date").value,t=document.getElementById("to-date").value;if(!f&&!t)return;currentPeriod=-1;[1,7,30,0].forEach(function(x){document.getElementById("chip-"+x).classList.remove("active");});loadMetrics();}
+    // {since,until} ISO bounds. Custom range wins; "until" is the START of the
+    // day AFTER the To-date (exclusive .lt) so the chosen To-day is included.
+    function rangeISO(){
+      if(currentPeriod===-1){
+        var f=document.getElementById("from-date").value,t=document.getElementById("to-date").value;
+        var since=f?new Date(f+"T00:00:00").toISOString():null;
+        var until=null;if(t){var u=new Date(t+"T00:00:00");u.setDate(u.getDate()+1);until=u.toISOString();}
+        return {since:since,until:until};
+      }
+      if(currentPeriod===0)return {since:null,until:null};
+      var s=new Date();if(currentPeriod===1)s.setHours(0,0,0,0);else s.setDate(s.getDate()-currentPeriod);
+      return {since:s.toISOString(),until:null};
+    }
 
     function isAuthErr(e){if(!e)return false;var m=((e.message||"")+" "+(e.code||"")).toLowerCase();return m.indexOf("jwt")!==-1||m.indexOf("token")!==-1||m.indexOf("expired")!==-1||m.indexOf("not authenticated")!==-1;}
 
-    async function runQueries(since){
-      var ctq=sb.from("call_transcripts").select("id,vapi_call_id,ended_reason,duration_seconds,intake_source,created_at");
-      var tcq=sb.from("triage_cases").select("id,created_at,severity,triage_tag,intake_source,source,extraction_source,duration_seconds,ended_reason,structured_output,triage_completed_at,reviewed_at,final_disposition,appointment_booked,subsequent_appointment_booked,revenue_generated,nps_score,nps_submitted_at,sam_satisfaction_score,timely_response,contradictions,patient_language,vapi_call_id,patient_phone");
+    async function runQueries(range){
+      var ctq=sb.from("call_transcripts").select("id,vapi_call_id,ended_reason,duration_seconds,intake_source,created_at,outcome_bucket,topic,capability_gap_detail,needs_review");
+      var tcq=sb.from("triage_cases").select("id,created_at,severity,triage_tag,intake_source,source,extraction_source,duration_seconds,ended_reason,structured_output,triage_completed_at,reviewed_at,final_disposition,appointment_booked,subsequent_appointment_booked,revenue_generated,nps_score,nps_submitted_at,sam_satisfaction_score,sam_nps_score,timely_response,contradictions,patient_language,vapi_call_id,patient_phone");
       var smsq=sb.from("sms_log").select("case_id,direction,sender_email,sender_name,sent_at,created_at");
-      if(since){ctq=ctq.gte("created_at",since);tcq=tcq.gte("created_at",since);smsq=smsq.gte("sent_at",since);}
+      if(range.since){ctq=ctq.gte("created_at",range.since);tcq=tcq.gte("created_at",range.since);smsq=smsq.gte("sent_at",range.since);}
+      if(range.until){ctq=ctq.lt("created_at",range.until);tcq=tcq.lt("created_at",range.until);smsq=smsq.lt("sent_at",range.until);}
       return Promise.all([ctq,tcq,smsq]);
     }
 
     async function loadMetrics(){
       var main=document.getElementById("main");var rb=document.getElementById("refresh-btn");rb.disabled=true;
-      var since=sinceISO();
+      var range=rangeISO();
       try{
-        var res=await runQueries(since);
+        var res=await runQueries(range);
         // Auth refresh-retry: if a query failed on an expired token, refresh once and retry.
         if([res[0].error,res[1].error,res[2].error].some(isAuthErr)){
           try{await sb.auth.refreshSession();}catch(e){}
-          res=await runQueries(since);
+          res=await runQueries(range);
         }
         var errs=[res[0].error,res[1].error,res[2].error].filter(Boolean);
         if(errs.length){main.innerHTML='<div class="panel"><div class="panel-title">Could not load some data</div><div class="empty">'+errs.map(function(e){return escHtml(e.message);}).join("<br>")+'</div><div class="note-line">If this mentions permission/RLS on a table, it needs an authenticated SELECT policy + grant. If it mentions JWT/token, sign out and back in.</div></div>';return;}
-        var calls=(res[0].data||[]).filter(function(c){return !isTest(c.intake_source);});
+        var rawCalls=(res[0].data||[]);
+        var calls=rawCalls.filter(function(c){return !isTest(c.intake_source);});
         var cases=(res[1].data||[]).filter(function(c){return !isTest(c.intake_source);});
         var sms=res[2].data||[];
-        render(calls,cases,sms);
+        render(calls,cases,sms,rawCalls.length-calls.length);
         document.getElementById("last-updated").textContent="Updated "+new Date().toLocaleTimeString("en-CA",{hour:"2-digit",minute:"2-digit"});
       }catch(e){main.innerHTML='<div class="panel"><div class="empty">Unexpected error: '+escHtml((e&&e.message)||"unknown")+'</div></div>';}
       finally{rb.disabled=false;}
@@ -197,58 +268,175 @@
     function sevBars(arr,color){var sev={critical:0,urgent:0,routine:0};arr.forEach(function(c){var s=(c.severity||"").toLowerCase();if(sev[s]!=null)sev[s]++;});var t=arr.length;return bar("Critical",sev.critical,t,"var(--critical)")+bar("Urgent",sev.urgent,t,"var(--urgent)")+bar("Routine",sev.routine,t,"var(--routine)");}
     function sevBarsU(arr){var sev={critical:0,urgent:0,routine:0,unset:0};arr.forEach(function(c){var s=(c.severity||"").toLowerCase();if(s==="critical"||s==="urgent"||s==="routine")sev[s]++;else sev.unset++;});var t=arr.length;return bar("Critical",sev.critical,t,"var(--critical)")+bar("Urgent",sev.urgent,t,"var(--urgent)")+bar("Routine",sev.routine,t,"var(--routine)")+bar("Untriaged",sev.unset,t,"var(--text-faint)");}
 
-    function render(calls,cases,sms){
+    function render(calls,cases,sms,testCallCount){
       var general=cases.filter(function(c){return laneOf(c)==="general";});
       var emergency=cases.filter(function(c){return laneOf(c)==="emergency";});
       var formOnly=cases.filter(function(c){return laneOf(c)==="form_only";});
       var html="";
-      var windowLabel=currentPeriod===0?"all time":currentPeriod===1?"today":("last "+currentPeriod+" days");
-      html+='<div class="note-line" style="margin:2px 0 6px;">Showing <b>'+windowLabel+'</b> \u00B7 '+calls.length+' inbound calls \u00B7 '+cases.length+' documented cases</div>';
+      var windowLabel;
+      if(currentPeriod===-1){var wf=document.getElementById("from-date").value,wt=document.getElementById("to-date").value;windowLabel=(wf?wf:"start")+" \u2192 "+(wt?wt:"now");}
+      else windowLabel=currentPeriod===0?"all time":currentPeriod===1?"today":("last "+currentPeriod+" days");
+      html+='<div class="note-line" style="margin:2px 0 6px;">Showing <b>'+windowLabel+'</b> \u00B7 '+calls.length+' inbound calls \u00B7 '+cases.length+' documented cases \u00B7 '+(testCallCount||0)+' test calls excluded (page filters tagged test rows \u2014 raw SQL reads higher)</div>';
+
+      /* ===== SAM HERO (METRICS_REHAUL_2026_06_08) ===== */
+      // Captured outcomes (call_transcripts.outcome_bucket, v1.6.6+). One
+      // definition page-wide; Q1 reuses these same variables. Hierarchy:
+      // hero (rate + WoW red-flag chips + visual funnel + gestalt bar) ->
+      // meaning rows -> rate-vs-target trend -> topics. Detail collapses.
+      function ob(c){return c.outcome_bucket||"unclassified";}
+      var obCounts={};calls.forEach(function(c){var b=ob(c);obCounts[b]=(obCounts[b]||0)+1;});
+      var obHandled=(obCounts.completed||0)+(obCounts.clinical_pivot||0);
+      var obNoise=0,obDropOther=0;
+      calls.forEach(function(c){if(ob(c)!=="dropped")return;var d=Number(c.duration_seconds)||0;var r=(c.ended_reason||"").toLowerCase();if(r.indexOf("customer-ended")!==-1&&d<15)obNoise++;else obDropOther++;});
+      var obSysErr=obCounts.system_error||0;
+      var obEngaged=calls.length-obNoise-obSysErr;
+      var obRateB=pct(obHandled,obEngaged);
+      var obPend=(obCounts.transferred_unsplit||0)+(obCounts.unclassified||0);
+      var obGaps={};calls.forEach(function(c){if(ob(c)==="capability_gap"){var k=c.capability_gap_detail||"other";obGaps[k]=(obGaps[k]||0)+1;}});
+
+      // RED-FLAG DETECTION - deterministic week-over-week deltas, rules
+      // stated not learned: decline <= -10pp, improve >= +5pp, else flat;
+      // a week with <10 engaged calls = not enough data (grey).
+      function obSlice(fromMs,toMs){var r={eng:0,han:0,drop:0,gap:0,err:0,tot:0};calls.forEach(function(c){var t=new Date(c.created_at).getTime();if(!(t>=fromMs&&t<toMs))return;r.tot++;var b=ob(c);if(b==="system_error"){r.err++;return;}var dd=Number(c.duration_seconds)||0;var rr=(c.ended_reason||"").toLowerCase();if(b==="dropped"&&rr.indexOf("customer-ended")!==-1&&dd<15)return;r.eng++;if(b==="completed"||b==="clinical_pivot")r.han++;else if(b==="dropped")r.drop++;else if(b==="capability_gap")r.gap++;});return r;}
+      var wkMs=7*24*3600*1000,nowMs=Date.now();
+      var wkCur=obSlice(nowMs-wkMs,nowMs),wkPrev=obSlice(nowMs-2*wkMs,nowMs-wkMs);
+      var wokOk=(wkCur.eng>=10&&wkPrev.eng>=10);
+      function schip(label,curV,prevV,goodWhenUp){
+        if(!wokOk)return '<span class="schip" title="needs at least 10 engaged calls in each of the last two weeks">'+escHtml(label)+' \u00B7 not enough data yet</span>';
+        var d=curV-prevV;
+        var word,cls,arrow;
+        if(Math.abs(d)<3){word="steady";cls="";arrow="\u2192";}
+        else if((d>0)===goodWhenUp){word="better";cls="up";arrow=d>0?"\u25B2":"\u25BC";}
+        else{word="worse";cls="down";arrow=d>0?"\u25B2":"\u25BC";}
+        return '<span class="schip '+cls+'" title="last 7 days vs the previous 7, in percentage points: '+prevV+'% \u2192 '+curV+'%">'+escHtml(label)+' \u00B7 '+word+' '+arrow+' '+(d>0?"+":"")+d+' pts</span>';
+      }
+      var hCur=pct(wkCur.han,wkCur.eng),hPrev=pct(wkPrev.han,wkPrev.eng);
+      var dCur=pct(wkCur.drop,wkCur.eng),dPrev=pct(wkPrev.drop,wkPrev.eng);
+      var gCur=pct(wkCur.gap,wkCur.eng),gPrev=pct(wkPrev.gap,wkPrev.eng);
+      var aCur=wkCur.tot?Math.round((wkCur.tot-wkCur.err)/wkCur.tot*100):100,aPrev=wkPrev.tot?Math.round((wkPrev.tot-wkPrev.err)/wkPrev.tot*100):100;
+
+      html+='<div class="hero">';
+      html+='<div class="hero-top"><span class="hero-rate">'+obRateB+'%</span><span class="hero-line">of the <b>'+obEngaged+'</b> callers Sam could serve, she fully handled the call</span><span class="hero-goal">goal 80\u201390%</span></div>';
+      html+='<div class="status-chips">'+
+        schip("Handled rate",hCur,hPrev,true)+
+        schip("Dropped mid-call",dCur,dPrev,false)+
+        schip("Capability gaps",gCur,gPrev,false)+
+        schip("Availability",aCur,aPrev,true)+
+        '</div>';
+      html+='<div class="chip-note">Each chip compares the last 7 days with the previous 7. Green “better” = moving the right way · red “worse” = needs attention · grey = roughly steady. “pts” = percentage points (a move from 40% to 42% is +2 pts).</div>';
+      if(wokOk&&(hCur-hPrev)<=-10){html+='<div class="alert-banner">\u26A0 Handled rate fell '+(hPrev-hCur)+'pp week-over-week ('+hPrev+'% \u2192 '+hCur+'%). Deterministic rule fired (\u226510pp drop, \u226510 engaged calls both weeks) \u2014 worth investigating before it compounds.</div>';}
+      html+='<div class="funnel">'+
+        '<div class="fblock"><div class="fnum">'+calls.length+'</div><div class="flabel">calls in</div></div>'+
+        '<div class="farrow">\u2192</div>'+
+        '<div class="fblock"><div class="fnum">\u2212'+(obNoise+obSysErr)+'</div><div class="flabel">noise \u2014 '+obNoise+' '+(obNoise===1?'hangup':'hangups')+' &lt;15s \u00B7 '+obSysErr+' '+(obSysErr===1?'error':'errors')+'</div></div>'+
+        '<div class="farrow">\u2192</div>'+
+        '<div class="fblock"><div class="fnum">'+obEngaged+'</div><div class="flabel">engaged \u2014 real conversations</div></div>'+
+        '<div class="farrow">\u2192</div>'+
+        '<div class="fblock" style="border-color:rgba(0,200,122,0.5)"><div class="fnum" style="color:var(--routine)">'+obHandled+'</div><div class="flabel">handled by Sam \u2014 '+obRateB+'%</div></div>'+
+        '</div>';
+      function segE(cnt,style,label){if(!(cnt>0))return "";var w=obEngaged?Math.max(1,Math.round(cnt/obEngaged*1000)/10):0;return '<span class="stack-seg" style="width:'+w+'%;'+style+'" title="'+escHtml(label)+': '+cnt+'"></span>';}
+      html+='<div class="stack">'+
+        segE(obCounts.completed||0,'background:var(--routine)',"Sam finished it")+
+        segE(obCounts.clinical_pivot||0,'background:var(--cyan)',"Clinical \u2192 intake form (correct)")+
+        segE(obCounts.patient_chose_human||0,'background:#5b7ea8',"Chose a person")+
+        segE(obCounts.capability_gap||0,'background:var(--urgent)',"Can\u2019t do yet (Dentrix)")+
+        segE(obDropOther,'background:var(--danger)',"Dropped mid-call")+
+        (obPend>0?'<span class="stack-seg seg-hatch" style="width:'+Math.max(1,Math.round(obPend/(obEngaged||1)*1000)/10)+'%" title="Not yet categorized: '+obPend+'"></span>':'')+
+        '</div>';
+      html+='<div class="legend">'+
+        '<span><span class="ldot" style="background:var(--routine)"></span><b>'+(obCounts.completed||0)+'</b> finished</span>'+
+        '<span><span class="ldot" style="background:var(--cyan)"></span><b>'+(obCounts.clinical_pivot||0)+'</b> clinical \u2192 form</span>'+
+        '<span><span class="ldot" style="background:#5b7ea8"></span><b>'+(obCounts.patient_chose_human||0)+'</b> chose a person</span>'+
+        '<span><span class="ldot" style="background:var(--urgent)"></span><b>'+(obCounts.capability_gap||0)+'</b> can\u2019t do yet</span>'+
+        '<span><span class="ldot" style="background:var(--danger)"></span><b>'+obDropOther+'</b> dropped</span>'+
+        '<span><span class="ldot seg-hatch"></span><b>'+obPend+'</b> not yet categorized</span>'+
+        '</div>';
+      html+='</div>';
+
+      // MEANING, not bars: big number + what it is + what to do.
+      html+='<div class="panel"><div class="panel-title">Where the other '+(obEngaged-obHandled)+' engaged calls went \u2014 and what each means</div>';
+      function whyRow(n,color,title,body){return '<div class="why-row"><div class="why-num" style="color:'+color+'">'+n+'</div><div class="why-body"><b>'+title+'</b><div class="why-sub">'+body+'</div></div></div>';}
+      html+=whyRow(obCounts.patient_chose_human||0,"#9db8d6","Chose a person","Normal preference \u2014 roughly 1 in 5 callers wants a human regardless of how good the AI is. Already priced into the 80\u201390% target. Not a Sam miss.");
+      var gkeys=Object.keys(obGaps).sort(function(a,b){return obGaps[b]-obGaps[a];});
+      var gapTxt=gkeys.map(function(k){return obGaps[k]+" "+k.replace(/_/g," ");}).join(" \u00B7 ");
+      html+=whyRow(obCounts.capability_gap||0,"var(--urgent)","Couldn\u2019t do it yet \u2014 needs the Dentrix API",(gapTxt?gapTxt+". ":"None in this window. ")+"This is the build roadmap ranked by real demand \u2014 it shrinks as integrations land. Improvement intel, not failure.");
+      html+=whyRow(obDropOther,"var(--danger)","Dropped mid-call","The line died partway through \u2014 the real losses. If the red chip above turns on, latency or audio are the usual suspects.");
+      var pendClin=0,pendBook=0;calls.forEach(function(c){if(ob(c)!=="unclassified")return;if(c.topic==="clinical")pendClin++;else if(c.topic==="booking")pendBook++;});
+      var pendXfer=obCounts.transferred_unsplit||0;var pendOther=Math.max(0,obPend-pendClin-pendBook-pendXfer);
+      html+=whyRow(obPend,"rgba(255,255,255,0.6)","Not yet categorized","The classifier wouldn\u2019t guess, so these count AGAINST Sam until a human reads them \u2014 today\u2019s rate is a floor, not the truth. Inside: <b>"+pendClin+"</b> mentioned something clinical but no intake form went out (read these first) \u00B7 <b>"+pendXfer+"</b> transfers with no stated reason \u00B7 <b>"+pendBook+"</b> booking talk with nothing saved (possible lost bookings) \u00B7 <b>"+pendOther+"</b> other. The click-to-read transcript view ships with the observations build.");
+      html+='</div>';
+
+      // Daily handled-rate vs target - the % view (volume-independent).
+      (function(){
+        var days={};
+        calls.forEach(function(c){var b=ob(c);if(b==="system_error")return;var dd=Number(c.duration_seconds)||0;var rr=(c.ended_reason||"").toLowerCase();if(b==="dropped"&&rr.indexOf("customer-ended")!==-1&&dd<15)return;var t=new Date(c.created_at);var k=t.getFullYear()+"-"+("0"+(t.getMonth()+1)).slice(-2)+"-"+("0"+t.getDate()).slice(-2);if(!days[k])days[k]={eng:0,han:0};days[k].eng++;if(b==="completed"||b==="clinical_pivot")days[k].han++;});
+        var keys=Object.keys(days).sort();if(keys.length>21)keys=keys.slice(keys.length-21);
+        html+='<div class="panel"><div class="panel-title">Daily handled-rate \u2014 % of engaged calls; the band is the 80\u201390% target</div>';
+        if(!keys.length)html+='<div class="empty">No engaged calls in this window.</div>';
+        else{
+          html+='<div class="rate-trend"><div class="rate-band"></div>';
+          keys.forEach(function(k){var d=days[k];var p=d.eng?Math.round(d.han/d.eng*100):0;
+            html+='<div class="trend-col" title="'+k+': '+d.han+' of '+d.eng+' engaged handled ('+p+'%)"><div class="rate-bar"><span style="height:'+p+'%"></span></div><div class="trend-cases">'+(d.eng?p+"%":"\u2014")+'</div><div class="trend-date">'+k.slice(5)+'</div></div>';});
+          html+='</div><div class="note-line">The week-over-week chips above do the watching for you \u2014 this chart is the picture behind them. Low-volume days swing wildly; read level and direction, not single days.</div>';
+        }
+        html+='</div>';
+      })();
+
+      // What callers wanted - topic from call content (pre-transfer intel).
+      (function(){
+        var tc={},tn=0;
+        calls.forEach(function(c){var t=c.topic;if(!t||t==="unknown")return;tc[t]=(tc[t]||0)+1;tn++;});
+        var TL={booking:"New booking",existing_appointment:"Existing appt \u2014 reschedule / cancel / lookup",hours_location:"Hours & location",billing_insurance:"Billing & insurance",clinical:"Clinical concern",message_callback:"Message / callback",language_callback:"Language callback",records:"Records",other:"Other"};
+        var tk=Object.keys(tc).sort(function(a,b){return tc[b]-tc[a];});
+        html+='<div class="panel"><div class="panel-title">What callers wanted \u2014 '+tn+' calls with a clear topic ('+(calls.length-tn)+' too short to tell)</div>';
+        if(!tk.length)html+='<div class="empty">No topics in this window.</div>';
+        else tk.forEach(function(t){html+=bar(TL[t]||t,tc[t],tn,"var(--cyan)");});
+        html+='</div>';
+      })();
+
+      html+='<details class="sec" open><summary><span class="qhead-num">1</span><span class="qhead-title">What came in</span></summary><div class="sec-body">';
 
       /* ===== Q1 — WHAT CAME IN ===== */
-      html+=qhead("1","What came in","Two lanes: General Sam answers the phone; Emergency Sam calls back after a form");
-
-      // General Sam inbound funnel (from call_transcripts)
-      var tot=calls.length,eng=0,xfer=0,hang=0,sysf=0;
-      calls.forEach(function(c){var r=(c.ended_reason||"").toLowerCase();var d=Number(c.duration_seconds)||0;
-        if(r.indexOf("forward")!==-1)xfer++;
-        else if(r.indexOf("silence")!==-1||r.indexOf("not-found")!==-1||r.indexOf("error")!==-1||r.indexOf("pipeline")!==-1)sysf++;
-        else if(r.indexOf("customer-ended")!==-1&&d<15)hang++;
-        else eng++;});
-      var pastGreeting=tot-hang-sysf;
-      html+=laneLabel("General Sam — inbound calls","var(--cyan)");
+      // Same bucket math as the hero - one definition page-wide, now WITH
+      // the at-a-glance percentages this lane had before the refactor.
+      var tot=calls.length;
+      var toOffice=(obCounts.patient_chose_human||0)+(obCounts.capability_gap||0)+(obCounts.transferred_unsplit||0);
+      html+=laneLabel("General Sam \u2014 inbound calls","var(--cyan)");
       html+='<div class="cards">'+
         card("Calls in",tot)+
-        card("Engaged Sam",eng+' <small>'+pct(eng,tot)+'%</small>')+
-        card("Asked for a person",xfer+' <small>'+pct(xfer,tot)+'%</small>',"transferred to office")+
-        card("Hung up in greeting",hang+' <small>'+pct(hang,tot)+'%</small>',"customer ended <15s")+
-        '</div><div class="cards">'+
-        card("System errors / no answer",sysf+' <small>'+pct(sysf,tot)+'%</small>',"availability signal — outage bucket")+
-        card("Became a documented case",general.length+' <small>of '+pastGreeting+'</small>',"inbound cases / calls past greeting")+
+        card("Engaged",obEngaged+' <small>'+pct(obEngaged,tot)+'%</small>',"past greeting \u2014 real conversations")+
+        card("To office",toOffice+' <small>'+pct(toOffice,tot)+'%</small>',"chose a person, gaps, unstated")+
+        card("Hung up in greeting",obNoise+' <small>'+pct(obNoise,tot)+'%</small>',"<15s \u2014 excluded from the rate")+
+        card("Became a documented case",general.length+' <small>'+pct(general.length,obEngaged)+'%</small>',"General-lane cases / engaged calls")+
         '</div>';
-      html+='<div class="note-line">Test calls (yours / Ranu\u2019s) are excluded only where tagged; untagged test hangups still sit in this bucket until caller_number lands, so the hangup share reads slightly high.</div>';
 
-      // Daily trend — the time dimension: is the hangup share actually falling?
+      // Daily trend — the time dimension, re-keyed to the SAME captured
+      // buckets as G (one definition page-wide): is the green band growing?
       (function(){
         var days={};
         function bk(d){var t=new Date(d);return t.getFullYear()+"-"+("0"+(t.getMonth()+1)).slice(-2)+"-"+("0"+t.getDate()).slice(-2);}
-        calls.forEach(function(c){var k=bk(c.created_at);if(!days[k])days[k]={c:0,h:0,e:0,g:0,cases:0};var r=(c.ended_reason||"").toLowerCase();var d=Number(c.duration_seconds)||0;days[k].c++;if(r.indexOf("silence")!==-1||r.indexOf("not-found")!==-1||r.indexOf("error")!==-1||r.indexOf("pipeline")!==-1)days[k].e++;else if(r.indexOf("customer-ended")!==-1&&d<15)days[k].h++;else days[k].g++;});
-        cases.forEach(function(c){var k=bk(c.created_at);if(!days[k])days[k]={c:0,h:0,e:0,g:0,cases:0};days[k].cases++;});
+        calls.forEach(function(c){var k=bk(c.created_at);if(!days[k])days[k]={c:0,h:0,o:0,u:0,e:0,cases:0};days[k].c++;var b=ob(c);
+          if(b==="completed"||b==="clinical_pivot")days[k].h++;
+          else if(b==="patient_chose_human"||b==="capability_gap"||b==="transferred_unsplit")days[k].o++;
+          else if(b==="system_error")days[k].e++;
+          else days[k].u++;});
+        cases.forEach(function(c){var k=bk(c.created_at);if(!days[k])days[k]={c:0,h:0,o:0,u:0,e:0,cases:0};days[k].cases++;});
         var keys=Object.keys(days).sort();if(keys.length>21)keys=keys.slice(keys.length-21);
         var maxC=1;keys.forEach(function(k){if(days[k].c>maxC)maxC=days[k].c;});
-        var avail=tot>0?Math.round((tot-sysf)/tot*100):100;
-        html+='<div class="panel"><div class="panel-title">Daily trend \u2014 availability '+avail+'% over the window; bars show calls (cyan engaged \u00B7 amber hangup \u00B7 red error), number = documented cases</div>';
+        var avail=calls.length>0?Math.round((calls.length-obSysErr)/calls.length*100):100;
+        html+='<div class="panel"><div class="panel-title">Daily trend \u2014 availability '+avail+'%; green = Sam handled \u00B7 cyan = to office \u00B7 amber = dropped / unresolved \u00B7 red = error; number = documented cases</div>';
         if(!keys.length)html+='<div class="empty">No calls in this window.</div>';
         else{
           html+='<div class="trend">';
-          keys.forEach(function(k){var d=days[k];var hp=d.c?Math.round(d.h/d.c*100):0;
-            html+='<div class="trend-col" title="'+k+": "+d.c+" calls, "+hp+'% hangup, '+d.cases+' cases"><div class="trend-bar">'+
+          keys.forEach(function(k){var d=days[k];
+            html+='<div class="trend-col" title="'+k+": "+d.c+" calls \u00B7 "+d.h+" handled \u00B7 "+d.o+" to office \u00B7 "+d.u+" dropped/unresolved \u00B7 "+d.e+' errors \u00B7 '+d.cases+' cases"><div class="trend-bar">'+
               '<span style="height:'+Math.round(d.e/maxC*100)+'%;background:var(--danger)"></span>'+
-              '<span style="height:'+Math.round(d.h/maxC*100)+'%;background:var(--urgent)"></span>'+
-              '<span style="height:'+Math.round(d.g/maxC*100)+'%;background:var(--cyan)"></span>'+
+              '<span style="height:'+Math.round(d.u/maxC*100)+'%;background:var(--urgent)"></span>'+
+              '<span style="height:'+Math.round(d.o/maxC*100)+'%;background:var(--cyan)"></span>'+
+              '<span style="height:'+Math.round(d.h/maxC*100)+'%;background:var(--routine)"></span>'+
               '</div><div class="trend-cases">'+d.cases+'</div><div class="trend-date">'+k.slice(5)+'</div></div>';
           });
-          html+='</div><div class="note-line">Watch the amber band shrink after the v1.4.21 deploy \u2014 that\u2019s the hangup-rate question answered visually. A red band is an availability dip (the Vapi outage would show here). With only a few days live, read this as early signal, not yet a trend.</div>';
+          html+='</div><div class="note-line">The question this answers: is the green (handled) band growing toward 80\u201390%? Same buckets as G \u2014 no second definition anywhere on the page.</div>';
         }
         html+='</div>';
       })();
@@ -319,7 +507,8 @@
       html+='</div><div class="hours-axis"><span>12a</span><span>6a</span><span>12p</span><span>6p</span><span>11p</span></div></div>';
 
       /* ===== Q2 — HOW FAST DID WE RESPOND ===== */
-      html+=qhead("2","How fast did we respond","Sam\u2019s capture time per lane, then how quickly a human followed up");
+      html+='</div></details>';
+      html+='<details class="sec"><summary><span class="qhead-num">2</span><span class="qhead-title">How fast did we respond</span></summary><div class="sec-body">';
       var genDur=calls.map(function(c){return Number(c.duration_seconds);}).filter(function(n){return Number.isFinite(n)&&n>=15;});
       var emDur=emergency.map(function(c){return Number(c.duration_seconds);}).filter(function(n){return Number.isFinite(n)&&n>0;});
       // Human first response: first dashboard outbound (sender_email present) minus case created_at.
@@ -391,7 +580,8 @@
       })();
 
       /* ===== Q3 — WHAT DID IT PRODUCE ===== */
-      html+=qhead("3","What did it produce","Bookings, retention, satisfaction, cost \u2014 the diligence view");
+      html+='</div></details>';
+      html+='<details class="sec"><summary><span class="qhead-num">3</span><span class="qhead-title">What did it produce</span></summary><div class="sec-body">';
       var clinical=general.concat(emergency); // documented clinical cases that involved Sam
       var allCases=cases;
       var booked=allCases.filter(function(c){return c.final_disposition==="booked"||(typeof c.revenue_generated==="number"&&c.revenue_generated>0);}).length;
@@ -404,7 +594,6 @@
       html+='<div class="cards">'+
         card("Booked",booked+' <small>of '+allCases.length+'</small>',allCases.length?(pct(booked,allCases.length)+"% \u2014 from disposition / revenue"):"")+
         card("Further treatment booked",followUp,"retention signal")+
-        card("NPS",nps!=null?(nps>0?"+"+nps:String(nps)):"—",npsRows.length?("n="+npsRows.length):"no survey responses yet")+
         card("Revenue recorded",revTotal>0?("$"+revTotal.toLocaleString()):"—",revRows.length?("n="+revRows.length+" cases"):"none entered yet")+
         '</div>';
       html+='<div class="note-line">"Booked" counts confirmed front-desk bookings plus any case with recorded revenue. New-vs-existing patient is now captured by the office-dashboard buttons too \u2014 a new/returning split can surface here once a few dispositions accumulate.</div>';
@@ -418,27 +607,37 @@
       else dispoEntries.forEach(function(e){html+=bar(e[0].replace(/_/g," "),e[1],dispoTotal,"var(--cyan)");});
       html+='</div>';
 
-      // Patient survey — rehauled schema (nps_score 0-10, sam_satisfaction 1-5,
-      // timely_response yes/somewhat/no). Empty until responses arrive; the
-      // pipeline was silently failing under RLS until recently fixed.
-      var samRows=allCases.filter(function(c){return Number.isInteger(c.sam_satisfaction_score);});
-      var samAvg=samRows.length?(samRows.reduce(function(s,c){return s+c.sam_satisfaction_score;},0)/samRows.length).toFixed(1):null;
+      // TWO surveys, kept distinct:
+      //  (1) Sam-call survey  — one question, "How was your experience with Sam?"
+      //      -> sam_nps_score (0-10), the kind='sam' post-call touchpoint.
+      //  (2) Post-visit survey — "How was your visit?" -> nps_score (0-10),
+      //      practice NPS, plus optional sam_satisfaction_score (1-5) + timely.
+      function npsOf(rows,field){var r=rows.filter(function(c){return Number.isInteger(c[field]);});
+        if(!r.length)return {n:0,nps:null};
+        var p=r.filter(function(c){return c[field]>=9;}).length,d=r.filter(function(c){return c[field]<=6;}).length;
+        return {n:r.length,nps:Math.round(p/r.length*100-d/r.length*100)};}
+      var samCall=npsOf(allCases,"sam_nps_score");
+      var postVisit=npsOf(allCases,"nps_score");
+      var samSatRows=allCases.filter(function(c){return Number.isInteger(c.sam_satisfaction_score);});
+      var samSatAvg=samSatRows.length?(samSatRows.reduce(function(s,c){return s+c.sam_satisfaction_score;},0)/samSatRows.length).toFixed(1):null;
       var tRows=allCases.filter(function(c){return c.timely_response;});
       var tYes=tRows.filter(function(c){return c.timely_response==="yes";}).length;
-      var tSw=tRows.filter(function(c){return c.timely_response==="somewhat";}).length;
-      var tNo=tRows.filter(function(c){return c.timely_response==="no";}).length;
-      html+='<div class="panel"><div class="panel-title">Patient survey ('+npsRows.length+' response'+(npsRows.length===1?"":"s")+')</div>';
-      if(!npsRows.length)html+='<div class="empty">No survey responses yet \u2014 the survey write path was recently fixed; responses will populate here as patients reply.</div>';
+
+      html+='<div class="panel"><div class="panel-title">Sam-call survey \u2014 \u201CHow was your experience with Sam?\u201D ('+samCall.n+' response'+(samCall.n===1?"":"s")+')</div>';
+      if(!samCall.n)html+='<div class="empty">No responses yet \u2014 sent by text right after a Sam call (0\u201310 scale). Populates here as patients reply.</div>';
+      else html+='<div class="cards">'+card("Sam-call NPS",(samCall.nps>0?"+":"")+samCall.nps,"n="+samCall.n+(samCall.n<5?" \u00B7 small sample":""))+'</div>';
+      html+='<div class="note-line">The one-question survey about the Sam interaction itself \u2014 separate from the post-visit survey below.</div></div>';
+
+      html+='<div class="panel"><div class="panel-title">Post-visit survey \u2014 practice NPS ('+postVisit.n+' response'+(postVisit.n===1?"":"s")+')</div>';
+      if(!postVisit.n)html+='<div class="empty">No responses yet \u2014 sent after the patient is seen in office (\u201CHow was your visit?\u201D, 0\u201310 scale).</div>';
       else{
         html+='<div class="cards">'+
-          card("NPS",nps!=null?(nps>0?"+"+nps:String(nps)):"\u2014","n="+npsRows.length+(npsRows.length<5?" \u00B7 small sample":""))+
-          card("Sam satisfaction",samAvg!=null?(samAvg+" / 5"):"\u2014",samRows.length?("n="+samRows.length):"no data")+
+          card("Practice NPS",(postVisit.nps>0?"+":"")+postVisit.nps,"n="+postVisit.n+(postVisit.n<5?" \u00B7 small sample":""))+
+          card("Sam helpfulness",samSatAvg!=null?(samSatAvg+" / 5"):"\u2014",samSatRows.length?("n="+samSatRows.length):"no data")+
           card("Felt response timely",tRows.length?(pct(tYes,tRows.length)+"% yes"):"\u2014",tRows.length?("n="+tRows.length):"no data")+
           '</div>';
-        if(tRows.length)html+=bar("Yes",tYes,tRows.length,"var(--routine)")+bar("Somewhat",tSw,tRows.length,"var(--urgent)")+bar("No",tNo,tRows.length,"var(--critical)");
       }
-      html+='<div class="note-line">Practice NPS for the Sam-served cohort. There is no pre-Sam baseline, so report this as the cohort\u2019s NPS \u2014 not as an NPS lift Sam caused.</div>';
-      html+='</div>';
+      html+='<div class="note-line">Practice NPS for the Sam-served cohort. No pre-Sam baseline exists, so report this as the cohort\u2019s NPS \u2014 not as a lift Sam caused.</div></div>';
 
       // Red-flag frequency across clinical cases (from structured_output)
       var f={Fever:0,Swelling:0,Trauma:0,"Airway concern":0,Bleeding:0,"Nocturnal pain":0,"Cold lingers":0,Immunocompromised:0};
@@ -466,20 +665,19 @@
       gateRows.forEach(function(c){var so=getSO(c);var lk=String(so.sam_severity||"").toLowerCase();var fk=String(c.severity||"").toLowerCase();var l=sevOrder[lk]||9,fi=sevOrder[fk]||9;
         if(fi<l){gEsc++;var k="model "+lk+" \u2192 gate "+fk;gEscDetail[k]=(gEscDetail[k]||0)+1;}
         else if(fi>l)gDe++; else gAgree++;});
-      html+='<div class="panel"><div class="panel-title">Deterministic safety gate vs model ('+gateRows.length+' cases carry both a model and a gate severity)</div>';
-      if(!gateRows.length)html+='<div class="empty">No cases carry both a model and a gate severity in this window.</div>';
+      html+='<div class="panel"><div class="panel-title">Safety net \u2014 rule-based gate vs the model</div>';
+      if(!gateRows.length)html+='<div class="empty">No cases yet where both the model and the rule-based gate assigned a severity.</div>';
       else{
-        html+='<div class="cards">'+
-          card("Gate caught under-triage",gEsc+' <small>'+pct(gEsc,gateRows.length)+'%</small>',"rule-based gate raised severity above the model")+
-          card("Gate agreed with model",gAgree+' <small>'+pct(gAgree,gateRows.length)+'%</small>',gDe?(gDe+" softened down"):"")+
-          '</div>';
-        var gk=Object.keys(gEscDetail).sort(function(a,b){return gEscDetail[b]-gEscDetail[a];});
-        gk.forEach(function(k){html+=bar(k,gEscDetail[k],gEsc||1,"var(--critical)");});
+        html+='<div class="why-row"><div class="why-num" style="color:var(--critical)">'+gEsc+'</div><div class="why-body"><b>raised the severity above the model</b><div class="why-sub">The gate caught a possible under-triage \u2014 exactly what the safety layer exists to do. The immunocompromised URGENT\u2192CRITICAL case is the textbook example.</div></div></div>';
+        html+='<div class="why-row"><div class="why-num">'+gAgree+'</div><div class="why-body"><b>agreed with the model</b><div class="why-sub">The model and the rule-based gate reached the same severity.</div></div></div>';
+        if(gDe)html+='<div class="why-row"><div class="why-num">'+gDe+'</div><div class="why-body"><b>lowered the severity</b><div class="why-sub">The gate set a less urgent level than the model proposed.</div></div></div>';
+        html+='<div class="note-line">Of '+gateRows.length+' cases where both ran, this is how often the deterministic gate \u2014 which sits above the model by design \u2014 changed the call. Raising severity is the safety-relevant direction, and the core regulatory evidence.</div>';
       }
-      html+='<div class="note-line">Where the rule-based gate overrides the model to a higher severity, it caught a potential under-triage \u2014 the deterministic-safety layer doing exactly what it exists for (the immunocompromised URGENT\u2192CRITICAL case is the canonical example). It sits above the model by design, and this is the core regulatory evidence.</div></div>';
+      html+='</div>';
 
       html+='<div class="panel"><div class="panel-title">Unit economics — cost to run vs. value created</div><div class="empty">Pending real vendor rates. Cost-per-call and cost-per-case compute here from call duration and message counts once actual Vapi / OpenAI / ElevenLabs / Azure / Twilio usage is read for the window, calibrated monthly against invoices. No placeholder figures until the rates are real.</div></div>';
 
+      html+='</div></details>';
       document.getElementById("main").innerHTML=html;
     }
     init();
