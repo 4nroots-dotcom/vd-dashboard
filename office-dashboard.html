@@ -831,6 +831,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <button class="sort-btn" id="filter-office" type="button" style="border-left:3px solid #71BB55;">In-Office</button>
         <button class="sort-btn" id="filter-web" type="button" style="border-left:3px solid #00c8e8;">Web</button>
         <button class="sort-btn" id="filter-nonemergent" type="button" style="border-left:3px solid #D69E2E;">Non-Emergent</button>
+        <button class="sort-btn" id="filter-awaiting" type="button" style="border-left:3px solid #B794F4;" title="Sam sent the intake form but the patient has not completed it - call-back candidates">Awaiting form</button>
       </div>
     </div>
       <div class="case-list-scroll" id="case-list-scroll">
@@ -1051,7 +1052,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   document.getElementById("filter-all").addEventListener("click", function() {
     sourceFilter = "all";
-    ["filter-all","filter-office","filter-web","filter-nonemergent"].forEach(function(id) {
+    ["filter-all","filter-office","filter-web","filter-nonemergent","filter-awaiting"].forEach(function(id) {
       document.getElementById(id).classList.remove("active");
     });
     document.getElementById("filter-all").classList.add("active");
@@ -1061,7 +1062,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   document.getElementById("filter-office").addEventListener("click", function() {
     sourceFilter = "office";
-    ["filter-all","filter-office","filter-web","filter-nonemergent"].forEach(function(id) {
+    ["filter-all","filter-office","filter-web","filter-nonemergent","filter-awaiting"].forEach(function(id) {
       document.getElementById(id).classList.remove("active");
     });
     document.getElementById("filter-office").classList.add("active");
@@ -1070,7 +1071,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   document.getElementById("filter-web").addEventListener("click", function() {
     sourceFilter = "web";
-    ["filter-all","filter-office","filter-web","filter-nonemergent"].forEach(function(id) {
+    ["filter-all","filter-office","filter-web","filter-nonemergent","filter-awaiting"].forEach(function(id) {
       document.getElementById(id).classList.remove("active");
     });
     document.getElementById("filter-web").classList.add("active");
@@ -1079,10 +1080,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   document.getElementById("filter-nonemergent").addEventListener("click", function() {
     sourceFilter = "nonemergent";
-    ["filter-all","filter-office","filter-web","filter-nonemergent"].forEach(function(id) {
+    ["filter-all","filter-office","filter-web","filter-nonemergent","filter-awaiting"].forEach(function(id) {
       document.getElementById(id).classList.remove("active");
     });
     document.getElementById("filter-nonemergent").classList.add("active");
+    applySearchFilter();
+  });
+
+  document.getElementById("filter-awaiting").addEventListener("click", function() {
+    sourceFilter = "awaiting";
+    ["filter-all","filter-office","filter-web","filter-nonemergent","filter-awaiting"].forEach(function(id) {
+      document.getElementById(id).classList.remove("active");
+    });
+    document.getElementById("filter-awaiting").classList.add("active");
     applySearchFilter();
   });
 
@@ -1359,6 +1369,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       filtered = filtered.filter(function(c) { return c.intake_source !== "in_office"; });
     } else if (sourceFilter === "nonemergent") {
       filtered = filtered.filter(function(c) { var so = c.structured_output || {}; return so.triage_tag === "non_emergent_inquiry" || c.triage_tag === "non_emergent_inquiry"; });
+    } else if (sourceFilter === "awaiting") {
+      // Path E: Sam sent the intake form, patient has not completed it. Warm call-backs.
+      filtered = filtered.filter(function(c) { return c.review_status === "pending_intake"; });
     }
     // Search filter
     if (q) {
