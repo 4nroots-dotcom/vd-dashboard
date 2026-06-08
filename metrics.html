@@ -149,14 +149,22 @@
     .tx-close{background:none;border:none;color:var(--text-muted);font-size:24px;line-height:1;cursor:pointer;padding:0 6px;}
     .tx-meta{padding:10px 18px;font-size:12px;color:var(--text-muted);border-bottom:1px solid var(--border);}
     .tx-body{padding:14px 18px;overflow-y:auto;font-size:13px;line-height:1.6;white-space:pre-wrap;color:var(--text-secondary);font-family:ui-monospace,Menlo,monospace;}
-    .ranu-row{display:flex;gap:10px;align-items:baseline;padding:9px 0;border-top:1px solid var(--border);font-size:13px;}
-    .ranu-row:first-of-type{border-top:none;}
-    .ranu-row.call-item{cursor:pointer;}
-    .ranu-row.call-item:hover{background:rgba(255,255,255,0.025);}
+    .review-row{display:flex;gap:10px;align-items:baseline;padding:9px 0;border-top:1px solid var(--border);font-size:13px;}
+    .review-row:first-of-type{border-top:none;}
+    .review-row.call-item{cursor:pointer;}
+    .review-row.call-item:hover{background:rgba(255,255,255,0.025);}
     .sev-badge{font-size:10px;font-weight:700;color:#06131f;border-radius:5px;padding:2px 7px;white-space:nowrap;letter-spacing:.04em;flex-shrink:0;}
-    .ranu-cc{flex:1;color:var(--text-secondary);}
-    .ranu-cc b{color:var(--text-primary);}
-    .ranu-meta{color:var(--text-faint);font-size:11.5px;white-space:nowrap;flex-shrink:0;}
+    .review-cc{flex:1;color:var(--text-secondary);}
+    .review-cc b{color:var(--text-primary);}
+    .review-meta{color:var(--text-faint);font-size:11.5px;white-space:nowrap;flex-shrink:0;}
+    .review-hero{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:2px 0 10px;}
+    .review-count{font-size:30px;font-weight:800;line-height:1;color:var(--text-primary);}
+    .review-count-label{font-size:13px;color:var(--text-secondary);}
+    .review-breakdown{font-size:12px;color:var(--text-faint);margin-left:auto;}
+    .review-detail{margin-top:2px;}
+    .review-detail>summary{cursor:pointer;font-size:12px;color:#00c8e8;list-style:none;padding:4px 0;}
+    .review-detail>summary::-webkit-details-marker{display:none;}
+    .review-list{margin-top:4px;}
     .briefing-narrative{margin:2px 0 14px;}
     .briefing-narrative:empty{display:none;}
     .briefing-tag{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-faint);margin-bottom:6px;}
@@ -456,25 +464,34 @@
         '</div>';
       html+='</div>';
 
-      // DAILY_BRIEFING_2026_06_08: For-Ranu clinical review queue (deterministic - severity gates + clinical contradiction flags; no LLM). The day's cases that need a dentist callback, for the selected window. v1 (Claude-written narrative) is a separate edge-function build.
+      // DAILY_BRIEFING_2026_06_08 (v2): daily briefing narrative + Awaiting-clinical-review queue. The queue is deterministic (severity gates + clinical contradiction flags; no LLM); the narrative above it is the Claude-written daily briefing. Hero summary always shown; the per-case list collapses for larger windows.
       (function(){
         var SEV_RANK={critical:3,urgent:2,routine:1};
-        var ranuCases=cases.filter(function(c){var sev=(c.severity||"").toLowerCase();return sev==="critical"||sev==="urgent"||getContras(c).length>0;}).sort(function(a,b){var d=(SEV_RANK[(b.severity||"").toLowerCase()]||0)-(SEV_RANK[(a.severity||"").toLowerCase()]||0);return d||(new Date(b.created_at)-new Date(a.created_at));});
-        html+='<div class="panel" style="border-color:rgba(0,200,232,0.3)">';
-        html+='<div class="panel-title" style="color:var(--text-primary);font-size:14px">Daily briefing \u2014 for Ranu</div>';
+        var reviewCases=cases.filter(function(c){var sev=(c.severity||"").toLowerCase();return sev==="critical"||sev==="urgent"||getContras(c).length>0;}).sort(function(a,b){var d=(SEV_RANK[(b.severity||"").toLowerCase()]||0)-(SEV_RANK[(a.severity||"").toLowerCase()]||0);return d||(new Date(b.created_at)-new Date(a.created_at));});
+        html+='<div class="panel"><div class="panel-title">Daily briefing</div>';
         html+='<div id="briefing-narrative" class="briefing-narrative"></div>';
-        html+='<div class="note-line" style="margin-top:-6px">'+obEngaged+' engaged '+(obEngaged===1?'call':'calls')+' \u00b7 '+obHandled+' handled by Sam \u00b7 <b style="color:var(--text-secondary)">'+ranuCases.length+'</b> clinical '+(ranuCases.length===1?'case':'cases')+' flagged for review in this window.</div>';
-        if(!ranuCases.length){html+='<div class="empty">No clinical cases flagged in this window \u2014 nothing needs a callback.</div>';}
-        else{ranuCases.forEach(function(c){
-          var sev=(c.severity||"").toLowerCase();
-          var sevc=sev==="critical"?"var(--critical)":(sev==="urgent"?"var(--urgent)":"var(--text-muted)");
-          var so=getSO(c);var cc=so.chief_complaint||so.complaint||(c.triage_tag?String(c.triage_tag).replace(/_/g," "):"\u2014");
-          var contras=getContras(c).map(function(k){return CONTRA_LABELS[k]||k;}).join(", ");
-          var when=c.created_at?new Date(c.created_at).toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"";
-          var phone=c.patient_phone?escHtml(String(c.patient_phone)):"";
-          var clickable=c.vapi_call_id?(' call-item" data-callid="'+escHtml(c.vapi_call_id)+'" data-label="Clinical case"'):'"';
-          html+='<div class="ranu-row'+clickable+'><span class="sev-badge" style="background:'+sevc+'">'+escHtml((c.severity||"?").toUpperCase())+'</span><span class="ranu-cc"><b>'+escHtml(cc)+'</b>'+(contras?' \u00b7 '+escHtml(contras):'')+'</span><span class="ranu-meta">'+escHtml(when)+(phone?' \u00b7 '+phone:'')+(c.vapi_call_id?' \u00b7 read \u2192':'')+'</span></div>';
-        });}
+        html+='</div>';
+        var critN=0,urgN=0;reviewCases.forEach(function(c){var s2=(c.severity||"").toLowerCase();if(s2==="critical")critN++;else if(s2==="urgent")urgN++;});
+        var flagN=reviewCases.length-critN-urgN;
+        var bits=[];if(critN)bits.push(critN+' critical');if(urgN)bits.push(urgN+' urgent');if(flagN)bits.push(flagN+' flagged');
+        var openByDefault=(currentPeriod===1||currentPeriod===7);
+        html+='<div class="panel"><div class="panel-title">Awaiting clinical review</div>';
+        html+='<div class="review-hero"><span class="review-count">'+reviewCases.length+'</span><span class="review-count-label">'+(reviewCases.length===1?'case':'cases')+' awaiting clinical review</span>'+(bits.length?'<span class="review-breakdown">'+bits.join(' \u00b7 ')+'</span>':'')+'</div>';
+        if(!reviewCases.length){html+='<div class="empty">Nothing is awaiting clinical review in this window.</div>';}
+        else{
+          html+='<details class="review-detail"'+(openByDefault?' open':'')+'><summary>View the '+reviewCases.length+' '+(reviewCases.length===1?'case':'cases')+'</summary><div class="review-list">';
+          reviewCases.forEach(function(c){
+            var sev=(c.severity||"").toLowerCase();
+            var sevc=sev==="critical"?"var(--critical)":(sev==="urgent"?"var(--urgent)":"var(--text-muted)");
+            var so=getSO(c);var cc=so.chief_complaint||so.complaint||(c.triage_tag?String(c.triage_tag).replace(/_/g," "):"\u2014");
+            var contras=getContras(c).map(function(k){return CONTRA_LABELS[k]||k;}).join(", ");
+            var when=c.created_at?new Date(c.created_at).toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"";
+            var phone=c.patient_phone?escHtml(String(c.patient_phone)):"";
+            var clickable=c.vapi_call_id?(' call-item" data-callid="'+escHtml(c.vapi_call_id)+'" data-label="Clinical case"'):'"';
+            html+='<div class="review-row'+clickable+'><span class="sev-badge" style="background:'+sevc+'">'+escHtml((c.severity||"?").toUpperCase())+'</span><span class="review-cc"><b>'+escHtml(cc)+'</b>'+(contras?' \u00b7 '+escHtml(contras):'')+'</span><span class="review-meta">'+escHtml(when)+(phone?' \u00b7 '+phone:'')+(c.vapi_call_id?' \u00b7 read \u2192':'')+'</span></div>';
+          });
+          html+='</div></details>';
+        }
         html+='</div>';
       })();
       // MEANING, not bars: big number + what it is + what to do.
@@ -511,7 +528,7 @@
       (function(){
         var tc={},tn=0;
         calls.forEach(function(c){var t=c.topic;if(!t||t==="unknown")return;tc[t]=(tc[t]||0)+1;tn++;});
-        var TL={booking:"New booking",existing_appointment:"Existing appt \u2014 reschedule / cancel / lookup",hours_location:"Hours & location",billing_insurance:"Billing & insurance",clinical:"Clinical concern",message_callback:"Message / callback",language_callback:"Language callback",records:"Records",other:"Other"};
+        var TL={booking:"New booking",existing_appointment:"Existing appt \u2014 reschedule / cancel / lookup",hours_location:"Hours & location",billing_insurance:"Billing & insurance",clinical:"Clinical concern",message_callback:"Message / callback",language_callback:"Language callback",records:"Records",services_treatments:"Services & treatments",new_patient:"New patient",prescription_medication:"Prescription / medication",general_question:"General question",other:"Other"};
         var tk=Object.keys(tc).sort(function(a,b){return tc[b]-tc[a];});
         html+='<div class="panel"><div class="panel-title">What callers wanted \u2014 '+tn+' calls with a clear topic ('+(calls.length-tn)+' too short to tell)</div>';
         if(!tk.length)html+='<div class="empty">No topics in this window.</div>';
