@@ -9,6 +9,7 @@
   <!-- METRICS_CLARITY_2026_06_07 : ONE headline + funnel sentence (no dual %), Q1 inferred funnel retired (captured buckets are the page-wide definition), daily trend re-keyed to buckets, review-queue list, custom date range, test-exclusion count surfaced -->
   <!-- UNIFIED_LINEAGE_2026_06_08 : audited + extended in the main thread (engaged-denominator bars, rate-vs-target trend, topics panel); supersedes the 23:50 2026-06-07 build -->
   <!-- METRICS_REHAUL_2026_06_08 : 10,000ft redesign - hero highlight reel, deterministic WoW red-flag chips + alert banner, visual funnel, stacked gestalt + meaning rows (replaces bar list, jargon card, and dead queue list), collapsible Q1-Q3, Q1 glance cards restored on bucket math -->
+  <!-- BOOKING_FUNNEL_2026_06_08 : Q3 panel for Sam-originated booking links (rows review_status="booking_requested"); requested->booked->revenue. Pairs with the general-sam-tools booking-row hook (linkType="booking"). -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root{
@@ -232,7 +233,7 @@
 
     async function runQueries(range){
       var ctq=sb.from("call_transcripts").select("id,vapi_call_id,ended_reason,duration_seconds,intake_source,created_at,outcome_bucket,topic,capability_gap_detail,needs_review");
-      var tcq=sb.from("triage_cases").select("id,created_at,severity,triage_tag,intake_source,source,extraction_source,duration_seconds,ended_reason,structured_output,triage_completed_at,reviewed_at,final_disposition,appointment_booked,subsequent_appointment_booked,revenue_generated,nps_score,nps_submitted_at,sam_satisfaction_score,sam_nps_score,timely_response,contradictions,patient_language,vapi_call_id,patient_phone");
+      var tcq=sb.from("triage_cases").select("id,created_at,severity,triage_tag,intake_source,source,extraction_source,duration_seconds,ended_reason,structured_output,triage_completed_at,reviewed_at,final_disposition,appointment_booked,subsequent_appointment_booked,revenue_generated,nps_score,nps_submitted_at,sam_satisfaction_score,sam_nps_score,timely_response,contradictions,patient_language,vapi_call_id,patient_phone,review_status");
       var smsq=sb.from("sms_log").select("case_id,direction,sender_email,sender_name,sent_at,created_at");
       if(range.since){ctq=ctq.gte("created_at",range.since);tcq=tcq.gte("created_at",range.since);smsq=smsq.gte("sent_at",range.since);}
       if(range.until){ctq=ctq.lt("created_at",range.until);tcq=tcq.lt("created_at",range.until);smsq=smsq.lt("sent_at",range.until);}
@@ -597,6 +598,31 @@
         card("Revenue recorded",revTotal>0?("$"+revTotal.toLocaleString()):"—",revRows.length?("n="+revRows.length+" cases"):"none entered yet")+
         '</div>';
       html+='<div class="note-line">"Booked" counts confirmed front-desk bookings plus any case with recorded revenue. New-vs-existing patient is now captured by the office-dashboard buttons too \u2014 a new/returning split can surface here once a few dispositions accumulate.</div>';
+
+      // BOOKING_FUNNEL_2026_06_08 : Sam-originated booking requests — rows
+      // tagged review_status="booking_requested" by general-sam-tools when Sam
+      // sends a booking link. requested -> booked -> revenue. Distinct from
+      // clinical pending_intake and from message-take appointment_requests.
+      // Shows empty until the booking-row hook ships; harmless when zero.
+      (function(){
+        var bookingReqs=allCases.filter(function(c){return c.review_status==="booking_requested";});
+        var bReq=bookingReqs.length;
+        var bBooked=bookingReqs.filter(function(c){return c.final_disposition==="booked"||c.appointment_booked===true||(typeof c.revenue_generated==="number"&&c.revenue_generated>0);}).length;
+        var bRev=bookingReqs.filter(function(c){return typeof c.revenue_generated==="number"&&c.revenue_generated>0;}).reduce(function(s,c){return s+c.revenue_generated;},0);
+        html+='<div class="panel"><div class="panel-title">Booking links Sam sent — did they convert? (requested → booked → revenue)</div>';
+        if(!bReq)html+='<div class="empty">No booking requests captured yet — these appear once Sam saves a row when she sends a booking link.</div>';
+        else{
+          html+='<div class="funnel">'+
+            '<div class="fblock"><div class="fnum">'+bReq+'</div><div class="flabel">booking links sent</div></div>'+
+            '<div class="farrow">→</div>'+
+            '<div class="fblock" style="border-color:rgba(0,200,122,0.5)"><div class="fnum" style="color:var(--routine)">'+bBooked+'</div><div class="flabel">booked — '+pct(bBooked,bReq)+'%</div></div>'+
+            '<div class="farrow">→</div>'+
+            '<div class="fblock"><div class="fnum">'+(bRev>0?("$"+bRev.toLocaleString()):"—")+'</div><div class="flabel">revenue recorded</div></div>'+
+            '</div>';
+          html+='<div class="note-line">Booking requests Sam created by sending a booking link, and how many the front desk then marked booked (by disposition or revenue). A subset of the "Booked" card above, scoped to Sam-originated booking links. Booked % is of booking links sent.</div>';
+        }
+        html+='</div>';
+      })();
 
       // Disposition breakdown
       var dispo={};allCases.forEach(function(c){if(c.final_disposition){dispo[c.final_disposition]=(dispo[c.final_disposition]||0)+1;}});
