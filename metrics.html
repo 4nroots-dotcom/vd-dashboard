@@ -335,7 +335,7 @@
     function isAuthErr(e){if(!e)return false;var m=((e.message||"")+" "+(e.code||"")).toLowerCase();return m.indexOf("jwt")!==-1||m.indexOf("token")!==-1||m.indexOf("expired")!==-1||m.indexOf("not authenticated")!==-1;}
 
     async function runQueries(range){
-      var ctq=sb.from("call_transcripts").select("id,vapi_call_id,ended_reason,duration_seconds,intake_source,created_at,outcome_bucket,topic,capability_gap_detail,needs_review");
+      var ctq=sb.from("call_transcripts").select("id,vapi_call_id,ended_reason,duration_seconds,intake_source,created_at,outcome_bucket,topic,capability_gap_detail,needs_review,failure_reason");
       var tcq=sb.from("triage_cases").select("id,created_at,severity,triage_tag,intake_source,source,extraction_source,duration_seconds,ended_reason,structured_output,triage_completed_at,reviewed_at,final_disposition,appointment_booked,subsequent_appointment_booked,revenue_generated,nps_score,nps_submitted_at,sam_satisfaction_score,sam_nps_score,timely_response,contradictions,patient_language,vapi_call_id,patient_phone,review_status");
       var smsq=sb.from("sms_log").select("case_id,direction,sender_email,sender_name,sent_at,created_at");
       if(range.since){ctq=ctq.gte("created_at",range.since);tcq=tcq.gte("created_at",range.since);smsq=smsq.gte("sent_at",range.since);}
@@ -391,7 +391,7 @@
       var obCounts={};calls.forEach(function(c){var b=ob(c);obCounts[b]=(obCounts[b]||0)+1;});
       var obHandled=(obCounts.completed||0)+(obCounts.clinical_pivot||0);
       var obNoise=0,obDropOther=0;
-      calls.forEach(function(c){if(ob(c)!=="dropped")return;var d=Number(c.duration_seconds)||0;var r=(c.ended_reason||"").toLowerCase();if(r.indexOf("customer-ended")!==-1&&d<15)obNoise++;else obDropOther++;});
+      calls.forEach(function(c){if(ob(c)!=="dropped")return;var d=Number(c.duration_seconds)||0;var r=(c.ended_reason||"").toLowerCase();var dead=(c.failure_reason==="dead_air_or_wrong_number")||(r.indexOf("customer-ended")!==-1&&d<15);if(dead)obNoise++;else obDropOther++;});
       var obSysErr=obCounts.system_error||0;
       var obEngaged=calls.length-obNoise-obSysErr;
       var obRateB=pct(obHandled,obEngaged);
@@ -403,7 +403,7 @@
       calls.forEach(function(c){var b=ob(c);
         if(b==="patient_chose_human")obLists.pch.push(c);
         else if(b==="capability_gap")obLists.gap.push(c);
-        else if(b==="dropped"){var d=Number(c.duration_seconds)||0;var r=(c.ended_reason||"").toLowerCase();if(r.indexOf("customer-ended")!==-1&&d<15)return;if(REAL_INTENT[c.topic])obLists.dropReal.push(c);else obLists.dropDead.push(c);}
+        else if(b==="dropped"){var d=Number(c.duration_seconds)||0;var r=(c.ended_reason||"").toLowerCase();var dead=(c.failure_reason==="dead_air_or_wrong_number")||(r.indexOf("customer-ended")!==-1&&d<15);if(dead)return;if(REAL_INTENT[c.topic])obLists.dropReal.push(c);else obLists.dropDead.push(c);}
         else if(b==="unclassified"&&c.topic==="clinical")obLists.pendClin.push(c);
       });
       var cpFwd=obLists.pch.filter(function(c){return (c.ended_reason||"").toLowerCase().indexOf("forwarded")!==-1;}).length;
@@ -443,7 +443,7 @@
       html+='<div class="funnel">'+
         '<div class="fblock"><div class="fnum">'+calls.length+'</div><div class="flabel">calls in</div></div>'+
         '<div class="farrow">\u2192</div>'+
-        '<div class="fblock"><div class="fnum">\u2212'+(obNoise+obSysErr)+'</div><div class="flabel">noise \u2014 '+obNoise+' '+(obNoise===1?'hangup':'hangups')+' &lt;15s \u00B7 '+obSysErr+' '+(obSysErr===1?'error':'errors')+'</div></div>'+
+        '<div class="fblock"><div class="fnum">\u2212'+(obNoise+obSysErr)+'</div><div class="flabel">noise \u2014 '+obNoise+' '+(obNoise===1?'hangup':'hangups')+' / dead air \u00B7 '+obSysErr+' '+(obSysErr===1?'error':'errors')+'</div></div>'+
         '<div class="farrow">\u2192</div>'+
         '<div class="fblock"><div class="fnum">'+obEngaged+'</div><div class="flabel">engaged \u2014 real conversations</div></div>'+
         '<div class="farrow">\u2192</div>'+
