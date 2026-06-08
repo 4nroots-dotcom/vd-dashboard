@@ -232,7 +232,7 @@
 
     async function runQueries(range){
       var ctq=sb.from("call_transcripts").select("id,vapi_call_id,ended_reason,duration_seconds,intake_source,created_at,outcome_bucket,topic,capability_gap_detail,needs_review");
-      var tcq=sb.from("triage_cases").select("id,created_at,severity,triage_tag,intake_source,source,extraction_source,duration_seconds,ended_reason,structured_output,triage_completed_at,reviewed_at,final_disposition,appointment_booked,subsequent_appointment_booked,revenue_generated,nps_score,nps_submitted_at,sam_satisfaction_score,timely_response,contradictions,patient_language,vapi_call_id,patient_phone");
+      var tcq=sb.from("triage_cases").select("id,created_at,severity,triage_tag,intake_source,source,extraction_source,duration_seconds,ended_reason,structured_output,triage_completed_at,reviewed_at,final_disposition,appointment_booked,subsequent_appointment_booked,revenue_generated,nps_score,nps_submitted_at,sam_satisfaction_score,sam_nps_score,timely_response,contradictions,patient_language,vapi_call_id,patient_phone");
       var smsq=sb.from("sms_log").select("case_id,direction,sender_email,sender_name,sent_at,created_at");
       if(range.since){ctq=ctq.gte("created_at",range.since);tcq=tcq.gte("created_at",range.since);smsq=smsq.gte("sent_at",range.since);}
       if(range.until){ctq=ctq.lt("created_at",range.until);tcq=tcq.lt("created_at",range.until);smsq=smsq.lt("sent_at",range.until);}
@@ -607,27 +607,37 @@
       else dispoEntries.forEach(function(e){html+=bar(e[0].replace(/_/g," "),e[1],dispoTotal,"var(--cyan)");});
       html+='</div>';
 
-      // Patient survey — rehauled schema (nps_score 0-10, sam_satisfaction 1-5,
-      // timely_response yes/somewhat/no). Empty until responses arrive; the
-      // pipeline was silently failing under RLS until recently fixed.
-      var samRows=allCases.filter(function(c){return Number.isInteger(c.sam_satisfaction_score);});
-      var samAvg=samRows.length?(samRows.reduce(function(s,c){return s+c.sam_satisfaction_score;},0)/samRows.length).toFixed(1):null;
+      // TWO surveys, kept distinct:
+      //  (1) Sam-call survey  — one question, "How was your experience with Sam?"
+      //      -> sam_nps_score (0-10), the kind='sam' post-call touchpoint.
+      //  (2) Post-visit survey — "How was your visit?" -> nps_score (0-10),
+      //      practice NPS, plus optional sam_satisfaction_score (1-5) + timely.
+      function npsOf(rows,field){var r=rows.filter(function(c){return Number.isInteger(c[field]);});
+        if(!r.length)return {n:0,nps:null};
+        var p=r.filter(function(c){return c[field]>=9;}).length,d=r.filter(function(c){return c[field]<=6;}).length;
+        return {n:r.length,nps:Math.round(p/r.length*100-d/r.length*100)};}
+      var samCall=npsOf(allCases,"sam_nps_score");
+      var postVisit=npsOf(allCases,"nps_score");
+      var samSatRows=allCases.filter(function(c){return Number.isInteger(c.sam_satisfaction_score);});
+      var samSatAvg=samSatRows.length?(samSatRows.reduce(function(s,c){return s+c.sam_satisfaction_score;},0)/samSatRows.length).toFixed(1):null;
       var tRows=allCases.filter(function(c){return c.timely_response;});
       var tYes=tRows.filter(function(c){return c.timely_response==="yes";}).length;
-      var tSw=tRows.filter(function(c){return c.timely_response==="somewhat";}).length;
-      var tNo=tRows.filter(function(c){return c.timely_response==="no";}).length;
-      html+='<div class="panel"><div class="panel-title">Patient survey ('+npsRows.length+' response'+(npsRows.length===1?"":"s")+')</div>';
-      if(!npsRows.length)html+='<div class="empty">No survey responses yet \u2014 the survey write path was recently fixed; responses will populate here as patients reply.</div>';
+
+      html+='<div class="panel"><div class="panel-title">Sam-call survey \u2014 \u201CHow was your experience with Sam?\u201D ('+samCall.n+' response'+(samCall.n===1?"":"s")+')</div>';
+      if(!samCall.n)html+='<div class="empty">No responses yet \u2014 sent by text right after a Sam call (0\u201310 scale). Populates here as patients reply.</div>';
+      else html+='<div class="cards">'+card("Sam-call NPS",(samCall.nps>0?"+":"")+samCall.nps,"n="+samCall.n+(samCall.n<5?" \u00B7 small sample":""))+'</div>';
+      html+='<div class="note-line">The one-question survey about the Sam interaction itself \u2014 separate from the post-visit survey below.</div></div>';
+
+      html+='<div class="panel"><div class="panel-title">Post-visit survey \u2014 practice NPS ('+postVisit.n+' response'+(postVisit.n===1?"":"s")+')</div>';
+      if(!postVisit.n)html+='<div class="empty">No responses yet \u2014 sent after the patient is seen in office (\u201CHow was your visit?\u201D, 0\u201310 scale).</div>';
       else{
         html+='<div class="cards">'+
-          card("NPS",nps!=null?(nps>0?"+"+nps:String(nps)):"\u2014","n="+npsRows.length+(npsRows.length<5?" \u00B7 small sample":""))+
-          card("Sam satisfaction",samAvg!=null?(samAvg+" / 5"):"\u2014",samRows.length?("n="+samRows.length):"no data")+
+          card("Practice NPS",(postVisit.nps>0?"+":"")+postVisit.nps,"n="+postVisit.n+(postVisit.n<5?" \u00B7 small sample":""))+
+          card("Sam helpfulness",samSatAvg!=null?(samSatAvg+" / 5"):"\u2014",samSatRows.length?("n="+samSatRows.length):"no data")+
           card("Felt response timely",tRows.length?(pct(tYes,tRows.length)+"% yes"):"\u2014",tRows.length?("n="+tRows.length):"no data")+
           '</div>';
-        if(tRows.length)html+=bar("Yes",tYes,tRows.length,"var(--routine)")+bar("Somewhat",tSw,tRows.length,"var(--urgent)")+bar("No",tNo,tRows.length,"var(--critical)");
       }
-      html+='<div class="note-line">Practice NPS for the Sam-served cohort. There is no pre-Sam baseline, so report this as the cohort\u2019s NPS \u2014 not as an NPS lift Sam caused.</div>';
-      html+='</div>';
+      html+='<div class="note-line">Practice NPS for the Sam-served cohort. No pre-Sam baseline exists, so report this as the cohort\u2019s NPS \u2014 not as a lift Sam caused.</div></div>';
 
       // Red-flag frequency across clinical cases (from structured_output)
       var f={Fever:0,Swelling:0,Trauma:0,"Airway concern":0,Bleeding:0,"Nocturnal pain":0,"Cold lingers":0,Immunocompromised:0};
@@ -655,17 +665,15 @@
       gateRows.forEach(function(c){var so=getSO(c);var lk=String(so.sam_severity||"").toLowerCase();var fk=String(c.severity||"").toLowerCase();var l=sevOrder[lk]||9,fi=sevOrder[fk]||9;
         if(fi<l){gEsc++;var k="model "+lk+" \u2192 gate "+fk;gEscDetail[k]=(gEscDetail[k]||0)+1;}
         else if(fi>l)gDe++; else gAgree++;});
-      html+='<div class="panel"><div class="panel-title">Deterministic safety gate vs model ('+gateRows.length+' cases carry both a model and a gate severity)</div>';
-      if(!gateRows.length)html+='<div class="empty">No cases carry both a model and a gate severity in this window.</div>';
+      html+='<div class="panel"><div class="panel-title">Safety net \u2014 rule-based gate vs the model</div>';
+      if(!gateRows.length)html+='<div class="empty">No cases yet where both the model and the rule-based gate assigned a severity.</div>';
       else{
-        html+='<div class="cards">'+
-          card("Gate caught under-triage",gEsc+' <small>'+pct(gEsc,gateRows.length)+'%</small>',"rule-based gate raised severity above the model")+
-          card("Gate agreed with model",gAgree+' <small>'+pct(gAgree,gateRows.length)+'%</small>',gDe?(gDe+" softened down"):"")+
-          '</div>';
-        var gk=Object.keys(gEscDetail).sort(function(a,b){return gEscDetail[b]-gEscDetail[a];});
-        gk.forEach(function(k){html+=bar(k,gEscDetail[k],gEsc||1,"var(--critical)");});
+        html+='<div class="why-row"><div class="why-num" style="color:var(--critical)">'+gEsc+'</div><div class="why-body"><b>raised the severity above the model</b><div class="why-sub">The gate caught a possible under-triage \u2014 exactly what the safety layer exists to do. The immunocompromised URGENT\u2192CRITICAL case is the textbook example.</div></div></div>';
+        html+='<div class="why-row"><div class="why-num">'+gAgree+'</div><div class="why-body"><b>agreed with the model</b><div class="why-sub">The model and the rule-based gate reached the same severity.</div></div></div>';
+        if(gDe)html+='<div class="why-row"><div class="why-num">'+gDe+'</div><div class="why-body"><b>lowered the severity</b><div class="why-sub">The gate set a less urgent level than the model proposed.</div></div></div>';
+        html+='<div class="note-line">Of '+gateRows.length+' cases where both ran, this is how often the deterministic gate \u2014 which sits above the model by design \u2014 changed the call. Raising severity is the safety-relevant direction, and the core regulatory evidence.</div>';
       }
-      html+='<div class="note-line">Where the rule-based gate overrides the model to a higher severity, it caught a potential under-triage \u2014 the deterministic-safety layer doing exactly what it exists for (the immunocompromised URGENT\u2192CRITICAL case is the canonical example). It sits above the model by design, and this is the core regulatory evidence.</div></div>';
+      html+='</div>';
 
       html+='<div class="panel"><div class="panel-title">Unit economics — cost to run vs. value created</div><div class="empty">Pending real vendor rates. Cost-per-call and cost-per-case compute here from call duration and message counts once actual Vapi / OpenAI / ElevenLabs / Azure / Twilio usage is read for the window, calibrated monthly against invoices. No placeholder figures until the rates are real.</div></div>';
 
