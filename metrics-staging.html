@@ -6,6 +6,8 @@
   <title>VirtualDentist.ai — Operational Metrics</title>
   <!-- REFACTOR_MARKER_2026_05_28_METRICS_V3_LANES -->
   <!-- SAM_USAGE_TILE_2026_06_07 : goal headline + captured-outcome breakdown (reads call_transcripts.outcome_bucket et al., written by general-sam-tools v1.6.6+) -->
+  <!-- METRICS_CLARITY_2026_06_07 : ONE headline + funnel sentence (no dual %), Q1 inferred funnel retired (captured buckets are the page-wide definition), daily trend re-keyed to buckets, review-queue list, custom date range, test-exclusion count surfaced -->
+  <!-- UNIFIED_LINEAGE_2026_06_08 : audited + extended in the main thread (engaged-denominator bars, rate-vs-target trend, topics panel); supersedes the 23:50 2026-06-07 build -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root{
@@ -77,7 +79,19 @@
     .flag b{font-weight:600;}
     .empty{font-size:13px;color:var(--text-faint);font-style:italic;padding:4px 0;}
     .note-line{font-size:11px;color:var(--text-faint);margin:-2px 0 14px;}
+    .rate-trend{position:relative;display:flex;gap:4px;height:120px;margin:8px 0 2px;}
+    .rate-band{position:absolute;left:0;right:0;bottom:80%;height:10%;background:rgba(0,200,122,0.10);border-top:1px dashed rgba(0,200,122,0.45);border-bottom:1px dashed rgba(0,200,122,0.45);pointer-events:none;}
+    .rate-bar{flex:1;width:72%;max-width:26px;margin:0 auto;display:flex;align-items:flex-end;background:rgba(255,255,255,0.05);border-radius:3px 3px 0 0;overflow:hidden;}
+    .rate-bar span{display:block;width:100%;background:var(--routine);}
     .loading{padding:60px 0;text-align:center;color:var(--text-muted);}
+    .bar-name{width:230px;}
+    .date-input{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:12px;padding:6px 8px;color-scheme:dark;}
+    .date-sep{font-size:11px;color:var(--text-faint);}
+    .queue-row{display:flex;gap:10px;font-size:11px;color:var(--text-muted);padding:5px 0;border-top:1px solid var(--border);flex-wrap:wrap;}
+    .queue-row:first-of-type{border-top:none;}
+    .queue-row b{color:var(--text-secondary);font-weight:600;}
+    .queue-id{font-family:ui-monospace,Menlo,monospace;color:var(--text-faint);}
+    @media(max-width:600px){.bar-name{width:118px;font-size:12px;}}
   </style>
 </head>
 <body>
@@ -108,6 +122,9 @@
         <button class="chip" id="chip-7" type="button">7 days</button>
         <button class="chip" id="chip-30" type="button">30 days</button>
         <button class="chip active" id="chip-0" type="button">All time</button>
+        <input class="date-input" id="from-date" type="date" title="From" />
+        <span class="date-sep">to</span>
+        <input class="date-input" id="to-date" type="date" title="To" />
       </div>
       <div class="toolbar-right">
         <span id="last-updated"></span>
@@ -138,12 +155,14 @@
 
     if(!window.supabase||!window.supabase.createClient){document.getElementById("auth-error").style.display="block";document.getElementById("auth-error").textContent="Supabase library failed to load.";throw new Error("supabase missing");}
     var sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-    var currentPeriod=0;
+    var currentPeriod=0; // 1/7/30 days, 0 = all time, -1 = custom from/to range
 
     document.getElementById("auth-btn").addEventListener("click",handleLogin);
     document.getElementById("signout-btn").addEventListener("click",function(){sb.auth.signOut().finally(function(){location.reload();});});
     document.getElementById("refresh-btn").addEventListener("click",loadMetrics);
     [1,7,30,0].forEach(function(d){document.getElementById("chip-"+d).addEventListener("click",function(){setPeriod(d);});});
+    document.getElementById("from-date").addEventListener("change",setCustomRange);
+    document.getElementById("to-date").addEventListener("change",setCustomRange);
     document.getElementById("auth-password").addEventListener("keydown",function(e){if(e.key==="Enter")handleLogin();});
 
     async function handleLogin(){
@@ -157,35 +176,50 @@
     }
     async function init(){try{var r=await sb.auth.getSession();if(r.data&&r.data.session&&r.data.session.user)showApp(r.data.session.user);}catch(e){console.error(e);}}
     function showApp(user){document.getElementById("auth-screen").style.display="none";document.getElementById("app").style.display="flex";document.getElementById("header-user").textContent=REVIEWER_NAMES[user.email]||user.email||"";loadMetrics();}
-    function setPeriod(d){currentPeriod=d;[1,7,30,0].forEach(function(x){document.getElementById("chip-"+x).classList.toggle("active",x===d);});loadMetrics();}
-    function sinceISO(){if(currentPeriod===0)return null;var s=new Date();if(currentPeriod===1)s.setHours(0,0,0,0);else s.setDate(s.getDate()-currentPeriod);return s.toISOString();}
+    function setPeriod(d){currentPeriod=d;document.getElementById("from-date").value="";document.getElementById("to-date").value="";[1,7,30,0].forEach(function(x){document.getElementById("chip-"+x).classList.toggle("active",x===d);});loadMetrics();}
+    function setCustomRange(){var f=document.getElementById("from-date").value,t=document.getElementById("to-date").value;if(!f&&!t)return;currentPeriod=-1;[1,7,30,0].forEach(function(x){document.getElementById("chip-"+x).classList.remove("active");});loadMetrics();}
+    // {since,until} ISO bounds. Custom range wins; "until" is the START of the
+    // day AFTER the To-date (exclusive .lt) so the chosen To-day is included.
+    function rangeISO(){
+      if(currentPeriod===-1){
+        var f=document.getElementById("from-date").value,t=document.getElementById("to-date").value;
+        var since=f?new Date(f+"T00:00:00").toISOString():null;
+        var until=null;if(t){var u=new Date(t+"T00:00:00");u.setDate(u.getDate()+1);until=u.toISOString();}
+        return {since:since,until:until};
+      }
+      if(currentPeriod===0)return {since:null,until:null};
+      var s=new Date();if(currentPeriod===1)s.setHours(0,0,0,0);else s.setDate(s.getDate()-currentPeriod);
+      return {since:s.toISOString(),until:null};
+    }
 
     function isAuthErr(e){if(!e)return false;var m=((e.message||"")+" "+(e.code||"")).toLowerCase();return m.indexOf("jwt")!==-1||m.indexOf("token")!==-1||m.indexOf("expired")!==-1||m.indexOf("not authenticated")!==-1;}
 
-    async function runQueries(since){
+    async function runQueries(range){
       var ctq=sb.from("call_transcripts").select("id,vapi_call_id,ended_reason,duration_seconds,intake_source,created_at,outcome_bucket,topic,capability_gap_detail,needs_review");
       var tcq=sb.from("triage_cases").select("id,created_at,severity,triage_tag,intake_source,source,extraction_source,duration_seconds,ended_reason,structured_output,triage_completed_at,reviewed_at,final_disposition,appointment_booked,subsequent_appointment_booked,revenue_generated,nps_score,nps_submitted_at,sam_satisfaction_score,timely_response,contradictions,patient_language,vapi_call_id,patient_phone");
       var smsq=sb.from("sms_log").select("case_id,direction,sender_email,sender_name,sent_at,created_at");
-      if(since){ctq=ctq.gte("created_at",since);tcq=tcq.gte("created_at",since);smsq=smsq.gte("sent_at",since);}
+      if(range.since){ctq=ctq.gte("created_at",range.since);tcq=tcq.gte("created_at",range.since);smsq=smsq.gte("sent_at",range.since);}
+      if(range.until){ctq=ctq.lt("created_at",range.until);tcq=tcq.lt("created_at",range.until);smsq=smsq.lt("sent_at",range.until);}
       return Promise.all([ctq,tcq,smsq]);
     }
 
     async function loadMetrics(){
       var main=document.getElementById("main");var rb=document.getElementById("refresh-btn");rb.disabled=true;
-      var since=sinceISO();
+      var range=rangeISO();
       try{
-        var res=await runQueries(since);
+        var res=await runQueries(range);
         // Auth refresh-retry: if a query failed on an expired token, refresh once and retry.
         if([res[0].error,res[1].error,res[2].error].some(isAuthErr)){
           try{await sb.auth.refreshSession();}catch(e){}
-          res=await runQueries(since);
+          res=await runQueries(range);
         }
         var errs=[res[0].error,res[1].error,res[2].error].filter(Boolean);
         if(errs.length){main.innerHTML='<div class="panel"><div class="panel-title">Could not load some data</div><div class="empty">'+errs.map(function(e){return escHtml(e.message);}).join("<br>")+'</div><div class="note-line">If this mentions permission/RLS on a table, it needs an authenticated SELECT policy + grant. If it mentions JWT/token, sign out and back in.</div></div>';return;}
-        var calls=(res[0].data||[]).filter(function(c){return !isTest(c.intake_source);});
+        var rawCalls=(res[0].data||[]);
+        var calls=rawCalls.filter(function(c){return !isTest(c.intake_source);});
         var cases=(res[1].data||[]).filter(function(c){return !isTest(c.intake_source);});
         var sms=res[2].data||[];
-        render(calls,cases,sms);
+        render(calls,cases,sms,rawCalls.length-calls.length);
         document.getElementById("last-updated").textContent="Updated "+new Date().toLocaleTimeString("en-CA",{hour:"2-digit",minute:"2-digit"});
       }catch(e){main.innerHTML='<div class="panel"><div class="empty">Unexpected error: '+escHtml((e&&e.message)||"unknown")+'</div></div>';}
       finally{rb.disabled=false;}
@@ -198,97 +232,143 @@
     function sevBars(arr,color){var sev={critical:0,urgent:0,routine:0};arr.forEach(function(c){var s=(c.severity||"").toLowerCase();if(sev[s]!=null)sev[s]++;});var t=arr.length;return bar("Critical",sev.critical,t,"var(--critical)")+bar("Urgent",sev.urgent,t,"var(--urgent)")+bar("Routine",sev.routine,t,"var(--routine)");}
     function sevBarsU(arr){var sev={critical:0,urgent:0,routine:0,unset:0};arr.forEach(function(c){var s=(c.severity||"").toLowerCase();if(s==="critical"||s==="urgent"||s==="routine")sev[s]++;else sev.unset++;});var t=arr.length;return bar("Critical",sev.critical,t,"var(--critical)")+bar("Urgent",sev.urgent,t,"var(--urgent)")+bar("Routine",sev.routine,t,"var(--routine)")+bar("Untriaged",sev.unset,t,"var(--text-faint)");}
 
-    function render(calls,cases,sms){
+    function render(calls,cases,sms,testCallCount){
       var general=cases.filter(function(c){return laneOf(c)==="general";});
       var emergency=cases.filter(function(c){return laneOf(c)==="emergency";});
       var formOnly=cases.filter(function(c){return laneOf(c)==="form_only";});
       var html="";
-      var windowLabel=currentPeriod===0?"all time":currentPeriod===1?"today":("last "+currentPeriod+" days");
-      html+='<div class="note-line" style="margin:2px 0 6px;">Showing <b>'+windowLabel+'</b> \u00B7 '+calls.length+' inbound calls \u00B7 '+cases.length+' documented cases</div>';
+      var windowLabel;
+      if(currentPeriod===-1){var wf=document.getElementById("from-date").value,wt=document.getElementById("to-date").value;windowLabel=(wf?wf:"start")+" \u2192 "+(wt?wt:"now");}
+      else windowLabel=currentPeriod===0?"all time":currentPeriod===1?"today":("last "+currentPeriod+" days");
+      html+='<div class="note-line" style="margin:2px 0 6px;">Showing <b>'+windowLabel+'</b> \u00B7 '+calls.length+' inbound calls \u00B7 '+cases.length+' documented cases \u00B7 '+(testCallCount||0)+' test calls excluded (page filters tagged test rows \u2014 raw SQL reads higher)</div>';
 
-      /* ===== GOAL — SAM-USAGE RATE (SAM_USAGE_TILE_2026_06_07) ===== */
+      /* ===== GOAL — SAM-USAGE RATE (SAM_USAGE_TILE_2026_06_07 / METRICS_CLARITY_2026_06_07) ===== */
       // Reads CAPTURED outcomes (call_transcripts.outcome_bucket, written at
       // end-of-call by general-sam-tools v1.6.6+; history via the 2026-06-07
-      // backfill). Headline = ENGAGED calls: sub-15s greeting hangups and
-      // system errors are excluded from the denominator because the 80-90%
-      // target is only coherent against callers Sam could actually serve.
+      // backfill). ONE headline: the engaged rate. The all-calls figure lives
+      // in the funnel sentence as plain text — two competing percentages
+      // confused more than they clarified. These buckets are the page-wide
+      // definition: the daily trend and Q1 reuse them (no second, inferred
+      // definition anywhere on the page).
+      function ob(c){return c.outcome_bucket||"unclassified";}
+      var obCounts={};calls.forEach(function(c){var b=ob(c);obCounts[b]=(obCounts[b]||0)+1;});
+      var obHandled=(obCounts.completed||0)+(obCounts.clinical_pivot||0);
+      var obNoise=0,obDropOther=0;
+      calls.forEach(function(c){if(ob(c)!=="dropped")return;var d=Number(c.duration_seconds)||0;var r=(c.ended_reason||"").toLowerCase();if(r.indexOf("customer-ended")!==-1&&d<15)obNoise++;else obDropOther++;});
+      var obSysErr=obCounts.system_error||0;
+      var obEngaged=calls.length-obNoise-obSysErr;
+      var obRateB=pct(obHandled,obEngaged),obRateA=pct(obHandled,calls.length);
+      var obQrows=calls.filter(function(c){return c.needs_review===true;}).sort(function(a,b){return new Date(b.created_at)-new Date(a.created_at);});
+      var obReview=obQrows.length;
+      var obGaps={};calls.forEach(function(c){if(ob(c)==="capability_gap"){var k=c.capability_gap_detail||"other";obGaps[k]=(obGaps[k]||0)+1;}});
+      html+=qhead("G","Sam-usage rate \u2014 goal 80\u201390%","One number, one funnel, every call in exactly one bucket below");
+      html+='<div class="cards">'+
+        card("Sam handled",obRateB+'%<small> of '+obEngaged+' engaged</small>',"completed + clinical pivots \u00B7 target 80\u201390%")+
+        card("Awaiting review",String(obReview),"ambiguous calls \u2014 newest listed below")+
+        '</div>';
+      html+='<div class="note-line" style="margin:0 0 12px;">'+calls.length+' calls in \u2212 '+obNoise+' greeting hangups (&lt;15s) \u2212 '+obSysErr+' system errors \u2192 <b>'+obEngaged+' engaged</b> \u2192 <b>'+obHandled+' handled by Sam ('+obRateB+'%)</b>. Counting every call including the noise: '+obRateA+'%.</div>';
+      html+='<div class="panel"><div class="panel-title">Every engaged call, one bucket \u2014 percentages share the headline\u2019s denominator ('+obEngaged+' engaged), so the math reconciles at a glance</div>'+
+        bar("Sam completed it",obCounts.completed||0,obEngaged||1,"var(--routine)")+
+        bar("Clinical \u2192 intake form",obCounts.clinical_pivot||0,obEngaged||1,"var(--cyan)")+
+        bar("Patient chose a human",obCounts.patient_chose_human||0,obEngaged||1,"var(--cyan)")+
+        bar("Capability gap (Dentrix)",obCounts.capability_gap||0,obEngaged||1,"var(--urgent)")+
+        bar("Transfer \u2014 pending review",obCounts.transferred_unsplit||0,obEngaged||1,"var(--text-faint)")+
+        bar("Dropped mid-call",obDropOther,obEngaged||1,"var(--critical)")+
+        bar("Unclassified (review)",obCounts.unclassified||0,obEngaged||1,"var(--text-faint)");
+      html+='<div class="panel-title" style="margin:12px 0 8px;">Excluded from the rate \u2014 '+(obNoise+obSysErr)+' of '+calls.length+' calls were never Sam\u2019s to serve</div>'+
+        bar("Greeting hangup <15s",obNoise,calls.length||1,"var(--text-faint)")+
+        bar("System errors",obSysErr,calls.length||1,"var(--text-faint)");
+      var obGk=Object.keys(obGaps).sort(function(a,b){return obGaps[b]-obGaps[a];});
+      if(obGk.length){html+='<div style="margin-top:10px"><div class="panel-title" style="margin-bottom:8px">Gap detail \u2014 the Dentrix roadmap, share of '+(obCounts.capability_gap||0)+' gap calls</div>';obGk.forEach(function(k){html+=bar(k.replace(/_/g," "),obGaps[k],obCounts.capability_gap||1,"var(--urgent)");});html+='</div>';}
+      html+='<div class="note-line">Headline excludes sub-15s greeting hangups and system errors \u2014 a caller gone in five seconds was never Sam\u2019s to serve. \u201CPatient chose a human\u201D counts against the rate by design: a 13\u201320% share is the population\u2019s AI-comfort floor, already priced into the 80\u201390% target \u2014 not a defect to fix. Unresolved buckets (pending / unclassified) also count against Sam, so the rate is a floor that rises as the review queue clears. The gap bar is the Dentrix-API roadmap and should shrink as integrations land \u2014 improvement intel, not failure.</div></div>';
+
+      // Daily handled-rate vs target \u2014 the % view. The volume trend in Q1
+      // shows the green band growing; this shows the RATE against the 80\u201390%
+      // band regardless of how many calls a day brought.
       (function(){
-        function ob(c){return c.outcome_bucket||"unclassified";}
-        var counts={};calls.forEach(function(c){var b=ob(c);counts[b]=(counts[b]||0)+1;});
-        var handled=(counts.completed||0)+(counts.clinical_pivot||0);
-        var noise=0,droppedOther=0;
-        calls.forEach(function(c){if(ob(c)!=="dropped")return;var d=Number(c.duration_seconds)||0;var r=(c.ended_reason||"").toLowerCase();if(r.indexOf("customer-ended")!==-1&&d<15)noise++;else droppedOther++;});
-        var sysErr=counts.system_error||0;
-        var engaged=calls.length-noise-sysErr;
-        var rateB=pct(handled,engaged),rateA=pct(handled,calls.length);
-        var review=calls.filter(function(c){return c.needs_review===true;}).length;
-        var gaps={};calls.forEach(function(c){if(ob(c)==="capability_gap"){var k=c.capability_gap_detail||"other";gaps[k]=(gaps[k]||0)+1;}});
-        html+=qhead("G","Sam-usage rate — goal 80–90%","Captured at end-of-call (deterministic + keyword, v1.6.6+); ambiguity goes to a review queue, never a forced bucket");
-        html+='<div class="cards">'+
-          card("Sam handled",rateB+'%<small> of '+engaged+' engaged</small>',"completed + clinical pivots · target 80–90%")+
-          card("Strict · all calls",rateA+'%<small> of '+calls.length+'</small>',"includes greeting hangups & errors")+
-          card("Awaiting review",String(review),"ambiguous calls — read the transcript")+
-          '</div>';
-        var T=calls.length||1;
-        html+='<div class="panel"><div class="panel-title">Every call, one bucket — nothing hidden</div>'+
-          bar("Sam completed it",counts.completed||0,T,"var(--routine)")+
-          bar("Clinical → intake form (by design)",counts.clinical_pivot||0,T,"var(--cyan)")+
-          bar("Patient chose a human",counts.patient_chose_human||0,T,"var(--cyan)")+
-          bar("Capability gap — needs Dentrix API",counts.capability_gap||0,T,"var(--urgent)")+
-          bar("Transfer — reason in review",counts.transferred_unsplit||0,T,"var(--text-faint)")+
-          bar("Dropped mid-call",droppedOther,T,"var(--critical)")+
-          bar("Greeting hangups <15s (excluded)",noise,T,"var(--text-faint)")+
-          bar("Unclassified — in review queue",counts.unclassified||0,T,"var(--text-faint)")+
-          bar("System errors",sysErr,T,"var(--critical)");
-        var gk=Object.keys(gaps).sort(function(a,b){return gaps[b]-gaps[a];});
-        if(gk.length){html+='<div style="margin-top:10px"><div class="panel-title" style="margin-bottom:8px">Gap detail — the Dentrix roadmap, ranked by demand</div>';gk.forEach(function(k){html+=bar(k.replace(/_/g," "),gaps[k],counts.capability_gap||1,"var(--urgent)");});html+='</div>';}
-        html+='<div class="note-line">Headline excludes sub-15s greeting hangups and system errors — a caller gone in five seconds was never Sam’s to serve, and the 80–90% target presupposes engagement. Unresolved buckets (review / unclassified) count AGAINST Sam, so the rate is a floor that rises as the queue clears. Capability gaps are deliberately their own bucket: that bar is the Dentrix-API roadmap and should shrink as integrations land — it is improvement intel, not failure.</div></div>';
+        var days={};
+        calls.forEach(function(c){var b=ob(c);if(b==="system_error")return;var dd=Number(c.duration_seconds)||0;var rr=(c.ended_reason||"").toLowerCase();if(b==="dropped"&&rr.indexOf("customer-ended")!==-1&&dd<15)return;var t=new Date(c.created_at);var k=t.getFullYear()+"-"+("0"+(t.getMonth()+1)).slice(-2)+"-"+("0"+t.getDate()).slice(-2);if(!days[k])days[k]={eng:0,han:0};days[k].eng++;if(b==="completed"||b==="clinical_pivot")days[k].han++;});
+        var keys=Object.keys(days).sort();if(keys.length>21)keys=keys.slice(keys.length-21);
+        html+='<div class="panel"><div class="panel-title">Daily handled-rate \u2014 % of engaged calls; the band is the 80\u201390% target</div>';
+        if(!keys.length)html+='<div class="empty">No engaged calls in this window.</div>';
+        else{
+          html+='<div class="rate-trend"><div class="rate-band"></div>';
+          keys.forEach(function(k){var d=days[k];var p=d.eng?Math.round(d.han/d.eng*100):0;
+            html+='<div class="trend-col" title="'+k+': '+d.han+' of '+d.eng+' engaged handled ('+p+'%)"><div class="rate-bar"><span style="height:'+p+'%"></span></div><div class="trend-cases">'+(d.eng?p+"%":"\u2014")+'</div><div class="trend-date">'+k.slice(5)+'</div></div>';});
+          html+='</div><div class="note-line">Low-volume days swing wildly \u2014 read the level and the direction, not single days.</div>';
+        }
+        html+='</div>';
       })();
 
+      // What callers wanted \u2014 topic from call content: the pre-transfer /
+      // pre-hangup intel. Very short calls (greeting hangups, keypad-0
+      // transfers) have nothing to tag, by nature \u2014 they are counted in the
+      // buckets above, just not here.
+      (function(){
+        var tc={},tn=0;
+        calls.forEach(function(c){var t=c.topic;if(!t||t==="unknown")return;tc[t]=(tc[t]||0)+1;tn++;});
+        var TL={booking:"New booking",existing_appointment:"Existing appt \u2014 reschedule / cancel / lookup",hours_location:"Hours & location",billing_insurance:"Billing & insurance",clinical:"Clinical concern",message_callback:"Message / callback",language_callback:"Language callback",records:"Records",other:"Other"};
+        var tk=Object.keys(tc).sort(function(a,b){return tc[b]-tc[a];});
+        html+='<div class="panel"><div class="panel-title">What callers wanted \u2014 '+tn+' calls with a clear topic ('+(calls.length-tn)+' too short to tell)</div>';
+        if(!tk.length)html+='<div class="empty">No topics in this window.</div>';
+        else tk.forEach(function(t){html+=bar(TL[t]||t,tc[t],tn,"var(--cyan)");});
+        html+='</div>';
+      })();
+
+      // Review queue \u2014 newest 10, metadata only (no transcript text on this
+      // page; the in-page transcript reader is the observations build).
+      html+='<div class="panel"><div class="panel-title">Review queue \u2014 newest '+Math.min(10,obReview)+' of '+obReview+'</div>';
+      if(!obReview)html+='<div class="empty">Queue is clear.</div>';
+      else{
+        obQrows.slice(0,10).forEach(function(c){
+          var d=new Date(c.created_at);
+          var when=("0"+(d.getMonth()+1)).slice(-2)+"-"+("0"+d.getDate()).slice(-2)+" "+("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2);
+          var id=(c.vapi_call_id||"");var idShort=id.length>14?id.slice(0,8)+"\u2026"+id.slice(-4):id;
+          html+='<div class="queue-row"><b>'+when+'</b><span>'+Math.round(Number(c.duration_seconds)||0)+'s</span><span>'+escHtml(c.ended_reason||"\u2014")+'</span><span>'+escHtml(ob(c))+'</span><span>'+escHtml(c.topic||"unknown")+'</span><span class="queue-id">'+escHtml(idShort)+'</span></div>';
+        });
+        html+='<div class="note-line" style="margin-top:8px">Open a call\u2019s transcript in Supabase by vapi_call_id. The full in-page reader ships with the observations build.</div>';
+      }
+      html+='</div>';
+
       /* ===== Q1 — WHAT CAME IN ===== */
-      html+=qhead("1","What came in","Two lanes: General Sam answers the phone; Emergency Sam calls back after a form");
+      html+=qhead("1","What came in","Emergency callbacks, SMS triage, sources, languages, timing \u2014 the inbound outcome story lives in G above");
 
-      // General Sam inbound funnel (from call_transcripts)
-      var tot=calls.length,eng=0,xfer=0,hang=0,sysf=0;
-      calls.forEach(function(c){var r=(c.ended_reason||"").toLowerCase();var d=Number(c.duration_seconds)||0;
-        if(r.indexOf("forward")!==-1)xfer++;
-        else if(r.indexOf("silence")!==-1||r.indexOf("not-found")!==-1||r.indexOf("error")!==-1||r.indexOf("pipeline")!==-1)sysf++;
-        else if(r.indexOf("customer-ended")!==-1&&d<15)hang++;
-        else eng++;});
-      var pastGreeting=tot-hang-sysf;
-      html+=laneLabel("General Sam — inbound calls","var(--cyan)");
+      // The inbound outcome story lives in G above (captured buckets, one
+      // definition page-wide). Q1 keeps what G does not cover: case
+      // conversion, the daily trend, and the Emergency / SMS lanes.
+      var tot=calls.length;
+      html+=laneLabel("General Sam \u2014 inbound calls","var(--cyan)");
       html+='<div class="cards">'+
-        card("Calls in",tot)+
-        card("Engaged Sam",eng+' <small>'+pct(eng,tot)+'%</small>')+
-        card("Directed to office staff",xfer+' <small>'+pct(xfer,tot)+'%</small>',"transferred to office")+
-        card("Hung up in greeting",hang+' <small>'+pct(hang,tot)+'%</small>',"customer ended <15s")+
-        '</div><div class="cards">'+
-        card("System errors / no answer",sysf+' <small>'+pct(sysf,tot)+'%</small>',"availability signal — outage bucket")+
-        card("Became a documented case",general.length+' <small>of '+pastGreeting+'</small>',"inbound cases / calls past greeting")+
+        card("Became a documented case",general.length+' <small>of '+obEngaged+' engaged</small>',"General-lane cases / engaged calls")+
         '</div>';
-      html+='<div class="note-line">Test calls (yours / Ranu\u2019s) are excluded only where tagged; untagged test hangups still sit in this bucket until caller_number lands, so the hangup share reads slightly high.</div>';
 
-      // Daily trend — the time dimension: is the hangup share actually falling?
+      // Daily trend — the time dimension, re-keyed to the SAME captured
+      // buckets as G (one definition page-wide): is the green band growing?
       (function(){
         var days={};
         function bk(d){var t=new Date(d);return t.getFullYear()+"-"+("0"+(t.getMonth()+1)).slice(-2)+"-"+("0"+t.getDate()).slice(-2);}
-        calls.forEach(function(c){var k=bk(c.created_at);if(!days[k])days[k]={c:0,h:0,e:0,g:0,cases:0};var r=(c.ended_reason||"").toLowerCase();var d=Number(c.duration_seconds)||0;days[k].c++;if(r.indexOf("silence")!==-1||r.indexOf("not-found")!==-1||r.indexOf("error")!==-1||r.indexOf("pipeline")!==-1)days[k].e++;else if(r.indexOf("customer-ended")!==-1&&d<15)days[k].h++;else days[k].g++;});
-        cases.forEach(function(c){var k=bk(c.created_at);if(!days[k])days[k]={c:0,h:0,e:0,g:0,cases:0};days[k].cases++;});
+        calls.forEach(function(c){var k=bk(c.created_at);if(!days[k])days[k]={c:0,h:0,o:0,u:0,e:0,cases:0};days[k].c++;var b=ob(c);
+          if(b==="completed"||b==="clinical_pivot")days[k].h++;
+          else if(b==="patient_chose_human"||b==="capability_gap"||b==="transferred_unsplit")days[k].o++;
+          else if(b==="system_error")days[k].e++;
+          else days[k].u++;});
+        cases.forEach(function(c){var k=bk(c.created_at);if(!days[k])days[k]={c:0,h:0,o:0,u:0,e:0,cases:0};days[k].cases++;});
         var keys=Object.keys(days).sort();if(keys.length>21)keys=keys.slice(keys.length-21);
         var maxC=1;keys.forEach(function(k){if(days[k].c>maxC)maxC=days[k].c;});
-        var avail=tot>0?Math.round((tot-sysf)/tot*100):100;
-        html+='<div class="panel"><div class="panel-title">Daily trend \u2014 availability '+avail+'% over the window; bars show calls (cyan engaged \u00B7 amber hangup \u00B7 red error), number = documented cases</div>';
+        var avail=calls.length>0?Math.round((calls.length-obSysErr)/calls.length*100):100;
+        html+='<div class="panel"><div class="panel-title">Daily trend \u2014 availability '+avail+'%; green = Sam handled \u00B7 cyan = to office \u00B7 amber = dropped / unresolved \u00B7 red = error; number = documented cases</div>';
         if(!keys.length)html+='<div class="empty">No calls in this window.</div>';
         else{
           html+='<div class="trend">';
-          keys.forEach(function(k){var d=days[k];var hp=d.c?Math.round(d.h/d.c*100):0;
-            html+='<div class="trend-col" title="'+k+": "+d.c+" calls, "+hp+'% hangup, '+d.cases+' cases"><div class="trend-bar">'+
+          keys.forEach(function(k){var d=days[k];
+            html+='<div class="trend-col" title="'+k+": "+d.c+" calls \u00B7 "+d.h+" handled \u00B7 "+d.o+" to office \u00B7 "+d.u+" dropped/unresolved \u00B7 "+d.e+' errors \u00B7 '+d.cases+' cases"><div class="trend-bar">'+
               '<span style="height:'+Math.round(d.e/maxC*100)+'%;background:var(--danger)"></span>'+
-              '<span style="height:'+Math.round(d.h/maxC*100)+'%;background:var(--urgent)"></span>'+
-              '<span style="height:'+Math.round(d.g/maxC*100)+'%;background:var(--cyan)"></span>'+
+              '<span style="height:'+Math.round(d.u/maxC*100)+'%;background:var(--urgent)"></span>'+
+              '<span style="height:'+Math.round(d.o/maxC*100)+'%;background:var(--cyan)"></span>'+
+              '<span style="height:'+Math.round(d.h/maxC*100)+'%;background:var(--routine)"></span>'+
               '</div><div class="trend-cases">'+d.cases+'</div><div class="trend-date">'+k.slice(5)+'</div></div>';
           });
-          html+='</div><div class="note-line">Watch the amber band shrink after the v1.4.21 deploy \u2014 that\u2019s the hangup-rate question answered visually. A red band is an availability dip (the Vapi outage would show here). With only a few days live, read this as early signal, not yet a trend.</div>';
+          html+='</div><div class="note-line">The question this answers: is the green (handled) band growing toward 80\u201390%? Same buckets as G \u2014 no second definition anywhere on the page.</div>';
         }
         html+='</div>';
       })();
@@ -444,7 +524,6 @@
       html+='<div class="cards">'+
         card("Booked",booked+' <small>of '+allCases.length+'</small>',allCases.length?(pct(booked,allCases.length)+"% \u2014 from disposition / revenue"):"")+
         card("Further treatment booked",followUp,"retention signal")+
-        card("NPS",nps!=null?(nps>0?"+"+nps:String(nps)):"—",npsRows.length?("n="+npsRows.length):"no survey responses yet")+
         card("Revenue recorded",revTotal>0?("$"+revTotal.toLocaleString()):"—",revRows.length?("n="+revRows.length+" cases"):"none entered yet")+
         '</div>';
       html+='<div class="note-line">"Booked" counts confirmed front-desk bookings plus any case with recorded revenue. New-vs-existing patient is now captured by the office-dashboard buttons too \u2014 a new/returning split can surface here once a few dispositions accumulate.</div>';
