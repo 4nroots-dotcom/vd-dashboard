@@ -294,9 +294,13 @@
     }
     function loadBriefingNarrative(){
       var el=document.getElementById("briefing-narrative");if(!el)return;
-      sb.from("daily_briefings").select("briefing_date,narrative_md,generated_by").order("briefing_date",{ascending:false}).limit(1).maybeSingle().then(function(res){
+      var endDate=null;
+      if(currentPeriod===-1){var td=document.getElementById("to-date").value,fd=document.getElementById("from-date").value;endDate=td||fd||null;}
+      var q=sb.from("daily_briefings").select("briefing_date,narrative_md,generated_by");
+      if(endDate)q=q.lte("briefing_date",endDate);
+      q.order("briefing_date",{ascending:false}).limit(1).maybeSingle().then(function(res){
         if(res&&res.error){el.innerHTML='<div class="briefing-tag">Briefing read error \u2014 '+escHtml(res.error.message)+' (likely a missing SELECT grant on daily_briefings)</div>';return;}
-        if(!res||!res.data)return;
+        if(!res||!res.data){el.innerHTML='';return;}
         var b=res.data;
         el.innerHTML='<div class="briefing-tag">Briefing \u00b7 '+escHtml(String(b.briefing_date))+(b.generated_by==="fallback"?' \u00b7 auto':'')+'</div>'+mdToHtml(b.narrative_md);
       }).catch(function(err){el.innerHTML='<div class="briefing-tag">Briefing unavailable \u2014 '+escHtml((err&&err.message)||"error")+'</div>';});
