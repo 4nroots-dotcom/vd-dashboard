@@ -129,6 +129,44 @@
     .queue-row b{color:var(--text-secondary);font-weight:600;}
     .queue-id{font-family:ui-monospace,Menlo,monospace;color:var(--text-faint);}
     @media(max-width:600px){.bar-name{width:118px;font-size:12px;}}
+    /* DRILL_DOWN_2026_06_08 : click-to-read transcript modal + bucket call lists */
+    details.calls>summary{cursor:pointer;list-style:none;font-size:12px;color:var(--cyan);padding:6px 0 2px;}
+    details.calls>summary::-webkit-details-marker{display:none;}
+    .call-list{display:flex;flex-direction:column;margin:2px 0 4px;}
+    .call-item{display:flex;gap:10px;align-items:baseline;padding:7px 0;border-top:1px solid var(--border);font-size:12px;color:var(--text-muted);cursor:pointer;}
+    .call-item:first-child{border-top:none;}
+    .call-item:hover{color:var(--text-secondary);}
+    .call-time{color:var(--text-faint);font-variant-numeric:tabular-nums;white-space:nowrap;}
+    .call-dur{color:var(--text-faint);white-space:nowrap;min-width:50px;}
+    .call-sum{flex:1;}
+    .why-split{font-size:12.5px;color:var(--text-muted);margin-top:6px;}
+    .why-split b{color:var(--text-secondary);}
+    .tx-modal{display:none;position:fixed;inset:0;z-index:200;background:rgba(3,9,20,0.8);justify-content:center;align-items:flex-start;padding:40px 16px;overflow-y:auto;}
+    .tx-modal.open{display:flex;}
+    .tx-box{width:100%;max-width:720px;background:linear-gradient(180deg,rgba(18,39,81,0.98),rgba(11,27,58,0.98));border:1px solid var(--border);border-radius:14px;display:flex;flex-direction:column;max-height:86vh;}
+    .tx-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);}
+    .tx-head b{font-size:14px;font-weight:600;color:var(--text-primary);}
+    .tx-close{background:none;border:none;color:var(--text-muted);font-size:24px;line-height:1;cursor:pointer;padding:0 6px;}
+    .tx-meta{padding:10px 18px;font-size:12px;color:var(--text-muted);border-bottom:1px solid var(--border);}
+    .tx-body{padding:14px 18px;overflow-y:auto;font-size:13px;line-height:1.6;white-space:pre-wrap;color:var(--text-secondary);font-family:ui-monospace,Menlo,monospace;}
+    .ranu-row{display:flex;gap:10px;align-items:baseline;padding:9px 0;border-top:1px solid var(--border);font-size:13px;}
+    .ranu-row:first-of-type{border-top:none;}
+    .ranu-row.call-item{cursor:pointer;}
+    .ranu-row.call-item:hover{background:rgba(255,255,255,0.025);}
+    .sev-badge{font-size:10px;font-weight:700;color:#06131f;border-radius:5px;padding:2px 7px;white-space:nowrap;letter-spacing:.04em;flex-shrink:0;}
+    .ranu-cc{flex:1;color:var(--text-secondary);}
+    .ranu-cc b{color:var(--text-primary);}
+    .ranu-meta{color:var(--text-faint);font-size:11.5px;white-space:nowrap;flex-shrink:0;}
+    .briefing-narrative{margin:2px 0 14px;}
+    .briefing-narrative:empty{display:none;}
+    .briefing-tag{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-faint);margin-bottom:6px;}
+    .briefing-narrative h3{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-secondary);margin:12px 0 4px;font-weight:700;}
+    .briefing-narrative h4{font-size:12px;color:var(--text-secondary);margin:10px 0 3px;font-weight:700;}
+    .briefing-narrative p{font-size:13px;line-height:1.55;color:var(--text-secondary);margin:6px 0;}
+    .briefing-narrative ul{margin:4px 0 8px;padding-left:18px;}
+    .briefing-narrative li{font-size:13px;line-height:1.5;color:var(--text-secondary);margin:2px 0;}
+    .briefing-narrative b{color:var(--text-primary);}
+    .briefing-narrative i{color:var(--text-faint);font-style:italic;}
   </style>
 </head>
 <body>
@@ -169,6 +207,7 @@
       </div>
     </div>
     <div class="main" id="main"><div class="loading">Loading metrics…</div></div>
+    <div id="tx-modal" class="tx-modal"><div class="tx-box"><div class="tx-head"><b id="tx-title">Transcript</b><button id="tx-close" class="tx-close" type="button" aria-label="Close">&times;</button></div><div id="tx-meta" class="tx-meta"></div><div id="tx-body" class="tx-body"></div></div></div>
   </div>
 
   <script>
@@ -202,6 +241,57 @@
     document.getElementById("to-date").addEventListener("change",setCustomRange);
     document.getElementById("auth-password").addEventListener("keydown",function(e){if(e.key==="Enter")handleLogin();});
 
+    // DRILL_DOWN_2026_06_08: click any rendered call row -> fetch + show its transcript.
+    document.getElementById("main").addEventListener("click",function(e){var item=e.target.closest?e.target.closest(".call-item"):null;if(item)openTranscript(item.getAttribute("data-callid"),item.getAttribute("data-label"));});
+    document.getElementById("tx-close").addEventListener("click",function(){document.getElementById("tx-modal").classList.remove("open");});
+    document.getElementById("tx-modal").addEventListener("click",function(e){if(e.target===this)this.classList.remove("open");});
+    document.addEventListener("keydown",function(e){if(e.key==="Escape")document.getElementById("tx-modal").classList.remove("open");});
+    function openTranscript(callId,label){
+      if(!callId)return;
+      var modal=document.getElementById("tx-modal");
+      document.getElementById("tx-title").textContent=label||"Transcript";
+      document.getElementById("tx-meta").textContent="Loading\u2026";
+      document.getElementById("tx-body").textContent="";
+      modal.classList.add("open");
+      sb.from("call_transcripts").select("transcript,call_summary,outcome_bucket,topic,duration_seconds,ended_reason,created_at").eq("vapi_call_id",callId).maybeSingle().then(function(res){
+        if(res&&res.error){document.getElementById("tx-meta").textContent="Couldn\u2019t load: "+res.error.message;return;}
+        var c=res&&res.data;
+        if(!c){document.getElementById("tx-meta").textContent="No transcript row found for this call.";return;}
+        var meta=[];
+        if(c.created_at)meta.push(new Date(c.created_at).toLocaleString());
+        if(c.duration_seconds!=null)meta.push(fmtDur(c.duration_seconds));
+        if(c.outcome_bucket)meta.push(String(c.outcome_bucket).replace(/_/g," "));
+        if(c.topic&&c.topic!=="unknown")meta.push(String(c.topic).replace(/_/g," "));
+        if(c.ended_reason)meta.push(String(c.ended_reason));
+        document.getElementById("tx-meta").textContent=meta.join("  \u00b7  ");
+        var tx=c.transcript,txStr;
+        if(tx==null)txStr="(No transcript text stored for this call.)";
+        else if(typeof tx==="string")txStr=tx;
+        else if(Array.isArray(tx))txStr=tx.map(function(m){return (m.role||m.speaker||"")+": "+(m.content||m.message||m.text||"");}).join("\n");
+        else txStr=JSON.stringify(tx,null,2);
+        var head=c.call_summary?("SUMMARY: "+c.call_summary+"\n\n\u2014\u2014\u2014\n\n"):"";
+        document.getElementById("tx-body").textContent=head+txStr;
+      }).catch(function(err){document.getElementById("tx-meta").textContent="Couldn\u2019t load transcript: "+(err&&err.message?err.message:"error");});
+    }
+
+    // DAILY_BRIEFING_2026_06_08 (v1): render the latest Claude-written briefing above the deterministic queue.
+    function mdToHtml(md){
+      var s=escHtml(String(md||""));
+      s=s.replace(/^###\s?(.*)$/gm,'<h4>$1</h4>').replace(/^##\s?(.*)$/gm,'<h3>$1</h3>').replace(/^#\s?(.*)$/gm,'<h3>$1</h3>');
+      s=s.replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>');
+      s=s.replace(/(^|[^_\w])_([^_\n]+)_/g,'$1<i>$2</i>');
+      s=s.replace(/(?:^|\n)((?:- .*(?:\n|$))+)/g,function(m,blk){var items=blk.trim().split(/\n/).map(function(l){return '<li>'+l.replace(/^- /,'')+'</li>';}).join('');return '\n<ul>'+items+'</ul>';});
+      s=s.split(/\n{2,}/).map(function(p){p=p.trim();if(!p)return '';if(/^<(h3|h4|ul)/.test(p))return p;return '<p>'+p.replace(/\n/g,'<br>')+'</p>';}).join('');
+      return s;
+    }
+    function loadBriefingNarrative(){
+      var el=document.getElementById("briefing-narrative");if(!el)return;
+      sb.from("daily_briefings").select("briefing_date,narrative_md,generated_by").order("briefing_date",{ascending:false}).limit(1).maybeSingle().then(function(res){
+        if(!res||res.error||!res.data)return;
+        var b=res.data;
+        el.innerHTML='<div class="briefing-tag">Briefing \u00b7 '+escHtml(String(b.briefing_date))+(b.generated_by==="fallback"?' \u00b7 auto':'')+'</div>'+mdToHtml(b.narrative_md);
+      }).catch(function(){});
+    }
     async function handleLogin(){
       var email=document.getElementById("auth-email").value.trim();var pw=document.getElementById("auth-password").value;
       var btn=document.getElementById("auth-btn");var err=document.getElementById("auth-error");err.style.display="none";
@@ -294,6 +384,17 @@
       var obRateB=pct(obHandled,obEngaged);
       var obPend=(obCounts.transferred_unsplit||0)+(obCounts.unclassified||0);
       var obGaps={};calls.forEach(function(c){if(ob(c)==="capability_gap"){var k=c.capability_gap_detail||"other";obGaps[k]=(obGaps[k]||0)+1;}});
+      // DRILL_DOWN_2026_06_08: per-bucket call lists + evidence splits (dropped, chose-a-person).
+      var REAL_INTENT={booking:1,existing_appointment:1,billing_insurance:1,hours_location:1,message_callback:1,records:1,clinical:1,services:1,new_patient:1};
+      var obLists={pch:[],gap:[],dropReal:[],dropDead:[],pendClin:[]};
+      calls.forEach(function(c){var b=ob(c);
+        if(b==="patient_chose_human")obLists.pch.push(c);
+        else if(b==="capability_gap")obLists.gap.push(c);
+        else if(b==="dropped"){var d=Number(c.duration_seconds)||0;var r=(c.ended_reason||"").toLowerCase();if(r.indexOf("customer-ended")!==-1&&d<15)return;if(REAL_INTENT[c.topic])obLists.dropReal.push(c);else obLists.dropDead.push(c);}
+        else if(b==="unclassified"&&c.topic==="clinical")obLists.pendClin.push(c);
+      });
+      var cpFwd=obLists.pch.filter(function(c){return (c.ended_reason||"").toLowerCase().indexOf("forwarded")!==-1;}).length;
+      var cpNoFwd=obLists.pch.length-cpFwd;
 
       // RED-FLAG DETECTION - deterministic week-over-week deltas, rules
       // stated not learned: decline <= -10pp, improve >= +5pp, else flat;
@@ -354,17 +455,39 @@
         '</div>';
       html+='</div>';
 
+      // DAILY_BRIEFING_2026_06_08: For-Ranu clinical review queue (deterministic - severity gates + clinical contradiction flags; no LLM). The day's cases that need a dentist callback, for the selected window. v1 (Claude-written narrative) is a separate edge-function build.
+      (function(){
+        var SEV_RANK={critical:3,urgent:2,routine:1};
+        var ranuCases=cases.filter(function(c){var sev=(c.severity||"").toLowerCase();return sev==="critical"||sev==="urgent"||getContras(c).length>0;}).sort(function(a,b){var d=(SEV_RANK[(b.severity||"").toLowerCase()]||0)-(SEV_RANK[(a.severity||"").toLowerCase()]||0);return d||(new Date(b.created_at)-new Date(a.created_at));});
+        html+='<div class="panel" style="border-color:rgba(0,200,232,0.3)">';
+        html+='<div class="panel-title" style="color:var(--text-primary);font-size:14px">Daily briefing \u2014 for Ranu</div>';
+        html+='<div id="briefing-narrative" class="briefing-narrative"></div>';
+        html+='<div class="note-line" style="margin-top:-6px">'+obEngaged+' engaged '+(obEngaged===1?'call':'calls')+' \u00b7 '+obHandled+' handled by Sam \u00b7 <b style="color:var(--text-secondary)">'+ranuCases.length+'</b> clinical '+(ranuCases.length===1?'case':'cases')+' flagged for review in this window.</div>';
+        if(!ranuCases.length){html+='<div class="empty">No clinical cases flagged in this window \u2014 nothing needs a callback.</div>';}
+        else{ranuCases.forEach(function(c){
+          var sev=(c.severity||"").toLowerCase();
+          var sevc=sev==="critical"?"var(--critical)":(sev==="urgent"?"var(--urgent)":"var(--text-muted)");
+          var so=getSO(c);var cc=so.chief_complaint||so.complaint||(c.triage_tag?String(c.triage_tag).replace(/_/g," "):"\u2014");
+          var contras=getContras(c).map(function(k){return CONTRA_LABELS[k]||k;}).join(", ");
+          var when=c.created_at?new Date(c.created_at).toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"";
+          var phone=c.patient_phone?escHtml(String(c.patient_phone)):"";
+          var clickable=c.vapi_call_id?(' call-item" data-callid="'+escHtml(c.vapi_call_id)+'" data-label="Clinical case"'):'"';
+          html+='<div class="ranu-row'+clickable+'><span class="sev-badge" style="background:'+sevc+'">'+escHtml((c.severity||"?").toUpperCase())+'</span><span class="ranu-cc"><b>'+escHtml(cc)+'</b>'+(contras?' \u00b7 '+escHtml(contras):'')+'</span><span class="ranu-meta">'+escHtml(when)+(phone?' \u00b7 '+phone:'')+(c.vapi_call_id?' \u00b7 read \u2192':'')+'</span></div>';
+        });}
+        html+='</div>';
+      })();
       // MEANING, not bars: big number + what it is + what to do.
       html+='<div class="panel"><div class="panel-title">Where the other '+(obEngaged-obHandled)+' engaged calls went \u2014 and what each means</div>';
       function whyRow(n,color,title,body){return '<div class="why-row"><div class="why-num" style="color:'+color+'">'+n+'</div><div class="why-body"><b>'+title+'</b><div class="why-sub">'+body+'</div></div></div>';}
-      html+=whyRow(obCounts.patient_chose_human||0,"#9db8d6","Chose a person","Normal preference \u2014 roughly 1 in 5 callers wants a human regardless of how good the AI is. Already priced into the 80\u201390% target. Not a Sam miss.");
+      function callList(arr,label){if(!arr||!arr.length)return "";var rows=arr.slice().sort(function(a,b){return new Date(b.created_at)-new Date(a.created_at);}).map(function(c){var t=c.created_at?new Date(c.created_at):null;var tl=t?(("0"+(t.getMonth()+1)).slice(-2)+"/"+("0"+t.getDate()).slice(-2)+" "+("0"+t.getHours()).slice(-2)+":"+("0"+t.getMinutes()).slice(-2)):"";var dur=c.duration_seconds!=null?fmtDur(c.duration_seconds):"";var sub=(c.topic&&c.topic!=="unknown")?escHtml(String(c.topic).replace(/_/g," ")):"\u2014";return '<div class="call-item" data-callid="'+escHtml(c.vapi_call_id||"")+'" data-label="'+escHtml(label)+'"><span class="call-time">'+tl+'</span><span class="call-dur">'+dur+'</span><span class="call-sum">'+sub+'</span></div>';}).join("");return '<details class="calls"><summary>Read the '+arr.length+' '+(arr.length===1?"call":"calls")+' \u2192</summary><div class="call-list">'+rows+'</div></details>';}
+      html+=whyRow(obCounts.patient_chose_human||0,"#9db8d6","Chose a person",'Normal preference \u2014 roughly 1 in 5 callers wants a human regardless of how good the AI is. Already priced into the 80\u201390% target.'+(obLists.pch.length?'<div class="why-split"><b>'+cpFwd+'</b> transferred cleanly \u00b7 <b>'+cpNoFwd+'</b> ended without a transfer. If the second number climbs, the transfer path needs a look \u2014 it regressed once before.</div>':'')+callList(obLists.pch,"Chose a person"));
       var gkeys=Object.keys(obGaps).sort(function(a,b){return obGaps[b]-obGaps[a];});
       var gapTxt=gkeys.map(function(k){return obGaps[k]+" "+k.replace(/_/g," ");}).join(" \u00B7 ");
-      html+=whyRow(obCounts.capability_gap||0,"var(--urgent)","Couldn\u2019t do it yet \u2014 needs the Dentrix API",(gapTxt?gapTxt+". ":"None in this window. ")+"This is the build roadmap ranked by real demand \u2014 it shrinks as integrations land. Improvement intel, not failure.");
-      html+=whyRow(obDropOther,"var(--danger)","Dropped mid-call","The line died partway through \u2014 the real losses. If the red chip above turns on, latency or audio are the usual suspects.");
+      html+=whyRow(obCounts.capability_gap||0,"var(--urgent)","Couldn\u2019t do it yet \u2014 needs the Dentrix API",(gapTxt?gapTxt+". ":"None in this window. ")+'This is the build roadmap ranked by real demand \u2014 it shrinks as integrations land. Improvement intel, not failure.'+callList(obLists.gap,"Capability gap"));
+      html+=whyRow(obDropOther,"var(--danger)","Dropped mid-call",'The line died partway through. Split by evidence: <b>'+obLists.dropReal.length+'</b> were mid-task when it dropped \u2014 recoverable, mostly booking attempts \u00b7 <b>'+obLists.dropDead.length+'</b> were dead air, unintelligible, or wrong numbers that never stated a need. Open the recoverable ones to see the real cause before assuming latency.'+callList(obLists.dropReal,"Dropped \u2014 recoverable")+(obLists.dropDead.length?callList(obLists.dropDead,"Dropped \u2014 dead air / noise"):''));
       var pendClin=0,pendBook=0;calls.forEach(function(c){if(ob(c)!=="unclassified")return;if(c.topic==="clinical")pendClin++;else if(c.topic==="booking")pendBook++;});
       var pendXfer=obCounts.transferred_unsplit||0;var pendOther=Math.max(0,obPend-pendClin-pendBook-pendXfer);
-      html+=whyRow(obPend,"rgba(255,255,255,0.6)","Not yet categorized","The classifier wouldn\u2019t guess, so these count AGAINST Sam until a human reads them \u2014 today\u2019s rate is a floor, not the truth. Inside: <b>"+pendClin+"</b> mentioned something clinical but no intake form went out (read these first) \u00B7 <b>"+pendXfer+"</b> transfers with no stated reason \u00B7 <b>"+pendBook+"</b> booking talk with nothing saved (possible lost bookings) \u00B7 <b>"+pendOther+"</b> other. The click-to-read transcript view ships with the observations build.");
+      html+=whyRow(obPend,"rgba(255,255,255,0.6)","Not yet categorized",'The classifier wouldn\u2019t guess, so these count AGAINST Sam until a human reads them \u2014 today\u2019s rate is a floor, not the truth. Inside: <b>'+pendClin+'</b> mentioned something clinical but no intake form went out (read these first) \u00b7 <b>'+pendXfer+'</b> transfers with no stated reason \u00b7 <b>'+pendBook+'</b> booking talk with nothing saved (possible lost bookings) \u00b7 <b>'+pendOther+'</b> other.'+callList(obLists.pendClin,"Clinical \u2014 no form went out"));
       html+='</div>';
 
       // Daily handled-rate vs target - the % view (volume-independent).
@@ -705,6 +828,7 @@
 
       html+='</div></details>';
       document.getElementById("main").innerHTML=html;
+      loadBriefingNarrative();
     }
     init();
   </script>
