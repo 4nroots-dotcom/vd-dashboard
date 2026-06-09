@@ -627,7 +627,7 @@
       var aCur=wkCur.tot?Math.round((wkCur.tot-wkCur.err)/wkCur.tot*100):100,aPrev=wkPrev.tot?Math.round((wkPrev.tot-wkPrev.err)/wkPrev.tot*100):100;
 
       html+='<div class="hero">';
-      html+='<div class="hero-top"><span class="hero-rate">'+obRateB+'%</span><span class="hero-line">of the <b>'+obEngaged+'</b> callers Sam could serve, she fully handled the call</span><span class="hero-goal">goal 80\u201390%</span></div>';
+      html+='<div class="hero-top"><span class="hero-rate">'+obRateB+'%</span><span class="hero-line">of the <b>'+obEngaged+'</b> engaged callers, Sam handled the whole call end to end</span></div>';
       html+='<div class="status-chips">'+
         schip("Handled rate",hCur,hPrev,true)+
         schip("Dropped mid-call",dCur,dPrev,false)+
@@ -695,7 +695,7 @@
       html+='<div class="panel"><div class="panel-title">Where the other '+(obEngaged-obHandled)+' engaged calls went \u2014 and what each means</div>';
       function whyRow(n,color,title,body){return '<div class="why-row"><div class="why-num" style="color:'+color+'">'+n+'</div><div class="why-body"><b>'+title+'</b><div class="why-sub">'+body+'</div></div></div>';}
       function callList(arr,label){if(!arr||!arr.length)return "";var rows=arr.slice().sort(function(a,b){return new Date(b.created_at)-new Date(a.created_at);}).map(function(c){var t=c.created_at?new Date(c.created_at):null;var tl=t?(("0"+(t.getMonth()+1)).slice(-2)+"/"+("0"+t.getDate()).slice(-2)+" "+("0"+t.getHours()).slice(-2)+":"+("0"+t.getMinutes()).slice(-2)):"";var dur=c.duration_seconds!=null?fmtDur(c.duration_seconds):"";var sub=(c.topic&&c.topic!=="unknown")?escHtml(String(c.topic).replace(/_/g," ")):"\u2014";return '<div class="call-item" data-callid="'+escHtml(c.vapi_call_id||"")+'" data-label="'+escHtml(label)+'"><span class="call-time">'+tl+'</span><span class="call-dur">'+dur+'</span><span class="call-sum">'+sub+'</span></div>';}).join("");return '<details class="calls"><summary>Read the '+arr.length+' '+(arr.length===1?"call":"calls")+' \u2192</summary><div class="call-list">'+rows+'</div></details>';}
-      html+=whyRow(obCounts.patient_chose_human||0,"#9db8d6","Chose a person",'Normal preference \u2014 roughly 1 in 5 callers wants a human regardless of how good the AI is. Already priced into the 80\u201390% target.'+(obLists.pch.length?'<div class="why-split"><b>'+cpFwd+'</b> transferred cleanly \u00b7 <b>'+cpNoFwd+'</b> ended without a transfer. If the second number climbs, the transfer path needs a look \u2014 it regressed once before.</div>':'')+callList(obLists.pch,"Chose a person"));
+      html+=whyRow(obCounts.patient_chose_human||0,"#9db8d6","Chose a person",'Normal preference \u2014 roughly 1 in 5 callers wants a human regardless of how good the AI is. These callers cap how high the handled rate can go \u2014 a perfect Sam still cannot convert someone who wants a person.'+(obLists.pch.length?'<div class="why-split"><b>'+cpFwd+'</b> transferred cleanly \u00b7 <b>'+cpNoFwd+'</b> ended without a transfer. If the second number climbs, the transfer path needs a look \u2014 it regressed once before.</div>':'')+callList(obLists.pch,"Chose a person"));
       var gkeys=Object.keys(obGaps).sort(function(a,b){return obGaps[b]-obGaps[a];});
       var gapTxt=gkeys.map(function(k){return obGaps[k]+" "+k.replace(/_/g," ");}).join(" \u00B7 ");
       html+=whyRow(obCounts.capability_gap||0,"var(--urgent)","Couldn\u2019t do it yet \u2014 needs the Dentrix API",(gapTxt?gapTxt+". ":"None in this window. ")+'This is the build roadmap ranked by real demand \u2014 it shrinks as integrations land. Improvement intel, not failure.'+callList(obLists.gap,"Capability gap"));
@@ -710,10 +710,10 @@
         var days={};
         calls.forEach(function(c){var b=ob(c);if(b==="system_error")return;var dd=Number(c.duration_seconds)||0;var rr=(c.ended_reason||"").toLowerCase();if(b==="dropped"&&rr.indexOf("customer-ended")!==-1&&dd<15)return;var t=new Date(c.created_at);var k=t.getFullYear()+"-"+("0"+(t.getMonth()+1)).slice(-2)+"-"+("0"+t.getDate()).slice(-2);if(!days[k])days[k]={eng:0,han:0};days[k].eng++;if(b==="completed"||b==="clinical_pivot")days[k].han++;});
         var keys=Object.keys(days).sort();if(keys.length>21)keys=keys.slice(keys.length-21);
-        html+='<div class="panel"><div class="panel-title">Daily handled-rate \u2014 % of engaged calls; the band is the 80\u201390% target</div>';
+        html+='<div class="panel"><div class="panel-title">Daily handled-rate \u2014 % of engaged calls Sam handled end to end</div>';
         if(!keys.length)html+='<div class="empty">No engaged calls in this window.</div>';
         else{
-          html+='<div class="rate-trend"><div class="rate-band"></div>';
+          html+='<div class="rate-trend">';
           keys.forEach(function(k){var d=days[k];var p=d.eng?Math.round(d.han/d.eng*100):0;
             html+='<div class="trend-col" title="'+k+': '+d.han+' of '+d.eng+' engaged handled ('+p+'%)"><div class="rate-bar"><span style="height:'+p+'%"></span></div><div class="trend-cases">'+(d.eng?p+"%":"\u2014")+'</div><div class="trend-date">'+k.slice(5)+'</div></div>';});
           html+='</div><div class="note-line">The week-over-week chips above do the watching for you \u2014 this chart is the picture behind them. Low-volume days swing wildly; read level and direction, not single days.</div>';
@@ -775,7 +775,7 @@
               '<span style="height:'+Math.round(d.h/maxC*100)+'%;background:var(--routine)"></span>'+
               '</div><div class="trend-cases">'+d.cases+'</div><div class="trend-date">'+k.slice(5)+'</div></div>';
           });
-          html+='</div><div class="note-line">The question this answers: is the green (handled) band growing toward 80\u201390%? Same buckets as G \u2014 no second definition anywhere on the page.</div>';
+          html+='</div><div class="note-line">The question this answers: is the green (handled) band trending up? Same buckets as G \u2014 no second definition anywhere on the page.</div>';
         }
         html+='</div>';
       })();
