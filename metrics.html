@@ -479,7 +479,14 @@
         var gd=st.capability_gap_detail||{};
         var gapSegs=Object.keys(gapMap).map(function(k){return {label:gapMap[k],value:gd[k]||0,color:DONUT_COLORS[k]||DONUT_COLORS.other};});
         var hasGap=gapSegs.some(function(s){return s.value>0;});
+        var tr=st.transfer_reasons||{};
+        var trSegs=[{label:"Genuine human preference",value:tr.genuine_human||0,color:DONUT_COLORS.person},
+          {label:"Sam-addressable (reflexive)",value:tr.sam_addressable||0,color:DONUT_COLORS.handled},
+          {label:"Appointment-driven",value:tr.appointment_driven||0,color:DONUT_COLORS.gap},
+          {label:"Not yet analyzed",value:tr.unclassified||0,color:DONUT_COLORS.other}];
+        var hasTr=trSegs.some(function(s){return s.value>0;});
         var viz='<div class="ops-viz">'+donutBlock("Where engaged calls went",engSegs,"engaged")+
+          (hasTr?donutBlock("Why callers chose a person",trSegs,"transfers"):'')+
           (hasGap?donutBlock("Capability gaps \u2014 what Sam can\u2019t do yet",gapSegs,"gaps"):'')+'</div>';
         var md=String(d.narrative_md).replace(/^\s*##\s*Operations read[^\n]*\n+/i,"");
         var body='<div class="ops-eyebrow">Operations read</div><div class="ops-body">'+mdToHtml(md)+'</div>';
