@@ -175,6 +175,7 @@
     .ops-asof{font-size:10.5px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.05em;}
     .ops-refresh{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--cyan);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
     .ops-refresh:hover{border-color:rgba(0,200,232,0.45);}
+    .ops-ctx{font-size:12px;color:var(--text-muted);margin-bottom:10px;}
     .ops-stats{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
     .ops-stat{flex:1;min-width:118px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;}
     .ops-stat-n{font-size:27px;font-weight:700;color:var(--text-primary);letter-spacing:-0.025em;line-height:1;font-variant-numeric:tabular-nums;}
@@ -463,13 +464,20 @@
           '<div class="ops-nav-fill"></div>'+
           '<span class="ops-asof">'+(when?'as of '+escHtml(when):'')+(d.cached?' \u00b7 cached':'')+(d.generated_by==="fallback"?' \u00b7 numbers only':'')+'</span>'+
           '<button class="ops-refresh" id="ops-refresh" type="button" title="Re-read now">\u21bb</button></div>';
-        var rate=(st.handled_rate_pct!=null?st.handled_rate_pct:0);
+        var contain=(st.containment_pct!=null?st.containment_pct:0);
+        var fail=(st.failed_pct!=null?st.failed_pct:0);
+        var failCls=(fail>=10?'crit':(fail>5?'urg':''));
+        var nps=st.sam_nps;
+        var npsTxt=(nps==null?'\u2014':(nps>0?'+':'')+nps);
+        var npsCls=(nps!=null&&nps<0?'crit':'');
+        var npsSub=(st.sam_nps_n?'n='+st.sam_nps_n+(st.sam_nps_n<5?' \u00b7 small sample':''):'no responses yet');
         var awaitCls=(st.critical>0?'crit':(st.urgent>0?'urg':''));
         var awaitSub=(st.critical?st.critical+' critical':(st.urgent?st.urgent+' urgent':''));
-        var stats='<div class="ops-stats">'+
-          statItem(st.inbound,"calls in","")+
-          statItem(st.engaged,"engaged callers","")+
-          statItem(rate+"%","handled by Sam","accent")+
+        var ctx='<div class="ops-ctx">'+(st.inbound||0)+' calls in \u00b7 '+(st.engaged||0)+' engaged \u00b7 '+(st.transferred||0)+' to a person</div>';
+        var stats=ctx+'<div class="ops-stats">'+
+          statItem(contain+"%","contained","accent","resolved or captured \u2014 no live pickup")+
+          statItem(fail+"%","failed",failCls,"drops & errors")+
+          statItem(npsTxt,"Sam NPS",npsCls,npsSub)+
           statItem(st.awaiting_clinical_review,"awaiting review",awaitCls,awaitSub)+'</div>';
         var engSegs=[{label:"Handled by Sam",value:st.handled||0,color:DONUT_COLORS.handled},
           {label:"Chose a person",value:st.chose_a_person||0,color:DONUT_COLORS.person},
