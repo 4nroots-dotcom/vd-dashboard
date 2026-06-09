@@ -123,6 +123,18 @@
     .loading{padding:60px 0;text-align:center;color:var(--text-muted);}
     .bar-name{width:230px;}
     .date-input{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:12px;padding:6px 8px;color-scheme:dark;}
+    .period-chips{display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
+    @media(max-width:640px){
+      .toolbar{padding:12px 14px 0;gap:8px;}
+      .period-chips{width:100%;}
+      .date-input{flex:1 1 140px;min-width:0;}
+      .toolbar-right{width:100%;justify-content:space-between;}
+      .ops-read{padding:0 14px;margin-top:14px;}
+      .ops-toggle-bar{padding:0 14px;}
+      .ops-nav{flex-wrap:wrap;}
+      .ops-stat{min-width:calc(50% - 6px);}
+      .donut-card{min-width:100%;}
+    }
     .date-sep{font-size:11px;color:var(--text-faint);}
     .queue-row{display:flex;gap:10px;font-size:11px;color:var(--text-muted);padding:5px 0;border-top:1px solid var(--border);flex-wrap:wrap;}
     .queue-row:first-of-type{border-top:none;}
@@ -464,7 +476,8 @@
           '<div class="ops-nav-fill"></div>'+
           '<span class="ops-asof">'+(when?'as of '+escHtml(when):'')+(d.cached?' \u00b7 cached':'')+(d.generated_by==="fallback"?' \u00b7 numbers only':'')+'</span>'+
           '<button class="ops-refresh" id="ops-refresh" type="button" title="Re-read now">\u21bb</button></div>';
-        var contain=(st.containment_pct!=null?st.containment_pct:0);
+        var resolved=(st.resolved_pct!=null?st.resolved_pct:0);
+        var pending=(st.pending_pms_pct!=null?st.pending_pms_pct:0);
         var fail=(st.failed_pct!=null?st.failed_pct:0);
         var failCls=(fail>=10?'crit':(fail>5?'urg':''));
         var nps=st.sam_nps;
@@ -473,9 +486,11 @@
         var npsSub=(st.sam_nps_n?'n='+st.sam_nps_n+(st.sam_nps_n<5?' \u00b7 small sample':''):'no responses yet');
         var awaitCls=(st.critical>0?'crit':(st.urgent>0?'urg':''));
         var awaitSub=(st.critical?st.critical+' critical':(st.urgent?st.urgent+' urgent':''));
-        var ctx='<div class="ops-ctx">'+(st.inbound||0)+' calls in \u00b7 '+(st.engaged||0)+' engaged \u00b7 '+(st.transferred||0)+' to a person</div>';
+        var proj=(st.pms_resolved_pct!=null&&pending>0)?(' \u00b7 with PMS scheduling, resolved \u2192 ~'+st.pms_resolved_pct+'%'+((st.pms_full_pct&&st.pms_full_pct!==st.pms_resolved_pct)?' ('+st.pms_full_pct+'% counting appointment transfers)':'')):'';
+        var ctx='<div class="ops-ctx">'+(st.inbound||0)+' calls in \u00b7 '+(st.engaged||0)+' engaged \u00b7 '+(st.transferred||0)+' to a person'+proj+'</div>';
         var stats=ctx+'<div class="ops-stats">'+
-          statItem(contain+"%","contained","accent","resolved or captured \u2014 no live pickup")+
+          statItem(resolved+"%","resolved","accent","Sam closed it \u2014 no front desk")+
+          statItem(pending+"%","pending PMS","","captured callback \u2192 PMS resolves")+
           statItem(fail+"%","failed",failCls,"drops & errors")+
           statItem(npsTxt,"Sam NPS",npsCls,npsSub)+
           statItem(st.awaiting_clinical_review,"awaiting review",awaitCls,awaitSub)+'</div>';
