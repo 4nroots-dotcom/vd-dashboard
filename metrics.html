@@ -125,12 +125,16 @@
     .date-input{background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:12px;padding:6px 8px;color-scheme:dark;}
     .period-chips{display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
     @media(max-width:640px){
+      .header{padding:0 12px;min-height:50px;flex-wrap:wrap;}
+      .header-logo{font-size:14px;}
+      .header-right{gap:8px;font-size:11px;}
+      #header-user{display:none;}
       .toolbar{padding:12px 14px 0;gap:8px;}
       .period-chips{width:100%;}
       .date-input{flex:1 1 140px;min-width:0;}
       .toolbar-right{width:100%;justify-content:space-between;}
       .ops-read{padding:0 14px;margin-top:14px;}
-      .ops-toggle-bar{padding:0 14px;}
+      .ops-tabs{padding:0 14px;}
       .ops-nav{flex-wrap:wrap;}
       .ops-stat{min-width:calc(50% - 6px);}
       .donut-card{min-width:100%;}
@@ -222,9 +226,10 @@
     .ops-body ul{margin:0 0 10px;padding-left:18px;}
     .ops-body li{margin:0 0 4px;}
     .ops-body b{color:var(--text-primary);font-weight:600;}
-    .ops-toggle-bar{max-width:940px;margin:8px auto 4px;padding:0 22px;}
-    .ops-toggle{background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text-muted);font-size:12.5px;padding:7px 14px;cursor:pointer;}
-    .ops-toggle:hover{border-color:rgba(0,200,232,0.3);color:var(--text-secondary);}
+    .ops-tabs{max-width:940px;margin:6px auto 2px;padding:0 22px;display:flex;gap:6px;}
+    .ops-tab{background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text-muted);font-size:13px;font-weight:600;padding:8px 18px;cursor:pointer;}
+    .ops-tab:hover{color:var(--text-secondary);border-color:rgba(0,200,232,0.3);}
+    .ops-tab.active{background:rgba(0,200,232,0.14);border-color:rgba(0,200,232,0.4);color:var(--cyan);}
     @media(max-width:620px){.donut-wrap{flex-direction:column;}.ops-body{font-size:14px;}}
     .briefing-narrative{margin:2px 0 14px;}
     .briefing-narrative:empty{display:none;}
@@ -276,7 +281,7 @@
       </div>
     </div>
     <div id="ops-read" class="ops-read"><div class="ops-loading">Reading the latest calls…</div></div>
-    <div class="ops-toggle-bar"><button id="ops-toggle" class="ops-toggle" type="button">Show the full metrics &#9662;</button></div>
+    <div class="ops-tabs" id="ops-tabs"><button class="ops-tab active" data-tab="overview" type="button">Overview</button><button class="ops-tab" data-tab="metrics" type="button">Metrics</button></div>
     <div class="main" id="main" style="display:none"><div class="loading">Loading metrics…</div></div>
     <div id="tx-modal" class="tx-modal"><div class="tx-box"><div class="tx-head"><b id="tx-title">Transcript</b><button id="tx-close" class="tx-close" type="button" aria-label="Close">&times;</button></div><div id="tx-meta" class="tx-meta"></div><div id="tx-body" class="tx-body"></div></div></div>
   </div>
@@ -308,7 +313,11 @@
     document.getElementById("signout-btn").addEventListener("click",function(){sb.auth.signOut().finally(function(){location.reload();});});
     document.getElementById("refresh-btn").addEventListener("click",loadMetrics);
     [1,7,30,0].forEach(function(d){document.getElementById("chip-"+d).addEventListener("click",function(){setPeriod(d);});});
-    document.getElementById("ops-toggle").addEventListener("click",function(){var m=document.getElementById("main");if(m.style.display==="none"){m.style.display="";this.innerHTML="Hide the full metrics &#9652;";}else{m.style.display="none";this.innerHTML="Show the full metrics &#9662;";}});
+    function setView(tab){var hero=document.getElementById("ops-read");var m=document.getElementById("main");var overview=(tab!=="metrics");
+      if(hero)hero.style.display=overview?"":"none";
+      if(m)m.style.display=overview?"none":"";
+      var tb=document.getElementById("ops-tabs");if(tb)Array.prototype.forEach.call(tb.querySelectorAll(".ops-tab"),function(b){b.classList.toggle("active",b.getAttribute("data-tab")===(overview?"overview":"metrics"));});}
+    var opsTabs=document.getElementById("ops-tabs");if(opsTabs)Array.prototype.forEach.call(opsTabs.querySelectorAll(".ops-tab"),function(b){b.addEventListener("click",function(){setView(b.getAttribute("data-tab"));});});
     document.getElementById("from-date").addEventListener("change",setCustomRange);
     document.getElementById("to-date").addEventListener("change",setCustomRange);
     document.getElementById("auth-password").addEventListener("keydown",function(e){if(e.key==="Enter")handleLogin();});
@@ -476,9 +485,14 @@
           '<div class="ops-nav-fill"></div>'+
           '<span class="ops-asof">'+(when?'as of '+escHtml(when):'')+(d.cached?' \u00b7 cached':'')+(d.generated_by==="fallback"?' \u00b7 numbers only':'')+'</span>'+
           '<button class="ops-refresh" id="ops-refresh" type="button" title="Re-read now">\u21bb</button></div>';
-        var resolved=(st.resolved_pct!=null?st.resolved_pct:0);
-        var pending=(st.pending_pms_pct!=null?st.pending_pms_pct:0);
-        var fail=(st.failed_pct!=null?st.failed_pct:0);
+        var eng=(st.engaged||0)||1;
+        var pctf=function(n){return Math.round((n||0)/eng*100);};
+        var resolved=pctf(st.handled);
+        var pending=pctf(st.capability_gap);
+        var apptD=(st.transfer_reasons&&st.transfer_reasons.appointment_driven)||0;
+        var pmsRes=pctf((st.handled||0)+(st.capability_gap||0));
+        var pmsFull=pctf((st.handled||0)+(st.capability_gap||0)+apptD);
+        var fail=(st.failed_pct!=null?st.failed_pct:pctf(st.dropped_real));
         var failCls=(fail>=10?'crit':(fail>5?'urg':''));
         var nps=st.sam_nps;
         var npsTxt=(nps==null?'\u2014':(nps>0?'+':'')+nps);
@@ -486,7 +500,7 @@
         var npsSub=(st.sam_nps_n?'n='+st.sam_nps_n+(st.sam_nps_n<5?' \u00b7 small sample':''):'no responses yet');
         var awaitCls=(st.critical>0?'crit':(st.urgent>0?'urg':''));
         var awaitSub=(st.critical?st.critical+' critical':(st.urgent?st.urgent+' urgent':''));
-        var proj=(st.pms_resolved_pct!=null&&pending>0)?(' \u00b7 with PMS scheduling, resolved \u2192 ~'+st.pms_resolved_pct+'%'+((st.pms_full_pct&&st.pms_full_pct!==st.pms_resolved_pct)?' ('+st.pms_full_pct+'% counting appointment transfers)':'')):'';
+        var proj=(pending>0)?(' \u00b7 with PMS scheduling, resolved \u2192 ~'+pmsRes+'%'+((pmsFull!==pmsRes)?' ('+pmsFull+'% counting appointment transfers)':'')):'';
         var ctx='<div class="ops-ctx">'+(st.inbound||0)+' calls in \u00b7 '+(st.engaged||0)+' engaged \u00b7 '+(st.transferred||0)+' to a person'+proj+'</div>';
         var stats=ctx+'<div class="ops-stats">'+
           statItem(resolved+"%","resolved","accent","Sam closed it \u2014 no front desk")+
@@ -715,7 +729,7 @@
         html+='</div>';
       })();
 
-      html+='<details class="sec" open><summary><span class="qhead-num">1</span><span class="qhead-title">What came in</span></summary><div class="sec-body">';
+      html+='<details class="sec"><summary><span class="qhead-num">1</span><span class="qhead-title">What came in</span></summary><div class="sec-body">';
 
       /* ===== Q1 — WHAT CAME IN ===== */
       // Same bucket math as the hero - one definition page-wide, now WITH
