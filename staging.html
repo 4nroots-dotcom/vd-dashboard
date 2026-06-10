@@ -881,12 +881,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <button class="book-btn" id="out-cancelled" type="button">Cancelled</button>
         <button class="book-btn" id="out-noreach" type="button">Couldn&#39;t reach</button>
         <button class="book-btn" id="out-declined" type="button">Declined</button>
-        <span class="book-sub-group" id="book-type-group">
-          <span class="book-sub-label">Type</span>
-          <button class="book-btn book-btn-sub" id="book-new" type="button">New</button>
-          <button class="book-btn book-btn-sub" id="book-existing" type="button">Existing</button>
-          <button class="book-btn book-btn-sub" id="book-further" type="button">Further tx</button>
-        </span>
         <span class="book-sub-group" id="book-when-group">
           <span class="book-sub-label">When</span>
           <input type="datetime-local" id="book-datetime" class="book-datetime" title="Appointment date & time" />
@@ -1216,14 +1210,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     var map = { booked:"out-booked", rescheduled:"out-resched", cancelled:"out-cancelled", no_response:"out-noreach", declined:"out-declined" };
     if (!document.getElementById("out-booked")) return;
     Object.keys(map).forEach(function(k){ var el = document.getElementById(map[k]); if (el) el.classList.toggle("active", fd === k); });
-    var tg = document.getElementById("book-type-group"), wg = document.getElementById("book-when-group");
-    if (tg) tg.style.display = (fd === "booked") ? "inline-flex" : "none";
+    var wg = document.getElementById("book-when-group");
     if (wg) wg.style.display = (fd === "booked" || fd === "rescheduled") ? "inline-flex" : "none";
-    var further = c.subsequent_appointment_booked === true, existing = c.is_existing_patient;
-    var bn = document.getElementById("book-new"), be = document.getElementById("book-existing"), bf = document.getElementById("book-further");
-    if (bn) bn.classList.toggle("active", fd === "booked" && !further && existing === false);
-    if (be) be.classList.toggle("active", fd === "booked" && !further && existing === true);
-    if (bf) bf.classList.toggle("active", fd === "booked" && further);
   }
 
   function bookOk(statusEl){ statusEl.textContent = "\u2713 Saved"; statusEl.className = "revenue-save-status ok"; setTimeout(function(){ statusEl.textContent=""; statusEl.className="revenue-save-status"; }, 2500); }
@@ -1678,9 +1666,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     document.getElementById("out-cancelled").onclick = function() { saveOutcome(c.id, "cancelled"); };
     document.getElementById("out-noreach").onclick = function() { saveOutcome(c.id, "no_response"); };
     document.getElementById("out-declined").onclick = function() { saveOutcome(c.id, "declined"); };
-    document.getElementById("book-new").onclick = function() { saveType(c.id, "new"); };
-    document.getElementById("book-existing").onclick = function() { saveType(c.id, "existing"); };
-    document.getElementById("book-further").onclick = function() { saveType(c.id, "further"); };
 
     // Office notes (free-text, front-desk owned)
     var noteBar = document.getElementById("note-bar");
