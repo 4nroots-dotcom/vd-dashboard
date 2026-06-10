@@ -435,6 +435,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .revenue-bar input:focus { border-color: rgba(0,200,232,0.35); }
     .book-datetime { background: rgba(255,255,255,0.07); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 12px; padding: 4px 8px; color-scheme: dark; }
     .outcome-head { font-size: 12px; font-weight: 700; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.06em; padding: 12px 20px 0; }
+    .book-sub-label { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-left: 6px; }
+    .book-type-group { display: none; align-items: center; gap: 6px; flex-wrap: wrap; padding-left: 8px; margin-left: 4px; border-left: 1px solid var(--border); }
+    .book-btn-sub { font-size: 12px; padding: 4px 10px; }
+    .name-edit-hint { font-size: 11px; color: #00c8e8; font-weight: 600; margin-left: 4px; }
     #revenue-bar, #booking-bar { margin-top: 4px; }
     #note-bar .revenue-bar-label { font-size: 11px; color: var(--text-muted); }
     #note-bar { opacity: 0.9; }
@@ -877,11 +881,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
       <div class="revenue-bar" id="booking-bar" style="display:none;">
         <span class="revenue-bar-label">Booked?</span>
-        <button class="book-btn" id="book-new" type="button">New patient</button>
-        <button class="book-btn" id="book-existing" type="button">Existing patient</button>
-        <button class="book-btn" id="book-further" type="button">Further treatment</button>
+        <button class="book-btn" id="book-yes" type="button">Booked</button>
         <button class="book-btn" id="book-none" type="button">Not booked</button>
-        <input type="datetime-local" id="book-datetime" class="book-datetime" title="Appointment date & time" />
+        <span class="book-type-group" id="book-type-group">
+          <span class="book-sub-label">Type</span>
+          <button class="book-btn book-btn-sub" id="book-new" type="button">New</button>
+          <button class="book-btn book-btn-sub" id="book-existing" type="button">Existing</button>
+          <button class="book-btn book-btn-sub" id="book-further" type="button">Further tx</button>
+          <span class="book-sub-label">When</span>
+          <input type="datetime-local" id="book-datetime" class="book-datetime" title="Appointment date & time" />
+        </span>
         <span class="revenue-save-status" id="booking-status"></span>
       </div>
 
@@ -1186,15 +1195,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   function setBookingButtons(c) {
     var booked = c.final_disposition === "booked" || c.appointment_booked === true || (c.revenue_generated != null && Number(c.revenue_generated) > 0);
     var further = c.subsequent_appointment_booked === true;
-    var existing = c.is_existing_patient === true;
+    var existing = c.is_existing_patient;  // true / false / null(unknown)
     var none = !booked && !!c.final_disposition && c.final_disposition !== "booked";
-    var bn = document.getElementById("book-new"), be = document.getElementById("book-existing"), bf = document.getElementById("book-further"), bx = document.getElementById("book-none");
-    if (!bn || !be || !bf || !bx) return;
-    bn.classList.toggle("active", booked && !further && !existing);
-    be.classList.toggle("active", booked && !further && existing);
-    bf.classList.toggle("active", booked && further);
+    var by = document.getElementById("book-yes"), bx = document.getElementById("book-none");
+    var bn = document.getElementById("book-new"), be = document.getElementById("book-existing"), bf = document.getElementById("book-further");
+    var grp = document.getElementById("book-type-group");
+    if (!by || !bx) return;
+    by.classList.toggle("active", booked);
     bx.classList.toggle("active", none);
     bx.classList.toggle("none-active", none);
+    if (grp) grp.style.display = booked ? "inline-flex" : "none";
+    if (bn) bn.classList.toggle("active", booked && !further && existing === false);
+    if (be) be.classList.toggle("active", booked && !further && existing === true);
+    if (bf) bf.classList.toggle("active", booked && further);
   }
 
   async function saveBooking(caseId, kind) {
@@ -1220,9 +1233,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     var existingVal = (kind === "existing" || kind === "further") ? true : (kind === "new" ? false : null);
     try { await sb.from("triage_cases").update({ is_existing_patient: existingVal }).eq("id", caseId); } catch (e) {}
     var c = currentCases.find(function(x) { return x.id === caseId; });
-    if (c) { c.final_disposition = patch.final_disposition; c.appointment_booked = patch.appointment_booked; c.subsequent_appointment_booked = patch.subsequent_appointment_booked; c.is_existing_patient = existingVal; setBookingButtons(c); }
+    if (c) { c.final_disposition = patch.final_disposition; c.appointment_booked = patch.appointment_booked; c.subsequent_appointment_booked = patch.subsequent_appointment_booked; c.is_existing_patient = existingVal; c.appointment_datetime = patch.appointment_datetime; setBookingButtons(c); }
     statusEl.textContent = "\u2713 Saved"; statusEl.className = "revenue-save-status ok";
     setTimeout(function() { statusEl.textContent = ""; statusEl.className = "revenue-save-status"; }, 2500);
+  }
+
+  async function saveAppointmentDT(caseId, val) {
+    var statusEl = document.getElementById("booking-status");
+    var iso = val ? new Date(val).toISOString() : null;
+    statusEl.textContent = "Saving..."; statusEl.className = "revenue-save-status";
+    var res = await sb.from("triage_cases").update({ appointment_datetime: iso }).eq("id", caseId);
+    if (res.error) { statusEl.textContent = "Error saving"; statusEl.className = "revenue-save-status err"; setTimeout(function() { statusEl.textContent = ""; statusEl.className = "revenue-save-status"; }, 2500); return; }
+    var c = currentCases.find(function(x) { return x.id === caseId; });
+    if (c) c.appointment_datetime = iso;
+    statusEl.textContent = "\u2713 Saved"; statusEl.className = "revenue-save-status ok";
+    setTimeout(function() { statusEl.textContent = ""; statusEl.className = "revenue-save-status"; }, 2500);
+  }
+
+  function wireContactNameEdit(c) {
+    var cnv = document.getElementById("contact-name-value");
+    if (!cnv) return;
+    cnv.onclick = function() { editPatientName(c.id, c.patient_name || ""); };
   }
 
   async function editPatientName(caseId, current) {
@@ -1234,6 +1265,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     var c = currentCases.find(function(x){ return x.id === caseId; });
     if (c) c.patient_name = next || null;
     var nmEl = document.getElementById("note-patient-name"); if (nmEl) nmEl.textContent = next || "Unknown";
+    var cnv = document.getElementById("contact-name-value"); if (cnv && cnv.childNodes[0]) cnv.childNodes[0].nodeValue = (next || "\u2014") + " ";
     applySearchFilter();
   }
   async function saveOfficeNote(caseId, rawVal) {
@@ -1317,7 +1349,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   function caseSelect() {
     return sb
       .from("triage_cases")
-      .select("id, patient_name, patient_name_english, patient_phone, patient_dob, patient_city, patient_city_english, patient_email, chief_complaint, chief_complaint_english, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at, revenue_generated, sms_transcript, sms_structured_output, has_sms_continuation, sms_received_at, intake_medical_flags, current_medications, clinical_note, patient_language, extraction_source, source, post_triage_escalation, post_triage_last_message_at, triage_tag, final_disposition, appointment_booked, subsequent_appointment_booked")
+      .select("id, patient_name, patient_name_english, patient_phone, patient_dob, patient_city, patient_city_english, patient_email, chief_complaint, chief_complaint_english, severity, created_at, intake_source, structured_output, review_status, appointment_completed_at, survey_sent_at, revenue_generated, sms_transcript, sms_structured_output, has_sms_continuation, sms_received_at, intake_medical_flags, current_medications, clinical_note, patient_language, extraction_source, source, post_triage_escalation, post_triage_last_message_at, triage_tag, final_disposition, appointment_booked, subsequent_appointment_booked, appointment_datetime")
       .order("created_at", { ascending: currentSortAsc });
   }
 
@@ -1564,6 +1596,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       if (smsResult.data) smsRows = smsResult.data;
     } catch(e) { /* non-blocking */ }
     scroll.appendChild(buildNote(c, smsRows));
+    wireContactNameEdit(c);
     if (smsRefreshInterval) clearInterval(smsRefreshInterval);
     smsRefreshInterval = setInterval(function() { if (selectedCaseId) refreshSMSThread(selectedCaseId); }, 30000);
     scroll.scrollTop = 0;
@@ -1599,11 +1632,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     var bookStatus = document.getElementById("booking-status");
     bookStatus.textContent = ""; bookStatus.className = "revenue-save-status";
     setBookingButtons(c);
-    var bdtEl = document.getElementById("book-datetime"); if (bdtEl) bdtEl.value = c.appointment_datetime ? toLocalDT(c.appointment_datetime) : "";
+    var bdtEl = document.getElementById("book-datetime");
+    if (bdtEl) { bdtEl.value = c.appointment_datetime ? toLocalDT(c.appointment_datetime) : ""; bdtEl.onchange = function() { saveAppointmentDT(c.id, bdtEl.value); }; }
+    document.getElementById("book-yes").onclick = function() {
+      var cur = currentCases.find(function(x) { return x.id === c.id; });
+      var alreadyBooked = cur && (cur.final_disposition === "booked" || cur.appointment_booked === true);
+      if (alreadyBooked) { var g = document.getElementById("book-type-group"); if (g) g.style.display = "inline-flex"; return; }
+      saveBooking(c.id, "booked");
+    };
+    document.getElementById("book-none").onclick = function() { saveBooking(c.id, "none"); };
     document.getElementById("book-new").onclick = function() { saveBooking(c.id, "new"); };
     document.getElementById("book-existing").onclick = function() { saveBooking(c.id, "existing"); };
     document.getElementById("book-further").onclick = function() { saveBooking(c.id, "further"); };
-    document.getElementById("book-none").onclick = function() { saveBooking(c.id, "none"); };
 
     // Office notes (free-text, front-desk owned)
     var noteBar = document.getElementById("note-bar");
@@ -1828,7 +1868,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             '<span style="color:#744210;">&#128172; This patient submitted a non-emergent inquiry through ' + nonEmergentVia + '. Please reach out to confirm details and book if appropriate.</span>' +
           '</div>' +
           '<div class="contact-grid">' +
-            '<div class="contact-row"><div class="contact-field-label">Name</div><div class="contact-field-value">' + esc(c.patient_name || "—") + '</div></div>' +
+            '<div class="contact-row"><div class="contact-field-label">Name</div><div class="contact-field-value contact-name-edit" id="contact-name-value" style="cursor:pointer;" title="Click to correct the name">' + esc(c.patient_name || "—") + ' <span class="name-edit-hint">edit</span></div></div>' +
             '<div class="contact-row"><div class="contact-field-label">Phone</div><div class="contact-field-value">' + esc(nePhone) + '</div></div>' +
             (neNewPatient ? '<div class="contact-row"><div class="contact-field-label">Patient Status</div><div class="contact-field-value">' + esc(neNewPatient) + '</div></div>' : '') +
             (c.patient_language && c.patient_language !== "en" ? '<div class="contact-row"><div class="contact-field-label">Language</div><div class="contact-field-value" style="color:#6b46c1;font-weight:600;">' + esc(({"ar":"Arabic","hi":"Hindi","pa":"Punjabi","fr":"French","fa":"Farsi","so":"Somali","es":"Spanish","zh":"Chinese"})[c.patient_language] || c.patient_language) + '</div></div>' : '') +
@@ -1860,7 +1900,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             pendingWarning +
           '</div>' +
           '<div class="contact-grid">' +
-            '<div class="contact-row"><div class="contact-field-label">Name</div><div class="contact-field-value">' + esc(c.patient_name || "—") + '</div></div>' +
+            '<div class="contact-row"><div class="contact-field-label">Name</div><div class="contact-field-value contact-name-edit" id="contact-name-value" style="cursor:pointer;" title="Click to correct the name">' + esc(c.patient_name || "—") + ' <span class="name-edit-hint">edit</span></div></div>' +
             '<div class="contact-row"><div class="contact-field-label">Phone</div><div class="contact-field-value">' + esc(pendingPhone) + '</div></div>' +
             '<div class="contact-row"><div class="contact-field-label">Date of Birth</div><div class="contact-field-value">' + esc(pendingDob) + '</div></div>' +
             '<div class="contact-row"><div class="contact-field-label">City</div><div class="contact-field-value">' + esc(c.patient_city || "—") + '</div></div>' +
@@ -1897,7 +1937,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     contactCard.innerHTML =
       '<div class="contact-card-label">Patient Contact</div>' +
       '<div class="contact-grid">' +
-        '<div class="contact-row"><div class="contact-field-label">Name</div><div class="contact-field-value">' + esc(c.patient_name || "Unknown") + '</div></div>' +
+        '<div class="contact-row"><div class="contact-field-label">Name</div><div class="contact-field-value contact-name-edit" id="contact-name-value" style="cursor:pointer;" title="Click to correct the name">' + esc(c.patient_name || "Unknown") + ' <span class="name-edit-hint">edit</span></div></div>' +
         '<div class="contact-row"><div class="contact-field-label">Phone</div><div class="contact-field-value">' + esc(phone) + '</div></div>' +
         '<div class="contact-row"><div class="contact-field-label">Date of Birth</div><div class="contact-field-value">' + esc(dobDisplay) + '</div></div>' +
         '<div class="contact-row"><div class="contact-field-label">Email</div><div class="contact-field-value">' + esc(c.patient_email || "—") + '</div></div>' +
@@ -2143,7 +2183,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     if (!smsDiv) {
       // Section doesn't exist yet — rebuild note with SMS rows
       var c = currentCases.find(function(x) { return x.id === caseId; });
-      if (c) { scroll.innerHTML = ""; scroll.appendChild(buildNote(c, smsRows)); }
+      if (c) { scroll.innerHTML = ""; scroll.appendChild(buildNote(c, smsRows)); wireContactNameEdit(c); }
       return;
     }
     // Update existing thread
