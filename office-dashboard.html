@@ -424,6 +424,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .revenue-bar {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
       gap: 8px;
       padding: 8px 20px;
       background: rgba(0,200,232,0.04);
@@ -434,6 +435,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .revenue-bar input { background: rgba(255,255,255,0.07); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 13px; padding: 5px 10px; outline: none; width: 110px; transition: border-color 0.2s; }
     .revenue-bar input:focus { border-color: rgba(0,200,232,0.35); }
     .book-datetime { background: rgba(255,255,255,0.07); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 12px; padding: 4px 8px; color-scheme: dark; }
+    .revenue-bar input.book-datetime { width: auto; min-width: 200px; flex: 0 0 auto; }
     .outcome-head { font-size: 12px; font-weight: 700; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.06em; padding: 12px 20px 0; }
     .book-sub-label { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-left: 6px; }
     .book-sub-group { display: none; align-items: center; gap: 6px; flex-wrap: wrap; padding-left: 8px; margin-left: 4px; border-left: 1px solid var(--border); }
