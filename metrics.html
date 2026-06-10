@@ -29,7 +29,7 @@
     .auth-logo span{color:var(--cyan);}
     .auth-subtitle{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:26px;}
     .field-label{display:block;font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
-    .field-input{width:100%;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:14px;padding:12px 14px;outline:none;margin-bottom:16px;}
+    .field-input{width:100%;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;color:var(--text-primary);font-size:16px;padding:12px 14px;outline:none;margin-bottom:16px;}
     .field-input:focus{border-color:rgba(0,200,232,0.3);}
     .btn-primary{width:100%;background:linear-gradient(135deg,#4c8fd2,#69cbe7);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;padding:14px;cursor:pointer;}
     .btn-primary:disabled{opacity:.55;}
@@ -231,7 +231,10 @@
     .ops-body ul{margin:0 0 10px;padding-left:18px;}
     .ops-body li{margin:0 0 4px;}
     .ops-body b{color:var(--text-primary);font-weight:600;}
-    .ops-tabs{max-width:940px;margin:6px auto 2px;padding:0 22px;display:flex;gap:6px;}
+    .ops-tabs{max-width:940px;margin:6px auto 2px;padding:0 22px;display:flex;gap:6px;align-items:center;}
+    .ops-tabs-fill{flex:1;}
+    .ops-tabs .ops-window{min-width:auto;font-size:13px;}
+    .ops-tabs .ops-arrow{width:26px;height:26px;font-size:16px;}
     .ops-tab{background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--text-muted);font-size:13px;font-weight:600;padding:8px 18px;cursor:pointer;}
     .ops-tab:hover{color:var(--text-secondary);border-color:rgba(0,200,232,0.3);}
     .ops-tab.active{background:rgba(0,200,232,0.14);border-color:rgba(0,200,232,0.4);color:var(--cyan);}
@@ -285,7 +288,7 @@
         <button class="refresh-btn" id="refresh-btn" type="button" title="Refresh">&#8635;</button>
       </div>
     </div>
-    <div class="ops-tabs" id="ops-tabs"><button class="ops-tab active" data-tab="overview" type="button">Overview</button><button class="ops-tab" data-tab="metrics" type="button">Metrics</button></div>
+    <div class="ops-tabs" id="ops-tabs"><button class="ops-tab active" data-tab="overview" type="button">Overview</button><button class="ops-tab" data-tab="metrics" type="button">Metrics</button><div class="ops-tabs-fill"></div><button class="ops-arrow" id="day-prev" type="button" title="Previous day" aria-label="Previous day">&#8249;</button><div class="ops-window" id="day-label"></div><button class="ops-arrow" id="day-next" type="button" title="Next day" aria-label="Next day">&#8250;</button></div>
     <div id="ops-read" class="ops-read"><div class="ops-loading">Reading the latest calls…</div></div>
     <div class="main" id="main" style="display:none"><div class="loading">Loading metrics…</div></div>
     <div id="tx-modal" class="tx-modal"><div class="tx-box"><div class="tx-head"><b id="tx-title">Transcript</b><button id="tx-close" class="tx-close" type="button" aria-label="Close">&times;</button></div><div id="tx-meta" class="tx-meta"></div><div id="tx-body" class="tx-body"></div></div></div>
@@ -323,6 +326,9 @@
       if(m)m.style.display=overview?"none":"";
       var tb=document.getElementById("ops-tabs");if(tb)Array.prototype.forEach.call(tb.querySelectorAll(".ops-tab"),function(b){b.classList.toggle("active",b.getAttribute("data-tab")===(overview?"overview":"metrics"));});}
     var opsTabs=document.getElementById("ops-tabs");if(opsTabs)Array.prototype.forEach.call(opsTabs.querySelectorAll(".ops-tab"),function(b){b.addEventListener("click",function(){setView(b.getAttribute("data-tab"));});});
+    function updateDayLabel(){var el=document.getElementById("day-label");if(el)el.textContent=opsDayLabel();}
+    (function(){var dp=document.getElementById("day-prev");if(dp)dp.addEventListener("click",function(){opsStepDay(-1);});
+      var dn=document.getElementById("day-next");if(dn)dn.addEventListener("click",function(){opsStepDay(1);});})();
     document.getElementById("from-date").addEventListener("change",setCustomRange);
     document.getElementById("to-date").addEventListener("change",setCustomRange);
     document.getElementById("auth-password").addEventListener("keydown",function(e){if(e.key==="Enter")handleLogin();});
@@ -487,10 +493,7 @@
         if(!d.narrative_md){opsFail(d.error||"no analysis returned");return;}
         var st=d.stats_json||{};
         var when=d.generated_at?new Date(d.generated_at).toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"";
-        var nav='<div class="ops-nav"><button class="ops-arrow" id="ops-prev" type="button" title="Previous day" aria-label="Previous day">\u2039</button>'+
-          '<div class="ops-window">'+escHtml(opsDayLabel())+'</div>'+
-          '<button class="ops-arrow" id="ops-next" type="button" title="Next day" aria-label="Next day">\u203a</button>'+
-          '<div class="ops-nav-fill"></div>'+
+        var nav='<div class="ops-nav"><div class="ops-nav-fill"></div>'+
           '<span class="ops-asof">'+(when?'as of '+escHtml(when):'')+(d.cached?' \u00b7 cached':'')+(d.generated_by==="fallback"?' \u00b7 numbers only':'')+'</span>'+
           '<button class="ops-refresh" id="ops-refresh" type="button" title="Re-read now">\u21bb</button></div>';
         var eng=(st.engaged||0)||1;
@@ -531,14 +534,13 @@
         var md=String(d.narrative_md).replace(/^\s*##\s*Operations read[^\n]*\n+/i,"");
         var body='<div class="ops-eyebrow">Operations read</div><div class="ops-body">'+mdToHtml(md)+'</div>';
         el.classList.remove("ops-refreshing");el.innerHTML=nav+stats+viz+body;
-        var pv=document.getElementById("ops-prev");if(pv)pv.addEventListener("click",function(){opsStepDay(-1);});
-        var nx=document.getElementById("ops-next");if(nx)nx.addEventListener("click",function(){opsStepDay(1);});
         var rb=document.getElementById("ops-refresh");if(rb)rb.addEventListener("click",function(){loadOpsRead(true);});
         el.querySelectorAll(".donut").forEach(wireDonut);
       }).catch(function(e){opsFail((e&&e.message)||"error");});
     }
     async function loadMetrics(){
       loadOpsRead(false);
+      updateDayLabel();
       var main=document.getElementById("main");var rb=document.getElementById("refresh-btn");rb.disabled=true;
       var range=rangeISO();
       try{
