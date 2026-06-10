@@ -502,10 +502,6 @@
         var pmsFull=pctf((st.handled||0)+(st.capability_gap||0)+apptD);
         var fail=(st.failed_pct!=null?st.failed_pct:pctf(st.dropped_real));
         var failCls=(fail>=10?'crit':(fail>5?'urg':''));
-        var nps=st.sam_nps;
-        var npsTxt=(nps==null?'\u2014':(nps>0?'+':'')+nps);
-        var npsCls=(nps!=null&&nps<0?'crit':'');
-        var npsSub=(st.sam_nps_n?'n='+st.sam_nps_n+(st.sam_nps_n<5?' \u00b7 small sample':''):'no responses yet');
         var awaitCls=(st.critical>0?'crit':(st.urgent>0?'urg':''));
         var awaitSub=(st.critical?st.critical+' critical':(st.urgent?st.urgent+' urgent':''));
         var proj=(pending>0)?(' \u00b7 with PMS scheduling, resolved \u2192 ~'+pmsRes+'%'+((pmsFull!==pmsRes)?' ('+pmsFull+'% counting appointment transfers)':'')):'';
@@ -514,7 +510,6 @@
           statItem(resolved+"%","resolved","accent","Sam closed it \u2014 no front desk")+
           statItem(pending+"%","pending PMS","","captured callback \u2192 PMS resolves")+
           statItem(fail+"%","failed",failCls,"drops & errors")+
-          statItem(npsTxt,"Sam NPS",npsCls,npsSub)+
           statItem(st.awaiting_clinical_review,"awaiting review",awaitCls,awaitSub)+'</div>';
         var engSegs=[{label:"Handled by Sam",value:st.handled||0,color:DONUT_COLORS.handled},
           {label:"Chose a person",value:st.chose_a_person||0,color:DONUT_COLORS.person},
@@ -975,26 +970,18 @@
       else dispoEntries.forEach(function(e){html+=bar(e[0].replace(/_/g," "),e[1],dispoTotal,"var(--cyan)");});
       html+='</div>';
 
-      // TWO surveys, kept distinct:
-      //  (1) Sam-call survey  — one question, "How was your experience with Sam?"
-      //      -> sam_nps_score (0-10), the kind='sam' post-call touchpoint.
-      //  (2) Post-visit survey — "How was your visit?" -> nps_score (0-10),
-      //      practice NPS, plus optional sam_satisfaction_score (1-5) + timely.
+      // Post-visit survey only. The post-call "how was Sam" survey was retired
+      // 2026-06-09 (wrong moment, ~0 response). nps_score (0-10) = practice NPS,
+      // plus optional sam_satisfaction_score (1-5) + timely_response.
       function npsOf(rows,field){var r=rows.filter(function(c){return Number.isInteger(c[field]);});
         if(!r.length)return {n:0,nps:null};
         var p=r.filter(function(c){return c[field]>=9;}).length,d=r.filter(function(c){return c[field]<=6;}).length;
         return {n:r.length,nps:Math.round(p/r.length*100-d/r.length*100)};}
-      var samCall=npsOf(allCases,"sam_nps_score");
       var postVisit=npsOf(allCases,"nps_score");
       var samSatRows=allCases.filter(function(c){return Number.isInteger(c.sam_satisfaction_score);});
       var samSatAvg=samSatRows.length?(samSatRows.reduce(function(s,c){return s+c.sam_satisfaction_score;},0)/samSatRows.length).toFixed(1):null;
       var tRows=allCases.filter(function(c){return c.timely_response;});
       var tYes=tRows.filter(function(c){return c.timely_response==="yes";}).length;
-
-      html+='<div class="panel"><div class="panel-title">Sam-call survey \u2014 \u201CHow was your experience with Sam?\u201D ('+samCall.n+' response'+(samCall.n===1?"":"s")+')</div>';
-      if(!samCall.n)html+='<div class="empty">No responses yet \u2014 sent by text right after a Sam call (0\u201310 scale). Populates here as patients reply.</div>';
-      else html+='<div class="cards">'+card("Sam-call NPS",(samCall.nps>0?"+":"")+samCall.nps,"n="+samCall.n+(samCall.n<5?" \u00B7 small sample":""))+'</div>';
-      html+='<div class="note-line">The one-question survey about the Sam interaction itself \u2014 separate from the post-visit survey below.</div></div>';
 
       html+='<div class="panel"><div class="panel-title">Post-visit survey \u2014 practice NPS ('+postVisit.n+' response'+(postVisit.n===1?"":"s")+')</div>';
       if(!postVisit.n)html+='<div class="empty">No responses yet \u2014 sent after the patient is seen in office (\u201CHow was your visit?\u201D, 0\u201310 scale).</div>';
