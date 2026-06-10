@@ -419,7 +419,7 @@
     function isAuthErr(e){if(!e)return false;var m=((e.message||"")+" "+(e.code||"")).toLowerCase();return m.indexOf("jwt")!==-1||m.indexOf("token")!==-1||m.indexOf("expired")!==-1||m.indexOf("not authenticated")!==-1;}
 
     async function runQueries(range){
-      var ctq=sb.from("call_transcripts").select("id,vapi_call_id,ended_reason,duration_seconds,intake_source,created_at,outcome_bucket,topic,capability_gap_detail,needs_review,failure_reason");
+      var ctq=sb.from("call_transcripts").select("id,vapi_call_id,ended_reason,duration_seconds,intake_source,created_at,outcome_bucket,topic,capability_gap_detail,needs_review,failure_reason,transfer_reason");
       var tcq=sb.from("triage_cases").select("id,created_at,severity,triage_tag,intake_source,source,extraction_source,duration_seconds,ended_reason,structured_output,triage_completed_at,reviewed_at,final_disposition,appointment_booked,subsequent_appointment_booked,revenue_generated,nps_score,nps_submitted_at,sam_satisfaction_score,timely_response,contradictions,patient_language,vapi_call_id,patient_phone,review_status");
       var smsq=sb.from("sms_log").select("case_id,direction,sender_email,sender_name,sent_at,created_at");
       if(range.since){ctq=ctq.gte("created_at",range.since);tcq=tcq.gte("created_at",range.since);smsq=smsq.gte("sent_at",range.since);}
@@ -480,82 +480,108 @@
     function statItem(v,label,cls,sub){
       return '<div class="ops-stat '+(cls||"")+'"><div class="ops-stat-n">'+escHtml(String(v==null?"\u2014":v))+'</div><div class="ops-stat-l">'+escHtml(label)+'</div>'+(sub?'<div class="ops-stat-s">'+escHtml(sub)+'</div>':'')+'</div>';
     }
-    function loadOpsRead(force){
-      var el=document.getElementById("ops-read");if(!el)return;
-      var range=rangeISO();var label=currentWindowLabel();
-      var hadContent=!!el.querySelector(".ops-nav");
-      if(hadContent){var sc=document.createElement("div");sc.className="ops-scrim";sc.id="ops-scrim";sc.innerHTML='<div class="ops-progress"><span class="ops-spinner"></span>Updating\u2026</div>';el.appendChild(sc);}
-      else{el.innerHTML='<div class="ops-loading">'+(force?"Re-reading the calls\u2026":"Reading the latest calls\u2026")+'</div>';}
-      function opsFail(msg){el.classList.remove("ops-refreshing");var sc=document.getElementById("ops-scrim");if(sc&&sc.parentNode)sc.parentNode.removeChild(sc);if(!hadContent){el.innerHTML=opsErr(msg);}}
-      sb.functions.invoke("analyze-window",{body:{since:range.since,until:range.until,label:label,force:!!force}}).then(function(res){
-        if(res&&res.error){opsFail((res.error&&res.error.message)||"analysis failed");return;}
-        var d=(res&&res.data)||{};
-        if(!d.narrative_md){opsFail(d.error||"no analysis returned");return;}
-        var st=d.stats_json||{};
-        var when=d.generated_at?new Date(d.generated_at).toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"";
-        var nav='<div class="ops-nav"><div class="ops-nav-fill"></div>'+
-          '<span class="ops-asof">'+(when?'as of '+escHtml(when):'')+(d.cached?' \u00b7 cached':'')+(d.generated_by==="fallback"?' \u00b7 numbers only':'')+'</span>'+
-          '<button class="ops-refresh" id="ops-refresh" type="button" title="Re-read now">\u21bb</button></div>';
-        var eng=(st.engaged||0)||1;
-        var pctf=function(n){return Math.round((n||0)/eng*100);};
-        var resolved=pctf(st.handled);
-        var pending=pctf(st.capability_gap);
-        var apptD=(st.transfer_reasons&&st.transfer_reasons.appointment_driven)||0;
-        var pmsRes=pctf((st.handled||0)+(st.capability_gap||0));
-        var pmsFull=pctf((st.handled||0)+(st.capability_gap||0)+apptD);
-        var fail=(st.failed_pct!=null?st.failed_pct:pctf(st.dropped_real));
-        var failCls=(fail>=10?'crit':(fail>5?'urg':''));
-        var awaitCls=(st.critical>0?'crit':(st.urgent>0?'urg':''));
-        var awaitSub=(st.critical?st.critical+' critical':(st.urgent?st.urgent+' urgent':''));
-        var proj=(pending>0)?(' \u00b7 with PMS scheduling, resolved \u2192 ~'+pmsRes+'%'+((pmsFull!==pmsRes)?' ('+pmsFull+'% counting appointment transfers)':'')):'';
-        var ctx='<div class="ops-ctx">'+(st.inbound||0)+' calls in \u00b7 '+(st.engaged||0)+' engaged \u00b7 '+(st.transferred||0)+' to a person'+proj+'</div>';
-        var stats=ctx+'<div class="ops-stats">'+
-          statItem(resolved+"%","resolved","accent","Sam closed it \u2014 no front desk")+
-          statItem(pending+"%","pending PMS","","captured callback \u2192 PMS resolves")+
-          statItem(fail+"%","failed",failCls,"drops & errors")+
-          statItem(st.awaiting_clinical_review,"awaiting review",awaitCls,awaitSub)+'</div>';
-        var engSegs=[{label:"Handled by Sam",value:st.handled||0,color:DONUT_COLORS.handled},
-          {label:"Chose a person",value:st.chose_a_person||0,color:DONUT_COLORS.person},
-          {label:"Capability gap",value:st.capability_gap||0,color:DONUT_COLORS.gap},
-          {label:"Dropped",value:st.dropped_real||0,color:DONUT_COLORS.dropped}];
-        var gapMap={reschedule:"Reschedule",cancel:"Cancel",appointment_lookup:"Appointment lookup",records_lookup:"Records lookup",other:"Other"};
-        var gd=st.capability_gap_detail||{};
-        var gapSegs=Object.keys(gapMap).map(function(k){return {label:gapMap[k],value:gd[k]||0,color:DONUT_COLORS[k]||DONUT_COLORS.other};});
-        var hasGap=gapSegs.some(function(s){return s.value>0;});
-        var tr=st.transfer_reasons||{};
-        var trSegs=[{label:"Genuine human preference",value:tr.genuine_human||0,color:DONUT_COLORS.person},
-          {label:"Sam-addressable (reflexive)",value:tr.sam_addressable||0,color:DONUT_COLORS.handled},
-          {label:"Appointment-driven",value:tr.appointment_driven||0,color:DONUT_COLORS.gap},
-          {label:"Not yet analyzed",value:tr.unclassified||0,color:DONUT_COLORS.other}];
-        var hasTr=trSegs.some(function(s){return s.value>0;});
-        var viz='<div class="ops-viz">'+donutBlock("Where engaged calls went",engSegs,"engaged")+
-          (hasTr?donutBlock("Why callers chose a person",trSegs,"transfers"):'')+
-          (hasGap?donutBlock("Capability gaps \u2014 what Sam can\u2019t do yet",gapSegs,"gaps"):'')+'</div>';
-        var md=String(d.narrative_md).replace(/^\s*##\s*Operations read[^\n]*\n+/i,"");
-        var body='<div class="ops-eyebrow">Operations read</div><div class="ops-body">'+mdToHtml(md)+'</div>';
-        el.classList.remove("ops-refreshing");el.innerHTML=nav+stats+viz+body;
-        var rb=document.getElementById("ops-refresh");if(rb)rb.addEventListener("click",function(){loadOpsRead(true);});
-        el.querySelectorAll(".donut").forEach(wireDonut);
-      }).catch(function(e){opsFail((e&&e.message)||"error");});
+    function computeOpsStats(calls,cases){
+      var ob=function(c){return c.outcome_bucket||"unclassified";};
+      var counts={};calls.forEach(function(c){var b=ob(c);counts[b]=(counts[b]||0)+1;});
+      var noise=0;calls.forEach(function(c){if(ob(c)!=="dropped")return;var d=Number(c.duration_seconds)||0;var r=(c.ended_reason||"").toLowerCase();if(c.failure_reason==="dead_air_or_wrong_number"||(r.indexOf("customer-ended")!==-1&&d<15))noise++;});
+      var sysErr=counts.system_error||0;
+      var inbound=calls.length;
+      var engaged=inbound-noise-sysErr;
+      var handled=(counts.completed||0)+(counts.clinical_pivot||0);
+      var chosePerson=counts.patient_chose_human||0;
+      var gap=counts.capability_gap||0;
+      var droppedReal=(counts.dropped||0)-noise;
+      var gapDetail={};calls.forEach(function(c){if(ob(c)==="capability_gap"){var k=c.capability_gap_detail||"other";gapDetail[k]=(gapDetail[k]||0)+1;}});
+      var transferReasons={appointment_driven:0,sam_addressable:0,genuine_human:0,unclassified:0};
+      calls.forEach(function(c){if(ob(c)==="patient_chose_human"){var k=(c.transfer_reason==="appointment_driven"||c.transfer_reason==="sam_addressable"||c.transfer_reason==="genuine_human")?c.transfer_reason:"unclassified";transferReasons[k]++;}});
+      var queue=cases.filter(function(c){var ss=(c.severity||"").toLowerCase();return ss==="critical"||ss==="urgent"||getContras(c).length>0;});
+      var critN=queue.filter(function(c){return (c.severity||"").toLowerCase()==="critical";}).length;
+      var urgN=queue.filter(function(c){return (c.severity||"").toLowerCase()==="urgent";}).length;
+      var failedN=droppedReal+sysErr;
+      var pctv=function(n){return engaged?Math.round(n/engaged*100):0;};
+      return {inbound:inbound,noise:noise,engaged:engaged,handled:handled,
+        chose_a_person:chosePerson,capability_gap:gap,dropped_real:droppedReal,
+        capability_gap_detail:gapDetail,transfer_reasons:transferReasons,
+        transferred:chosePerson,failed:failedN,failed_pct:pctv(failedN),
+        awaiting_clinical_review:queue.length,critical:critN,urgent:urgN};
     }
-    async function loadMetrics(){
-      loadOpsRead(false);
+    function loadOpsRead(force,st){
+      var el=document.getElementById("ops-read");if(!el)return;
+      st=st||{};
+      var range=rangeISO();var label=currentWindowLabel();
+      var eng=(st.engaged||0)||1;
+      var pctf=function(n){return Math.round((n||0)/eng*100);};
+      var resolved=pctf(st.handled);
+      var pending=pctf(st.capability_gap);
+      var apptD=(st.transfer_reasons&&st.transfer_reasons.appointment_driven)||0;
+      var pmsRes=pctf((st.handled||0)+(st.capability_gap||0));
+      var pmsFull=pctf((st.handled||0)+(st.capability_gap||0)+apptD);
+      var fail=(st.failed_pct!=null?st.failed_pct:pctf(st.dropped_real));
+      var failCls=(fail>=10?'crit':(fail>5?'urg':''));
+      var awaitCls=(st.critical>0?'crit':(st.urgent>0?'urg':''));
+      var awaitSub=(st.critical?st.critical+' critical':(st.urgent?st.urgent+' urgent':''));
+      var proj=(pending>0)?(' \u00b7 with PMS scheduling, resolved \u2192 ~'+pmsRes+'%'+((pmsFull!==pmsRes)?' ('+pmsFull+'% counting appointment transfers)':'')):'';
+      var nav='<div class="ops-nav"><div class="ops-nav-fill"></div>'+
+        '<span class="ops-asof" id="ops-asof">live</span>'+
+        '<button class="ops-refresh" id="ops-refresh" type="button" title="Re-read now">\u21bb</button></div>';
+      var ctx='<div class="ops-ctx">'+(st.inbound||0)+' calls in \u00b7 '+(st.engaged||0)+' engaged \u00b7 '+(st.transferred||0)+' to a person'+proj+'</div>';
+      var stats=ctx+'<div class="ops-stats">'+
+        statItem(resolved+"%","resolved","accent","Sam closed it \u2014 no front desk")+
+        statItem(pending+"%","pending PMS","","captured callback \u2192 PMS resolves")+
+        statItem(fail+"%","failed",failCls,"drops & errors")+
+        statItem(st.awaiting_clinical_review,"awaiting review",awaitCls,awaitSub)+'</div>';
+      var engSegs=[{label:"Handled by Sam",value:st.handled||0,color:DONUT_COLORS.handled},
+        {label:"Chose a person",value:st.chose_a_person||0,color:DONUT_COLORS.person},
+        {label:"Capability gap",value:st.capability_gap||0,color:DONUT_COLORS.gap},
+        {label:"Dropped",value:st.dropped_real||0,color:DONUT_COLORS.dropped}];
+      var gapMap={reschedule:"Reschedule",cancel:"Cancel",appointment_lookup:"Appointment lookup",records_lookup:"Records lookup",other:"Other"};
+      var gd=st.capability_gap_detail||{};
+      var gapSegs=Object.keys(gapMap).map(function(k){return {label:gapMap[k],value:gd[k]||0,color:DONUT_COLORS[k]||DONUT_COLORS.other};});
+      var hasGap=gapSegs.some(function(s){return s.value>0;});
+      var tr=st.transfer_reasons||{};
+      var trSegs=[{label:"Genuine human preference",value:tr.genuine_human||0,color:DONUT_COLORS.person},
+        {label:"Sam-addressable (reflexive)",value:tr.sam_addressable||0,color:DONUT_COLORS.handled},
+        {label:"Appointment-driven",value:tr.appointment_driven||0,color:DONUT_COLORS.gap},
+        {label:"Not yet analyzed",value:tr.unclassified||0,color:DONUT_COLORS.other}];
+      var hasTr=trSegs.some(function(s){return s.value>0;});
+      var viz='<div class="ops-viz">'+donutBlock("Where engaged calls went",engSegs,"engaged")+
+        (hasTr?donutBlock("Why callers chose a person",trSegs,"transfers"):'')+
+        (hasGap?donutBlock("Capability gaps \u2014 what Sam can\u2019t do yet",gapSegs,"gaps"):'')+'</div>';
+      var body='<div class="ops-eyebrow">Operations read</div><div class="ops-body" id="ops-body"><div class="ops-loading">'+(force?"Re-reading the calls\u2026":"Reading the calls\u2026")+'</div></div>';
+      el.classList.remove("ops-refreshing");el.innerHTML=nav+stats+viz+body;
+      var rb=document.getElementById("ops-refresh");if(rb)rb.addEventListener("click",function(){loadMetrics(true);});
+      el.querySelectorAll(".donut").forEach(wireDonut);
+      sb.functions.invoke("analyze-window",{body:{since:range.since,until:range.until,label:label,force:!!force}}).then(function(res){
+        var bodyEl=document.getElementById("ops-body");if(!bodyEl)return;
+        if(res&&res.error){bodyEl.innerHTML='<div class="empty">Could not generate the written read \u2014 '+escHtml((res.error&&res.error.message)||"analysis failed")+'. The numbers above are live and unaffected.</div>';return;}
+        var d=(res&&res.data)||{};
+        if(!d.narrative_md){bodyEl.innerHTML='<div class="empty">Could not generate the written read \u2014 '+escHtml(d.error||"no analysis returned")+'. The numbers above are live and unaffected.</div>';return;}
+        var md=String(d.narrative_md).replace(/^\s*##\s*Operations read[^\n]*\n+/i,"");
+        bodyEl.innerHTML=mdToHtml(md);
+        var when=d.generated_at?new Date(d.generated_at).toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"";
+        var asof=document.getElementById("ops-asof");if(asof)asof.textContent=(when?'analysis as of '+when:'live')+(d.cached?' \u00b7 cached':'')+(d.generated_by==="fallback"?' \u00b7 numbers only':'');
+      }).catch(function(e){var bodyEl=document.getElementById("ops-body");if(bodyEl)bodyEl.innerHTML='<div class="empty">Could not generate the written read \u2014 '+escHtml((e&&e.message)||"error")+'. The numbers above are live and unaffected.</div>';});
+    }
+    async function loadMetrics(force){
       updateDayLabel();
+      var ore=document.getElementById("ops-read");
+      if(ore&&ore.querySelector(".ops-nav")){if(!document.getElementById("ops-scrim")){var osc=document.createElement("div");osc.className="ops-scrim";osc.id="ops-scrim";osc.innerHTML='<div class="ops-progress"><span class="ops-spinner"></span>Updating\u2026</div>';ore.appendChild(osc);}}
+      else if(ore){ore.innerHTML='<div class="ops-loading">Reading the latest calls\u2026</div>';}
       var main=document.getElementById("main");var rb=document.getElementById("refresh-btn");rb.disabled=true;
       var range=rangeISO();
       try{
         var res=await runQueries(range);
-        // Auth refresh-retry: if a query failed on an expired token, refresh once and retry.
         if([res[0].error,res[1].error,res[2].error].some(isAuthErr)){
           try{await sb.auth.refreshSession();}catch(e){}
           res=await runQueries(range);
         }
         var errs=[res[0].error,res[1].error,res[2].error].filter(Boolean);
-        if(errs.length){main.innerHTML='<div class="panel"><div class="panel-title">Could not load some data</div><div class="empty">'+errs.map(function(e){return escHtml(e.message);}).join("<br>")+'</div><div class="note-line">If this mentions permission/RLS on a table, it needs an authenticated SELECT policy + grant. If it mentions JWT/token, sign out and back in.</div></div>';return;}
+        if(errs.length){main.innerHTML='<div class="panel"><div class="panel-title">Could not load some data</div><div class="empty">'+errs.map(function(e){return escHtml(e.message);}).join("<br>")+'</div><div class="note-line">If this mentions permission/RLS on a table, it needs an authenticated SELECT policy + grant. If it mentions JWT/token, sign out and back in.</div></div>';var oscE=document.getElementById("ops-scrim");if(oscE&&oscE.parentNode)oscE.parentNode.removeChild(oscE);return;}
         var rawCalls=(res[0].data||[]);
         var calls=rawCalls.filter(function(c){return !isTest(c.intake_source);});
         var cases=(res[1].data||[]).filter(function(c){return !isTest(c.intake_source);});
         var sms=res[2].data||[];
+        loadOpsRead(!!force,computeOpsStats(calls,cases));
         render(calls,cases,sms,rawCalls.length-calls.length);
         document.getElementById("last-updated").textContent="Updated "+new Date().toLocaleTimeString("en-CA",{hour:"2-digit",minute:"2-digit"});
       }catch(e){main.innerHTML='<div class="panel"><div class="empty">Unexpected error: '+escHtml((e&&e.message)||"unknown")+'</div></div>';}
