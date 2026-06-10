@@ -208,6 +208,10 @@
     .ops-stat-l{font-size:11.5px;color:var(--text-muted);margin-top:6px;}
     .ops-stat-s{font-size:10.5px;color:var(--text-faint);margin-top:2px;}
     .ops-viz{display:flex;gap:14px;margin-bottom:24px;flex-wrap:wrap;}
+    .ops-subt{margin:-10px 0 22px;font-size:12px;color:var(--text-muted);}
+    .ops-subt-h{font-weight:600;color:var(--text-primary);margin-bottom:4px;}
+    .ops-subt-row{padding:1px 0;}
+    .ops-subt-row b{color:var(--text-primary);}
     .donut-card{flex:1;min-width:300px;background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
     .donut-title{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-bottom:12px;}
     .donut-wrap{display:flex;align-items:center;gap:18px;}
@@ -419,7 +423,7 @@
     function isAuthErr(e){if(!e)return false;var m=((e.message||"")+" "+(e.code||"")).toLowerCase();return m.indexOf("jwt")!==-1||m.indexOf("token")!==-1||m.indexOf("expired")!==-1||m.indexOf("not authenticated")!==-1;}
 
     async function runQueries(range){
-      var ctq=sb.from("call_transcripts").select("id,vapi_call_id,ended_reason,duration_seconds,intake_source,created_at,outcome_bucket,topic,capability_gap_detail,needs_review,failure_reason,transfer_reason");
+      var ctq=sb.from("call_transcripts").select("id,vapi_call_id,ended_reason,duration_seconds,intake_source,created_at,outcome_bucket,topic,capability_gap_detail,needs_review,failure_reason,transfer_reason,transfer_subreason");
       var tcq=sb.from("triage_cases").select("id,created_at,severity,triage_tag,intake_source,source,extraction_source,duration_seconds,ended_reason,structured_output,triage_completed_at,reviewed_at,final_disposition,appointment_booked,subsequent_appointment_booked,revenue_generated,nps_score,nps_submitted_at,sam_satisfaction_score,timely_response,contradictions,patient_language,vapi_call_id,patient_phone,review_status");
       var smsq=sb.from("sms_log").select("case_id,direction,sender_email,sender_name,sent_at,created_at");
       if(range.since){ctq=ctq.gte("created_at",range.since);tcq=tcq.gte("created_at",range.since);smsq=smsq.gte("sent_at",range.since);}
@@ -493,7 +497,8 @@
       var droppedReal=(counts.dropped||0)-noise;
       var gapDetail={};calls.forEach(function(c){if(ob(c)==="capability_gap"){var k=c.capability_gap_detail||"other";gapDetail[k]=(gapDetail[k]||0)+1;}});
       var transferReasons={appointment_driven:0,sam_addressable:0,genuine_human:0,unclassified:0};
-      calls.forEach(function(c){if(ob(c)==="patient_chose_human"){var k=(c.transfer_reason==="appointment_driven"||c.transfer_reason==="sam_addressable"||c.transfer_reason==="genuine_human")?c.transfer_reason:"unclassified";transferReasons[k]++;}});
+      var transferSub={human_need_stated:0,no_reason_given:0,sam_frustration:0,unclassified:0};
+      calls.forEach(function(c){if(ob(c)==="patient_chose_human"){var k=(c.transfer_reason==="appointment_driven"||c.transfer_reason==="sam_addressable"||c.transfer_reason==="genuine_human")?c.transfer_reason:"unclassified";transferReasons[k]++;if(k==="genuine_human"){var sk=(c.transfer_subreason==="human_need_stated"||c.transfer_subreason==="no_reason_given"||c.transfer_subreason==="sam_frustration")?c.transfer_subreason:"unclassified";transferSub[sk]++;}}});
       var queue=cases.filter(function(c){var ss=(c.severity||"").toLowerCase();return ss==="critical"||ss==="urgent"||getContras(c).length>0;});
       var critN=queue.filter(function(c){return (c.severity||"").toLowerCase()==="critical";}).length;
       var urgN=queue.filter(function(c){return (c.severity||"").toLowerCase()==="urgent";}).length;
@@ -501,7 +506,7 @@
       var pctv=function(n){return engaged?Math.round(n/engaged*100):0;};
       return {inbound:inbound,noise:noise,engaged:engaged,handled:handled,
         chose_a_person:chosePerson,capability_gap:gap,dropped_real:droppedReal,
-        capability_gap_detail:gapDetail,transfer_reasons:transferReasons,
+        capability_gap_detail:gapDetail,transfer_reasons:transferReasons,transfer_subreasons:transferSub,
         transferred:chosePerson,failed:failedN,failed_pct:pctv(failedN),
         awaiting_clinical_review:queue.length,critical:critN,urgent:urgN};
     }
@@ -548,7 +553,13 @@
         (hasTr?donutBlock("Why callers chose a person",trSegs,"transfers"):'')+
         (hasGap?donutBlock("Capability gaps \u2014 what Sam can\u2019t do yet",gapSegs,"gaps"):'')+'</div>';
       var body='<div class="ops-eyebrow">Operations read</div><div class="ops-body" id="ops-body"><div class="ops-loading">'+(force?"Re-reading the calls\u2026":"Reading the calls\u2026")+'</div></div>';
-      el.classList.remove("ops-refreshing");el.innerHTML=nav+stats+viz+body;
+      var tsr=st.transfer_subreasons||{};var genTot=(tr.genuine_human||0);
+      var subt=genTot>0?('<div class="ops-subt"><div class="ops-subt-h">Of the '+genTot+' who chose a person:</div>'+
+        '<div class="ops-subt-row"><b>'+(tsr.no_reason_given||0)+'</b> gave no reason \u2014 reducible via the opener</div>'+
+        '<div class="ops-subt-row"><b>'+(tsr.human_need_stated||0)+'</b> a real human need \u2014 correctly routed</div>'+
+        '<div class="ops-subt-row"><b>'+(tsr.sam_frustration||0)+'</b> bailed after Sam struggled \u2014 fixable</div>'+
+        ((tsr.unclassified||0)?'<div class="ops-subt-row"><b>'+tsr.unclassified+'</b> not yet analyzed</div>':'')+'</div>'):'';
+      el.classList.remove("ops-refreshing");el.innerHTML=nav+stats+viz+subt+body;
       var rb=document.getElementById("ops-refresh");if(rb)rb.addEventListener("click",function(){loadMetrics(true);});
       el.querySelectorAll(".donut").forEach(wireDonut);
       sb.functions.invoke("analyze-window",{body:{since:range.since,until:range.until,label:label,force:!!force}}).then(function(res){
