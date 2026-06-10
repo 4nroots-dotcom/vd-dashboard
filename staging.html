@@ -436,10 +436,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .book-datetime { background: rgba(255,255,255,0.07); border: 1px solid var(--border); border-radius: 6px; color: var(--text-primary); font-size: 12px; padding: 4px 8px; color-scheme: dark; }
     .outcome-head { font-size: 12px; font-weight: 700; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.06em; padding: 12px 20px 0; }
     .book-sub-label { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-left: 6px; }
-    .book-type-group { display: none; align-items: center; gap: 6px; flex-wrap: wrap; padding-left: 8px; margin-left: 4px; border-left: 1px solid var(--border); }
+    .book-sub-group { display: none; align-items: center; gap: 6px; flex-wrap: wrap; padding-left: 8px; margin-left: 4px; border-left: 1px solid var(--border); }
     .book-btn-sub { font-size: 12px; padding: 4px 10px; }
+    .needs-count { display:inline-block; min-width:16px; padding:0 5px; margin-left:4px; border-radius:999px; background:#ED8936; color:#1a202c; font-size:10px; font-weight:800; line-height:16px; text-align:center; vertical-align:middle; }
     .name-edit-hint { font-size: 11px; color: #00c8e8; font-weight: 600; margin-left: 4px; }
-    #revenue-bar, #booking-bar { margin-top: 4px; }
+    #booking-bar { margin-top: 4px; flex-wrap: wrap; }
     #note-bar .revenue-bar-label { font-size: 11px; color: var(--text-muted); }
     #note-bar { opacity: 0.9; }
     .revenue-bar input::placeholder { color: var(--text-muted); }
@@ -837,11 +838,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div style="display:flex;gap:5px;margin-top:8px;align-items:center;flex-wrap:wrap;">
         <span style="font-size:11px;color:var(--text-muted);">Source:</span>
         <button class="sort-btn active" id="filter-all" type="button">All</button>
+        <button class="sort-btn" id="filter-needs" type="button" style="border-left:3px solid #ED8936;" title="Open cases with no recorded outcome and not yet seen - your daily worklist">Needs action <span id="needs-count" class="needs-count"></span></button>
         <button class="sort-btn" id="filter-office" type="button" style="border-left:3px solid #71BB55;">In-Office</button>
         <button class="sort-btn" id="filter-web" type="button" style="border-left:3px solid #00c8e8;">Web</button>
         <button class="sort-btn" id="filter-nonemergent" type="button" style="border-left:3px solid #D69E2E;">Non-Emergent</button>
         <button class="sort-btn" id="filter-awaiting" type="button" style="border-left:3px solid #B794F4;" title="Sam sent the intake form but the patient has not completed it - call-back candidates">Awaiting form</button>
-        <button class="sort-btn" id="filter-emergency" type="button" style="border-left:3px solid #e84545;" title="Clinical / Emergency Sam cases (voice and SMS)">Emergency</button>
+        <button class="sort-btn" id="filter-er-voice" type="button" style="border-left:3px solid #e84545;" title="Clinical / Emergency Sam cases - voice">Emergency Voice</button>
+        <button class="sort-btn" id="filter-er-sms" type="button" style="border-left:3px solid #e84545;" title="Clinical / Emergency Sam cases - SMS">Emergency SMS</button>
       </div>
     </div>
       <div class="case-list-scroll" id="case-list-scroll">
@@ -871,23 +874,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div id="detail-ownership-inline" class="detail-ownership-indicator" style="display:none;"></div>
 
       <div class="outcome-head" id="outcome-head" style="display:none;">Outcome</div>
-      <div class="revenue-bar" id="revenue-bar" style="display:none;">
-        <span class="revenue-bar-label">Revenue</span>
-        <span style="font-size:13px;color:var(--text-muted);font-weight:600;">$</span>
-        <input type="number" id="revenue-input" placeholder="0.00" step="0.01" min="0" />
-        <button class="revenue-save-btn" id="revenue-save-btn" type="button">Save</button>
-        <span class="revenue-save-status" id="revenue-save-status"></span>
-      </div>
-
       <div class="revenue-bar" id="booking-bar" style="display:none;">
-        <span class="revenue-bar-label">Booked?</span>
-        <button class="book-btn" id="book-yes" type="button">Booked</button>
-        <button class="book-btn" id="book-none" type="button">Not booked</button>
-        <span class="book-type-group" id="book-type-group">
+        <span class="revenue-bar-label">What happened?</span>
+        <button class="book-btn" id="out-booked" type="button">Booked</button>
+        <button class="book-btn" id="out-resched" type="button">Rescheduled</button>
+        <button class="book-btn" id="out-cancelled" type="button">Cancelled</button>
+        <button class="book-btn" id="out-noreach" type="button">Couldn&#39;t reach</button>
+        <button class="book-btn" id="out-declined" type="button">Declined</button>
+        <span class="book-sub-group" id="book-type-group">
           <span class="book-sub-label">Type</span>
           <button class="book-btn book-btn-sub" id="book-new" type="button">New</button>
           <button class="book-btn book-btn-sub" id="book-existing" type="button">Existing</button>
           <button class="book-btn book-btn-sub" id="book-further" type="button">Further tx</button>
+        </span>
+        <span class="book-sub-group" id="book-when-group">
           <span class="book-sub-label">When</span>
           <input type="datetime-local" id="book-datetime" class="book-datetime" title="Appointment date & time" />
         </span>
@@ -1069,7 +1069,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   document.getElementById("filter-all").addEventListener("click", function() {
     sourceFilter = "all";
-    ["filter-all","filter-office","filter-web","filter-nonemergent","filter-awaiting","filter-emergency"].forEach(function(id) {
+    ["filter-all","filter-needs","filter-office","filter-web","filter-nonemergent","filter-awaiting","filter-er-voice","filter-er-sms"].forEach(function(id) {
       document.getElementById(id).classList.remove("active");
     });
     document.getElementById("filter-all").classList.add("active");
@@ -1079,7 +1079,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   document.getElementById("filter-office").addEventListener("click", function() {
     sourceFilter = "office";
-    ["filter-all","filter-office","filter-web","filter-nonemergent","filter-awaiting","filter-emergency"].forEach(function(id) {
+    ["filter-all","filter-needs","filter-office","filter-web","filter-nonemergent","filter-awaiting","filter-er-voice","filter-er-sms"].forEach(function(id) {
       document.getElementById(id).classList.remove("active");
     });
     document.getElementById("filter-office").classList.add("active");
@@ -1088,7 +1088,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   document.getElementById("filter-web").addEventListener("click", function() {
     sourceFilter = "web";
-    ["filter-all","filter-office","filter-web","filter-nonemergent","filter-awaiting","filter-emergency"].forEach(function(id) {
+    ["filter-all","filter-needs","filter-office","filter-web","filter-nonemergent","filter-awaiting","filter-er-voice","filter-er-sms"].forEach(function(id) {
       document.getElementById(id).classList.remove("active");
     });
     document.getElementById("filter-web").classList.add("active");
@@ -1097,7 +1097,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   document.getElementById("filter-nonemergent").addEventListener("click", function() {
     sourceFilter = "nonemergent";
-    ["filter-all","filter-office","filter-web","filter-nonemergent","filter-awaiting","filter-emergency"].forEach(function(id) {
+    ["filter-all","filter-needs","filter-office","filter-web","filter-nonemergent","filter-awaiting","filter-er-voice","filter-er-sms"].forEach(function(id) {
       document.getElementById(id).classList.remove("active");
     });
     document.getElementById("filter-nonemergent").classList.add("active");
@@ -1106,19 +1106,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   document.getElementById("filter-awaiting").addEventListener("click", function() {
     sourceFilter = "awaiting";
-    ["filter-all","filter-office","filter-web","filter-nonemergent","filter-awaiting","filter-emergency"].forEach(function(id) {
+    ["filter-all","filter-needs","filter-office","filter-web","filter-nonemergent","filter-awaiting","filter-er-voice","filter-er-sms"].forEach(function(id) {
       document.getElementById(id).classList.remove("active");
     });
     document.getElementById("filter-awaiting").classList.add("active");
     applySearchFilter();
   });
 
-  document.getElementById("filter-emergency").addEventListener("click", function() {
-    sourceFilter = "emergency";
-    ["filter-all","filter-office","filter-web","filter-nonemergent","filter-awaiting","filter-emergency"].forEach(function(id) {
+  document.getElementById("filter-needs").addEventListener("click", function() {
+    sourceFilter = "needs";
+    ["filter-all","filter-needs","filter-office","filter-web","filter-nonemergent","filter-awaiting","filter-er-voice","filter-er-sms"].forEach(function(id) {
       document.getElementById(id).classList.remove("active");
     });
-    document.getElementById("filter-emergency").classList.add("active");
+    document.getElementById("filter-needs").classList.add("active");
+    applySearchFilter();
+  });
+
+  document.getElementById("filter-er-voice").addEventListener("click", function() {
+    sourceFilter = "er-voice";
+    ["filter-all","filter-needs","filter-office","filter-web","filter-nonemergent","filter-awaiting","filter-er-voice","filter-er-sms"].forEach(function(id) {
+      document.getElementById(id).classList.remove("active");
+    });
+    document.getElementById("filter-er-voice").classList.add("active");
+    applySearchFilter();
+  });
+
+  document.getElementById("filter-er-sms").addEventListener("click", function() {
+    sourceFilter = "er-sms";
+    ["filter-all","filter-needs","filter-office","filter-web","filter-nonemergent","filter-awaiting","filter-er-voice","filter-er-sms"].forEach(function(id) {
+      document.getElementById(id).classList.remove("active");
+    });
+    document.getElementById("filter-er-sms").classList.add("active");
     applySearchFilter();
   });
 
@@ -1193,49 +1211,65 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }
 
   function setBookingButtons(c) {
-    var booked = c.final_disposition === "booked" || c.appointment_booked === true || (c.revenue_generated != null && Number(c.revenue_generated) > 0);
-    var further = c.subsequent_appointment_booked === true;
-    var existing = c.is_existing_patient;  // true / false / null(unknown)
-    var none = !booked && !!c.final_disposition && c.final_disposition !== "booked";
-    var by = document.getElementById("book-yes"), bx = document.getElementById("book-none");
+    var fd = c.final_disposition;
+    if (!fd && c.appointment_booked === true) fd = "booked";  // legacy rows
+    var map = { booked:"out-booked", rescheduled:"out-resched", cancelled:"out-cancelled", no_response:"out-noreach", declined:"out-declined" };
+    if (!document.getElementById("out-booked")) return;
+    Object.keys(map).forEach(function(k){ var el = document.getElementById(map[k]); if (el) el.classList.toggle("active", fd === k); });
+    var tg = document.getElementById("book-type-group"), wg = document.getElementById("book-when-group");
+    if (tg) tg.style.display = (fd === "booked") ? "inline-flex" : "none";
+    if (wg) wg.style.display = (fd === "booked" || fd === "rescheduled") ? "inline-flex" : "none";
+    var further = c.subsequent_appointment_booked === true, existing = c.is_existing_patient;
     var bn = document.getElementById("book-new"), be = document.getElementById("book-existing"), bf = document.getElementById("book-further");
-    var grp = document.getElementById("book-type-group");
-    if (!by || !bx) return;
-    by.classList.toggle("active", booked);
-    bx.classList.toggle("active", none);
-    bx.classList.toggle("none-active", none);
-    if (grp) grp.style.display = booked ? "inline-flex" : "none";
-    if (bn) bn.classList.toggle("active", booked && !further && existing === false);
-    if (be) be.classList.toggle("active", booked && !further && existing === true);
-    if (bf) bf.classList.toggle("active", booked && further);
+    if (bn) bn.classList.toggle("active", fd === "booked" && !further && existing === false);
+    if (be) be.classList.toggle("active", fd === "booked" && !further && existing === true);
+    if (bf) bf.classList.toggle("active", fd === "booked" && further);
   }
 
-  async function saveBooking(caseId, kind) {
+  function bookOk(statusEl){ statusEl.textContent = "\u2713 Saved"; statusEl.className = "revenue-save-status ok"; setTimeout(function(){ statusEl.textContent=""; statusEl.className="revenue-save-status"; }, 2500); }
+  function bookErr(statusEl){ statusEl.textContent = "Error saving"; statusEl.className = "revenue-save-status err"; setTimeout(function(){ statusEl.textContent=""; statusEl.className="revenue-save-status"; }, 2500); }
+
+  // Primary outcome. booked/rescheduled carry an appointment; the rest do not.
+  // "booked" does NOT touch type fields (set by the Type buttons), so re-clicking
+  // Booked never wipes a chosen type.
+  async function saveOutcome(caseId, outcome) {
     var statusEl = document.getElementById("booking-status");
     statusEl.textContent = "Saving..."; statusEl.className = "revenue-save-status";
-    var booked = kind !== "none";
+    var appt = (outcome === "booked" || outcome === "rescheduled");
     var dtEl = document.getElementById("book-datetime");
-    var dtVal = (booked && dtEl && dtEl.value) ? new Date(dtEl.value).toISOString() : null;
-    var patch = {
-      final_disposition: booked ? "booked" : "not_booked",
-      appointment_booked: booked,
-      subsequent_appointment_booked: kind === "further",
-      appointment_datetime: dtVal
-    };
+    var dtVal = (appt && dtEl && dtEl.value) ? new Date(dtEl.value).toISOString() : null;
+    var patch = { final_disposition: outcome, appointment_booked: appt };
+    if (appt) patch.appointment_datetime = dtVal;
+    if (outcome !== "booked") patch.subsequent_appointment_booked = false;
     var result = await sb.from("triage_cases").update(patch).eq("id", caseId);
-    if (result.error) {
-      statusEl.textContent = "Error saving"; statusEl.className = "revenue-save-status err";
-      setTimeout(function() { statusEl.textContent = ""; statusEl.className = "revenue-save-status"; }, 2500);
-      return;
-    }
-    // new-vs-existing lives in a separately-migrated column; written as its own
-    // guarded update so a pre-migration deploy still saves the booking itself.
+    if (result.error) { bookErr(statusEl); return; }
+    var existingVal;  // undefined = leave unchanged (booked); true for reschedule; null otherwise
+    if (outcome === "rescheduled") existingVal = true;
+    else if (outcome !== "booked") existingVal = null;
+    if (existingVal !== undefined) { try { await sb.from("triage_cases").update({ is_existing_patient: existingVal }).eq("id", caseId); } catch (e) {} }
+    var c = currentCases.find(function(x) { return x.id === caseId; });
+    if (c) { c.final_disposition = outcome; c.appointment_booked = appt; if (appt) c.appointment_datetime = dtVal; if (outcome !== "booked") c.subsequent_appointment_booked = false; if (existingVal !== undefined) c.is_existing_patient = existingVal; setBookingButtons(c); }
+    applySearchFilter();
+    bookOk(statusEl);
+  }
+
+  // Type refinement for a booked appointment (new / existing / further treatment).
+  async function saveType(caseId, kind) {
+    var statusEl = document.getElementById("booking-status");
+    statusEl.textContent = "Saving..."; statusEl.className = "revenue-save-status";
     var existingVal = (kind === "existing" || kind === "further") ? true : (kind === "new" ? false : null);
+    var subsequent = (kind === "further");
+    var dtEl = document.getElementById("book-datetime");
+    var dtVal = (dtEl && dtEl.value) ? new Date(dtEl.value).toISOString() : null;
+    var patch = { final_disposition: "booked", appointment_booked: true, subsequent_appointment_booked: subsequent };
+    if (dtVal) patch.appointment_datetime = dtVal;
+    var result = await sb.from("triage_cases").update(patch).eq("id", caseId);
+    if (result.error) { bookErr(statusEl); return; }
     try { await sb.from("triage_cases").update({ is_existing_patient: existingVal }).eq("id", caseId); } catch (e) {}
     var c = currentCases.find(function(x) { return x.id === caseId; });
-    if (c) { c.final_disposition = patch.final_disposition; c.appointment_booked = patch.appointment_booked; c.subsequent_appointment_booked = patch.subsequent_appointment_booked; c.is_existing_patient = existingVal; c.appointment_datetime = patch.appointment_datetime; setBookingButtons(c); }
-    statusEl.textContent = "\u2713 Saved"; statusEl.className = "revenue-save-status ok";
-    setTimeout(function() { statusEl.textContent = ""; statusEl.className = "revenue-save-status"; }, 2500);
+    if (c) { c.final_disposition = "booked"; c.appointment_booked = true; c.subsequent_appointment_booked = subsequent; c.is_existing_patient = existingVal; if (dtVal) c.appointment_datetime = dtVal; setBookingButtons(c); }
+    applySearchFilter();
+    bookOk(statusEl);
   }
 
   async function saveAppointmentDT(caseId, val) {
@@ -1425,6 +1459,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     renderCaseList(f);
   }
 
+  // ---- shared case classifiers (used by filters + worklist count) ----
+  function isClinicalCase(c) { var so = c.structured_output || {}; var tag = so.triage_tag || c.triage_tag; return c.inquiry_type === "clinical" || (!!tag && tag !== "non_emergent_inquiry"); }
+  function isSmsCase(c) { var lang = c.patient_language || "en"; return c.extraction_source === "sms-openai" || c.extraction_source === "sms-claude" || !!c.sms_transcript || (lang !== "en" && !c.source); }
+  function isVoiceCase(c) { return c.source === "vapi" || c.extraction_source === "vapi"; }
+  // Worklist: open cases with no recorded outcome and not yet seen. Drops off the
+  // moment staff record a booking/not-booked disposition or mark the visit complete.
+  function needsAction(c) { return (!c.final_disposition || c.final_disposition === "no_response") && !c.appointment_completed_at; }
+
   function applySearchFilter() {
     var q = searchQuery.toLowerCase().trim();
     var filtered = currentCases;
@@ -1438,9 +1480,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     } else if (sourceFilter === "awaiting") {
       // Path E: Sam sent the intake form, patient has not completed it. Warm call-backs.
       filtered = filtered.filter(function(c) { return c.review_status === "pending_intake"; });
-    } else if (sourceFilter === "emergency") {
-      // Emergency Sam (clinical surface) - voice and SMS, excludes non-emergent inquiries.
-      filtered = filtered.filter(function(c) { var so = c.structured_output || {}; var tag = so.triage_tag || c.triage_tag; return c.inquiry_type === "clinical" || (!!tag && tag !== "non_emergent_inquiry"); });
+    } else if (sourceFilter === "needs") {
+      // Worklist queue - the daily "what still needs me" view.
+      filtered = filtered.filter(needsAction);
+    } else if (sourceFilter === "er-voice") {
+      filtered = filtered.filter(function(c) { return isClinicalCase(c) && isVoiceCase(c); });
+    } else if (sourceFilter === "er-sms") {
+      filtered = filtered.filter(function(c) { return isClinicalCase(c) && isSmsCase(c); });
     }
     // Search filter
     if (q) {
@@ -1471,6 +1517,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       total === 0 ? "No cases" :
       n === total ? total + (total === 1 ? " case" : " cases") + " total" :
       n + " of " + total + " cases";
+    var needsN = currentCases.filter(needsAction).length;
+    var ncEl = document.getElementById("needs-count");
+    if (ncEl) ncEl.textContent = needsN > 0 ? needsN : "";
 
     var el = document.getElementById("case-list-scroll");
 
@@ -1601,17 +1650,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     smsRefreshInterval = setInterval(function() { if (selectedCaseId) refreshSMSThread(selectedCaseId); }, 30000);
     scroll.scrollTop = 0;
 
-    // Revenue bar
-    var revenueBar = document.getElementById("revenue-bar");
-    var revenueInput = document.getElementById("revenue-input");
-    var revSaveBtn = document.getElementById("revenue-save-btn");
-    var revStatus = document.getElementById("revenue-save-status");
-    revenueBar.style.display = "flex";
     var ohEl = document.getElementById("outcome-head"); if (ohEl) ohEl.style.display = "block";
-    revenueInput.value = (c.revenue_generated !== null && c.revenue_generated !== undefined) ? String(c.revenue_generated) : "";
-    revStatus.textContent = "";
-    revStatus.className = "revenue-save-status";
-    revSaveBtn.onclick = function() { saveRevenue(c.id, revenueInput.value.trim()); };
 
     // Office-owned fields (office_note + is_existing_patient) live in separately
     // migrated columns. Fetched here and guarded so a pre-migration deploy can't
@@ -1634,16 +1673,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     setBookingButtons(c);
     var bdtEl = document.getElementById("book-datetime");
     if (bdtEl) { bdtEl.value = c.appointment_datetime ? toLocalDT(c.appointment_datetime) : ""; bdtEl.onchange = function() { saveAppointmentDT(c.id, bdtEl.value); }; }
-    document.getElementById("book-yes").onclick = function() {
-      var cur = currentCases.find(function(x) { return x.id === c.id; });
-      var alreadyBooked = cur && (cur.final_disposition === "booked" || cur.appointment_booked === true);
-      if (alreadyBooked) { var g = document.getElementById("book-type-group"); if (g) g.style.display = "inline-flex"; return; }
-      saveBooking(c.id, "booked");
-    };
-    document.getElementById("book-none").onclick = function() { saveBooking(c.id, "none"); };
-    document.getElementById("book-new").onclick = function() { saveBooking(c.id, "new"); };
-    document.getElementById("book-existing").onclick = function() { saveBooking(c.id, "existing"); };
-    document.getElementById("book-further").onclick = function() { saveBooking(c.id, "further"); };
+    document.getElementById("out-booked").onclick = function() { saveOutcome(c.id, "booked"); };
+    document.getElementById("out-resched").onclick = function() { saveOutcome(c.id, "rescheduled"); };
+    document.getElementById("out-cancelled").onclick = function() { saveOutcome(c.id, "cancelled"); };
+    document.getElementById("out-noreach").onclick = function() { saveOutcome(c.id, "no_response"); };
+    document.getElementById("out-declined").onclick = function() { saveOutcome(c.id, "declined"); };
+    document.getElementById("book-new").onclick = function() { saveType(c.id, "new"); };
+    document.getElementById("book-existing").onclick = function() { saveType(c.id, "existing"); };
+    document.getElementById("book-further").onclick = function() { saveType(c.id, "further"); };
 
     // Office notes (free-text, front-desk owned)
     var noteBar = document.getElementById("note-bar");
@@ -1684,7 +1721,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         : isSmsPrimary
         ? "<strong>&#128172; SMS triage.</strong> This case was triaged entirely via text &mdash; no voice call was made. Review the AI-generated clinical note carefully for completeness before taking action."
         : "<strong>&#9888; SMS continuation.</strong> This patient provided additional information via text after the call ended. Review the SMS thread below and verify the clinical note is complete before finalising this case.";
-      revenueBar.parentNode.insertBefore(smsBanner, revenueBar.nextSibling);
+      var ohb = document.getElementById("outcome-head"); if (ohb && ohb.parentNode) ohb.parentNode.insertBefore(smsBanner, ohb);
     }
 
     // Allergy alert — always show above the note if allergy flags present
@@ -1696,8 +1733,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       allergyBanner.id = "allergy-alert-banner";
       allergyBanner.className = "allergy-alert";
       allergyBanner.innerHTML = '<div class="allergy-alert-icon">&#9888;</div><div><div class="allergy-alert-label">Allergy flags</div><div class="allergy-alert-flags">' + allergyFlags.map(function(f){return f.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}).join(" &nbsp;&middot;&nbsp; ") + '</div></div>';
-      var insertTarget = document.getElementById("sms-case-banner") || revenueBar;
-      insertTarget.parentNode.insertBefore(allergyBanner, insertTarget.nextSibling);
+      var ohb2 = document.getElementById("outcome-head"); if (ohb2 && ohb2.parentNode) ohb2.parentNode.insertBefore(allergyBanner, ohb2);
     }
 
     // Message Patient button
@@ -2118,7 +2154,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     if (smsRefreshInterval) { clearInterval(smsRefreshInterval); smsRefreshInterval = null; }
     document.querySelectorAll(".case-item").forEach(function(el) { el.classList.remove("active"); });
     document.getElementById("note-toolbar").style.display = "none";
-    document.getElementById("revenue-bar").style.display = "none";
     var b = document.getElementById("sms-case-banner");
     if (b) b.remove();
     document.getElementById("note-scroll").innerHTML =
