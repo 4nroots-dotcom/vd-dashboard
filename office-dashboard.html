@@ -883,6 +883,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <button class="book-btn" id="out-cancelled" type="button">Cancelled</button>
         <button class="book-btn" id="out-noreach" type="button">Couldn&#39;t reach</button>
         <button class="book-btn" id="out-declined" type="button">Declined</button>
+        <button class="book-btn" id="out-other" type="button">Other</button>
         <span class="book-sub-group" id="book-when-group">
           <span class="book-sub-label">When</span>
           <input type="datetime-local" id="book-datetime" class="book-datetime" step="900" title="Appointment date &amp; time (15-min steps)" />
@@ -1209,7 +1210,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   function setBookingButtons(c) {
     var fd = c.final_disposition;
     if (!fd && c.appointment_booked === true) fd = "booked";  // legacy rows
-    var map = { booked:"out-booked", rescheduled:"out-resched", cancelled:"out-cancelled", no_response:"out-noreach", declined:"out-declined" };
+    var map = { booked:"out-booked", rescheduled:"out-resched", cancelled:"out-cancelled", no_response:"out-noreach", declined:"out-declined", other:"out-other" };
     if (!document.getElementById("out-booked")) return;
     Object.keys(map).forEach(function(k){ var el = document.getElementById(map[k]); if (el) el.classList.toggle("active", fd === k); });
     var wg = document.getElementById("book-when-group");
@@ -1668,6 +1669,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     document.getElementById("out-cancelled").onclick = function() { saveOutcome(c.id, "cancelled"); };
     document.getElementById("out-noreach").onclick = function() { saveOutcome(c.id, "no_response"); };
     document.getElementById("out-declined").onclick = function() { saveOutcome(c.id, "declined"); };
+    document.getElementById("out-other").onclick = function() { saveOutcome(c.id, "other"); };
 
     // Office notes (free-text, front-desk owned)
     var noteBar = document.getElementById("note-bar");
