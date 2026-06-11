@@ -221,6 +221,7 @@
     .ops-goal-fill{position:absolute;left:0;top:0;bottom:0;background:#00c87a;border-radius:4px;}
     .ops-goal-tick{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--text-primary);opacity:0.7;}
     .ops-goal-sub{font-size:11px;color:var(--text-muted);line-height:1.45;}
+    .ops-goal-pending{margin:6px 0 -2px;font-size:11px;font-weight:600;color:#e0a64a;}
     .donut-card{flex:1;min-width:300px;background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
     .donut-title{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-bottom:12px;}
     .donut-wrap{display:flex;align-items:center;gap:18px;}
@@ -572,12 +573,16 @@
       var addrDenom=(st.engaged||0)-genuine;
       var handledAddr=addrDenom>0?Math.round((st.handled||0)/addrDenom*100):0;
       var GOAL_TARGET=60;
+      var pendingTr=(st.transfer_reasons&&st.transfer_reasons.unclassified)||0;
+      var pendNote=pendingTr>0?('<div class="ops-goal-pending">'+pendingTr+' transfer'+(pendingTr===1?'':'s')+' pending classification \u2014 figure provisional, rises as they\u2019re sorted</div>'):'';
+      var subWho=pendingTr>0?('the '+genuine+' identified so far who'):('the '+genuine+' who');
       var goal='<div class="ops-goal"><div class="ops-goal-top">'+
         '<span class="ops-goal-n">'+handledAddr+'%</span>'+
         '<span class="ops-goal-lab">of addressable contacts Sam handles end-to-end</span>'+
         '<span class="ops-goal-tgt">target '+GOAL_TARGET+'%</span></div>'+
+        pendNote+
         '<div class="ops-goal-bar"><span class="ops-goal-fill" style="width:'+Math.max(0,Math.min(100,handledAddr))+'%"></span><span class="ops-goal-tick" style="left:'+GOAL_TARGET+'%"></span></div>'+
-        '<div class="ops-goal-sub">Addressable = engaged calls minus the '+genuine+' who clearly wanted a person (correctly routed). Pre-PMS this is the workflow-efficiency number; revenue &amp; show-rate need the PMS API.</div></div>';
+        '<div class="ops-goal-sub">Addressable = engaged calls minus '+subWho+' clearly wanted a person (correctly routed). Pre-PMS this is the workflow-efficiency number; revenue &amp; show-rate need the PMS API.</div></div>';
       el.classList.remove("ops-refreshing");el.innerHTML=nav+goal+stats+viz+subt+body;
       var rb=document.getElementById("ops-refresh");if(rb)rb.addEventListener("click",function(){loadMetrics(true);});
       el.querySelectorAll(".donut").forEach(wireDonut);
