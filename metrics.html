@@ -583,7 +583,17 @@
         pendNote+
         '<div class="ops-goal-bar"><span class="ops-goal-fill" style="width:'+Math.max(0,Math.min(100,handledAddr))+'%"></span><span class="ops-goal-tick" style="left:'+GOAL_TARGET+'%"></span></div>'+
         '<div class="ops-goal-sub">Addressable = engaged calls minus '+subWho+' clearly wanted a person (correctly routed). Pre-PMS this is the workflow-efficiency number; revenue &amp; show-rate need the PMS API.</div></div>';
-      el.classList.remove("ops-refreshing");el.innerHTML=nav+goal+stats+viz+subt+body;
+      var adoptDen=(st.inbound||0)-(st.noise||0);
+      var adoptNum=(st.engaged||0)-(st.chose_a_person||0);
+      var adoptPct=adoptDen>0?Math.round(adoptNum/adoptDen*100):0;
+      var USAGE_TARGET=85;
+      var adopt='<div class="ops-goal"><div class="ops-goal-top">'+
+        '<span class="ops-goal-n">'+adoptPct+'%</span>'+
+        '<span class="ops-goal-lab">of genuine callers let Sam work \u2014 voice adoption</span>'+
+        '<span class="ops-goal-tgt">target '+USAGE_TARGET+'%</span></div>'+
+        '<div class="ops-goal-bar"><span class="ops-goal-fill" style="width:'+Math.max(0,Math.min(100,adoptPct))+'%"></span><span class="ops-goal-tick" style="left:'+USAGE_TARGET+'%"></span></div>'+
+        '<div class="ops-goal-sub">Of '+adoptDen+' genuine callers (misdials/robocalls excluded), '+adoptNum+' let Sam handle the call instead of asking for a person. VOICE channel only \u2014 the full cross-channel Sam-usage rate needs the intake-funnel events instrumented, and is NOT the same number as the cross-channel ~52% headline.</div></div>';
+      el.classList.remove("ops-refreshing");el.innerHTML=nav+goal+adopt+stats+viz+subt+body;
       var rb=document.getElementById("ops-refresh");if(rb)rb.addEventListener("click",function(){loadMetrics(true);});
       el.querySelectorAll(".donut").forEach(wireDonut);
       sb.functions.invoke("analyze-window",{body:{since:range.since,until:range.until,label:label,force:!!force}}).then(function(res){
