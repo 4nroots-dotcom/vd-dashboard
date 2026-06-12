@@ -844,6 +844,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div style="display:flex;gap:6px;margin-top:8px;">
         <input class="search-input" id="search-input" type="text" placeholder="Search name or phone..." oninput="doSearch(this.value);" />
       </div>
+      <button class="btn-insurance" id="ins-lookup-btn" type="button" style="margin-top:8px;width:100%;">&#129463; Insurance lookup (any patient)</button>
       <div style="display:flex;gap:6px;margin-top:6px;align-items:center;">
         <span style="font-size:11px;color:var(--text-muted);">Sort:</span>
         <button class="sort-btn active" id="sort-newest" type="button">Newest</button>
@@ -897,6 +898,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <button class="book-btn" id="out-cancelled" type="button">Cancelled</button>
         <button class="book-btn" id="out-noreach" type="button">Couldn&#39;t reach</button>
         <button class="book-btn" id="out-declined" type="button">Declined</button>
+        <button class="book-btn" id="out-other" type="button">Other</button>
         <span class="book-sub-group" id="book-when-group">
           <span class="book-sub-label">When</span>
           <input type="datetime-local" id="book-datetime" class="book-datetime" step="900" title="Appointment date &amp; time (15-min steps)" />
@@ -961,6 +963,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="sms-modal-recipient" id="ins-modal-patient"></div>
       </div>
       <button class="sms-modal-close" id="ins-modal-close" type="button" aria-label="Close">&times;</button>
+    </div>
+
+    <div id="ins-standalone-id" style="display:none;flex-direction:column;gap:10px;">
+      <div class="ins-section-label" style="margin-top:0;">Patient (not in the system)</div>
+      <div class="ins-grid">
+        <div class="ins-field"><label for="ins-sa-name">Patient name</label><input class="ins-input" id="ins-sa-name" type="text" placeholder="First Last" /></div>
+        <div class="ins-field"><label for="ins-sa-phone">Phone</label><input class="ins-input" id="ins-sa-phone" type="text" placeholder="(905) 555-1234" /></div>
+      </div>
+      <button class="ins-open-btn" id="ins-sa-load" type="button" style="align-self:flex-start;">Load existing record &#8635;</button>
     </div>
 
     <div class="ins-last-saved" id="ins-last-saved" style="display:none;"></div>
@@ -1286,7 +1297,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   function setBookingButtons(c) {
     var fd = c.final_disposition;
     if (!fd && c.appointment_booked === true) fd = "booked";  // legacy rows
-    var map = { booked:"out-booked", rescheduled:"out-resched", cancelled:"out-cancelled", no_response:"out-noreach", declined:"out-declined" };
+    var map = { booked:"out-booked", rescheduled:"out-resched", cancelled:"out-cancelled", no_response:"out-noreach", declined:"out-declined", other:"out-other" };
     if (!document.getElementById("out-booked")) return;
     Object.keys(map).forEach(function(k){ var el = document.getElementById(map[k]); if (el) el.classList.toggle("active", fd === k); });
     var wg = document.getElementById("book-when-group");
@@ -1745,6 +1756,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     document.getElementById("out-cancelled").onclick = function() { saveOutcome(c.id, "cancelled"); };
     document.getElementById("out-noreach").onclick = function() { saveOutcome(c.id, "no_response"); };
     document.getElementById("out-declined").onclick = function() { saveOutcome(c.id, "declined"); };
+    document.getElementById("out-other").onclick = function() { saveOutcome(c.id, "other"); };
 
     // Office notes (free-text, front-desk owned)
     var noteBar = document.getElementById("note-bar");
@@ -2639,9 +2651,53 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     } catch (e) { /* table missing or no row yet — start fresh */ }
   }
 
+  function insShowMode(standalone) {
+    var saBlock = insEl("ins-standalone-id");
+    var roLine = insEl("ins-modal-patient");
+    if (saBlock) saBlock.style.display = standalone ? "flex" : "none";
+    if (roLine) roLine.style.display = standalone ? "none" : "block";
+  }
+
+  // Standalone lookup: insurance for a patient of record who is NOT in the
+  // system (e.g. an existing Dentrix patient). No case_id; keyed by phone.
+  function openInsLookup() {
+    insModalCase = null;            // standalone => no case
+    currentVerificationId = null;
+    populateInsCarriers();
+    insShowMode(true);
+    insSetVal("ins-sa-name", "");
+    insSetVal("ins-sa-phone", "");
+    var pt = insEl("ins-modal-patient"); if (pt) pt.textContent = "";
+    var st = insEl("ins-status"); if (st) { st.textContent = ""; st.className = "sms-send-status"; }
+    resetInsFields();
+    updateInsPortalLink();
+    var ov = insEl("ins-modal-overlay"); if (ov) ov.classList.add("open");
+    var nm = insEl("ins-sa-name"); if (nm) nm.focus();
+  }
+
+  // Load an existing verification by the typed phone (standalone mode) so a
+  // patient checked before re-loads instead of creating a duplicate row.
+  async function loadStandaloneByPhone() {
+    var phone = insGetStr("ins-sa-phone");
+    if (!phone) return;
+    currentVerificationId = null;
+    resetInsFields();
+    updateInsPortalLink();
+    try {
+      var r = await sb.from("insurance_verifications").select("*").eq("patient_phone", phone).order("verified_at", { ascending: false }).limit(1).maybeSingle();
+      if (r && r.data && !r.error) {
+        currentVerificationId = r.data.id;
+        fillInsFields(r.data);
+        showInsLastSaved(r.data);
+        if (r.data.patient_name) insSetVal("ins-sa-name", r.data.patient_name);
+      }
+    } catch (e) { /* no record / table issue — start fresh */ }
+  }
+
   async function openInsModal(c) {
     insModalCase = c;
     populateInsCarriers();
+    insShowMode(false);
     var ov = insEl("ins-modal-overlay");
     var pt = insEl("ins-modal-patient");
     if (pt) pt.textContent = (c.patient_name || "Patient") + (c.patient_phone ? " \u00B7 " + formatPhone(c.patient_phone) : "");
@@ -2657,17 +2713,38 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }
 
   async function saveInsurance() {
-    if (!insModalCase) return;
-    var c = insModalCase;
+    var standalone = (insModalCase === null);
     var btn = insEl("ins-save");
     var st = insEl("ins-status");
     if (btn) { btn.disabled = true; btn.textContent = "Saving\u2026"; }
     if (st) { st.textContent = ""; st.className = "sms-send-status"; }
+    var caseId, savePhone, saveName;
+    if (standalone) {
+      saveName = insGetStr("ins-sa-name");
+      savePhone = insGetStr("ins-sa-phone");
+      caseId = null;
+      if (!saveName && !savePhone) {
+        if (st) { st.textContent = "Enter a patient name or phone first"; st.className = "sms-send-status err"; }
+        if (btn) { btn.disabled = false; btn.textContent = "Save verification"; }
+        return;
+      }
+      // Resync to an existing phone-keyed record so re-saving updates, not dupes.
+      if (!currentVerificationId && savePhone) {
+        try {
+          var pre = await sb.from("insurance_verifications").select("id").eq("patient_phone", savePhone).order("verified_at", { ascending: false }).limit(1).maybeSingle();
+          if (pre && pre.data && !pre.error) currentVerificationId = pre.data.id;
+        } catch (e) {}
+      }
+    } else {
+      caseId = insModalCase.id;
+      savePhone = insModalCase.patient_phone || null;
+      saveName = insModalCase.patient_name || null;
+    }
     var nowIso = new Date().toISOString();
     var payload = {
-      case_id: c.id,
-      patient_phone: c.patient_phone || null,
-      patient_name: c.patient_name || null,
+      case_id: caseId,
+      patient_phone: savePhone,
+      patient_name: saveName,
       carrier: insGetStr("ins-carrier"),
       member_id: insGetStr("ins-member"),
       policy_or_plan_number: insGetStr("ins-policy"),
@@ -2729,6 +2806,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var cr = INS_CARRIERS.find(function(x){ return x.name === (sel ? sel.value : ""); }) || {};
       if (cr.url) window.open(cr.url, "_blank", "noopener");
     });
+    var lookupBtn = insEl("ins-lookup-btn");
+    if (lookupBtn) lookupBtn.addEventListener("click", openInsLookup);
+    var saLoad = insEl("ins-sa-load");
+    if (saLoad) saLoad.addEventListener("click", loadStandaloneByPhone);
+    var saPhone = insEl("ins-sa-phone");
+    if (saPhone) saPhone.addEventListener("change", loadStandaloneByPhone);
     var saveBtn = insEl("ins-save");
     if (saveBtn) saveBtn.addEventListener("click", saveInsurance);
     document.addEventListener("keydown", function(e){
