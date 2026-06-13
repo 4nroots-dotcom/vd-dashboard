@@ -2438,6 +2438,154 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     });
   }());
   // ── END SMS MODAL ──────────────────────────────────────────────
+
+/* ============================================================================
+   SESSION SENTINEL + RECONNECT BANNER  (2026-06-13)
+   ----------------------------------------------------------------------------
+   Detects a dead or expired Supabase session and gives one-click recovery
+   instead of forcing a full sign-out / sign-in. It NEVER refreshes
+   proactively: it acts only once the access token is already past expiry
+   (the library's own auto-refresh has demonstrably missed), then makes a
+   single, single-flighted recovery refresh. On failure it surfaces a
+   "Reconnect" banner with the reason. Self-contained IIFE; the only global
+   it needs is the Supabase client `sb`. Guarded so it can never wire twice.
+   ============================================================================ */
+(function () {
+  "use strict";
+  if (window.__vdSessionSentinel) return;      // never wire up twice
+  window.__vdSessionSentinel = true;
+
+  if (typeof sb === "undefined" || !sb || !sb.auth) {
+    console.warn("[session-sentinel] Supabase client `sb` not found - sentinel inactive.");
+    return;
+  }
+
+  var CHECK_MS = 45000;          // how often to check session health
+  var EXPIRED_GRACE_SEC = 20;    // act only once the token is this many seconds PAST expiry
+  var refreshInFlight = null;    // single-flight guard for OUR refreshes
+  var bannerEl = null;
+
+  // Collapse overlapping recovery attempts into one network refresh so we
+  // never race ourselves on a rotating refresh token.
+  function refreshOnce() {
+    if (refreshInFlight) return refreshInFlight;
+    refreshInFlight = sb.auth.refreshSession()
+      .catch(function (e) { return { error: e }; })
+      .then(function (res) { refreshInFlight = null; return res || {}; });
+    return refreshInFlight;
+  }
+
+  // Reload the page's data after a successful recovery. Feature-detects the
+  // loader each page exposes; no-op if neither exists.
+  function reloadPageData() {
+    try {
+      if (typeof loadCases === "function") { loadCases(); return; }
+      if (typeof loadMetrics === "function") { loadMetrics(); return; }
+    } catch (e) { /* non-fatal */ }
+  }
+
+  function removeBanner() {
+    if (bannerEl && bannerEl.parentNode) bannerEl.parentNode.removeChild(bannerEl);
+    bannerEl = null;
+  }
+
+  function showBanner(reasonText) {
+    if (bannerEl) {
+      var r = bannerEl.querySelector("[data-reason]");
+      if (r) r.textContent = reasonText || "";
+      return;
+    }
+    bannerEl = document.createElement("div");
+    bannerEl.setAttribute("role", "alert");
+    bannerEl.style.cssText = [
+      "position:fixed", "top:0", "left:0", "right:0", "z-index:10000",
+      "background:#7a1f1f", "color:#fff",
+      "font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
+      "font-size:13px", "line-height:1.4",
+      "padding:10px 14px", "display:flex", "align-items:center", "gap:12px",
+      "box-shadow:0 2px 12px rgba(0,0,0,0.35)"
+    ].join(";");
+
+    var msg = document.createElement("div");
+    msg.style.cssText = "flex:1;min-width:0;";
+    msg.innerHTML =
+      "<strong>Your session went idle.</strong> New cases may not be loading. " +
+      "Click Reconnect to refresh without signing out." +
+      "<div data-reason style=\"opacity:0.72;font-size:11px;margin-top:2px;\"></div>";
+    var reasonDiv = msg.querySelector("[data-reason]");
+    if (reasonDiv) reasonDiv.textContent = reasonText || "";
+
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = "Reconnect";
+    btn.style.cssText = [
+      "flex:none", "background:#fff", "color:#7a1f1f", "border:none",
+      "border-radius:7px", "font-weight:700", "font-size:13px",
+      "padding:8px 16px", "cursor:pointer"
+    ].join(";");
+    btn.addEventListener("click", function () { doReconnect(btn); });
+
+    bannerEl.appendChild(msg);
+    bannerEl.appendChild(btn);
+    document.body.appendChild(bannerEl);
+  }
+
+  function doReconnect(btn) {
+    if (btn) { btn.disabled = true; btn.textContent = "Reconnecting\u2026"; btn.style.opacity = "0.7"; }
+    refreshOnce().then(function (res) {
+      if (res && !res.error && res.data && res.data.session) {
+        removeBanner();
+        reloadPageData();
+      } else {
+        // Refresh genuinely failed (refresh token likely dead). A full reload
+        // re-runs the page's own init() with fresh library state; it either
+        // restores the session or falls back to the sign-in screen.
+        location.reload();
+      }
+    });
+  }
+
+  // Passive health check. NEVER refreshes proactively. Acts only once the
+  // token is already expired (the library's auto-refresh has missed), then
+  // attempts ONE recovery refresh; on failure, surfaces the banner.
+  function checkHealth() {
+    sb.auth.getSession().then(function (res) {
+      var session = res && res.data ? res.data.session : null;
+
+      if (!session) {
+        showBanner("Signed out - reconnect to continue.");
+        return;
+      }
+
+      var now = Math.floor(Date.now() / 1000);
+      var exp = session.expires_at || 0;
+
+      if (exp && (now - exp) >= EXPIRED_GRACE_SEC) {
+        refreshOnce().then(function (r) {
+          if (r && !r.error && r.data && r.data.session) {
+            removeBanner();
+            reloadPageData();
+          } else {
+            var why = (r && r.error && (r.error.message || r.error.error_description)) || "token refresh failed";
+            showBanner("Session expired and could not auto-renew (" + why + ").");
+          }
+        });
+        return;
+      }
+
+      removeBanner();
+    }).catch(function (e) {
+      showBanner("Could not verify session (" + ((e && e.message) || "error") + ").");
+    });
+  }
+
+  setInterval(checkHealth, CHECK_MS);
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) checkHealth();   // returning to the tab is when staleness shows
+  });
+  setTimeout(checkHealth, 8000);           // first check, after sign-in has settled
+})();
+
 </script>
 
 </body>
