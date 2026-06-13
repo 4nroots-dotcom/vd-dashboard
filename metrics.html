@@ -263,6 +263,38 @@
     .briefing-narrative li{font-size:13px;line-height:1.5;color:var(--text-secondary);margin:2px 0;}
     .briefing-narrative b{color:var(--text-primary);}
     .briefing-narrative i{color:var(--text-faint);font-style:italic;}
+    /* QA_PANEL_2026_06_13 : pipeline-integrity tile (nightly QA agent -> qa_reports) */
+    .qa-panel{max-width:940px;margin:14px auto 0;padding:0 22px;}
+    .qa-card{border:1px solid var(--border);border-radius:12px;padding:14px 16px;background:var(--surface-2);}
+    .qa-card.clean{border-color:rgba(0,200,122,0.35);background:rgba(0,200,122,0.05);}
+    .qa-card.alert{border-color:rgba(232,69,69,0.5);background:rgba(232,69,69,0.08);}
+    .qa-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .qa-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0;background:var(--text-faint);}
+    .qa-dot.clean{background:var(--ok);}
+    .qa-dot.alert{background:var(--danger);}
+    .qa-title{font-size:14px;font-weight:700;color:var(--text-primary);}
+    .qa-sub{font-size:11.5px;color:var(--text-muted);}
+    .qa-when{margin-left:auto;font-size:10.5px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.05em;}
+    .qa-run{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--cyan);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .qa-run:hover{border-color:rgba(0,200,232,0.45);}
+    .qa-run:disabled{opacity:.5;cursor:default;}
+    .qa-checks{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+    .qa-chk{flex:1;min-width:150px;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:10px 12px;}
+    .qa-chk.hit{border-color:rgba(232,69,69,0.4);}
+    .qa-chk-n{font-size:22px;font-weight:700;color:var(--text-primary);line-height:1;font-variant-numeric:tabular-nums;}
+    .qa-chk.hit .qa-chk-n{color:var(--danger);}
+    .qa-chk.zero .qa-chk-n{color:var(--ok);}
+    .qa-chk-l{font-size:11px;color:var(--text-muted);margin-top:6px;line-height:1.35;}
+    .qa-detail{margin-top:10px;}
+    .qa-detail>summary{cursor:pointer;list-style:none;font-size:12px;color:var(--cyan);padding:4px 0;}
+    .qa-detail>summary::-webkit-details-marker{display:none;}
+    .qa-finding{padding:8px 0;border-top:1px solid var(--border);font-size:12.5px;color:var(--text-secondary);}
+    .qa-finding:first-child{border-top:none;}
+    .qa-finding h5{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin:0 0 4px;font-weight:700;}
+    .qa-cid{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--text-faint);}
+    .qa-loading{font-size:12.5px;color:var(--text-muted);padding:8px 0;}
+    .qa-empty{font-size:12.5px;color:var(--text-faint);font-style:italic;padding:8px 0;}
+    @media(max-width:640px){.qa-panel{padding:0 14px;}.qa-chk{min-width:calc(50% - 4px);}}
   </style>
 </head>
 <body>
@@ -303,6 +335,7 @@
       </div>
     </div>
     <div class="ops-tabs" id="ops-tabs"><button class="ops-tab active" data-tab="overview" type="button">Overview</button><button class="ops-tab" data-tab="metrics" type="button">Metrics</button><div class="ops-tabs-fill"></div><button class="ops-arrow" id="day-prev" type="button" title="Previous day" aria-label="Previous day">&#8249;</button><div class="ops-window" id="day-label"></div><button class="ops-arrow" id="day-next" type="button" title="Next day" aria-label="Next day">&#8250;</button></div>
+    <div id="qa-panel" class="qa-panel"></div>
     <div id="ops-read" class="ops-read"><div class="ops-loading">Reading the latest calls…</div></div>
     <div class="main" id="main" style="display:none"><div class="loading">Loading metrics…</div></div>
     <div id="tx-modal" class="tx-modal"><div class="tx-box"><div class="tx-head"><b id="tx-title">Transcript</b><button id="tx-close" class="tx-close" type="button" aria-label="Close">&times;</button></div><div id="tx-meta" class="tx-meta"></div><div id="tx-body" class="tx-body"></div></div></div>
@@ -520,6 +553,58 @@
         transferred:chosePerson,failed:failedN,failed_pct:pctv(failedN),
         awaiting_clinical_review:queue.length,critical:critN,urgent:urgN};
     }
+    // QA_PANEL_2026_06_13 : pipeline-integrity tile. Reads the latest qa_reports
+    // row (authenticated SELECT); "Run now" invokes the qa-nightly edge function
+    // on demand (also the live test) then re-reads. Read-and-flag only.
+    function loadQaPanel(){
+      var el=document.getElementById("qa-panel");if(!el)return;
+      if(!el.innerHTML)el.innerHTML='<div class="qa-card"><div class="qa-loading">Loading pipeline-integrity report\u2026</div></div>';
+      sb.from("qa_reports").select("label,report_md,findings_json,generated_at,generated_by").order("generated_at",{ascending:false}).limit(1).maybeSingle().then(function(res){
+        if(res&&res.error){el.innerHTML='<div class="qa-card"><div class="qa-empty">QA report read error \u2014 '+escHtml(res.error.message)+' (check the authenticated SELECT policy on qa_reports).</div></div>';return;}
+        if(!res||!res.data){
+          el.innerHTML='<div class="qa-card"><div class="qa-top"><span class="qa-dot"></span><span class="qa-title">Pipeline integrity</span><span class="qa-sub">no report yet</span><span class="qa-when"></span><button class="qa-run" id="qa-run" type="button" title="Run the QA checks now">\u21bb</button></div><div class="qa-empty">No QA run recorded yet. Click \u21bb to run the checks now, or wait for the nightly run.</div></div>';
+          wireQaRun();return;
+        }
+        renderQaPanel(res.data);
+      }).catch(function(e){el.innerHTML='<div class="qa-card"><div class="qa-empty">QA report unavailable \u2014 '+escHtml((e&&e.message)||"error")+'</div></div>';});
+    }
+    function renderQaPanel(d){
+      var el=document.getElementById("qa-panel");if(!el)return;
+      var f=d.findings_json||{};
+      function cnt(k){return (f[k]&&typeof f[k].count==="number")?f[k].count:0;}
+      var c1=cnt("check1_routine_on_incomplete"),c2=cnt("check2_aging_shells"),c2b=cnt("check2_no_recovery_sms"),c3=cnt("check3_auditor_false_positives"),c3c=cnt("check3_auditor_confirmed");
+      var anyHit=(c1+c2+c2b+c3+c3c)>0;
+      var cls=anyHit?"alert":"clean";
+      var when=d.generated_at?new Date(d.generated_at).toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"";
+      var sub=anyHit?"items need attention":"all checks clear";
+      function chk(n,label){return '<div class="qa-chk '+(n>0?"hit":"zero")+'"><div class="qa-chk-n">'+n+'</div><div class="qa-chk-l">'+escHtml(label)+'</div></div>';}
+      function findingBlock(title,key,fmt){var node=f[key];if(!node||!node.count)return "";var rows=(node.cases||[]).map(fmt).join("");return '<div class="qa-finding"><h5>'+escHtml(title)+' \u00b7 '+node.count+'</h5>'+rows+'</div>';}
+      var detail="";
+      if(anyHit){
+        detail+=findingBlock("Routine-on-incomplete \u2014 verify complaint was patient-stated","check1_routine_on_incomplete",function(r){return '<div><span class="qa-cid">'+escHtml(r.case_id)+'</span> \u00b7 '+escHtml(r.severity||"?")+' \u00b7 '+escHtml(String(r.engagement_words))+' words'+(r.chief_complaint?' \u00b7 '+escHtml(r.chief_complaint):'')+'</div>';});
+        detail+=findingBlock("Aging shells \u2014 invisible to the review queue","check2_aging_shells",function(r){return '<div><span class="qa-cid">'+escHtml(r.case_id)+'</span> \u00b7 '+escHtml(r.review_status||"?")+(r.age_hours!=null?' \u00b7 '+escHtml(String(r.age_hours))+'h':'')+(r.final_disposition?' \u00b7 '+escHtml(r.final_disposition):'')+'</div>';});
+        detail+=findingBlock("No recovery SMS sent \u2014 automation gap","check2_no_recovery_sms",function(r){return '<div><span class="qa-cid">'+escHtml(r.case_id)+'</span>'+(r.age_hours!=null?' \u00b7 '+escHtml(String(r.age_hours))+'h':'')+'</div>';});
+        detail+=findingBlock("Auditor FALSE positives \u2014 fix the auditor regex, not Sam","check3_auditor_false_positives",function(r){return '<div><span class="qa-cid">'+escHtml(r.case_id)+'</span> \u00b7 '+escHtml(r.violation_type||"")+'</div>';});
+        detail+=findingBlock("Auditor-confirmed Q2b skips \u2014 genuine, route for review","check3_auditor_confirmed",function(r){return '<div><span class="qa-cid">'+escHtml(r.case_id)+'</span> \u00b7 '+escHtml(r.violation_type||"")+'</div>';});
+      }
+      var html='<div class="qa-card '+cls+'">'+
+        '<div class="qa-top"><span class="qa-dot '+cls+'"></span><span class="qa-title">Pipeline integrity</span><span class="qa-sub">'+escHtml(sub)+'</span>'+
+        '<span class="qa-when">'+(when?'as of '+escHtml(when):'')+(d.generated_by==="deterministic"?' \u00b7 numbers only':'')+'</span>'+
+        '<button class="qa-run" id="qa-run" type="button" title="Run the QA checks now">\u21bb</button></div>'+
+        '<div class="qa-checks">'+chk(c1,"routine-on-incomplete")+chk(c2+c2b,"aging / unsent shells")+chk(c3,"auditor false positives")+chk(c3c,"confirmed Q2b skips")+'</div>'+
+        (detail?('<details class="qa-detail" open><summary>View flagged case IDs</summary>'+detail+'</details>'):'')+
+        '</div>';
+      el.innerHTML=html;
+      wireQaRun();
+    }
+    function wireQaRun(){var btn=document.getElementById("qa-run");if(!btn)return;btn.addEventListener("click",function(){runQaNow();});}
+    function runQaNow(){
+      var btn=document.getElementById("qa-run");if(btn){btn.disabled=true;btn.textContent="\u22ef";}
+      sb.functions.invoke("qa-nightly",{body:{force:true,lookback_hours:720,label:"QA "+new Date().toISOString().slice(0,10)}}).then(function(res){
+        if(res&&res.error){var el=document.getElementById("qa-panel");if(el)el.innerHTML='<div class="qa-card alert"><div class="qa-top"><span class="qa-dot alert"></span><span class="qa-title">Pipeline integrity</span><span class="qa-sub">run failed</span><button class="qa-run" id="qa-run" type="button">\u21bb</button></div><div class="qa-empty">Could not run the QA checks \u2014 '+escHtml((res.error&&res.error.message)||"error")+'</div></div>';wireQaRun();return;}
+        loadQaPanel();
+      }).catch(function(e){var el=document.getElementById("qa-panel");if(el)el.innerHTML='<div class="qa-card alert"><div class="qa-top"><span class="qa-dot alert"></span><span class="qa-title">Pipeline integrity</span><span class="qa-sub">run failed</span><button class="qa-run" id="qa-run" type="button">\u21bb</button></div><div class="qa-empty">Could not run the QA checks \u2014 '+escHtml((e&&e.message)||"error")+'</div></div>';wireQaRun();});
+    }
     function loadOpsRead(force,st){
       var el=document.getElementById("ops-read");if(!el)return;
       st=st||{};
@@ -627,6 +712,7 @@
         var cases=(res[1].data||[]).filter(function(c){return !isTest(c.intake_source);});
         var sms=res[2].data||[];
         loadOpsRead(!!force,computeOpsStats(calls,cases));
+        loadQaPanel();
         render(calls,cases,sms,rawCalls.length-calls.length);
         document.getElementById("last-updated").textContent="Updated "+new Date().toLocaleTimeString("en-CA",{hour:"2-digit",minute:"2-digit"});
       }catch(e){main.innerHTML='<div class="panel"><div class="empty">Unexpected error: '+escHtml((e&&e.message)||"unknown")+'</div></div>';}
