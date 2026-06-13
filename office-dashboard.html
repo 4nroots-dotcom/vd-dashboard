@@ -2440,33 +2440,47 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   // ── END SMS MODAL ──────────────────────────────────────────────
 
 /* ============================================================================
-   SESSION SENTINEL + RECONNECT BANNER  (2026-06-13)
+   SESSION SENTINEL + RECONNECT NOTICE  —  2026-06-13 (v2, toned down)
    ----------------------------------------------------------------------------
-   Detects a dead or expired Supabase session and gives one-click recovery
-   instead of forcing a full sign-out / sign-in. It NEVER refreshes
-   proactively: it acts only once the access token is already past expiry
-   (the library's own auto-refresh has demonstrably missed), then makes a
-   single, single-flighted recovery refresh. On failure it surfaces a
-   "Reconnect" banner with the reason. Self-contained IIFE; the only global
-   it needs is the Supabase client `sb`. Guarded so it can never wire twice.
-   ============================================================================ */
+   WHERE TO PASTE: immediately before the final closing script tag, in BOTH
+   office-dashboard.html AND ddsdashboard.html. Paste the whole block. It is
+   self-contained and does not depend on or modify any existing function; the
+   only global it uses is `sb` (the Supabase client), which both files define.
+
+   WHAT IT DOES: when a tab is left open for hours the access token can expire
+   without the library's background refresh running (backgrounded tabs throttle
+   timers). This watches for that and recovers it so the queue does not silently
+   stop loading new cases.
+
+   TONE (v2): recovery is now SILENT in the common case — when the token is past
+   expiry it attempts one quiet refresh and, on success, simply reloads the data
+   with no notice at all. A small, calm notice (NOT an error banner) appears only
+   after recovery has failed on TWO consecutive checks, i.e. the session is
+   genuinely stuck. The notice auto-clears the moment the session recovers.
+
+   WHY IT WILL NOT WORSEN A REFRESH RACE: it never refreshes proactively. It acts
+   only once the token is well past expiry (the library has demonstrably missed),
+   and funnels its own refreshes through a single in-flight promise so it can
+   never double-spend a rotating refresh token against itself.
+   ========================================================================== */
 (function () {
   "use strict";
-  if (window.__vdSessionSentinel) return;      // never wire up twice
+  if (window.__vdSessionSentinel) return;
   window.__vdSessionSentinel = true;
 
   if (typeof sb === "undefined" || !sb || !sb.auth) {
-    console.warn("[session-sentinel] Supabase client `sb` not found - sentinel inactive.");
+    console.warn("[session-sentinel] Supabase client `sb` not found — sentinel inactive.");
     return;
   }
 
-  var CHECK_MS = 45000;          // how often to check session health
-  var EXPIRED_GRACE_SEC = 20;    // act only once the token is this many seconds PAST expiry
-  var refreshInFlight = null;    // single-flight guard for OUR refreshes
-  var bannerEl = null;
+  var CHECK_MS = 60000;            // how often to check session health
+  var EXPIRED_GRACE_SEC = 45;      // act only once the token is this many seconds PAST expiry (let the library + any in-app refresh go first)
+  var FAILURES_BEFORE_NOTICE = 2;  // surface the notice only after recovery fails this many checks in a row (debounce — no flashing on transient blips)
+  var refreshInFlight = null;
+  var consecutiveFailures = 0;
+  var noticeEl = null;
 
-  // Collapse overlapping recovery attempts into one network refresh so we
-  // never race ourselves on a rotating refresh token.
+  // single-flight refresh — collapses overlapping recovery attempts into one
   function refreshOnce() {
     if (refreshInFlight) return refreshInFlight;
     refreshInFlight = sb.auth.refreshSession()
@@ -2475,8 +2489,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     return refreshInFlight;
   }
 
-  // Reload the page's data after a successful recovery. Feature-detects the
-  // loader each page exposes; no-op if neither exists.
   function reloadPageData() {
     try {
       if (typeof loadCases === "function") { loadCases(); return; }
@@ -2484,106 +2496,102 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     } catch (e) { /* non-fatal */ }
   }
 
-  function removeBanner() {
-    if (bannerEl && bannerEl.parentNode) bannerEl.parentNode.removeChild(bannerEl);
-    bannerEl = null;
+  function removeNotice() {
+    if (noticeEl && noticeEl.parentNode) noticeEl.parentNode.removeChild(noticeEl);
+    noticeEl = null;
   }
 
-  function showBanner(reasonText) {
-    if (bannerEl) {
-      var r = bannerEl.querySelector("[data-reason]");
-      if (r) r.textContent = reasonText || "";
-      return;
-    }
-    bannerEl = document.createElement("div");
-    bannerEl.setAttribute("role", "alert");
-    bannerEl.style.cssText = [
+  // A calm, native-looking notice — deliberately not a red error bar.
+  function showNotice() {
+    if (noticeEl) return;
+    noticeEl = document.createElement("div");
+    noticeEl.setAttribute("role", "status");
+    noticeEl.style.cssText = [
       "position:fixed", "top:0", "left:0", "right:0", "z-index:10000",
-      "background:#7a1f1f", "color:#fff",
+      "background:rgba(15,32,68,0.97)", "color:#cfe0f5",
+      "border-bottom:1px solid rgba(0,200,232,0.35)",
       "font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
       "font-size:13px", "line-height:1.4",
-      "padding:10px 14px", "display:flex", "align-items:center", "gap:12px",
-      "box-shadow:0 2px 12px rgba(0,0,0,0.35)"
+      "padding:9px 14px", "display:flex", "align-items:center", "gap:12px",
+      "box-shadow:0 4px 16px rgba(0,0,0,0.25)"
     ].join(";");
 
-    var msg = document.createElement("div");
+    var dot = document.createElement("span");
+    dot.style.cssText = "flex:none;width:8px;height:8px;border-radius:50%;background:#00c8e8;box-shadow:0 0 8px rgba(0,200,232,0.6);";
+
+    var msg = document.createElement("span");
     msg.style.cssText = "flex:1;min-width:0;";
-    msg.innerHTML =
-      "<strong>Your session went idle.</strong> New cases may not be loading. " +
-      "Click Reconnect to refresh without signing out." +
-      "<div data-reason style=\"opacity:0.72;font-size:11px;margin-top:2px;\"></div>";
-    var reasonDiv = msg.querySelector("[data-reason]");
-    if (reasonDiv) reasonDiv.textContent = reasonText || "";
+    msg.textContent = "Your session has been idle for a while. Reconnect to keep the queue current.";
 
     var btn = document.createElement("button");
     btn.type = "button";
     btn.textContent = "Reconnect";
     btn.style.cssText = [
-      "flex:none", "background:#fff", "color:#7a1f1f", "border:none",
-      "border-radius:7px", "font-weight:700", "font-size:13px",
-      "padding:8px 16px", "cursor:pointer"
+      "flex:none", "background:rgba(0,200,232,0.12)", "color:#00c8e8",
+      "border:1px solid rgba(0,200,232,0.4)", "border-radius:7px",
+      "font-weight:700", "font-size:12px", "letter-spacing:0.03em",
+      "padding:6px 14px", "cursor:pointer"
     ].join(";");
     btn.addEventListener("click", function () { doReconnect(btn); });
 
-    bannerEl.appendChild(msg);
-    bannerEl.appendChild(btn);
-    document.body.appendChild(bannerEl);
+    noticeEl.appendChild(dot);
+    noticeEl.appendChild(msg);
+    noticeEl.appendChild(btn);
+    document.body.appendChild(noticeEl);
   }
 
   function doReconnect(btn) {
     if (btn) { btn.disabled = true; btn.textContent = "Reconnecting\u2026"; btn.style.opacity = "0.7"; }
     refreshOnce().then(function (res) {
       if (res && !res.error && res.data && res.data.session) {
-        removeBanner();
+        consecutiveFailures = 0;
+        removeNotice();
         reloadPageData();
       } else {
-        // Refresh genuinely failed (refresh token likely dead). A full reload
-        // re-runs the page's own init() with fresh library state; it either
-        // restores the session or falls back to the sign-in screen.
+        // genuinely unrecoverable in-page — a full reload re-runs init() with
+        // fresh library state and will restore the session or show sign-in
         location.reload();
       }
     });
   }
 
-  // Passive health check. NEVER refreshes proactively. Acts only once the
-  // token is already expired (the library's auto-refresh has missed), then
-  // attempts ONE recovery refresh; on failure, surfaces the banner.
+  // Passive health check. Never refreshes proactively; acts only once the token
+  // is well past expiry, recovers silently, and surfaces the notice only after
+  // repeated failures.
   function checkHealth() {
     sb.auth.getSession().then(function (res) {
       var session = res && res.data ? res.data.session : null;
-
-      if (!session) {
-        showBanner("Signed out - reconnect to continue.");
-        return;
-      }
-
       var now = Math.floor(Date.now() / 1000);
-      var exp = session.expires_at || 0;
 
-      if (exp && (now - exp) >= EXPIRED_GRACE_SEC) {
-        refreshOnce().then(function (r) {
-          if (r && !r.error && r.data && r.data.session) {
-            removeBanner();
-            reloadPageData();
-          } else {
-            var why = (r && r.error && (r.error.message || r.error.error_description)) || "token refresh failed";
-            showBanner("Session expired and could not auto-renew (" + why + ").");
-          }
-        });
-        return;
-      }
+      var healthy = session && session.expires_at && (session.expires_at - now) > 0;
+      if (healthy) { consecutiveFailures = 0; removeNotice(); return; }
 
-      removeBanner();
-    }).catch(function (e) {
-      showBanner("Could not verify session (" + ((e && e.message) || "error") + ").");
+      // No session, or token already expired. Only take over once we are clearly
+      // past expiry (the library has missed its window).
+      var pastExpiry = !session || (session.expires_at && (now - session.expires_at) >= EXPIRED_GRACE_SEC);
+      if (!pastExpiry) return; // within grace — trust the library, do nothing, no notice
+
+      refreshOnce().then(function (r) {
+        if (r && !r.error && r.data && r.data.session) {
+          consecutiveFailures = 0;
+          removeNotice();
+          reloadPageData();           // silent recovery — pull whatever we missed
+        } else {
+          consecutiveFailures += 1;
+          if (consecutiveFailures >= FAILURES_BEFORE_NOTICE) showNotice();
+        }
+      });
+    }).catch(function () {
+      consecutiveFailures += 1;
+      if (consecutiveFailures >= FAILURES_BEFORE_NOTICE) showNotice();
     });
   }
 
   setInterval(checkHealth, CHECK_MS);
   document.addEventListener("visibilitychange", function () {
-    if (!document.hidden) checkHealth();   // returning to the tab is when staleness shows
+    if (!document.hidden) checkHealth();
   });
-  setTimeout(checkHealth, 8000);           // first check, after sign-in has settled
+  setTimeout(checkHealth, 8000);
 })();
 
 </script>
