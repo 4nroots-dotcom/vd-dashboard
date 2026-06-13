@@ -265,36 +265,36 @@
     .briefing-narrative i{color:var(--text-faint);font-style:italic;}
     /* QA_PANEL_2026_06_13 : pipeline-integrity tile (nightly QA agent -> qa_reports) */
     .qa-panel{max-width:940px;margin:14px auto 0;padding:0 22px;}
-    .qa-card{border:1px solid var(--border);border-radius:12px;padding:14px 16px;background:var(--surface-2);}
-    .qa-card.clean{border-color:rgba(0,200,122,0.35);background:rgba(0,200,122,0.05);}
-    .qa-card.alert{border-color:rgba(232,69,69,0.5);background:rgba(232,69,69,0.08);}
-    .qa-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-    .qa-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0;background:var(--text-faint);}
+    .qa-card{border:1px solid var(--border);border-radius:10px;padding:9px 14px;background:var(--surface-2);}
+    .qa-card.clean{border-color:rgba(0,200,122,0.28);background:rgba(0,200,122,0.04);}
+    .qa-card.alert{border-color:rgba(232,69,69,0.45);background:rgba(232,69,69,0.06);}
+    .qa-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+    .qa-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;background:var(--text-faint);}
     .qa-dot.clean{background:var(--ok);}
     .qa-dot.alert{background:var(--danger);}
-    .qa-title{font-size:14px;font-weight:700;color:var(--text-primary);}
-    .qa-sub{font-size:11.5px;color:var(--text-muted);}
-    .qa-when{margin-left:auto;font-size:10.5px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.05em;}
-    .qa-run{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--cyan);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .qa-title{font-size:12.5px;font-weight:700;color:var(--text-primary);}
+    .qa-counts{display:flex;gap:9px;flex-wrap:wrap;align-items:center;font-size:11.5px;color:var(--text-muted);}
+    .qa-count{white-space:nowrap;}
+    .qa-count b{font-weight:700;font-variant-numeric:tabular-nums;color:var(--text-secondary);}
+    .qa-count.hit b{color:var(--danger);}
+    .qa-count.ok b{color:var(--ok);}
+    .qa-when{font-size:10px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.05em;}
+    .qa-spacer{flex:1;min-width:8px;}
+    .qa-run{width:26px;height:26px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--cyan);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
     .qa-run:hover{border-color:rgba(0,200,232,0.45);}
     .qa-run:disabled{opacity:.5;cursor:default;}
-    .qa-checks{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
-    .qa-chk{flex:1;min-width:150px;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:10px 12px;}
-    .qa-chk.hit{border-color:rgba(232,69,69,0.4);}
-    .qa-chk-n{font-size:22px;font-weight:700;color:var(--text-primary);line-height:1;font-variant-numeric:tabular-nums;}
-    .qa-chk.hit .qa-chk-n{color:var(--danger);}
-    .qa-chk.zero .qa-chk-n{color:var(--ok);}
-    .qa-chk-l{font-size:11px;color:var(--text-muted);margin-top:6px;line-height:1.35;}
-    .qa-detail{margin-top:10px;}
-    .qa-detail>summary{cursor:pointer;list-style:none;font-size:12px;color:var(--cyan);padding:4px 0;}
+    .qa-detail{margin-top:0;}
+    .qa-detail>summary{cursor:pointer;list-style:none;font-size:11px;color:var(--cyan);padding:2px 0;}
     .qa-detail>summary::-webkit-details-marker{display:none;}
-    .qa-finding{padding:8px 0;border-top:1px solid var(--border);font-size:12.5px;color:var(--text-secondary);}
-    .qa-finding:first-child{border-top:none;}
-    .qa-finding h5{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin:0 0 4px;font-weight:700;}
-    .qa-cid{font-family:ui-monospace,Menlo,monospace;font-size:11.5px;color:var(--text-faint);}
-    .qa-loading{font-size:12.5px;color:var(--text-muted);padding:8px 0;}
-    .qa-empty{font-size:12.5px;color:var(--text-faint);font-style:italic;padding:8px 0;}
-    @media(max-width:640px){.qa-panel{padding:0 14px;}.qa-chk{min-width:calc(50% - 4px);}}
+    .qa-detail[open]>summary{margin-bottom:6px;}
+    .qa-findings-wrap{border-top:1px solid var(--border);padding-top:8px;margin-top:4px;}
+    .qa-finding{padding:7px 0;border-top:1px solid var(--border);font-size:12px;color:var(--text-secondary);}
+    .qa-finding:first-child{border-top:none;padding-top:0;}
+    .qa-finding h5{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin:0 0 4px;font-weight:700;}
+    .qa-finding>div{padding:1px 0;}
+    .qa-cid{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--text-faint);}
+    .qa-loading{font-size:12px;color:var(--text-muted);padding:2px 0;}
+    .qa-empty{font-size:12px;color:var(--text-faint);font-style:italic;padding:2px 0;}
   </style>
 </head>
 <body>
@@ -573,11 +573,15 @@
       var f=d.findings_json||{};
       function cnt(k){return (f[k]&&typeof f[k].count==="number")?f[k].count:0;}
       var c1=cnt("check1_routine_on_incomplete"),c2=cnt("check2_aging_shells"),c2b=cnt("check2_no_recovery_sms"),c3=cnt("check3_auditor_false_positives"),c3c=cnt("check3_auditor_confirmed");
-      var anyHit=(c1+c2+c2b+c3+c3c)>0;
+      var shells=c2+c2b;
+      var anyHit=(c1+shells+c3+c3c)>0;
       var cls=anyHit?"alert":"clean";
       var when=d.generated_at?new Date(d.generated_at).toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"";
-      var sub=anyHit?"items need attention":"all checks clear";
-      function chk(n,label){return '<div class="qa-chk '+(n>0?"hit":"zero")+'"><div class="qa-chk-n">'+n+'</div><div class="qa-chk-l">'+escHtml(label)+'</div></div>';}
+      // inline count summary — compact, red only where there's a hit
+      function ct(n,label){return '<span class="qa-count '+(n>0?"hit":"ok")+'"><b>'+n+'</b> '+escHtml(label)+'</span>';}
+      var counts=anyHit
+        ? ct(c1,"routine-incomplete")+ct(shells,"shells")+ct(c3,"auditor FP")+ct(c3c,"Q2b skips")
+        : '<span class="qa-count ok"><b>\u2713</b> all checks clear</span>';
       function findingBlock(title,key,fmt){var node=f[key];if(!node||!node.count)return "";var rows=(node.cases||[]).map(fmt).join("");return '<div class="qa-finding"><h5>'+escHtml(title)+' \u00b7 '+node.count+'</h5>'+rows+'</div>';}
       var detail="";
       if(anyHit){
@@ -588,11 +592,12 @@
         detail+=findingBlock("Auditor-confirmed Q2b skips \u2014 genuine, route for review","check3_auditor_confirmed",function(r){return '<div><span class="qa-cid">'+escHtml(r.case_id)+'</span> \u00b7 '+escHtml(r.violation_type||"")+'</div>';});
       }
       var html='<div class="qa-card '+cls+'">'+
-        '<div class="qa-top"><span class="qa-dot '+cls+'"></span><span class="qa-title">Pipeline integrity</span><span class="qa-sub">'+escHtml(sub)+'</span>'+
-        '<span class="qa-when">'+(when?'as of '+escHtml(when):'')+(d.generated_by==="deterministic"?' \u00b7 numbers only':'')+'</span>'+
+        '<div class="qa-top"><span class="qa-dot '+cls+'"></span><span class="qa-title">Pipeline integrity</span>'+
+        '<span class="qa-counts">'+counts+'</span>'+
+        '<span class="qa-spacer"></span>'+
+        '<span class="qa-when">'+(when?escHtml(when):'')+(d.generated_by==="deterministic"?' \u00b7 numbers only':'')+'</span>'+
         '<button class="qa-run" id="qa-run" type="button" title="Run the QA checks now">\u21bb</button></div>'+
-        '<div class="qa-checks">'+chk(c1,"routine-on-incomplete")+chk(c2+c2b,"aging / unsent shells")+chk(c3,"auditor false positives")+chk(c3c,"confirmed Q2b skips")+'</div>'+
-        (detail?('<details class="qa-detail" open><summary>View flagged case IDs</summary>'+detail+'</details>'):'')+
+        (detail?('<details class="qa-detail"><summary>View flagged case IDs</summary><div class="qa-findings-wrap">'+detail+'</div></details>'):'')+
         '</div>';
       el.innerHTML=html;
       wireQaRun();
