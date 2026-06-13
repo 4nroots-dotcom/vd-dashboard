@@ -253,16 +253,6 @@
     .ops-tab:hover{color:var(--text-secondary);border-color:rgba(0,200,232,0.3);}
     .ops-tab.active{background:rgba(0,200,232,0.14);border-color:rgba(0,200,232,0.4);color:var(--cyan);}
     @media(max-width:620px){.donut-wrap{flex-direction:column;}.ops-body{font-size:14px;}}
-    .briefing-narrative{margin:2px 0 14px;}
-    .briefing-narrative:empty{display:none;}
-    .briefing-tag{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-faint);margin-bottom:6px;}
-    .briefing-narrative h3{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-secondary);margin:12px 0 4px;font-weight:700;}
-    .briefing-narrative h4{font-size:12px;color:var(--text-secondary);margin:10px 0 3px;font-weight:700;}
-    .briefing-narrative p{font-size:13px;line-height:1.55;color:var(--text-secondary);margin:6px 0;}
-    .briefing-narrative ul{margin:4px 0 8px;padding-left:18px;}
-    .briefing-narrative li{font-size:13px;line-height:1.5;color:var(--text-secondary);margin:2px 0;}
-    .briefing-narrative b{color:var(--text-primary);}
-    .briefing-narrative i{color:var(--text-faint);font-style:italic;}
     /* QA_PANEL_2026_06_13 : pipeline-integrity tile (nightly QA agent -> qa_reports) */
     .qa-panel{max-width:940px;margin:14px auto 0;padding:0 22px;}
     .qa-card{border:1px solid var(--border);border-radius:10px;padding:9px 14px;background:var(--surface-2);}
@@ -295,6 +285,10 @@
     .qa-cid{font-family:ui-monospace,Menlo,monospace;font-size:11px;color:var(--text-faint);}
     .qa-loading{font-size:12px;color:var(--text-muted);padding:2px 0;}
     .qa-empty{font-size:12px;color:var(--text-faint);font-style:italic;padding:2px 0;}
+    /* amber "warn" tier (2026-06-13): noise / operational findings — not a red clinical alert */
+    .qa-card.warn{border-color:rgba(240,165,0,0.42);background:rgba(240,165,0,0.06);}
+    .qa-dot.warn{background:var(--warn);}
+    .qa-count.warnhit b{color:var(--warn);}
   </style>
 </head>
 <body>
@@ -413,7 +407,7 @@
       }).catch(function(err){document.getElementById("tx-meta").textContent="Couldn\u2019t load transcript: "+(err&&err.message?err.message:"error");});
     }
 
-    // DAILY_BRIEFING_2026_06_08 (v1): render the latest Claude-written briefing above the deterministic queue.
+    // mdToHtml: shared markdown -> HTML renderer for the Overview narrative (fed by analyze-window).
     function mdToHtml(md){
       var s=escHtml(String(md||""));
       s=s.replace(/^###\s?(.*)$/gm,'<h4>$1</h4>').replace(/^##\s?(.*)$/gm,'<h3>$1</h3>').replace(/^#\s?(.*)$/gm,'<h3>$1</h3>');
@@ -423,19 +417,9 @@
       s=s.split(/\n{2,}/).map(function(p){p=p.trim();if(!p)return '';if(/^<(h3|h4|ul)/.test(p))return p;return '<p>'+p.replace(/\n/g,'<br>')+'</p>';}).join('');
       return s;
     }
-    function loadBriefingNarrative(){
-      var el=document.getElementById("briefing-narrative");if(!el)return;
-      var endDate=null;
-      if(currentPeriod===-1){var td=document.getElementById("to-date").value,fd=document.getElementById("from-date").value;endDate=td||fd||null;}
-      var q=sb.from("daily_briefings").select("briefing_date,narrative_md,generated_by");
-      if(endDate)q=q.lte("briefing_date",endDate);
-      q.order("briefing_date",{ascending:false}).limit(1).maybeSingle().then(function(res){
-        if(res&&res.error){el.innerHTML='<div class="briefing-tag">Briefing read error \u2014 '+escHtml(res.error.message)+' (likely a missing SELECT grant on daily_briefings)</div>';return;}
-        if(!res||!res.data){el.innerHTML='';return;}
-        var b=res.data;
-        el.innerHTML='<div class="briefing-tag">Briefing \u00b7 '+escHtml(String(b.briefing_date))+(b.generated_by==="fallback"?' \u00b7 auto':'')+'</div>'+mdToHtml(b.narrative_md);
-      }).catch(function(err){el.innerHTML='<div class="briefing-tag">Briefing unavailable \u2014 '+escHtml((err&&err.message)||"error")+'</div>';});
-    }
+    // (2026-06-13) Removed a retired narrative-table reader — it was dead code (never called; its
+    // target element does not exist) and that table is retired. The Overview narrative now comes
+    // solely from analyze-window (see loadMetrics).
     async function handleLogin(){
       var email=document.getElementById("auth-email").value.trim();var pw=document.getElementById("auth-password").value;
       var btn=document.getElementById("auth-btn");var err=document.getElementById("auth-error");err.style.display="none";
@@ -575,12 +559,22 @@
       var c1=cnt("check1_routine_on_incomplete"),c2=cnt("check2_aging_shells"),c2b=cnt("check2_no_recovery_sms"),c3=cnt("check3_auditor_false_positives"),c3c=cnt("check3_auditor_confirmed");
       var shells=c2+c2b;
       var anyHit=(c1+shells+c3+c3c)>0;
-      var cls=anyHit?"alert":"clean";
+      // Severity tier: RED ("alert") ONLY for genuine clinical / queue-integrity failures
+      // (routine-on-incomplete OR an auditor-CONFIRMED in-scope Q2b skip). AMBER ("warn") for
+      // tooling noise + operational backlog (auditor regex false positives, aging shells, no
+      // recovery SMS) — worth a glance, not an alarm. GREEN ("clean") when nothing is flagged.
+      // Honor qa-nightly's findings.status when present (ok->clean); otherwise derive from the
+      // counts so reports written before the qa-nightly status field still tier correctly.
+      var derivedCls=((c1+c3c)>0)?"alert":(((shells+c3)>0)?"warn":"clean");
+      var st=f.status;
+      var cls=(st==="alert"||st==="warn")?st:(st==="ok"?"clean":derivedCls);
       var when=d.generated_at?new Date(d.generated_at).toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"";
       // inline count summary — compact, red only where there's a hit
-      function ct(n,label){return '<span class="qa-count '+(n>0?"hit":"ok")+'"><b>'+n+'</b> '+escHtml(label)+'</span>';}
+      // per-chip color: genuine failures (routine-incomplete, Q2b skips) show red on a hit;
+      // noise / operational findings (shells, auditor FP) show amber.
+      function ct(n,label,hitCls){return '<span class="qa-count '+(n>0?(hitCls||"hit"):"ok")+'"><b>'+n+'</b> '+escHtml(label)+'</span>';}
       var counts=anyHit
-        ? ct(c1,"routine-incomplete")+ct(shells,"shells")+ct(c3,"auditor FP")+ct(c3c,"Q2b skips")
+        ? ct(c1,"routine-incomplete","hit")+ct(shells,"shells","warnhit")+ct(c3,"auditor FP","warnhit")+ct(c3c,"Q2b skips","hit")
         : '<span class="qa-count ok"><b>\u2713</b> all checks clear</span>';
       function findingBlock(title,key,fmt){var node=f[key];if(!node||!node.count)return "";var rows=(node.cases||[]).map(fmt).join("");return '<div class="qa-finding"><h5>'+escHtml(title)+' \u00b7 '+node.count+'</h5>'+rows+'</div>';}
       var detail="";
@@ -827,7 +821,7 @@
         '</div>';
       html+='</div>';
 
-      // DAILY_BRIEFING_2026_06_08 (v2): daily briefing narrative + Awaiting-clinical-review queue. The queue is deterministic (severity gates + clinical contradiction flags; no LLM); the narrative above it is the Claude-written daily briefing. Hero summary always shown; the per-case list collapses for larger windows.
+      // OVERVIEW_HERO (v2): analyze-window operational read + Awaiting-clinical-review queue. The queue is deterministic (severity gates + clinical contradiction flags; no LLM); the narrative above it is the Claude-written read from analyze-window. Hero summary always shown; the per-case list collapses for larger windows.
       (function(){
         var SEV_RANK={critical:3,urgent:2,routine:1};
         var reviewCases=cases.filter(function(c){var sev=(c.severity||"").toLowerCase();return sev==="critical"||sev==="urgent"||getContras(c).length>0;}).sort(function(a,b){var d=(SEV_RANK[(b.severity||"").toLowerCase()]||0)-(SEV_RANK[(a.severity||"").toLowerCase()]||0);return d||(new Date(b.created_at)-new Date(a.created_at));});
