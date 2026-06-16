@@ -237,6 +237,12 @@
     .lg-lab{flex:1;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
     .lg-val{color:var(--text-primary);font-weight:600;font-variant-numeric:tabular-nums;}
     .ops-eyebrow{font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--cyan);font-weight:700;margin:0 0 8px;}
+    .ops-eyebrow-row{display:flex;align-items:center;gap:10px;margin:0 0 8px;}
+    .ops-eyebrow-row .ops-eyebrow{margin:0;}
+    .ops-copy{margin-left:auto;border:1px solid var(--border);background:transparent;color:var(--cyan);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;font-weight:700;padding:4px 11px;border-radius:7px;cursor:pointer;}
+    .ops-copy:hover:not(:disabled){border-color:rgba(0,200,232,0.45);}
+    .ops-copy:disabled{opacity:.4;cursor:default;}
+    .ops-copy.ok{color:#00c87a;border-color:rgba(0,200,122,0.5);}
     .ops-body{font-size:14.5px;line-height:1.62;color:var(--text-secondary);max-width:760px;}
     .ops-body h3{font-size:17px;color:var(--text-primary);margin:0 0 8px;font-weight:700;letter-spacing:-0.01em;}
     .ops-body h4{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);margin:20px 0 5px;font-weight:700;}
@@ -623,6 +629,16 @@
         loadQaPanel();
       }).catch(function(e){var el=document.getElementById("qa-panel");if(el)el.innerHTML='<div class="qa-card alert"><div class="qa-top"><span class="qa-dot alert"></span><span class="qa-title">Pipeline integrity</span><span class="qa-sub">run failed</span><button class="qa-run" id="qa-run" type="button">\u21bb</button></div><div class="qa-empty">Could not run the QA checks \u2014 '+escHtml((e&&e.message)||"error")+'</div></div>';wireQaRun();});
     }
+    var lastNarrativeMd="";
+    function fallbackCopy(text,done){
+      try{var ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.top="-9999px";ta.style.opacity="0";document.body.appendChild(ta);ta.focus();ta.select();var ok=document.execCommand("copy");document.body.removeChild(ta);done(!!ok);}catch(e){done(false);}
+    }
+    function copyOpsRead(){
+      var cb=document.getElementById("ops-copy");var text=lastNarrativeMd||"";if(!text)return;
+      function done(ok){if(!cb)return;cb.textContent=ok?"Copied":"Copy failed";cb.classList.toggle("ok",!!ok);setTimeout(function(){cb.textContent="Copy";cb.classList.remove("ok");},1500);}
+      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(function(){done(true);},function(){fallbackCopy(text,done);});}
+      else{fallbackCopy(text,done);}
+    }
     function loadOpsRead(force,st){
       var el=document.getElementById("ops-read");if(!el)return;
       st=st||{};
@@ -665,7 +681,7 @@
       var viz='<div class="ops-viz">'+donutBlock("Where engaged calls went",engSegs,"engaged")+
         (hasTr?donutBlock("Why callers chose a person",trSegs,"transfers"):'')+
         (hasGap?donutBlock("Capability gaps \u2014 what Sam can\u2019t do yet",gapSegs,"gaps"):'')+'</div>';
-      var body='<div class="ops-eyebrow">Operations read</div><div class="ops-body" id="ops-body"><div class="ops-loading">'+(force?"Re-reading the calls\u2026":"Reading the calls\u2026")+'</div></div>';
+      var body='<div class="ops-eyebrow-row"><div class="ops-eyebrow">Operations read</div><button class="ops-copy" id="ops-copy" type="button" disabled title="Copy the full report as markdown">Copy</button></div><div class="ops-body" id="ops-body"><div class="ops-loading">'+(force?"Re-reading the calls\u2026":"Reading the calls\u2026")+'</div></div>';
       var tsr=st.transfer_subreasons||{};var genTot=(tr.genuine_human||0);
       var subt=genTot>0?('<div class="ops-subt"><div class="ops-subt-h">Of the '+genTot+' who chose a person:</div>'+
         '<div class="ops-subt-row"><b>'+(tsr.no_reason_given||0)+'</b> gave no reason \u2014 reducible via the opener</div>'+
@@ -698,12 +714,15 @@
         '<div class="ops-goal-sub">Of '+adoptDen+' genuine callers (misdials/robocalls excluded), '+adoptNum+' let Sam handle the call instead of asking for a person. VOICE channel only \u2014 the full cross-channel Sam-usage rate needs the intake-funnel events instrumented, and is NOT the same number as the cross-channel ~52% headline.</div></div>';
       el.classList.remove("ops-refreshing");el.innerHTML=nav+goal+adopt+stats+viz+subt+body;
       var rb=document.getElementById("ops-refresh");if(rb)rb.addEventListener("click",function(){loadMetrics(true);});
+      var cpb=document.getElementById("ops-copy");if(cpb)cpb.addEventListener("click",copyOpsRead);
       el.querySelectorAll(".donut").forEach(wireDonut);
       sb.functions.invoke("analyze-window",{body:{since:range.since,until:range.until,label:label,force:!!force}}).then(function(res){
         var bodyEl=document.getElementById("ops-body");if(!bodyEl)return;
         if(res&&res.error){bodyEl.innerHTML='<div class="empty">Could not generate the written read \u2014 '+escHtml((res.error&&res.error.message)||"analysis failed")+'. The numbers above are live and unaffected.</div>';return;}
         var d=(res&&res.data)||{};
         if(!d.narrative_md){bodyEl.innerHTML='<div class="empty">Could not generate the written read \u2014 '+escHtml(d.error||"no analysis returned")+'. The numbers above are live and unaffected.</div>';return;}
+        lastNarrativeMd=String(d.narrative_md||"");
+        var cpb2=document.getElementById("ops-copy");if(cpb2)cpb2.disabled=!lastNarrativeMd;
         var md=String(d.narrative_md).replace(/^\s*##\s*Operations read[^\n]*\n+/i,"");
         bodyEl.innerHTML=mdToHtml(md);
         var when=d.generated_at?new Date(d.generated_at).toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"";
