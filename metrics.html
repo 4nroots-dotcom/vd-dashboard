@@ -349,6 +349,25 @@
     function fmtDur(s){if(s==null)return "—";s=Math.round(s);return Math.floor(s/60)+"m "+(s%60)+"s";}
     function fmtMins(m){if(m==null)return "—";if(m<1)return "<1 min";if(m>=60)return Math.floor(m/60)+"h "+Math.round(m%60)+"m";return Math.round(m)+" min";}
     function getSO(c){var so=c.structured_output;if(!so)return {};if(typeof so==="string"){try{return JSON.parse(so);}catch(e){return {};}}return so;}
+    // Thin chief-complaint detector — IDENTICAL logic to the dentist dashboard's
+    // amber INCOMPLETE flag, so this rate equals the count of flags a reviewer
+    // sees. Empty/placeholder, a single generic word, or an all-generic <=2-word
+    // phrase => thin; any specific symptom word => not thin. Tune the two lists.
+    function isThinComplaint(text){
+      if(text==null)return true;
+      var t=String(text).trim().toLowerCase();
+      if(t===""||t==="-"||t==="n/a"||t==="na"||t==="none"||t==="unknown"||t==="null")return true;
+      var SPECIFIC=/(swell|bleed|abscess|infect|broke|broken|crack|fractur|knock|avuls|lost|fell|filling|crown|bridge|chip|loose|sensitiv|throbb|sharp|shoot|pulsat|gum|jaw|cheek|lip|tongue|wisdom|root canal|extraction|implant|denture|pus|drain|numb|trauma|fever|pop|hole|cavit|grind|clench|tmj|when |can.?t )/;
+      if(SPECIFIC.test(t))return false;
+      var cleaned=t.replace(/[^a-z0-9\s]/g," ").replace(/\b(a|an|the|my|some|bad|really|very|just|got|have|having|feel|feeling|felt|little|bit|of|in|on|with|and|to|is|it|i)\b/g," ").replace(/\s+/g," ").trim();
+      if(cleaned==="")return true;
+      var words=cleaned.split(" ");
+      var GENERIC=["concern","problem","issue","pain","ache","aching","discomfort","help","emergency","urgent","tooth","teeth","dental","mouth","question","sore","hurt","hurts","hurting","painful"];
+      if(words.length<=2&&words.every(function(w){return GENERIC.indexOf(w)!==-1;}))return true;
+      return false;
+    }
+    // Resolve the displayed chief complaint exactly as the dashboard card does.
+    function resolveComplaint(c){var so=getSO(c);var inc=!c.severity||c.triage_tag==='incomplete_call'||c.triage_tag==='no_complaint_reported';return inc?(c.chief_complaint||so.chief_complaint||"-"):(so.chief_complaint||so.chief_complaint_quote||c.chief_complaint||"-");}
     function getContras(c){var r=c.contradictions;if(!r)return [];if(typeof r==="string"){try{r=JSON.parse(r);}catch(e){return [];}}return Array.isArray(r)?r:[];}
     var CONTRA_LABELS={fever:"Fever",feeling_unwell:"Feeling unwell",swelling:"Swelling",trauma:"Trauma",bleeding:"Bleeding",uncontrolled_bleeding:"Uncontrolled bleeding",breathing_swallowing:"Airway / swallowing",difficulty_breathing_or_swallowing:"Airway / swallowing",immunocompromised:"Immunocompromised",pregnant:"Pregnancy",anticoagulant:"Blood thinners",recent_extraction:"Recent extraction"};
     function laneOf(c){if(c.source==="vapi"&&GENERAL_INBOUND_SOURCES[c.intake_source])return "general";if(c.source==="vapi")return "emergency";return "form_only";}
@@ -451,7 +470,7 @@
 
     async function runQueries(range){
       var ctq=sb.from("call_transcripts").select("id,vapi_call_id,ended_reason,duration_seconds,intake_source,created_at,outcome_bucket,topic,capability_gap_detail,needs_review,failure_reason,transfer_reason,transfer_subreason");
-      var tcq=sb.from("triage_cases").select("id,created_at,severity,triage_tag,intake_source,source,extraction_source,duration_seconds,ended_reason,structured_output,triage_completed_at,reviewed_at,final_disposition,appointment_booked,subsequent_appointment_booked,revenue_generated,nps_score,nps_submitted_at,sam_satisfaction_score,timely_response,contradictions,patient_language,vapi_call_id,patient_phone,review_status");
+      var tcq=sb.from("triage_cases").select("id,created_at,severity,triage_tag,intake_source,source,extraction_source,duration_seconds,ended_reason,structured_output,chief_complaint,triage_completed_at,reviewed_at,final_disposition,appointment_booked,subsequent_appointment_booked,revenue_generated,nps_score,nps_submitted_at,sam_satisfaction_score,timely_response,contradictions,patient_language,vapi_call_id,patient_phone,review_status");
       var smsq=sb.from("sms_log").select("case_id,direction,sender_email,sender_name,sent_at,created_at");
       if(range.since){ctq=ctq.gte("created_at",range.since);tcq=tcq.gte("created_at",range.since);smsq=smsq.gte("sent_at",range.since);}
       if(range.until){ctq=ctq.lt("created_at",range.until);tcq=tcq.lt("created_at",range.until);smsq=smsq.lt("sent_at",range.until);}
@@ -1167,6 +1186,18 @@
       if(!contraCases)html+='<div class="empty">No discrepancies recorded in this window.</div>';
       else{var ck=Object.keys(contraFields).sort(function(a,b){return contraFields[b]-contraFields[a];});ck.forEach(function(fld){html+=bar(CONTRA_LABELS[fld]||fld.replace(/_/g," "),contraFields[fld],contraCases,"var(--urgent)");});}
       html+='<div class="note-line">Mismatches between the patient\u2019s intake form and what Sam found on the call or text \u2014 e.g. swelling that emerged in conversation but was not on the form. This is the case for live triage over a static form, and the clearest evidence for the deterministic-safety layer.</div></div>';
+
+      // Chief-complaint completeness — extraction-quality signal, computed the
+      // SAME way as the dentist dashboard's amber INCOMPLETE flag (read-time, no
+      // persisted column). Denominator = the dashboard's review-queue scope:
+      // non-test clinical cases minus admin inquiries / no-complaint / no-action.
+      var ccReviewable=cases.filter(function(c){return c.triage_tag!=="non_emergent_inquiry"&&c.triage_tag!=="no_complaint_reported"&&c.review_status!=="no_action_needed";});
+      var ccThin=ccReviewable.filter(function(c){return isThinComplaint(resolveComplaint(c));}).length;
+      var ccPct=pct(ccThin,ccReviewable.length);
+      html+='<div class="panel"><div class="panel-title">Chief-complaint completeness ('+ccThin+' of '+ccReviewable.length+' clinical cases flagged thin)</div>';
+      if(!ccReviewable.length)html+='<div class="empty">No clinical cases in this window.</div>';
+      else html+='<div class="why-row"><div class="why-num" style="color:#f0a500">'+ccPct+'%</div><div class="why-body"><b>have a chief complaint too thin to triage from</b><div class="why-sub">Missing, or a single vague word like \u201cconcern\u201d or \u201cpain\u201d \u2014 the reviewer has to open the transcript. These are exactly the cases the amber INCOMPLETE flag marks on the dentist dashboard. A rising rate means extraction is degrading or callers are giving less detail up front; it does not change severity (the deterministic gates run on structured fields, not this free text).</div></div></div>';
+      html+='</div>';
 
       // Deterministic safety gate vs LLM — the regulatory centerpiece. The model
       // proposes sam_severity; the rule-based computeSeverity() gate sets the
