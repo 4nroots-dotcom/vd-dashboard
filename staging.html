@@ -867,9 +867,37 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     @keyframes vdiSpin { 100% { transform: rotate(360deg); } }
     .vdi-lk-prog-label { font-size: 13px; font-weight: 600; color: var(--text-primary); }
     .vdi-lk-prog-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+    /* ===== Insurance MFA relay banner (vdi-mfa-*) ===== */
+    .vdi-mfa-banner { position: fixed; top: 0; left: 0; right: 0; z-index: 1000; transform: translateY(-115%); transition: transform .35s cubic-bezier(.2,.8,.2,1); background: linear-gradient(90deg, #C05621, #DD6B20); color: #fff; box-shadow: 0 6px 24px rgba(0,0,0,0.25); }
+    .vdi-mfa-banner.show { transform: translateY(0); animation: vdiMfaPulse 2.2s ease-in-out infinite; }
+    @keyframes vdiMfaPulse { 0%, 100% { box-shadow: 0 6px 22px rgba(192,86,33,0.30); } 50% { box-shadow: 0 8px 34px rgba(192,86,33,0.60); } }
+    .vdi-mfa-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 14px; padding: 12px 18px; flex-wrap: wrap; }
+    .vdi-mfa-icon { font-size: 20px; line-height: 1; }
+    .vdi-mfa-text { flex: 1; min-width: 220px; }
+    .vdi-mfa-title { font-size: 14px; font-weight: 700; letter-spacing: -.01em; }
+    .vdi-mfa-sub { font-size: 12px; opacity: .92; margin-top: 1px; }
+    .vdi-mfa-input { font: inherit; font-size: 15px; font-weight: 600; letter-spacing: .12em; width: 130px; padding: 8px 10px; border: 0; border-radius: 7px; outline: none; text-align: center; color: #1A202C; }
+    .vdi-mfa-submit { appearance: none; border: 0; border-radius: 7px; background: #1A202C; color: #fff; font: inherit; font-size: 13px; font-weight: 700; padding: 9px 16px; cursor: pointer; transition: background .15s; }
+    .vdi-mfa-submit:hover { background: #000; }
+    .vdi-mfa-submit[disabled] { opacity: .6; cursor: default; }
+    .vdi-mfa-status { font-size: 12px; font-weight: 600; width: 100%; min-height: 0; }
   </style>
 </head>
 <body>
+
+<!-- INSURANCE MFA RELAY BANNER -->
+<div class="vdi-mfa-banner" id="vdi-mfa-banner">
+  <div class="vdi-mfa-inner">
+    <div class="vdi-mfa-icon">&#128274;</div>
+    <div class="vdi-mfa-text">
+      <div class="vdi-mfa-title">Insurance robot needs a verification code</div>
+      <div class="vdi-mfa-sub" id="vdi-mfa-sub">A code was just sent to the office email. Enter it to keep the lookup going.</div>
+    </div>
+    <input class="vdi-mfa-input" id="vdi-mfa-input" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="Code" />
+    <button class="vdi-mfa-submit" id="vdi-mfa-submit" type="button">Submit code</button>
+    <div class="vdi-mfa-status" id="vdi-mfa-status"></div>
+  </div>
+</div>
 <!-- Google Tag Manager (noscript) -->
 <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K7XDHFB8"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -1072,6 +1100,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="vdi-lk-row">
         <label class="vdi-lk-label" for="vdi-lk-member">Member ID</label>
         <input class="vdi-lk-input" id="vdi-lk-member" type="text" autocomplete="off" placeholder="Cardholder / plan member ID">
+        <div class="vdi-lk-hint" style="font-size:12.5px;line-height:1.45;"><strong>Don&rsquo;t include the last 2 digits</strong> (the 00 member suffix). GreenShield pre-fills those automatically &mdash; entering them returns &ldquo;member not found.&rdquo;</div>
       </div>
       <div class="vdi-lk-grid2">
         <div class="vdi-lk-row"><label class="vdi-lk-label" for="vdi-lk-first">First name</label><input class="vdi-lk-input" id="vdi-lk-first" type="text" autocomplete="off"></div>
@@ -3009,6 +3038,64 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         }
       }, 3000);
     });
+  })();
+
+  // ===== Insurance MFA relay — watch for a pending challenge, let staff answer it =====
+  (function(){
+    var banner = document.getElementById("vdi-mfa-banner");
+    if (!banner) return;
+    var input = document.getElementById("vdi-mfa-input");
+    var submit = document.getElementById("vdi-mfa-submit");
+    var statusEl = document.getElementById("vdi-mfa-status");
+    var subEl = document.getElementById("vdi-mfa-sub");
+    var currentId = null;
+    var busy = false;
+
+    function setStatus(msg){ statusEl.textContent = msg || ""; }
+    function show(ch){
+      currentId = ch.id;
+      if (ch.detail) subEl.textContent = ch.detail + " — enter it to keep the lookup going.";
+      banner.classList.add("show");
+    }
+    function hide(){ banner.classList.remove("show"); currentId = null; }
+
+    async function poll(){
+      if (busy) return;
+      try {
+        var r = await sb.from("mfa_challenges")
+          .select("id, detail, status")
+          .eq("status", "pending")
+          .gt("expires_at", new Date().toISOString())
+          .order("created_at", { ascending: false })
+          .limit(1).maybeSingle();
+        if (r && r.data) {
+          if (r.data.id !== currentId) { setStatus(""); input.value = ""; show(r.data); }
+        } else if (currentId) {
+          hide();
+        }
+      } catch (e) { /* non-blocking */ }
+    }
+
+    submit.addEventListener("click", async function(){
+      var code = (input.value || "").trim();
+      if (!code) { setStatus("Enter the code first."); return; }
+      if (!currentId) return;
+      busy = true; submit.disabled = true; setStatus("Submitting\u2026");
+      var upd = await sb.from("mfa_challenges")
+        .update({ code: code, status: "answered", answered_at: new Date().toISOString() })
+        .eq("id", currentId);
+      busy = false; submit.disabled = false;
+      if (upd && !upd.error) {
+        setStatus("Submitted \u2014 the robot is finishing the login\u2026");
+        setTimeout(hide, 4500);
+      } else {
+        setStatus("Could not submit" + (upd && upd.error ? ": " + upd.error.message : "") + ". Try again.");
+      }
+    });
+    input.addEventListener("keydown", function(e){ if (e.key === "Enter") submit.click(); });
+
+    setInterval(poll, 4000);
+    poll();
   })();
 
 </script>
