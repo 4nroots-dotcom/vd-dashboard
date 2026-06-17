@@ -459,7 +459,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .office-note-input:focus { border-color: rgba(0,200,232,0.35); }
     .office-note-input::placeholder { color: var(--text-muted); }
 
-    /* SMS */
+    /* ── SMS ──────────────────────────────────────────────────────── */
     .sms-banner { display: flex; gap: 10px; background: rgba(240,165,0,0.09); border: 1px solid rgba(240,165,0,0.28); border-radius: 8px; padding: 10px 14px; margin: 8px 20px 0; font-size: 13px; color: #c08020; line-height: 1.5; flex-shrink: 0; }
     .sms-banner strong { color: #c08020; }
     .allergy-alert { display: flex; align-items: flex-start; gap: 10px; background: #fff5f5; border: 1.5px solid #fc8181; border-radius: 8px; padding: 12px 16px; margin: 8px 20px 0; font-size: 13px; line-height: 1.5; flex-shrink: 0; }
@@ -507,22 +507,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .sms-send-status.err { color: #e84545; }
     .btn-msg-patient { background: rgba(0,200,232,0.08); border: 1px solid rgba(0,200,232,0.22); color: #007a8e; border-radius: 6px; font-size: 12px; font-weight: 600; padding: 7px 12px; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
     .btn-msg-patient:hover { background: rgba(0,200,232,0.16); }
-
-    /* INSURANCE */
-    .ins-field { display:flex; flex-direction:column; gap:4px; }
-    .ins-field label { font-size:10px; font-weight:700; color:#5a7090; text-transform:uppercase; letter-spacing:0.05em; }
-    .ins-input, .ins-select { width:100%; background:#f8fafd; border:1px solid #d0dae8; border-radius:7px; color:#1a2b40; font-size:13px; padding:8px 10px; outline:none; font-family:inherit; }
-    .ins-input:focus, .ins-select:focus { border-color:#00a8c4; }
-    .ins-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    .ins-open-btn { align-self:flex-start; background:rgba(0,150,180,0.08); border:1px solid rgba(0,150,180,0.25); color:#007a8e; border-radius:7px; font-size:12px; font-weight:600; padding:7px 12px; cursor:pointer; }
-    .ins-open-btn:hover { background:rgba(0,150,180,0.16); }
-    .ins-portal-hint { font-size:11px; color:#8a9cb8; }
-    .ins-last-saved { background:#f0f7fb; border:1px solid #cbdce8; color:#41698a; border-radius:8px; padding:8px 12px; font-size:12px; line-height:1.4; }
-    .ins-section-label { font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#8a9cb8; margin-top:2px; }
-    .ins-details summary { font-size:12px; font-weight:600; color:#3a5070; cursor:pointer; padding:4px 0; }
-    .ins-details summary:hover { color:#00a8c4; }
-    .btn-insurance { background:rgba(113,187,85,0.12); border:1px solid rgba(113,187,85,0.4); color:#3d7a2a; border-radius:6px; font-size:12px; font-weight:600; padding:7px 12px; cursor:pointer; transition:background 0.15s; white-space:nowrap; }
-    .btn-insurance:hover { background:rgba(113,187,85,0.22); }
 
     .note-scroll {
       flex: 1;
@@ -704,6 +688,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .app { height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
       .body { flex: 1; overflow: hidden; position: relative; }
 
+      /* List panel — full screen by default on mobile */
       .case-list-panel {
         position: absolute;
         inset: 0;
@@ -718,11 +703,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
       .case-list-scroll { flex: 1; overflow-y: auto; }
 
+      /* When a case is selected on mobile, slide list out and show note full screen */
       .body.case-open .case-list-panel {
         transform: translateX(-100%);
         pointer-events: none;
       }
 
+      /* Note panel — hidden behind list by default, full screen when case open */
       .note-panel {
         position: absolute;
         inset: 0;
@@ -743,7 +730,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         flex: 1;
         overflow-y: auto;
         padding: 12px;
-        height: 0;
+        height: 0; /* forces flex child to scroll */
       }
 
       .note-toolbar {
@@ -766,6 +753,82 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       .header-practice-name { font-size: 13px; }
       .header-practice-location { display: none; }
     }
+    /* ===== Insurance verification panel (vdi-*) — injected, namespaced ===== */
+    .vdi-wrap { margin-top: 14px; }
+    .vdi-card { --vdi-good:#2F855A; --vdi-good-dot:#48BB78; --vdi-good-bg:#F0FBF4; --vdi-warn:#B7791F; --vdi-warn-dot:#ED8936; --vdi-warn-bg:#FFFAF2; --vdi-info-dot:#A6B1C2; --vdi-faint:#B6BECC;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+      box-shadow: 0 1px 2px rgba(16,24,40,.04), 0 10px 28px rgba(16,24,40,.05); }
+    .vdi-loading, .vdi-empty { padding: 16px 18px; font-size: 13px; color: var(--text-muted); }
+    .vdi-empty .vdi-empty-t { font-weight: 600; color: var(--text-secondary); margin-bottom: 2px; }
+    .vdi-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 18px 20px 16px; }
+    .vdi-who { min-width: 0; }
+    .vdi-name { font-size: 17px; font-weight: 600; letter-spacing: -.01em; line-height: 1.2; color: var(--text-primary); }
+    .vdi-meta { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
+    .vdi-head-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; white-space: nowrap; }
+    .vdi-asof { font-size: 12px; color: var(--text-muted); }
+    .vdi-badge { font-size: 11.5px; font-weight: 600; padding: 4px 9px; border-radius: 999px; }
+    .vdi-badge.review { color: var(--vdi-warn); background: var(--vdi-warn-bg); box-shadow: inset 0 0 0 1px rgba(183,121,31,.18); }
+    .vdi-badge.ok { color: var(--vdi-good); background: var(--vdi-good-bg); box-shadow: inset 0 0 0 1px rgba(47,133,90,.2); }
+    .vdi-tick { width: 9px; height: 9px; border-radius: 50%; background: var(--vdi-good-dot); display: inline-block; }
+    .vdi-verdict { padding: 16px 20px; background: linear-gradient(135deg, rgba(0,200,232,.07), rgba(113,187,85,.06)); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .vdi-verdict.inactive { background: linear-gradient(135deg, rgba(197,48,48,.06), rgba(192,86,33,.05)); }
+    .vdi-v-lead { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 600; letter-spacing: -.01em; color: var(--text-primary); line-height: 1.2; }
+    .vdi-v-lead .vdi-tick { box-shadow: 0 0 0 3px rgba(72,187,120,.18); }
+    .vdi-verdict.inactive .vdi-v-lead .vdi-tick { background: #C53030; box-shadow: 0 0 0 3px rgba(197,48,48,.16); }
+    .vdi-v-detail { font-size: 13.5px; line-height: 1.5; color: var(--text-secondary); margin-top: 7px; }
+    .vdi-glance { padding: 18px 20px 16px; background: #FAFBFD; border-bottom: 1px solid var(--border); }
+    .vdi-rings { display: flex; gap: 10px; justify-content: space-between; }
+    .vdi-ring { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 7px; min-width: 0; }
+    .vdi-ring svg { width: 72px; height: 72px; display: block; overflow: visible; }
+    .vdi-track { fill: none; stroke: #E8EDF3; stroke-width: 7; }
+    .vdi-prog { fill: none; stroke-width: 7; stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 1s cubic-bezier(.2,.85,.25,1); }
+    .vdi-pct { font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; fill: var(--text-primary); }
+    .vdi-cat { font-size: 12px; color: var(--text-secondary); font-weight: 500; text-align: center; }
+    .vdi-kpis { display: flex; gap: 10px; margin-top: 16px; padding-top: 15px; border-top: 1px solid #EDF1F6; }
+    .vdi-kpi { flex: 1; min-width: 0; }
+    .vdi-kl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--text-muted); }
+    .vdi-kval { font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -.02em; margin-top: 5px; display: flex; align-items: center; gap: 6px; line-height: 1.05; color: var(--text-primary); }
+    .vdi-ks { font-size: 11px; color: var(--text-muted); margin-top: 4px; line-height: 1.35; }
+    .vdi-sec { display: flex; align-items: center; gap: 11px; padding: 18px 20px 4px; }
+    .vdi-sec-label { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); white-space: nowrap; }
+    .vdi-sec-line { flex: 1; height: 1px; background: #ECF0F5; }
+    .vdi-sec-meta { font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .vdi-row { width: 100%; display: flex; align-items: center; gap: 13px; padding: 12px 20px; background: none; border: 0; text-align: left; cursor: pointer; font: inherit; color: inherit; transition: background .12s ease; }
+    .vdi-row:hover { background: #F6F8FB; }
+    .vdi-detail + .vdi-row { border-top: 1px solid #F1F4F8; }
+    .vdi-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+    .vdi-dot.covered { background: var(--vdi-good-dot); }
+    .vdi-dot.attention { background: var(--vdi-warn-dot); }
+    .vdi-dot.info { background: var(--vdi-info-dot); }
+    .vdi-dot.ineligible { background: var(--vdi-faint); }
+    .vdi-rmain { flex: 1; min-width: 0; }
+    .vdi-rname { font-size: 15px; font-weight: 500; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-primary); }
+    .vdi-rstatus { font-size: 13px; margin-top: 2px; }
+    .vdi-rstatus.covered { color: var(--vdi-good); }
+    .vdi-rstatus.attention { color: var(--vdi-warn); }
+    .vdi-rstatus.info { color: var(--text-muted); }
+    .vdi-rstatus.ineligible { color: var(--vdi-faint); }
+    .vdi-ramt { font-size: 15px; font-variant-numeric: tabular-nums; white-space: nowrap; letter-spacing: -.01em; }
+    .vdi-ramt.covered { color: var(--vdi-good); font-weight: 600; }
+    .vdi-ramt.muted { color: var(--text-muted); }
+    .vdi-chev { width: 7px; height: 7px; border-right: 1.6px solid #C2CAD6; border-bottom: 1.6px solid #C2CAD6; transform: rotate(-45deg); transition: transform .18s ease; flex: none; margin-left: 2px; }
+    .vdi-row[aria-expanded="true"] .vdi-chev { transform: rotate(45deg); }
+    .vdi-row.ineligible .vdi-rname { color: var(--text-secondary); }
+    .vdi-detail { max-height: 0; overflow: hidden; transition: max-height .22s ease; background: #FBFCFE; }
+    .vdi-detail-inner { padding: 4px 20px 16px 42px; }
+    .vdi-kv { display: flex; justify-content: space-between; gap: 16px; font-size: 13px; padding: 5px 0; border-top: 1px solid #EEF1F6; }
+    .vdi-kv:first-child { border-top: 0; }
+    .vdi-k { color: var(--text-muted); }
+    .vdi-val { color: var(--text-secondary); text-align: right; font-variant-numeric: tabular-nums; }
+    .vdi-notes { margin-top: 10px; font-size: 12.5px; color: var(--text-secondary); line-height: 1.5; }
+    .vdi-n { padding: 3px 0 3px 14px; position: relative; }
+    .vdi-n::before { content: ""; position: absolute; left: 2px; top: 11px; width: 4px; height: 4px; border-radius: 50%; background: var(--vdi-warn-dot); opacity: .7; }
+    .vdi-foot { padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--border); }
+    .vdi-disclaimer { font-size: 11.5px; color: var(--text-muted); line-height: 1.45; max-width: 330px; }
+    .vdi-confirm { appearance: none; border: 0; border-radius: 9px; background: var(--navy); color: #fff; font: inherit; font-size: 13px; font-weight: 600; padding: 9px 15px; cursor: pointer; white-space: nowrap; transition: opacity .15s; }
+    .vdi-confirm:hover { opacity: .9; }
+    .vdi-confirm.done { background: var(--vdi-good-bg); color: var(--vdi-good); box-shadow: inset 0 0 0 1px rgba(47,133,90,.25); cursor: default; }
+    .vdi-confirm[disabled] { opacity: .6; cursor: default; }
   </style>
 </head>
 <body>
@@ -844,7 +907,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div style="display:flex;gap:6px;margin-top:8px;">
         <input class="search-input" id="search-input" type="text" placeholder="Search name or phone..." oninput="doSearch(this.value);" />
       </div>
-      <button class="btn-insurance" id="ins-lookup-btn" type="button" style="margin-top:8px;width:100%;">&#129463; Insurance lookup (any patient)</button>
       <div style="display:flex;gap:6px;margin-top:6px;align-items:center;">
         <span style="font-size:11px;color:var(--text-muted);">Sort:</span>
         <button class="sort-btn active" id="sort-newest" type="button">Newest</button>
@@ -882,7 +944,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="note-actions">
           <button class="action-btn btn-complete" id="complete-btn" type="button">Mark Visit Complete</button>
           <button class="btn-msg-patient" id="msg-patient-btn" type="button">&#128172; Message Patient</button>
-          <button class="btn-insurance" id="ins-btn" type="button">&#129463; Insurance</button>
           <button class="action-btn btn-pdf" id="save-pdf-btn" type="button">Save as PDF</button>
           <button class="action-btn btn-print" id="print-btn" type="button">Print Note</button>
         </div>
@@ -951,78 +1012,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
     <button class="sms-send-btn" id="sms-send-btn" type="button" disabled>Send message</button>
     <div class="sms-send-status" id="sms-send-status"></div>
-  </div>
-</div>
-
-<!-- INSURANCE MODAL -->
-<div class="sms-modal-overlay" id="ins-modal-overlay">
-  <div class="sms-modal" role="dialog" aria-modal="true" style="max-width:560px;max-height:92vh;overflow-y:auto;">
-    <div class="sms-modal-header">
-      <div>
-        <div class="sms-modal-title">&#129463; Insurance Verification</div>
-        <div class="sms-modal-recipient" id="ins-modal-patient"></div>
-      </div>
-      <button class="sms-modal-close" id="ins-modal-close" type="button" aria-label="Close">&times;</button>
-    </div>
-
-    <div id="ins-standalone-id" style="display:none;flex-direction:column;gap:10px;">
-      <div class="ins-section-label" style="margin-top:0;">Patient (not in the system)</div>
-      <div class="ins-grid">
-        <div class="ins-field"><label for="ins-sa-name">Patient name</label><input class="ins-input" id="ins-sa-name" type="text" placeholder="First Last" /></div>
-        <div class="ins-field"><label for="ins-sa-phone">Phone</label><input class="ins-input" id="ins-sa-phone" type="text" placeholder="(905) 555-1234" /></div>
-      </div>
-      <button class="ins-open-btn" id="ins-sa-load" type="button" style="align-self:flex-start;">Load existing record &#8635;</button>
-    </div>
-
-    <div class="ins-last-saved" id="ins-last-saved" style="display:none;"></div>
-
-    <div class="ins-field">
-      <label for="ins-carrier">Carrier</label>
-      <select class="ins-select" id="ins-carrier"></select>
-      <span class="ins-portal-hint" id="ins-portal-hint"></span>
-    </div>
-    <button class="ins-open-btn" id="ins-open-portal" type="button" style="display:none;">Open portal &#8599;</button>
-
-    <div class="ins-field">
-      <label for="ins-paste">Paste the benefit summary from the portal</label>
-      <textarea class="sms-textarea" id="ins-paste" style="min-height:90px;" placeholder="Copy the coverage breakdown from the portal and paste it here. It is saved exactly as pasted."></textarea>
-    </div>
-
-    <div class="ins-section-label">Key details</div>
-    <div class="ins-grid">
-      <div class="ins-field"><label for="ins-member">Member / certificate ID</label><input class="ins-input" id="ins-member" type="text" /></div>
-      <div class="ins-field"><label for="ins-active">Coverage active?</label><select class="ins-select" id="ins-active"><option value="">Unknown</option><option value="yes">Yes</option><option value="no">No</option></select></div>
-      <div class="ins-field"><label for="ins-annualmax">Annual maximum ($)</label><input class="ins-input" id="ins-annualmax" type="number" step="0.01" /></div>
-      <div class="ins-field"><label for="ins-remaining">Benefits remaining ($)</label><input class="ins-input" id="ins-remaining" type="number" step="0.01" /></div>
-      <div class="ins-field"><label for="ins-preventive">Preventive (%)</label><input class="ins-input" id="ins-preventive" type="number" /></div>
-      <div class="ins-field"><label for="ins-basic">Basic (%)</label><input class="ins-input" id="ins-basic" type="number" /></div>
-      <div class="ins-field"><label for="ins-major">Major (%)</label><input class="ins-input" id="ins-major" type="number" /></div>
-      <div class="ins-field"><label for="ins-recall">Recall frequency</label><input class="ins-input" id="ins-recall" type="text" placeholder="e.g. every 9 months" /></div>
-    </div>
-
-    <details class="ins-details">
-      <summary>More fields</summary>
-      <div class="ins-grid" style="margin-top:10px;">
-        <div class="ins-field"><label for="ins-policy">Policy / plan #</label><input class="ins-input" id="ins-policy" type="text" /></div>
-        <div class="ins-field"><label for="ins-subscriber">Subscriber name</label><input class="ins-input" id="ins-subscriber" type="text" /></div>
-        <div class="ins-field"><label for="ins-relationship">Relationship</label><select class="ins-select" id="ins-relationship"><option value="">&mdash;</option><option value="self">Self</option><option value="spouse">Spouse</option><option value="child">Child</option><option value="other">Other</option></select></div>
-        <div class="ins-field"><label for="ins-effective">Effective date</label><input class="ins-input" id="ins-effective" type="date" /></div>
-        <div class="ins-field"><label for="ins-deductible">Deductible ($)</label><input class="ins-input" id="ins-deductible" type="number" step="0.01" /></div>
-        <div class="ins-field"><label for="ins-deductible-rem">Deductible remaining ($)</label><input class="ins-input" id="ins-deductible-rem" type="number" step="0.01" /></div>
-        <div class="ins-field"><label for="ins-ortho">Ortho (%)</label><input class="ins-input" id="ins-ortho" type="number" /></div>
-        <div class="ins-field"><label for="ins-exam">Exam frequency</label><input class="ins-input" id="ins-exam" type="text" /></div>
-        <div class="ins-field"><label for="ins-xray">X-ray frequency</label><input class="ins-input" id="ins-xray" type="text" /></div>
-        <div class="ins-field"><label for="ins-scaling">Scaling units remaining</label><input class="ins-input" id="ins-scaling" type="text" /></div>
-      </div>
-    </details>
-
-    <div class="ins-field">
-      <label for="ins-notes">Notes</label>
-      <textarea class="sms-textarea" id="ins-notes" style="min-height:50px;" placeholder="Anything the structured fields don't capture..."></textarea>
-    </div>
-
-    <button class="sms-send-btn" id="ins-save" type="button">Save verification</button>
-    <div class="sms-send-status" id="ins-status"></div>
   </div>
 </div>
 
@@ -1723,6 +1712,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       if (smsResult.data) smsRows = smsResult.data;
     } catch(e) { /* non-blocking */ }
     scroll.appendChild(buildNote(c, smsRows));
+    scroll.appendChild(buildInsurancePanel(c));
     wireContactNameEdit(c);
     if (smsRefreshInterval) clearInterval(smsRefreshInterval);
     smsRefreshInterval = setInterval(function() { if (selectedCaseId) refreshSMSThread(selectedCaseId); }, 30000);
@@ -1815,10 +1805,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     // Message Patient button
     var msgBtn = document.getElementById("msg-patient-btn");
     if (msgBtn) { msgBtn.onclick = function() { openSMSModal(c); }; }
-
-    // Insurance button
-    var insBtn = document.getElementById("ins-btn");
-    if (insBtn) { insBtn.onclick = function() { openInsModal(c); }; }
 
     // Populate ownership indicator asynchronously.
     (async function() {
@@ -2530,295 +2516,338 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   }());
   // ── END SMS MODAL ──────────────────────────────────────────────
 
-  // ── INSURANCE VERIFICATION ─────────────────────────────────────
-  // V1 (autopaste): Afaf opens the carrier portal herself, logs in on the
-  // carrier's own site, copies the benefit breakdown, and pastes it here.
-  // raw_paste is the source of truth; the structured fields are entered by hand
-  // for now and will be auto-filled from the paste in a later step (Canadian-
-  // region model). All reads/writes go straight to the Canadian Supabase table
-  // insurance_verifications under the logged-in reviewer's session (RLS).
-  // One current record per patient, keyed by patient_phone (fallback case_id),
-  // updated in place.
-  var INS_CARRIERS = [
-    { name: "GreenShield",          url: "https://www.providerconnect.ca/AccessMgmt/Public/SignOn.aspx", via: "providerConnect" },
-    { name: "Canada Life",          url: "https://www.providerconnect.ca/AccessMgmt/Public/SignOn.aspx", via: "providerConnect" },
-    { name: "RBC",                  url: "https://www.providerconnect.ca/AccessMgmt/Public/SignOn.aspx", via: "providerConnect" },
-    { name: "SSQ",                  url: "https://www.providerconnect.ca/AccessMgmt/Public/SignOn.aspx", via: "providerConnect" },
-    { name: "Sun Life",             url: "https://www.sunnet.sunlife.com/signin/provider/e/home.wca", via: "" },
-    { name: "CDCP (Sun Life)",      url: "https://www.sunnet.sunlife.com/signin/provider/e/home.wca", via: "Sun Life Direct" },
-    { name: "MDM",                  url: "https://mdm-insurance.com/providers/providers.ps?Provider=DEN", via: "" },
-    { name: "Express Scripts",      url: "https://provider.express-scripts.ca/apex/f?p=200:9999", via: "" },
-    { name: "Blue Cross (Medavie)", url: "https://secure.medavie.bluecross.ca/auth/login.connexion", via: "" },
-    { name: "ClaimSecure",          url: "https://provider.claimsecure.com/", via: "" },
-    { name: "Other",                url: "", via: "" }
-  ];
-  var insModalCase = null;
-  var currentVerificationId = null;
+/* ============================================================================
+   SESSION SENTINEL + RECONNECT NOTICE  —  2026-06-13 (v2, toned down)
+   ----------------------------------------------------------------------------
+   WHERE TO PASTE: immediately before the final closing script tag, in BOTH
+   office-dashboard.html AND ddsdashboard.html. Paste the whole block. It is
+   self-contained and does not depend on or modify any existing function; the
+   only global it uses is `sb` (the Supabase client), which both files define.
 
-  function insEl(id) { return document.getElementById(id); }
-  function insSetVal(id, v) { var e = insEl(id); if (e) e.value = (v === null || v === undefined) ? "" : v; }
-  function insGetStr(id) { var e = insEl(id); var v = e ? e.value.trim() : ""; return v || null; }
-  function insGetNum(id) { var e = insEl(id); if (!e || e.value === "") return null; var n = parseFloat(e.value); return isNaN(n) ? null : n; }
-  function insGetInt(id) { var e = insEl(id); if (!e || e.value === "") return null; var n = parseInt(e.value, 10); return isNaN(n) ? null : n; }
-  function insGetTri(id) { var e = insEl(id); if (!e || e.value === "") return null; return e.value === "yes"; }
+   WHAT IT DOES: when a tab is left open for hours the access token can expire
+   without the library's background refresh running (backgrounded tabs throttle
+   timers). This watches for that and recovers it so the queue does not silently
+   stop loading new cases.
 
-  function populateInsCarriers() {
-    var sel = insEl("ins-carrier");
-    if (!sel || sel.options.length) return;
-    var ph = document.createElement("option");
-    ph.value = ""; ph.textContent = "\u2014 Select carrier \u2014";
-    sel.appendChild(ph);
-    INS_CARRIERS.forEach(function(cr) {
-      var o = document.createElement("option");
-      o.value = cr.name; o.textContent = cr.name;
-      sel.appendChild(o);
-    });
+   TONE (v2): recovery is now SILENT in the common case — when the token is past
+   expiry it attempts one quiet refresh and, on success, simply reloads the data
+   with no notice at all. A small, calm notice (NOT an error banner) appears only
+   after recovery has failed on TWO consecutive checks, i.e. the session is
+   genuinely stuck. The notice auto-clears the moment the session recovers.
+
+   WHY IT WILL NOT WORSEN A REFRESH RACE: it never refreshes proactively. It acts
+   only once the token is well past expiry (the library has demonstrably missed),
+   and funnels its own refreshes through a single in-flight promise so it can
+   never double-spend a rotating refresh token against itself.
+   ========================================================================== */
+(function () {
+  "use strict";
+  if (window.__vdSessionSentinel) return;
+  window.__vdSessionSentinel = true;
+
+  if (typeof sb === "undefined" || !sb || !sb.auth) {
+    console.warn("[session-sentinel] Supabase client `sb` not found — sentinel inactive.");
+    return;
   }
 
-  function updateInsPortalLink() {
-    var sel = insEl("ins-carrier");
-    var hint = insEl("ins-portal-hint");
-    var btn = insEl("ins-open-portal");
-    if (!sel || !hint || !btn) return;
-    var name = sel.value;
-    var cr = INS_CARRIERS.find(function(x){ return x.name === name; }) || {};
-    if (cr.url) {
-      btn.style.display = "inline-block";
-      btn.textContent = "Open " + name + " portal \u2197";
-      hint.textContent = cr.via ? ("Opens via " + cr.via) : "";
-    } else {
-      btn.style.display = "none";
-      hint.textContent = name === "Other" ? "No portal link on file \u2014 log in manually."
-        : name === "" ? "Choose the patient's carrier to get the portal link." : "";
-    }
+  var CHECK_MS = 60000;            // how often to check session health
+  var EXPIRED_GRACE_SEC = 45;      // act only once the token is this many seconds PAST expiry (let the library + any in-app refresh go first)
+  var FAILURES_BEFORE_NOTICE = 2;  // surface the notice only after recovery fails this many checks in a row (debounce — no flashing on transient blips)
+  var refreshInFlight = null;
+  var consecutiveFailures = 0;
+  var noticeEl = null;
+
+  // single-flight refresh — collapses overlapping recovery attempts into one
+  function refreshOnce() {
+    if (refreshInFlight) return refreshInFlight;
+    refreshInFlight = sb.auth.refreshSession()
+      .catch(function (e) { return { error: e }; })
+      .then(function (res) { refreshInFlight = null; return res || {}; });
+    return refreshInFlight;
   }
 
-  function resetInsFields() {
-    ["ins-member","ins-policy","ins-subscriber","ins-effective","ins-annualmax","ins-remaining","ins-deductible","ins-deductible-rem","ins-preventive","ins-basic","ins-major","ins-ortho","ins-recall","ins-exam","ins-xray","ins-scaling","ins-paste","ins-notes"].forEach(function(id){ insSetVal(id, ""); });
-    insSetVal("ins-relationship", "");
-    insSetVal("ins-active", "");
-    var sel = insEl("ins-carrier"); if (sel) sel.selectedIndex = 0;
-    var ls = insEl("ins-last-saved"); if (ls) { ls.style.display = "none"; ls.innerHTML = ""; }
-  }
-
-  function fillInsFields(r) {
-    var sel = insEl("ins-carrier"); if (sel && r.carrier) sel.value = r.carrier;
-    insSetVal("ins-member", r.member_id);
-    insSetVal("ins-policy", r.policy_or_plan_number);
-    insSetVal("ins-subscriber", r.subscriber_name);
-    insSetVal("ins-relationship", r.relationship_to_subscriber || "");
-    insSetVal("ins-active", r.coverage_active === true ? "yes" : r.coverage_active === false ? "no" : "");
-    insSetVal("ins-effective", r.effective_date || "");
-    insSetVal("ins-annualmax", r.annual_maximum);
-    insSetVal("ins-remaining", r.benefits_remaining);
-    insSetVal("ins-deductible", r.deductible_amount);
-    insSetVal("ins-deductible-rem", r.deductible_remaining);
-    insSetVal("ins-preventive", r.coverage_preventive);
-    insSetVal("ins-basic", r.coverage_basic);
-    insSetVal("ins-major", r.coverage_major);
-    insSetVal("ins-ortho", r.coverage_ortho);
-    insSetVal("ins-recall", r.recall_frequency);
-    insSetVal("ins-exam", r.exam_frequency);
-    insSetVal("ins-xray", r.xray_frequency);
-    insSetVal("ins-scaling", r.scaling_units_remaining);
-    insSetVal("ins-paste", r.raw_paste);
-    insSetVal("ins-notes", r.notes);
-    updateInsPortalLink();
-  }
-
-  function showInsLastSaved(r) {
-    var ls = insEl("ins-last-saved");
-    if (!ls) return;
-    var when = r.verified_at ? new Date(r.verified_at).toLocaleString("en-CA", { month:"short", day:"numeric", year:"numeric", hour:"2-digit", minute:"2-digit" }) : "";
-    ls.innerHTML = "Last verified " + esc(when) + (r.verified_by ? " by " + esc(r.verified_by) : "") + ". Saving will update this record.";
-    ls.style.display = "block";
-  }
-
-  async function loadInsurance(c) {
-    currentVerificationId = null;
-    resetInsFields();
-    updateInsPortalLink();
+  function reloadPageData() {
     try {
-      var q = sb.from("insurance_verifications").select("*");
-      if (c.patient_phone) q = q.eq("patient_phone", c.patient_phone);
-      else q = q.eq("case_id", c.id);
-      var r = await q.order("verified_at", { ascending: false }).limit(1).maybeSingle();
-      if (r && r.data && !r.error) {
-        currentVerificationId = r.data.id;
-        fillInsFields(r.data);
-        showInsLastSaved(r.data);
-      }
-    } catch (e) { /* table missing or no row yet — start fresh */ }
+      if (typeof loadCases === "function") { loadCases(); return; }
+      if (typeof loadMetrics === "function") { loadMetrics(); return; }
+    } catch (e) { /* non-fatal */ }
   }
 
-  function insShowMode(standalone) {
-    var saBlock = insEl("ins-standalone-id");
-    var roLine = insEl("ins-modal-patient");
-    if (saBlock) saBlock.style.display = standalone ? "flex" : "none";
-    if (roLine) roLine.style.display = standalone ? "none" : "block";
+  function removeNotice() {
+    if (noticeEl && noticeEl.parentNode) noticeEl.parentNode.removeChild(noticeEl);
+    noticeEl = null;
   }
 
-  // Standalone lookup: insurance for a patient of record who is NOT in the
-  // system (e.g. an existing Dentrix patient). No case_id; keyed by phone.
-  function openInsLookup() {
-    insModalCase = null;            // standalone => no case
-    currentVerificationId = null;
-    populateInsCarriers();
-    insShowMode(true);
-    insSetVal("ins-sa-name", "");
-    insSetVal("ins-sa-phone", "");
-    var pt = insEl("ins-modal-patient"); if (pt) pt.textContent = "";
-    var st = insEl("ins-status"); if (st) { st.textContent = ""; st.className = "sms-send-status"; }
-    resetInsFields();
-    updateInsPortalLink();
-    var ov = insEl("ins-modal-overlay"); if (ov) ov.classList.add("open");
-    var nm = insEl("ins-sa-name"); if (nm) nm.focus();
+  // A calm, native-looking notice — deliberately not a red error bar.
+  function showNotice() {
+    if (noticeEl) return;
+    noticeEl = document.createElement("div");
+    noticeEl.setAttribute("role", "status");
+    noticeEl.style.cssText = [
+      "position:fixed", "top:0", "left:0", "right:0", "z-index:10000",
+      "background:rgba(15,32,68,0.97)", "color:#cfe0f5",
+      "border-bottom:1px solid rgba(0,200,232,0.35)",
+      "font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
+      "font-size:13px", "line-height:1.4",
+      "padding:9px 14px", "display:flex", "align-items:center", "gap:12px",
+      "box-shadow:0 4px 16px rgba(0,0,0,0.25)"
+    ].join(";");
+
+    var dot = document.createElement("span");
+    dot.style.cssText = "flex:none;width:8px;height:8px;border-radius:50%;background:#00c8e8;box-shadow:0 0 8px rgba(0,200,232,0.6);";
+
+    var msg = document.createElement("span");
+    msg.style.cssText = "flex:1;min-width:0;";
+    msg.textContent = "Your session has been idle for a while. Reconnect to keep the queue current.";
+
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = "Reconnect";
+    btn.style.cssText = [
+      "flex:none", "background:rgba(0,200,232,0.12)", "color:#00c8e8",
+      "border:1px solid rgba(0,200,232,0.4)", "border-radius:7px",
+      "font-weight:700", "font-size:12px", "letter-spacing:0.03em",
+      "padding:6px 14px", "cursor:pointer"
+    ].join(";");
+    btn.addEventListener("click", function () { doReconnect(btn); });
+
+    noticeEl.appendChild(dot);
+    noticeEl.appendChild(msg);
+    noticeEl.appendChild(btn);
+    document.body.appendChild(noticeEl);
   }
 
-  // Load an existing verification by the typed phone (standalone mode) so a
-  // patient checked before re-loads instead of creating a duplicate row.
-  async function loadStandaloneByPhone() {
-    var phone = insGetStr("ins-sa-phone");
-    if (!phone) return;
-    currentVerificationId = null;
-    resetInsFields();
-    updateInsPortalLink();
-    try {
-      var r = await sb.from("insurance_verifications").select("*").eq("patient_phone", phone).order("verified_at", { ascending: false }).limit(1).maybeSingle();
-      if (r && r.data && !r.error) {
-        currentVerificationId = r.data.id;
-        fillInsFields(r.data);
-        showInsLastSaved(r.data);
-        if (r.data.patient_name) insSetVal("ins-sa-name", r.data.patient_name);
-      }
-    } catch (e) { /* no record / table issue — start fresh */ }
-  }
-
-  async function openInsModal(c) {
-    insModalCase = c;
-    populateInsCarriers();
-    insShowMode(false);
-    var ov = insEl("ins-modal-overlay");
-    var pt = insEl("ins-modal-patient");
-    if (pt) pt.textContent = (c.patient_name || "Patient") + (c.patient_phone ? " \u00B7 " + formatPhone(c.patient_phone) : "");
-    var st = insEl("ins-status"); if (st) { st.textContent = ""; st.className = "sms-send-status"; }
-    if (ov) ov.classList.add("open");
-    await loadInsurance(c);
-  }
-
-  function closeInsModal() {
-    var ov = insEl("ins-modal-overlay");
-    if (ov) ov.classList.remove("open");
-    insModalCase = null;
-  }
-
-  async function saveInsurance() {
-    var standalone = (insModalCase === null);
-    var btn = insEl("ins-save");
-    var st = insEl("ins-status");
-    if (btn) { btn.disabled = true; btn.textContent = "Saving\u2026"; }
-    if (st) { st.textContent = ""; st.className = "sms-send-status"; }
-    var caseId, savePhone, saveName;
-    if (standalone) {
-      saveName = insGetStr("ins-sa-name");
-      savePhone = insGetStr("ins-sa-phone");
-      caseId = null;
-      if (!saveName && !savePhone) {
-        if (st) { st.textContent = "Enter a patient name or phone first"; st.className = "sms-send-status err"; }
-        if (btn) { btn.disabled = false; btn.textContent = "Save verification"; }
-        return;
-      }
-      // Resync to an existing phone-keyed record so re-saving updates, not dupes.
-      if (!currentVerificationId && savePhone) {
-        try {
-          var pre = await sb.from("insurance_verifications").select("id").eq("patient_phone", savePhone).order("verified_at", { ascending: false }).limit(1).maybeSingle();
-          if (pre && pre.data && !pre.error) currentVerificationId = pre.data.id;
-        } catch (e) {}
-      }
-    } else {
-      caseId = insModalCase.id;
-      savePhone = insModalCase.patient_phone || null;
-      saveName = insModalCase.patient_name || null;
-    }
-    var nowIso = new Date().toISOString();
-    var payload = {
-      case_id: caseId,
-      patient_phone: savePhone,
-      patient_name: saveName,
-      carrier: insGetStr("ins-carrier"),
-      member_id: insGetStr("ins-member"),
-      policy_or_plan_number: insGetStr("ins-policy"),
-      subscriber_name: insGetStr("ins-subscriber"),
-      relationship_to_subscriber: insGetStr("ins-relationship"),
-      coverage_active: insGetTri("ins-active"),
-      effective_date: insGetStr("ins-effective"),
-      annual_maximum: insGetNum("ins-annualmax"),
-      benefits_remaining: insGetNum("ins-remaining"),
-      deductible_amount: insGetNum("ins-deductible"),
-      deductible_remaining: insGetNum("ins-deductible-rem"),
-      coverage_preventive: insGetInt("ins-preventive"),
-      coverage_basic: insGetInt("ins-basic"),
-      coverage_major: insGetInt("ins-major"),
-      coverage_ortho: insGetInt("ins-ortho"),
-      recall_frequency: insGetStr("ins-recall"),
-      exam_frequency: insGetStr("ins-exam"),
-      xray_frequency: insGetStr("ins-xray"),
-      scaling_units_remaining: insGetStr("ins-scaling"),
-      raw_paste: insGetStr("ins-paste"),
-      notes: insGetStr("ins-notes"),
-      parsed_by: "manual",
-      verified_by: OFFICE_DISPLAY_NAME || OFFICE_USER_EMAIL || "Office Staff",
-      verified_at: nowIso,
-      updated_at: nowIso
-    };
-    try {
-      var result;
-      if (currentVerificationId) {
-        result = await sb.from("insurance_verifications").update(payload).eq("id", currentVerificationId);
+  function doReconnect(btn) {
+    if (btn) { btn.disabled = true; btn.textContent = "Reconnecting\u2026"; btn.style.opacity = "0.7"; }
+    refreshOnce().then(function (res) {
+      if (res && !res.error && res.data && res.data.session) {
+        consecutiveFailures = 0;
+        removeNotice();
+        reloadPageData();
       } else {
-        result = await sb.from("insurance_verifications").insert(payload).select("id").maybeSingle();
-        if (!result.error && result.data) currentVerificationId = result.data.id;
+        // genuinely unrecoverable in-page — a full reload re-runs init() with
+        // fresh library state and will restore the session or show sign-in
+        location.reload();
       }
-      if (result.error) {
-        if (st) { st.textContent = "Save failed \u2014 " + (result.error.message || "check connection"); st.className = "sms-send-status err"; }
-        if (btn) { btn.disabled = false; btn.textContent = "Save verification"; }
-        return;
-      }
-      if (st) { st.textContent = "\u2713 Saved"; st.className = "sms-send-status ok"; }
-      if (btn) { btn.disabled = false; btn.textContent = "Save verification"; }
-      showInsLastSaved({ verified_at: nowIso, verified_by: payload.verified_by });
-    } catch (e) {
-      if (st) { st.textContent = "Unexpected error \u2014 check connection"; st.className = "sms-send-status err"; }
-      if (btn) { btn.disabled = false; btn.textContent = "Save verification"; }
-    }
+    });
   }
 
-  (function() {
-    var ov = insEl("ins-modal-overlay");
-    var closeBtn = insEl("ins-modal-close");
-    if (closeBtn) closeBtn.addEventListener("click", closeInsModal);
-    if (ov) ov.addEventListener("click", function(e){ if (e.target === ov) closeInsModal(); });
-    var carrierSel = insEl("ins-carrier");
-    if (carrierSel) carrierSel.addEventListener("change", updateInsPortalLink);
-    var openBtn = insEl("ins-open-portal");
-    if (openBtn) openBtn.addEventListener("click", function(){
-      var sel = insEl("ins-carrier");
-      var cr = INS_CARRIERS.find(function(x){ return x.name === (sel ? sel.value : ""); }) || {};
-      if (cr.url) window.open(cr.url, "_blank", "noopener");
+  // Passive health check. Never refreshes proactively; acts only once the token
+  // is well past expiry, recovers silently, and surfaces the notice only after
+  // repeated failures.
+  function checkHealth() {
+    sb.auth.getSession().then(function (res) {
+      var session = res && res.data ? res.data.session : null;
+      var now = Math.floor(Date.now() / 1000);
+
+      var healthy = session && session.expires_at && (session.expires_at - now) > 0;
+      if (healthy) { consecutiveFailures = 0; removeNotice(); return; }
+
+      // No session, or token already expired. Only take over once we are clearly
+      // past expiry (the library has missed its window).
+      var pastExpiry = !session || (session.expires_at && (now - session.expires_at) >= EXPIRED_GRACE_SEC);
+      if (!pastExpiry) return; // within grace — trust the library, do nothing, no notice
+
+      refreshOnce().then(function (r) {
+        if (r && !r.error && r.data && r.data.session) {
+          consecutiveFailures = 0;
+          removeNotice();
+          reloadPageData();           // silent recovery — pull whatever we missed
+        } else {
+          consecutiveFailures += 1;
+          if (consecutiveFailures >= FAILURES_BEFORE_NOTICE) showNotice();
+        }
+      });
+    }).catch(function () {
+      consecutiveFailures += 1;
+      if (consecutiveFailures >= FAILURES_BEFORE_NOTICE) showNotice();
     });
-    var lookupBtn = insEl("ins-lookup-btn");
-    if (lookupBtn) lookupBtn.addEventListener("click", openInsLookup);
-    var saLoad = insEl("ins-sa-load");
-    if (saLoad) saLoad.addEventListener("click", loadStandaloneByPhone);
-    var saPhone = insEl("ins-sa-phone");
-    if (saPhone) saPhone.addEventListener("change", loadStandaloneByPhone);
-    var saveBtn = insEl("ins-save");
-    if (saveBtn) saveBtn.addEventListener("click", saveInsurance);
-    document.addEventListener("keydown", function(e){
-      if (e.key === "Escape") { var o = insEl("ins-modal-overlay"); if (o && o.classList.contains("open")) closeInsModal(); }
+  }
+
+  setInterval(checkHealth, CHECK_MS);
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) checkHealth();
+  });
+  setTimeout(checkHealth, 8000);
+})();
+
+  // ===== Insurance verification panel (vdi*) — reads insurance_verifications.benefits_detail =====
+  var VDI_FRIENDLY = {
+    "01202":"Recall exam","01103":"Complete exam","11101":"Polishing","02601":"Panoramic X-ray",
+    "02144":"Bitewing X-rays (4)","23325":"White filling (5 surfaces)","33124":"Root canal (2 canals)",
+    "27201":"Porcelain crown","12112":"Fluoride","93331":"Orthodontics (monthly)",
+    "11112":"Scaling (30 min)","11111":"Scaling (15 min)"
+  };
+  var VDI_TONE = { covered:"covered", covered_copay:"covered", attention:"attention", review:"info", ineligible:"ineligible" };
+
+  function vdiMoney(n){ return n == null ? "\u2014" : "$" + Number(n).toLocaleString("en-CA", { minimumFractionDigits:0, maximumFractionDigits:0 }); }
+  function vdiTitle(s){ return String(s || "").toLowerCase().replace(/\b\w/g, function(c){ return c.toUpperCase(); }); }
+  function vdiDate(s){ if (!s) return ""; var d = new Date(s + "T00:00:00"); return isNaN(d) ? s : d.toLocaleDateString("en-CA", { month:"short", year:"numeric" }); }
+  function vdiFriendly(p){ var n = VDI_FRIENDLY[p.code] || vdiTitle(p.description); if (p.tooth_code) n += " \u00b7 tooth " + p.tooth_code; return n; }
+  function vdiShortFreq(d){ return String(d || "").replace(/^\([A-Z0-9]+\)\s*/, "").replace(/,?\s*including.*/i, "").replace(/\s+based on first paid claim/i, "").trim(); }
+  function vdiRingColor(pct){ if (pct == null) return "#A6B1C2"; return pct >= 80 ? "#48BB78" : "#ED8936"; }
+
+  function vdiRing(cat){
+    var C = 2 * Math.PI * 30;
+    var shown = cat.coverage_percent == null ? 0 : cat.coverage_percent;
+    var off = C * (1 - shown / 100);
+    return '<div class="vdi-ring"><svg viewBox="0 0 72 72">'
+      + '<circle class="vdi-track" cx="36" cy="36" r="30"></circle>'
+      + '<circle class="vdi-prog" cx="36" cy="36" r="30" stroke="' + vdiRingColor(cat.coverage_percent) + '" stroke-dasharray="' + C.toFixed(1) + '" stroke-dashoffset="' + C.toFixed(1) + '" data-off="' + off.toFixed(1) + '"></circle>'
+      + '<text class="vdi-pct" x="36" y="37" text-anchor="middle" dominant-baseline="central">' + (cat.coverage_percent == null ? "\u2014" : cat.coverage_percent + "%") + '</text>'
+      + '</svg><div class="vdi-cat">' + esc(cat.name) + '</div></div>';
+  }
+  function vdiKpi(label, value, sub){ return '<div class="vdi-kpi"><div class="vdi-kl">' + esc(label) + '</div><div class="vdi-kval">' + value + '</div><div class="vdi-ks">' + esc(sub) + '</div></div>'; }
+  function vdiGlance(b){
+    var rings = (b.categories || []).map(vdiRing).join("");
+    var annual = (b.maximums || []).find(function(m){ return m.category === "combined"; });
+    var ortho  = (b.maximums || []).find(function(m){ return m.category === "ortho"; });
+    var kpis = [];
+    if (annual) kpis.push(vdiKpi("Annual maximum", vdiMoney(annual.amount), annual.period === "calendar_year" ? "Resets every calendar year" : "Per benefit year"));
+    if (ortho)  kpis.push(vdiKpi("Ortho lifetime", vdiMoney(ortho.amount), "Per person, once"));
+    kpis.push(vdiKpi("Eligibility", (b.eligibility.active ? '<span class="vdi-tick"></span>Active' : "Inactive"), "As of " + vdiDate(b.eligibility.as_of)));
+    return '<div class="vdi-glance"><div class="vdi-rings">' + rings + '</div><div class="vdi-kpis">' + kpis.join("") + '</div></div>';
+  }
+  function vdiSec(label, meta){ return '<div class="vdi-sec"><span class="vdi-sec-label">' + esc(label) + '</span><div class="vdi-sec-line"></div>' + (meta ? '<span class="vdi-sec-meta">' + esc(meta) + '</span>' : "") + '</div>'; }
+  function vdiCap(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+  function vdiList(a){ return a.length <= 1 ? (a[0] || "") : a.slice(0, -1).join(", ") + " and " + a[a.length - 1]; }
+  function vdiVerdict(b){
+    var cats = b.categories || [];
+    var full = cats.filter(function(c){ return c.coverage_percent === 100; }).map(function(c){ return c.name.toLowerCase(); });
+    var partial = cats.filter(function(c){ return c.coverage_percent != null && c.coverage_percent < 100; });
+    var annual = (b.maximums || []).find(function(m){ return m.category === "combined"; });
+    var parts = [];
+    if (full.length) parts.push(vdiList(full) + " " + (full.length > 1 ? "are" : "is") + " paid in full");
+    if (partial.length) {
+      var rates = partial.map(function(c){ return c.coverage_percent; }).filter(function(v, i, a){ return a.indexOf(v) === i; });
+      var names = partial.map(function(c){ return c.name.toLowerCase(); });
+      if (rates.length === 1) parts.push(vdiList(names) + " " + (names.length > 1 ? "are" : "is") + " covered at " + rates[0] + "%");
+      else parts.push(vdiList(partial.map(function(c){ return c.name.toLowerCase() + " at " + c.coverage_percent + "%"; })));
+    }
+    var detail = parts.length ? vdiCap(parts.join("; ")) + "." : "";
+    if (annual) detail += (detail ? " " : "") + "Up to a " + vdiMoney(annual.amount) + " annual maximum.";
+    return { active: b.eligibility.active, lead: b.eligibility.active ? "Active coverage" : "Coverage inactive", detail: detail };
+  }
+  function vdiProcGestalt(b){
+    var cov = (b.procedures || []).filter(function(p){ return p.status.kind === "covered" || p.status.kind === "covered_copay"; }).length;
+    return cov + " of " + (b.procedures || []).length + " paid in full";
+  }
+  function vdiRowAmount(p){
+    if (p.status.kind === "covered" || p.status.kind === "covered_copay") return '<span class="vdi-ramt covered">' + esc(vdiMoney(p.paid_amount)) + '</span>';
+    return '<span class="vdi-ramt muted">' + esc(vdiMoney(p.total_amount)) + '</span>';
+  }
+  function vdiDetailHTML(b, p){
+    var asOf = (b.eligibility && b.eligibility.as_of) || "";
+    var rows = [];
+    rows.push('<div class="vdi-kv"><span class="vdi-k">Dentist fee</span><span class="vdi-val">' + esc(vdiMoney(p.total_amount)) + '</span></div>');
+    rows.push('<div class="vdi-kv"><span class="vdi-k">Plan pays</span><span class="vdi-val">' + esc(vdiMoney(p.paid_amount)) + '</span></div>');
+    if (p.copay_percent != null) rows.push('<div class="vdi-kv"><span class="vdi-k">Patient copay</span><span class="vdi-val">' + esc(p.copay_percent) + '%</span></div>');
+    (p.frequencies || []).forEach(function(f){
+      var v = (f.eligible_as_of && f.eligible_as_of > asOf) ? ("next " + vdiDate(f.eligible_as_of)) : "available";
+      rows.push('<div class="vdi-kv"><span class="vdi-k">Frequency</span><span class="vdi-val">' + esc(vdiShortFreq(f.description)) + " \u00b7 " + v + '</span></div>');
     });
-  }());
-  // ── END INSURANCE ──────────────────────────────────────────────
+    if (p.next_eligible_date && p.status.kind !== "covered" && p.status.kind !== "covered_copay")
+      rows.push('<div class="vdi-kv"><span class="vdi-k">Next eligible</span><span class="vdi-val">' + esc(vdiDate(p.next_eligible_date)) + '</span></div>');
+    var msgs = (p.messages || []).filter(function(m){ return !/^fee guide:/i.test(m); });
+    var notes = msgs.length ? '<div class="vdi-notes">' + msgs.map(function(m){ return '<div class="vdi-n">' + esc(m) + '</div>'; }).join("") + '</div>' : "";
+    return '<div class="vdi-detail-inner">' + rows.join("") + notes + '</div>';
+  }
+  function vdiPanelHTML(b, row){
+    b = b || {};
+    b.eligibility = b.eligibility || {}; b.plan = b.plan || {};
+    b.maximums = b.maximums || []; b.categories = b.categories || []; b.procedures = b.procedures || [];
+    var memberBits = [ b.plan.carrier ? b.plan.carrier.replace(/ Insurance$/, "") : "Insurance" ];
+    if (b.plan.member_id) memberBits.push("Member " + b.plan.member_id);
+    var v = vdiVerdict(b);
+    var verified = row && row.verified_by;
+    var badge = verified
+      ? '<span class="vdi-badge ok" data-badge>Confirmed by ' + esc(row.verified_by) + '</span>'
+      : '<span class="vdi-badge review" data-badge>Needs review</span>';
+    var rows = b.procedures.map(function(p, i){
+      var tone = VDI_TONE[p.status.kind] || "info";
+      return '<button class="vdi-row ' + tone + '" aria-expanded="false" data-i="' + i + '">'
+        + '<span class="vdi-dot ' + tone + '"></span>'
+        + '<span class="vdi-rmain"><span class="vdi-rname">' + esc(vdiFriendly(p)) + '</span><span class="vdi-rstatus ' + tone + '">' + esc(p.status.label) + '</span></span>'
+        + vdiRowAmount(p)
+        + '<span class="vdi-chev"></span>'
+        + '</button>'
+        + '<div class="vdi-detail" data-d="' + i + '">' + vdiDetailHTML(b, p) + '</div>';
+    }).join("");
+    var carrierShort = (b.plan.carrier || "the carrier").replace(/ Insurance$/, "");
+    var confirmBtn = verified
+      ? '<button class="vdi-confirm done" data-confirm disabled>Confirmed</button>'
+      : '<button class="vdi-confirm" data-confirm>Confirm</button>';
+    return '<div class="vdi-card">'
+      + '<div class="vdi-head"><div class="vdi-who"><div class="vdi-name">' + esc(b.plan.subscriber_name || "Plan member") + '</div>'
+        + '<div class="vdi-meta">' + esc(memberBits.join(" \u00b7 ")) + '</div></div>'
+        + '<div class="vdi-head-right"><span class="vdi-asof">Updated ' + esc(vdiDate(b.eligibility.as_of)) + '</span>' + badge + '</div></div>'
+      + '<div class="vdi-verdict ' + (v.active ? "ok" : "inactive") + '"><div class="vdi-v-lead"><span class="vdi-tick"></span>' + esc(v.lead) + '</div>'
+        + (v.detail ? '<div class="vdi-v-detail">' + esc(v.detail) + '</div>' : "") + '</div>'
+      + vdiSec("What's covered")
+      + vdiGlance(b)
+      + vdiSec("Procedure by procedure", vdiProcGestalt(b))
+      + '<div class="vdi-list">' + rows + '</div>'
+      + '<div class="vdi-foot"><div class="vdi-disclaimer">Point-in-time estimate from ' + esc(carrierShort) + '. Final coverage is set when the claim is adjudicated.</div>' + confirmBtn + '</div>'
+      + '</div>';
+  }
+  function vdiEmptyHTML(){
+    return '<div class="vdi-card"><div class="vdi-empty"><div class="vdi-empty-t">No insurance verification on file</div>'
+      + 'Run a verification to see this patient\u2019s coverage here.</div></div>';
+  }
+  function vdiWire(wrap, row){
+    requestAnimationFrame(function(){ wrap.querySelectorAll(".vdi-prog").forEach(function(c){ c.style.strokeDashoffset = c.getAttribute("data-off"); }); });
+    wrap.querySelectorAll(".vdi-row").forEach(function(rowEl){
+      rowEl.addEventListener("click", function(){
+        var i = rowEl.getAttribute("data-i");
+        var d = wrap.querySelector('.vdi-detail[data-d="' + i + '"]');
+        var open = rowEl.getAttribute("aria-expanded") === "true";
+        rowEl.setAttribute("aria-expanded", String(!open));
+        if (d) d.style.maxHeight = open ? "0" : (d.scrollHeight + "px");
+      });
+    });
+    var btn = wrap.querySelector("[data-confirm]");
+    var badge = wrap.querySelector("[data-badge]");
+    if (btn && row && !row.verified_by) {
+      btn.addEventListener("click", async function(){
+        if (btn.classList.contains("done")) return;
+        btn.disabled = true; btn.textContent = "Confirming\u2026";
+        var who = "office";
+        try { var u = await sb.auth.getUser(); if (u && u.data && u.data.user && u.data.user.email) who = u.data.user.email; } catch (e) {}
+        var upd = await sb.from("insurance_verifications").update({ verified_by: who, verified_at: new Date().toISOString() }).eq("id", row.id);
+        if (upd && !upd.error) {
+          row.verified_by = who;
+          btn.classList.add("done"); btn.textContent = "Confirmed"; btn.disabled = true;
+          if (badge) { badge.className = "vdi-badge ok"; badge.textContent = "Confirmed by " + who; }
+        } else {
+          btn.disabled = false; btn.textContent = "Confirm";
+          alert("Could not save confirmation" + (upd && upd.error ? (": " + upd.error.message) : ""));
+        }
+      });
+    }
+  }
+  function buildInsurancePanel(c){
+    var wrap = document.createElement("div");
+    wrap.className = "vdi-wrap";
+    var phoneDigits = (c.patient_phone || "").replace(/\D/g, "");
+    if (!phoneDigits || phoneDigits.length < 7) { return wrap; }
+    wrap.innerHTML = '<div class="vdi-card"><div class="vdi-loading">Checking insurance\u2026</div></div>';
+    (async function(){
+      try {
+        var r = await sb.from("insurance_verifications").select("*").eq("patient_phone", c.patient_phone).order("updated_at", { ascending: false }).limit(1).maybeSingle();
+        if (r && r.data && r.data.benefits_detail) {
+          var b = (typeof r.data.benefits_detail === "string") ? JSON.parse(r.data.benefits_detail) : r.data.benefits_detail;
+          wrap.innerHTML = vdiPanelHTML(b, r.data);
+          vdiWire(wrap, r.data);
+        } else {
+          wrap.innerHTML = vdiEmptyHTML();
+        }
+      } catch (e) {
+        wrap.innerHTML = '<div class="vdi-card"><div class="vdi-loading">Insurance unavailable right now.</div></div>';
+      }
+    })();
+    return wrap;
+  }
+
 </script>
 
 </body>
