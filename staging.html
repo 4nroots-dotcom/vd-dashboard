@@ -855,6 +855,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .vdi-lookup-btn { display: inline-flex; align-items: center; gap: 7px; background: var(--cyan); color: var(--navy); border: 0; border-radius: 8px; font-size: 13px; font-weight: 700; letter-spacing: -.01em; padding: 8px 14px; cursor: pointer; margin-right: 10px; transition: filter .15s, transform .05s; box-shadow: 0 1px 2px rgba(0,0,0,0.25); }
     .vdi-lookup-btn:hover { filter: brightness(1.08); }
     .vdi-lookup-btn:active { transform: translateY(1px); }
+    /* lookup progress (honest: width tracks real status, never 100% until done) */
+    .vdi-lk-prog { display: none; flex-direction: column; gap: 10px; margin-top: 2px; }
+    .vdi-lk-prog.show { display: flex; }
+    .vdi-lk-prog-track { height: 8px; border-radius: 999px; background: #E6ECF3; overflow: hidden; }
+    .vdi-lk-prog-fill { height: 100%; width: 8%; border-radius: 999px; background: linear-gradient(90deg, #00c8e8, #34d399); transition: width .8s cubic-bezier(.3,.8,.3,1); position: relative; overflow: hidden; }
+    .vdi-lk-prog-fill::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.5), transparent); transform: translateX(-100%); animation: vdiSheen 1.3s ease-in-out infinite; }
+    @keyframes vdiSheen { 100% { transform: translateX(100%); } }
+    .vdi-lk-prog-row { display: flex; align-items: center; gap: 10px; }
+    .vdi-lk-prog-spin { width: 15px; height: 15px; border: 2px solid #cfe9f2; border-top-color: var(--cyan); border-radius: 50%; animation: vdiSpin .8s linear infinite; flex: none; }
+    @keyframes vdiSpin { 100% { transform: rotate(360deg); } }
+    .vdi-lk-prog-label { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+    .vdi-lk-prog-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
   </style>
 </head>
 <body>
@@ -1070,6 +1082,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <input class="vdi-lk-input" id="vdi-lk-phone" type="text" autocomplete="off" placeholder="e.g. 9051234567">
       </div>
       <button class="vdi-lk-run" id="vdi-lookup-run" type="button">Run verification</button>
+      <div class="vdi-lk-prog" id="vdi-lk-prog">
+        <div class="vdi-lk-prog-track"><div class="vdi-lk-prog-fill" id="vdi-lk-prog-fill"></div></div>
+        <div class="vdi-lk-prog-row"><div class="vdi-lk-prog-spin"></div><div><div class="vdi-lk-prog-label" id="vdi-lk-prog-label"></div><div class="vdi-lk-prog-sub" id="vdi-lk-prog-sub"></div></div></div>
+      </div>
       <div class="vdi-lk-status" id="vdi-lookup-status"></div>
     </div>
     <div class="vdi-lk-result" id="vdi-lookup-result"></div>
@@ -2918,61 +2934,77 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     var runBtn = document.getElementById("vdi-lookup-run");
     var statusEl = document.getElementById("vdi-lookup-status");
     var resultEl = document.getElementById("vdi-lookup-result");
+    var progEl = document.getElementById("vdi-lk-prog");
+    var fillEl = document.getElementById("vdi-lk-prog-fill");
+    var labelEl = document.getElementById("vdi-lk-prog-label");
+    var subEl = document.getElementById("vdi-lk-prog-sub");
     var polling = null;
 
     function openModal(){ overlay.classList.add("open"); }
-    function closeModal(){ overlay.classList.remove("open"); if (polling) { clearInterval(polling); polling = null; } }
+    function stopPoll(){ if (polling) { clearInterval(polling); polling = null; } }
+    function closeModal(){ overlay.classList.remove("open"); stopPoll(); }
     function setStatus(msg, kind){ statusEl.textContent = msg || ""; statusEl.className = "vdi-lk-status" + (kind ? " " + kind : ""); }
+    function showProg(){ progEl.classList.add("show"); }
+    function hideProg(){ progEl.classList.remove("show"); }
+    function setProg(pct, label, sub){ fillEl.style.width = pct + "%"; if (label != null) labelEl.textContent = label; subEl.textContent = sub || ""; }
 
     openBtn.addEventListener("click", openModal);
     closeBtn.addEventListener("click", closeModal);
     overlay.addEventListener("click", function(e){ if (e.target === overlay) closeModal(); });
 
     runBtn.addEventListener("click", async function(){
-      if (polling) { clearInterval(polling); polling = null; }
+      stopPoll();
       resultEl.innerHTML = "";
+      setStatus("");
       var carrier = document.getElementById("vdi-lk-carrier").value;
       var member = document.getElementById("vdi-lk-member").value.trim();
       var first = document.getElementById("vdi-lk-first").value.trim();
       var last = document.getElementById("vdi-lk-last").value.trim();
       var phone = document.getElementById("vdi-lk-phone").value.trim();
       if (!member || !first || !last || !phone) { setStatus("Member ID, first and last name, and phone are all required.", "err"); return; }
-      runBtn.disabled = true; setStatus("Submitting\u2026");
+      runBtn.disabled = true;
+      showProg(); setProg(10, "Submitting\u2026", "");
       var ins;
       try {
         ins = await sb.from("verification_requests").insert({
           carrier: carrier, member_id: member, patient_name: first + " " + last, patient_phone: phone, requested_by: "dashboard:lookup"
         }).select("id").single();
       } catch (e) { ins = { error: e }; }
-      if (!ins || ins.error || !ins.data) { runBtn.disabled = false; setStatus("Could not queue the request" + (ins && ins.error ? ": " + ins.error.message : ""), "err"); return; }
+      if (!ins || ins.error || !ins.data) { hideProg(); runBtn.disabled = false; setStatus("Could not queue the request" + (ins && ins.error ? ": " + ins.error.message : ""), "err"); return; }
       var reqId = ins.data.id;
-      setStatus("Waiting for the robot\u2026 this can take up to a minute. Keep the robot running on your Mac.");
-      var waited = 0;
+      setProg(25, "Queued", "Waiting for the robot to pick it up\u2026");
+      var waited = 0, creep = 25;
       polling = setInterval(async function(){
         waited += 3;
         var r;
         try { r = await sb.from("verification_requests").select("status, result_verification_id, error_reason").eq("id", reqId).maybeSingle(); }
         catch (e) { return; }
         if (!r || !r.data) return;
-        if (r.data.status === "done" && r.data.result_verification_id) {
-          clearInterval(polling); polling = null;
+        var st = r.data.status;
+        if (st === "done" && r.data.result_verification_id) {
+          stopPoll();
+          setProg(100, "Done", "");
           var vr = await sb.from("insurance_verifications").select("*").eq("id", r.data.result_verification_id).maybeSingle();
           if (vr && vr.data && vr.data.benefits_detail) {
             var b = (typeof vr.data.benefits_detail === "string") ? JSON.parse(vr.data.benefits_detail) : vr.data.benefits_detail;
-            setStatus("");
-            resultEl.innerHTML = vdiPanelHTML(b, vr.data);
-            vdiWire(resultEl, vr.data);
+            setTimeout(function(){ hideProg(); resultEl.innerHTML = vdiPanelHTML(b, vr.data); vdiWire(resultEl, vr.data); }, 350);
           } else {
-            setStatus("Verification finished but no result was found.", "err");
+            hideProg(); setStatus("Verification finished but no result was found.", "err");
           }
           runBtn.disabled = false;
-        } else if (r.data.status === "error") {
-          clearInterval(polling); polling = null;
+        } else if (st === "error") {
+          stopPoll(); hideProg();
           setStatus("Verification failed: " + (r.data.error_reason || "unknown error") + ". Check the robot is running and its session is fresh.", "err");
           runBtn.disabled = false;
-        } else if (waited >= 120) {
-          clearInterval(polling); polling = null;
-          setStatus("Still waiting after 2 minutes \u2014 is the robot running on your Mac?", "err");
+        } else if (st === "claimed" || st === "running") {
+          creep = Math.min(90, creep + 4);
+          setProg(creep, "Checking coverage with GreenShield\u2026", "Reading the plan breakdown.");
+        } else {
+          setProg(Math.min(30, creep), "Queued", "Waiting for the robot to pick it up\u2026");
+        }
+        if (waited >= 180 && polling) {
+          stopPoll(); hideProg();
+          setStatus("Still waiting after 3 minutes \u2014 is the robot running on your Mac? Start it in Terminal: node src/index.js --once", "err");
           runBtn.disabled = false;
         }
       }, 3000);
