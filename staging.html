@@ -829,6 +829,28 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .vdi-confirm:hover { opacity: .9; }
     .vdi-confirm.done { background: var(--vdi-good-bg); color: var(--vdi-good); box-shadow: inset 0 0 0 1px rgba(47,133,90,.25); cursor: default; }
     .vdi-confirm[disabled] { opacity: .6; cursor: default; }
+    /* ===== Insurance lookup modal (vdi-lk-*) ===== */
+    .vdi-lk-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 950; display: none; align-items: flex-start; justify-content: center; padding: 40px 20px; overflow-y: auto; }
+    .vdi-lk-overlay.open { display: flex; }
+    .vdi-lk-modal { background: #fff; border-radius: 14px; padding: 22px; width: 100%; max-width: 600px; box-shadow: 0 24px 60px rgba(0,0,0,0.22); display: flex; flex-direction: column; gap: 16px; height: fit-content; }
+    .vdi-lk-header { display: flex; align-items: flex-start; justify-content: space-between; }
+    .vdi-lk-title { font-size: 16px; font-weight: 700; color: #0f2044; letter-spacing: -.01em; }
+    .vdi-lk-sub { font-size: 12.5px; color: #5a7090; margin-top: 2px; }
+    .vdi-lk-close { background: none; border: none; color: #aaa; font-size: 24px; cursor: pointer; padding: 0; line-height: 1; }
+    .vdi-lk-form { display: flex; flex-direction: column; gap: 12px; }
+    .vdi-lk-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .vdi-lk-row { display: flex; flex-direction: column; gap: 5px; }
+    .vdi-lk-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); }
+    .vdi-lk-hint { font-weight: 500; text-transform: none; letter-spacing: 0; color: var(--text-muted); }
+    .vdi-lk-input { font: inherit; font-size: 14px; padding: 9px 11px; border: 1px solid var(--border); border-radius: 8px; background: #fff; color: var(--text-primary); outline: none; transition: border-color .15s; width: 100%; }
+    .vdi-lk-input:focus { border-color: var(--cyan); }
+    select.vdi-lk-input { cursor: pointer; }
+    .vdi-lk-run { appearance: none; border: 0; border-radius: 9px; background: var(--navy); color: #fff; font: inherit; font-size: 14px; font-weight: 600; padding: 11px 16px; cursor: pointer; transition: opacity .15s; margin-top: 2px; }
+    .vdi-lk-run:hover { opacity: .92; }
+    .vdi-lk-run[disabled] { opacity: .55; cursor: default; }
+    .vdi-lk-status { font-size: 12.5px; color: var(--text-secondary); line-height: 1.45; }
+    .vdi-lk-status.err { color: var(--critical); }
+    .vdi-lk-result:not(:empty) { margin-top: 4px; }
   </style>
 </head>
 <body>
@@ -892,6 +914,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <span style="font-weight:700;color:#f5f9ff;letter-spacing:-0.01em;">Virtual<span style="color:#00c8e8;">Dentist.ai</span></span>
       </div>
     </div>
+    <button class="signout-btn" id="vdi-lookup-btn" type="button" style="margin-right:8px;">Insurance lookup</button>
     <button class="signout-btn" id="signout-btn" type="button">Sign out</button>
   </div>
 
@@ -1012,6 +1035,40 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
     <button class="sms-send-btn" id="sms-send-btn" type="button" disabled>Send message</button>
     <div class="sms-send-status" id="sms-send-status"></div>
+  </div>
+</div>
+
+<!-- INSURANCE LOOKUP MODAL -->
+<div class="vdi-lk-overlay" id="vdi-lookup-overlay">
+  <div class="vdi-lk-modal" role="dialog" aria-modal="true">
+    <div class="vdi-lk-header">
+      <div>
+        <div class="vdi-lk-title">Insurance lookup</div>
+        <div class="vdi-lk-sub">Run an eligibility check for any patient &mdash; no case required.</div>
+      </div>
+      <button class="vdi-lk-close" id="vdi-lookup-close" type="button" aria-label="Close">&times;</button>
+    </div>
+    <div class="vdi-lk-form">
+      <div class="vdi-lk-row">
+        <label class="vdi-lk-label" for="vdi-lk-carrier">Carrier</label>
+        <select class="vdi-lk-input" id="vdi-lk-carrier"><option value="GreenShield">GreenShield</option></select>
+      </div>
+      <div class="vdi-lk-row">
+        <label class="vdi-lk-label" for="vdi-lk-member">Member ID</label>
+        <input class="vdi-lk-input" id="vdi-lk-member" type="text" autocomplete="off" placeholder="Cardholder / plan member ID">
+      </div>
+      <div class="vdi-lk-grid2">
+        <div class="vdi-lk-row"><label class="vdi-lk-label" for="vdi-lk-first">First name</label><input class="vdi-lk-input" id="vdi-lk-first" type="text" autocomplete="off"></div>
+        <div class="vdi-lk-row"><label class="vdi-lk-label" for="vdi-lk-last">Last name</label><input class="vdi-lk-input" id="vdi-lk-last" type="text" autocomplete="off"></div>
+      </div>
+      <div class="vdi-lk-row">
+        <label class="vdi-lk-label" for="vdi-lk-phone">Patient phone <span class="vdi-lk-hint">&mdash; how the result is filed; for a test use a throwaway like 5550000001</span></label>
+        <input class="vdi-lk-input" id="vdi-lk-phone" type="text" autocomplete="off" placeholder="e.g. 9051234567">
+      </div>
+      <button class="vdi-lk-run" id="vdi-lookup-run" type="button">Run verification</button>
+      <div class="vdi-lk-status" id="vdi-lookup-status"></div>
+    </div>
+    <div class="vdi-lk-result" id="vdi-lookup-result"></div>
   </div>
 </div>
 
@@ -2847,6 +2904,76 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     })();
     return wrap;
   }
+
+  // ===== Insurance lookup modal — enqueue a verification_requests row, poll, render =====
+  (function(){
+    var overlay = document.getElementById("vdi-lookup-overlay");
+    var openBtn = document.getElementById("vdi-lookup-btn");
+    if (!overlay || !openBtn) return;
+    var closeBtn = document.getElementById("vdi-lookup-close");
+    var runBtn = document.getElementById("vdi-lookup-run");
+    var statusEl = document.getElementById("vdi-lookup-status");
+    var resultEl = document.getElementById("vdi-lookup-result");
+    var polling = null;
+
+    function openModal(){ overlay.classList.add("open"); }
+    function closeModal(){ overlay.classList.remove("open"); if (polling) { clearInterval(polling); polling = null; } }
+    function setStatus(msg, kind){ statusEl.textContent = msg || ""; statusEl.className = "vdi-lk-status" + (kind ? " " + kind : ""); }
+
+    openBtn.addEventListener("click", openModal);
+    closeBtn.addEventListener("click", closeModal);
+    overlay.addEventListener("click", function(e){ if (e.target === overlay) closeModal(); });
+
+    runBtn.addEventListener("click", async function(){
+      if (polling) { clearInterval(polling); polling = null; }
+      resultEl.innerHTML = "";
+      var carrier = document.getElementById("vdi-lk-carrier").value;
+      var member = document.getElementById("vdi-lk-member").value.trim();
+      var first = document.getElementById("vdi-lk-first").value.trim();
+      var last = document.getElementById("vdi-lk-last").value.trim();
+      var phone = document.getElementById("vdi-lk-phone").value.trim();
+      if (!member || !first || !last || !phone) { setStatus("Member ID, first and last name, and phone are all required.", "err"); return; }
+      runBtn.disabled = true; setStatus("Submitting\u2026");
+      var ins;
+      try {
+        ins = await sb.from("verification_requests").insert({
+          carrier: carrier, member_id: member, patient_name: first + " " + last, patient_phone: phone, requested_by: "dashboard:lookup"
+        }).select("id").single();
+      } catch (e) { ins = { error: e }; }
+      if (!ins || ins.error || !ins.data) { runBtn.disabled = false; setStatus("Could not queue the request" + (ins && ins.error ? ": " + ins.error.message : ""), "err"); return; }
+      var reqId = ins.data.id;
+      setStatus("Waiting for the robot\u2026 this can take up to a minute. Keep the robot running on your Mac.");
+      var waited = 0;
+      polling = setInterval(async function(){
+        waited += 3;
+        var r;
+        try { r = await sb.from("verification_requests").select("status, result_verification_id, error_reason").eq("id", reqId).maybeSingle(); }
+        catch (e) { return; }
+        if (!r || !r.data) return;
+        if (r.data.status === "done" && r.data.result_verification_id) {
+          clearInterval(polling); polling = null;
+          var vr = await sb.from("insurance_verifications").select("*").eq("id", r.data.result_verification_id).maybeSingle();
+          if (vr && vr.data && vr.data.benefits_detail) {
+            var b = (typeof vr.data.benefits_detail === "string") ? JSON.parse(vr.data.benefits_detail) : vr.data.benefits_detail;
+            setStatus("");
+            resultEl.innerHTML = vdiPanelHTML(b, vr.data);
+            vdiWire(resultEl, vr.data);
+          } else {
+            setStatus("Verification finished but no result was found.", "err");
+          }
+          runBtn.disabled = false;
+        } else if (r.data.status === "error") {
+          clearInterval(polling); polling = null;
+          setStatus("Verification failed: " + (r.data.error_reason || "unknown error") + ". Check the robot is running and its session is fresh.", "err");
+          runBtn.disabled = false;
+        } else if (waited >= 120) {
+          clearInterval(polling); polling = null;
+          setStatus("Still waiting after 2 minutes \u2014 is the robot running on your Mac?", "err");
+          runBtn.disabled = false;
+        }
+      }, 3000);
+    });
+  })();
 
 </script>
 
