@@ -851,6 +851,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .vdi-lk-input:focus { border-color: var(--cyan); }
     select.vdi-lk-input { cursor: pointer; }
     .vdi-lk-run { appearance: none; border: 0; border-radius: 9px; background: var(--navy); color: #fff; font: inherit; font-size: 14px; font-weight: 600; padding: 11px 16px; cursor: pointer; transition: opacity .15s; margin-top: 2px; }
+    .vdi-lk-cancel { appearance: none; border: 1px solid #D1D9E0; border-radius: 8px; background: #fff; color: var(--text-secondary); font: inherit; font-size: 12.5px; font-weight: 600; padding: 7px 14px; cursor: pointer; align-self: flex-start; transition: background .15s, border-color .15s; }
+    .vdi-lk-cancel:hover { background: #F4F7FA; border-color: #B8C2CC; }
     .vdi-lk-run:hover { opacity: .92; }
     .vdi-lk-run[disabled] { opacity: .55; cursor: default; }
     .vdi-lk-status { font-size: 12.5px; color: var(--text-secondary); line-height: 1.45; }
@@ -896,7 +898,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <div class="vdi-mfa-inner">
     <div class="vdi-mfa-icon">&#128274;</div>
     <div class="vdi-mfa-text">
-      <div class="vdi-mfa-title">Insurance robot needs a verification code</div>
+      <div class="vdi-mfa-title">Insurance lookup needs a verification code</div>
       <div class="vdi-mfa-sub" id="vdi-mfa-sub">A code was just sent to the office email. Enter it to keep the lookup going.</div>
     </div>
     <input class="vdi-mfa-input" id="vdi-mfa-input" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="Code" />
@@ -1120,6 +1122,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="vdi-lk-prog" id="vdi-lk-prog">
         <div class="vdi-lk-prog-track"><div class="vdi-lk-prog-fill" id="vdi-lk-prog-fill"></div></div>
         <div class="vdi-lk-prog-row"><div class="vdi-lk-prog-spin"></div><div><div class="vdi-lk-prog-label" id="vdi-lk-prog-label"></div><div class="vdi-lk-prog-sub" id="vdi-lk-prog-sub"></div></div></div>
+        <button class="vdi-lk-cancel" id="vdi-lk-cancel" type="button">Cancel lookup</button>
       </div>
       <div class="vdi-lk-status" id="vdi-lookup-status"></div>
     </div>
@@ -2974,6 +2977,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     var labelEl = document.getElementById("vdi-lk-prog-label");
     var subEl = document.getElementById("vdi-lk-prog-sub");
     var polling = null;
+    var currentReqId = null;
+    var cancelBtn = document.getElementById("vdi-lk-cancel");
 
     function openModal(){ overlay.classList.add("open"); }
     function stopPoll(){ if (polling) { clearInterval(polling); polling = null; } }
@@ -3007,7 +3012,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       } catch (e) { ins = { error: e }; }
       if (!ins || ins.error || !ins.data) { hideProg(); runBtn.disabled = false; setStatus("Could not queue the request" + (ins && ins.error ? ": " + ins.error.message : ""), "err"); return; }
       var reqId = ins.data.id;
-      setProg(25, "Queued", "Waiting for the robot to pick it up\u2026");
+      currentReqId = reqId;
+      setProg(25, "Queued", "Starting the lookup\u2026");
       var waited = 0, creep = 25;
       polling = setInterval(async function(){
         waited += 3;
@@ -3033,21 +3039,32 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           if (er.indexOf("Member not found") === 0) {
             setStatus(er, "warn");
           } else {
-            setStatus("Verification failed: " + (er || "unknown error") + ". Check the robot is running and its session is fresh.", "err");
+            setStatus("Verification failed: " + (er || "unknown error") + ". Please try again in a moment.", "err");
           }
           runBtn.disabled = false;
         } else if (st === "claimed" || st === "running") {
           creep = Math.min(90, creep + 4);
           setProg(creep, "Checking coverage with GreenShield\u2026", "Reading the plan breakdown.");
         } else {
-          setProg(Math.min(30, creep), "Queued", "Waiting for the robot to pick it up\u2026");
+          setProg(Math.min(30, creep), "Queued", "Starting the lookup\u2026");
         }
         if (waited >= 180 && polling) {
           stopPoll(); hideProg();
-          setStatus("Still waiting after 3 minutes \u2014 is the robot running on your Mac? Start it in Terminal: node src/index.js --once", "err");
+          setStatus("This lookup is taking longer than expected. Please try again, or check coverage manually for now.", "err");
           runBtn.disabled = false;
         }
       }, 3000);
+    });
+
+    cancelBtn.addEventListener("click", async function(){
+      stopPoll();
+      if (currentReqId) {
+        try { await sb.from("verification_requests").update({ status: "cancelled" }).eq("id", currentReqId); } catch (e) {}
+      }
+      currentReqId = null;
+      hideProg();
+      runBtn.disabled = false;
+      setStatus("Lookup cancelled.", "");
     });
   })();
 
@@ -3097,7 +3114,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         .eq("id", currentId);
       busy = false; submit.disabled = false;
       if (upd && !upd.error) {
-        setStatus("Submitted \u2014 the robot is finishing the login\u2026");
+        setStatus("Submitted \u2014 finishing the lookup\u2026");
         setTimeout(hide, 4500);
       } else {
         setStatus("Could not submit" + (upd && upd.error ? ": " + upd.error.message : "") + ". Try again.");
