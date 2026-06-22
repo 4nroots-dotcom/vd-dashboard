@@ -190,15 +190,17 @@ window.addEventListener('DOMContentLoaded', function() {
   html[dir="rtl"] .msg.bot { align-self: flex-end; border-bottom-left-radius: var(--radius-bubble); border-bottom-right-radius: 4px; }
   html[dir="rtl"] .msg.user { align-self: flex-start; border-bottom-right-radius: var(--radius-bubble); border-bottom-left-radius: 4px; }
 
-  /* Intake handoff CTA inside a bot bubble */
-  .msg.bot .intake-cta {
+  /* Intake handoff CTA / booking CTA inside a bot bubble */
+  .msg.bot .intake-cta,
+  .msg.bot .book-cta {
     display: inline-block; margin-top: 10px;
     padding: 9px 18px; border-radius: var(--radius-pill);
     background: var(--accent); color: var(--text-on-accent);
     font-weight: 700; font-size: 13px; text-decoration: none;
     transition: background 0.15s, transform 0.1s;
   }
-  .msg.bot .intake-cta:hover { background: var(--accent-hover); transform: translateY(-1px); }
+  .msg.bot .intake-cta:hover,
+  .msg.bot .book-cta:hover { background: var(--accent-hover); transform: translateY(-1px); }
 
   /* Emergency disclaimer styling — surface as warning bubble */
   .msg.warning {
@@ -542,6 +544,24 @@ window.addEventListener('DOMContentLoaded', function() {
       msg.appendChild(document.createElement("br"));
       msg.appendChild(btn);
     }
+    // Booking CTA — self-serve MaxAssist link for routine appointment turns.
+    // Same trusted-markup pattern as the intake button above: the server
+    // sends a booking_url field and the widget builds the button itself
+    // (never injects server HTML). Label is config-driven with an English
+    // fallback ("Book online").
+    if (opts.bookingUrl) {
+      var bookBtn = document.createElement("a");
+      bookBtn.className = "book-cta";
+      bookBtn.href = opts.bookingUrl;
+      bookBtn.target = "_blank";
+      bookBtn.rel = "noopener";
+      bookBtn.textContent = (state.strings.ui_strings && state.strings.ui_strings.book_online_button) || "Book online";
+      bookBtn.addEventListener("click", function() {
+        fireEvent("booking_link_opened", { booking_url: opts.bookingUrl });
+      });
+      msg.appendChild(document.createElement("br"));
+      msg.appendChild(bookBtn);
+    }
     el("messages").appendChild(msg);
     scrollToBottom();
   }
@@ -726,7 +746,8 @@ window.addEventListener('DOMContentLoaded', function() {
       // Render the bot reply.
       var openIntake = data.action === "open_intake_form";
       appendBotBubble(data.reply || "", {
-        intakeUrl: openIntake && data.intake_form_url ? data.intake_form_url : null
+        intakeUrl: openIntake && data.intake_form_url ? data.intake_form_url : null,
+        bookingUrl: data.booking_url || null
       });
       state.messageHistory.push({ role: "assistant", content: data.reply || "" });
       fireEvent("message_received", { intent: data.intent, action: data.action });
