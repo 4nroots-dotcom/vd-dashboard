@@ -19,6 +19,7 @@
     "minimize_chat_aria": "تصغير المحادثة",
     "typing_indicator_aria": "سام يكتب",
     "open_intake_button": "فتح نموذج الاستقبال",
+    "book_online_button": "احجز عبر الإنترنت",
     "powered_by": "مدعوم من VirtualDentist.ai",
     "error_send_failed": "تعذّر إرسال هذه الرسالة. يرجى المحاولة مرة أخرى.",
     "error_rate_limited": "لقد أرسلت رسائل كثيرة. يرجى الانتظار قليلاً ثم المحاولة مرة أخرى."
