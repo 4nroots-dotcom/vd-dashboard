@@ -19,6 +19,7 @@
     "minimize_chat_aria": "Minimizar chat",
     "typing_indicator_aria": "Sam está escribiendo",
     "open_intake_button": "Abrir formulario de admisión",
+    "book_online_button": "Reservar en línea",
     "powered_by": "Desarrollado por VirtualDentist.ai",
     "error_send_failed": "No se pudo enviar ese mensaje. Por favor intente de nuevo.",
     "error_rate_limited": "Ha enviado bastantes mensajes. Por favor espere un momento e intente de nuevo."
