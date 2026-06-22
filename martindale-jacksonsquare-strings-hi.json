@@ -19,6 +19,7 @@
     "minimize_chat_aria": "चैट छोटी करें",
     "typing_indicator_aria": "सैम टाइप कर रहा है",
     "open_intake_button": "इनटेक फॉर्म खोलें",
+    "book_online_button": "ऑनलाइन बुक करें",
     "powered_by": "VirtualDentist.ai द्वारा संचालित",
     "error_send_failed": "वह संदेश नहीं भेजा जा सका। कृपया फिर से कोशिश करें।",
     "error_rate_limited": "आपने काफी संदेश भेजे हैं। कृपया एक पल रुकें, फिर दोबारा कोशिश करें।"
