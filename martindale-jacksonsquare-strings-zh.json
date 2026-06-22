@@ -19,6 +19,7 @@
     "minimize_chat_aria": "最小化对话",
     "typing_indicator_aria": "Sam 正在输入",
     "open_intake_button": "打开登记表",
+    "book_online_button": "在线预约",
     "powered_by": "由 VirtualDentist.ai 提供技术支持",
     "error_send_failed": "无法发送该消息。请重试。",
     "error_rate_limited": "您已发送较多消息。请稍等片刻后再试。"
