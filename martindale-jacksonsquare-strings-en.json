@@ -19,6 +19,7 @@
     "minimize_chat_aria": "Minimize chat",
     "typing_indicator_aria": "Sam is typing",
     "open_intake_button": "Open intake form",
+    "book_online_button": "Book online",
     "powered_by": "Powered by VirtualDentist.ai",
     "error_send_failed": "Couldn't send that message. Please try again.",
     "error_rate_limited": "You've sent quite a few messages. Please give us a moment, then try again."
