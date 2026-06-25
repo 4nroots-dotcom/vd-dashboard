@@ -1103,16 +1103,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div class="vdi-lk-form">
       <div class="vdi-lk-row">
         <label class="vdi-lk-label" for="vdi-lk-carrier">Carrier</label>
-        <select class="vdi-lk-input" id="vdi-lk-carrier"><option value="GreenShield">GreenShield</option></select>
+        <select class="vdi-lk-input" id="vdi-lk-carrier"><option value="GreenShield">GreenShield</option><option value="CDCP">CDCP (Sun Life)</option></select>
       </div>
       <div class="vdi-lk-row">
         <label class="vdi-lk-label" for="vdi-lk-member">Member ID</label>
         <input class="vdi-lk-input" id="vdi-lk-member" type="text" autocomplete="off" placeholder="Cardholder / plan member ID">
-        <div class="vdi-lk-hint" style="font-size:12.5px;line-height:1.45;"><strong>Don&rsquo;t include the last 2 digits</strong> (the 00 member suffix). GreenShield pre-fills those automatically &mdash; entering them returns &ldquo;member not found.&rdquo;</div>
+        <div class="vdi-lk-hint" id="vdi-lk-suffix-hint" style="font-size:12.5px;line-height:1.45;"><strong>Don&rsquo;t include the last 2 digits</strong> (the 00 member suffix). GreenShield pre-fills those automatically &mdash; entering them returns &ldquo;member not found.&rdquo;</div>
       </div>
       <div class="vdi-lk-grid2">
         <div class="vdi-lk-row"><label class="vdi-lk-label" for="vdi-lk-first">First name</label><input class="vdi-lk-input" id="vdi-lk-first" type="text" autocomplete="off"></div>
         <div class="vdi-lk-row"><label class="vdi-lk-label" for="vdi-lk-last">Last name</label><input class="vdi-lk-input" id="vdi-lk-last" type="text" autocomplete="off"></div>
+      </div>
+      <div class="vdi-lk-row" id="vdi-lk-dob-row" style="display:none;">
+        <label class="vdi-lk-label" for="vdi-lk-dob">Date of birth <span class="vdi-lk-hint">&mdash; required for CDCP</span></label>
+        <input class="vdi-lk-input" id="vdi-lk-dob" type="date">
       </div>
       <div class="vdi-lk-row">
         <label class="vdi-lk-label" for="vdi-lk-phone">Patient phone <span class="vdi-lk-hint">&mdash; how the result is filed; for a test use a throwaway like 5550000001</span></label>
@@ -2867,8 +2871,63 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     var notes = msgs.length ? '<div class="vdi-notes">' + msgs.map(function(m){ return '<div class="vdi-n">' + esc(m) + '</div>'; }).join("") + '</div>' : "";
     return '<div class="vdi-detail-inner">' + rows.join("") + notes + '</div>';
   }
+  function vdiCdcpRowAmount(p){
+    var pct = p.coverage_percent;
+    return '<span class="vdi-ramt ' + (pct != null && pct > 0 ? "covered" : "muted") + '">' + (pct == null ? "\u2014" : pct + "%") + '</span>';
+  }
+  function vdiCdcpDetailHTML(b, p){
+    var rows = [];
+    rows.push('<div class="vdi-kv"><span class="vdi-k">Procedure code</span><span class="vdi-val">' + esc(p.code) + '</span></div>');
+    rows.push('<div class="vdi-kv"><span class="vdi-k">Covered</span><span class="vdi-val">' + (p.coverage_percent == null ? "\u2014" : esc(p.coverage_percent + "%")) + '</span></div>');
+    rows.push('<div class="vdi-kv"><span class="vdi-k">Patient pays</span><span class="vdi-val">' + (p.patient_pays_percent == null ? "\u2014" : esc(p.patient_pays_percent + "%")) + '</span></div>');
+    rows.push('<div class="vdi-kv"><span class="vdi-k">Deductible</span><span class="vdi-val">' + (p.deductible_amount ? esc(vdiMoney(p.deductible_amount)) : "None") + '</span></div>');
+    return '<div class="vdi-detail-inner">' + rows.join("") + '</div>';
+  }
+  function vdiCdcpPanelHTML(b, row){
+    b.eligibility = b.eligibility || {}; b.plan = b.plan || {}; b.procedures = b.procedures || [];
+    var tier = b.copay_tier || {};
+    var memberBits = ["Canadian Dental Care Plan"];
+    if (b.plan.member_id) memberBits.push("Member " + b.plan.member_id);
+    var verified = row && row.verified_by;
+    var badge = verified
+      ? '<span class="vdi-badge ok" data-badge>Confirmed by ' + esc(row.verified_by) + '</span>'
+      : '<span class="vdi-badge review" data-badge>Needs review</span>';
+    var detail;
+    if (tier.uniform && tier.percent_covered != null) {
+      detail = tier.percent_covered >= 100
+        ? "All listed services covered in full \u2014 no patient co-pay."
+        : "Covered at " + tier.percent_covered + "% \u2014 patient pays " + tier.patient_pays_percent + "% of eligible fees.";
+    } else {
+      detail = "Coverage varies by procedure \u2014 see the breakdown below.";
+    }
+    var rows = b.procedures.map(function(p, i){
+      var pct = p.coverage_percent;
+      var tone = (pct != null && pct > 0) ? "covered" : "info";
+      return '<button class="vdi-row ' + tone + '" aria-expanded="false" data-i="' + i + '">'
+        + '<span class="vdi-dot ' + tone + '"></span>'
+        + '<span class="vdi-rmain"><span class="vdi-rname">' + esc(vdiTitle(p.description)) + '</span><span class="vdi-rstatus ' + tone + '">' + esc(p.status.label) + '</span></span>'
+        + vdiCdcpRowAmount(p)
+        + '<span class="vdi-chev"></span>'
+        + '</button>'
+        + '<div class="vdi-detail" data-d="' + i + '">' + vdiCdcpDetailHTML(b, p) + '</div>';
+    }).join("");
+    var confirmBtn = verified
+      ? '<button class="vdi-confirm done" data-confirm disabled>Confirmed</button>'
+      : '<button class="vdi-confirm" data-confirm>Confirm</button>';
+    return '<div class="vdi-card">'
+      + '<div class="vdi-head"><div class="vdi-who"><div class="vdi-name">' + esc(b.plan.subscriber_name || "CDCP member") + '</div>'
+        + '<div class="vdi-meta">' + esc(memberBits.join(" \u00b7 ")) + '</div></div>'
+        + '<div class="vdi-head-right"><span class="vdi-asof">Updated ' + esc(vdiDate(b.eligibility.as_of)) + '</span>' + badge + '</div></div>'
+      + '<div class="vdi-verdict ok"><div class="vdi-v-lead"><span class="vdi-tick"></span>Active CDCP coverage</div>'
+        + '<div class="vdi-v-detail">' + esc(detail) + '</div></div>'
+      + vdiSec("Coverage by procedure", b.procedures.length + " common codes")
+      + '<div class="vdi-list">' + rows + '</div>'
+      + '<div class="vdi-foot"><div class="vdi-disclaimer">Standardized CDCP coverage from Sun Life. Final coverage is confirmed when the claim is submitted.</div>' + confirmBtn + '</div>'
+      + '</div>';
+  }
   function vdiPanelHTML(b, row){
     b = b || {};
+    if (b.source && b.source.plan_type === "CDCP") return vdiCdcpPanelHTML(b, row);
     b.eligibility = b.eligibility || {}; b.plan = b.plan || {};
     b.maximums = b.maximums || []; b.categories = b.categories || []; b.procedures = b.procedures || [];
     var memberBits = [ b.plan.carrier ? b.plan.carrier.replace(/ Insurance$/, "") : "Insurance" ];
@@ -2992,6 +3051,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     closeBtn.addEventListener("click", closeModal);
     overlay.addEventListener("click", function(e){ if (e.target === overlay) closeModal(); });
 
+    var carrierSel = document.getElementById("vdi-lk-carrier");
+    var dobRow = document.getElementById("vdi-lk-dob-row");
+    var suffixHint = document.getElementById("vdi-lk-suffix-hint");
+    var memberInput = document.getElementById("vdi-lk-member");
+    function applyCarrier(){
+      var isCdcp = carrierSel.value === "CDCP";
+      if (dobRow) dobRow.style.display = isCdcp ? "" : "none";
+      if (suffixHint) suffixHint.style.display = isCdcp ? "none" : "";
+      if (memberInput) memberInput.placeholder = isCdcp ? "CDCP member ID" : "Cardholder / plan member ID";
+    }
+    carrierSel.addEventListener("change", applyCarrier);
+    applyCarrier();
+
     runBtn.addEventListener("click", async function(){
       stopPoll();
       resultEl.innerHTML = "";
@@ -3001,14 +3073,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var first = document.getElementById("vdi-lk-first").value.trim();
       var last = document.getElementById("vdi-lk-last").value.trim();
       var phone = document.getElementById("vdi-lk-phone").value.trim();
-      if (!member || !first || !last || !phone) { setStatus("Member ID, first and last name, and phone are all required.", "err"); return; }
+      var dob = document.getElementById("vdi-lk-dob").value;
+      var isCdcp = carrier === "CDCP";
+      if (!member || !first || !phone) { setStatus("Member ID, first name, and phone are required.", "err"); return; }
+      if (!isCdcp && !last) { setStatus("Last name is required.", "err"); return; }
+      if (isCdcp && !dob) { setStatus("Date of birth is required for a CDCP lookup.", "err"); return; }
       runBtn.disabled = true;
       showProg(); setProg(10, "Submitting\u2026", "");
+      var payload = { carrier: carrier, member_id: member, patient_name: (first + " " + last).trim(), patient_phone: phone, requested_by: "dashboard:lookup" };
+      if (isCdcp) { payload.patient_dob = dob; payload.province = "Ontario"; }
       var ins;
       try {
-        ins = await sb.from("verification_requests").insert({
-          carrier: carrier, member_id: member, patient_name: first + " " + last, patient_phone: phone, requested_by: "dashboard:lookup"
-        }).select("id").single();
+        ins = await sb.from("verification_requests").insert(payload).select("id").single();
       } catch (e) { ins = { error: e }; }
       if (!ins || ins.error || !ins.data) { hideProg(); runBtn.disabled = false; setStatus("Could not queue the request" + (ins && ins.error ? ": " + ins.error.message : ""), "err"); return; }
       var reqId = ins.data.id;
@@ -3044,7 +3120,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           runBtn.disabled = false;
         } else if (st === "claimed" || st === "running") {
           creep = Math.min(90, creep + 4);
-          setProg(creep, "Checking coverage with GreenShield\u2026", "Reading the plan breakdown.");
+          setProg(creep, "Checking coverage with " + (carrier === "CDCP" ? "Sun Life" : "GreenShield") + "\u2026", "Reading the plan breakdown.");
         } else {
           setProg(Math.min(30, creep), "Queued", "Starting the lookup\u2026");
         }
