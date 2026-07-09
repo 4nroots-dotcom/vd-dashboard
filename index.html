@@ -10,12 +10,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VirtualDentist.ai — Always-On AI Receptionist for Dental Practices | Canada</title>
-  <meta name="description" content="Sam answers every call your dental practice gets — questions, bookings, transfers, and messages — 24/7, by voice or text, in your patients' languages. Sam checks insurance coverage before the visit, and patient data stays in Canada. Clinical concerns are structured and routed to your team; the software never makes clinical decisions." />
-  <meta name="keywords" content="AI dental receptionist, dental front desk AI, dental answering service Canada, dental appointment booking AI, multilingual dental phone, after-hours dental coverage Canada, dental practice software Canada, dental insurance verification Canada, CDCP eligibility" />
+  <title>VirtualDentist.ai — After-Hours &amp; Overflow AI for Dental Practices | Canada</title>
+  <meta name="description" content="Your team answers first. Sam catches every missed, busy, and after-hours call — questions, booking links, messages, insurance checks, and structured clinical intake routed to your dentists. Flat $499/month, unmetered. Patient data stays in Canada." />
+  <meta name="keywords" content="after-hours dental coverage Canada, dental answering service Canada, missed call dental AI, AI dental receptionist, dental appointment booking AI, multilingual dental phone, dental insurance verification Canada, CDCP eligibility, dental practice software Canada" />
   <link rel="canonical" href="https://virtualdentist.ai/" />
-  <meta property="og:title" content="VirtualDentist.ai — Always-On AI Receptionist for Dental Practices" />
-  <meta property="og:description" content="Sam covers your front desk 24/7 — calls, bookings, messages, and insurance checks — by voice or text, in your patients' languages. Clinical concerns go straight to your team. Patient data stays in Canada." />
+  <meta property="og:title" content="VirtualDentist.ai — Your Team Answers First. Sam Catches the Rest." />
+  <meta property="og:description" content="Every missed, busy, and after-hours call handled — bookings, messages, insurance checks, and clinical intake routed to your team. Flat $499/month, unmetered. Patient data stays in Canada." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://virtualdentist.ai/" />
   <script type="application/ld+json">
@@ -23,13 +23,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "VirtualDentist.ai",
-    "description": "An AI receptionist and structured intake software for dental practices. Sam answers calls around the clock — questions, appointment requests, transfers, and messages — by voice or text in the patient's language. Sam checks insurance coverage before the visit. Clinical concerns are structured and routed to the practice's own clinical team; the software does not make clinical decisions.",
+    "description": "An AI after-hours and overflow answering system with structured intake for dental practices. The practice team answers first; Sam catches missed, busy, and after-hours calls — questions, appointment requests, messages, and insurance checks — by voice or text in the patient's language. Clinical concerns are structured and routed to the practice's own clinical team; the software does not make clinical decisions.",
     "url": "https://virtualdentist.ai",
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "Web",
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "After-Hours & Overflow",
+        "price": "499",
+        "priceCurrency": "CAD",
+        "description": "Flat monthly price per practice location. Unmetered — no per-minute fees."
+      },
+      {
+        "@type": "Offer",
+        "name": "Full Front Desk",
+        "price": "1000",
+        "priceCurrency": "CAD",
+        "description": "Flat monthly price per practice location. Sam answers first line, 24/7."
+      }
+    ],
     "featureList": [
-      "24/7 AI call answering by voice and text",
-      "Appointment booking and management",
+      "Missed-call, busy-line, and after-hours AI answering by voice and text",
+      "Appointment booking links and message capture",
       "Insurance eligibility verification",
       "Multilingual patient communication",
       "Structured clinical intake routed to the practice's clinical team",
@@ -48,7 +64,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <noscript><style>.fade-up{opacity:1 !important;transform:none !important;}.lang-pill{opacity:1 !important;transform:none !important;}.tw-cursor{display:none !important;}</style></noscript>
   <style>
     :root {
@@ -63,6 +79,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     html { scroll-behavior: smooth; }
     body { font-family: "DM Sans", -apple-system, sans-serif; background: var(--navy-0); color: var(--text-primary); line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
     section[id] { scroll-margin-top: 84px; }
+    .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; }
 
     .ambient { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
     .orb { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.07; animation: orbFloat 20s ease-in-out infinite; }
@@ -70,18 +87,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .orb-2 { width: 400px; height: 400px; background: #1a4fa0; bottom: 10%; right: -8%; animation-duration: 26s; animation-delay: -8s; }
     .orb-3 { width: 300px; height: 300px; background: #00c87a; top: 40%; left: 50%; animation-duration: 30s; animation-delay: -14s; opacity: 0.04; }
     @keyframes orbFloat { 0%, 100% { transform: translate(0,0) scale(1); } 25% { transform: translate(30px,-40px) scale(1.05); } 50% { transform: translate(-20px,20px) scale(0.95); } 75% { transform: translate(40px,30px) scale(1.02); } }
-    .nav, section, .footer, .onboard { position: relative; z-index: 1; }
+    .nav, section, .footer, .onboard, .prov { position: relative; z-index: 1; }
     .fade-up { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .fade-up.visible { opacity: 1; transform: translateY(0); }
-    .hero-stat-val { background: linear-gradient(90deg, #00c8e8, #73d7f3, #00c8e8); background-size: 200% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: shimmer 4s ease-in-out infinite; }
-    @keyframes shimmer { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
     .step, .cap, .onboard-card, .handle { transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease; }
     .step:hover, .cap:hover, .handle:hover { transform: translateY(-3px); border-color: rgba(0,200,232,0.2); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
     .onboard-card:hover { transform: translateY(-2px); border-color: rgba(0,200,232,0.15); }
     .serif { font-family: "DM Serif Display", Georgia, serif; }
     a { color: var(--cyan); text-decoration: none; }
     a:focus-visible, button:focus-visible, .btn-primary:focus-visible, .btn-ghost:focus-visible, .nav-cta:focus-visible, .lang-pill:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; border-radius: 6px; }
-    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    .container { max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+
+    /* Provenance strip */
+    .prov { border-bottom: 1px solid var(--border); background: rgba(255,255,255,0.02); }
+    .prov-inner { max-width: 1140px; margin: 0 auto; padding: 7px 24px; font-family: "IBM Plex Mono", monospace;
+                  font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted);
+                  display: flex; justify-content: space-between; gap: 16px; }
+    .prov-inner .dotgrn { color: var(--green); }
+    .prov-inner .hl { color: var(--cyan-soft); }
+    @media (max-width: 720px) { .prov-inner span:last-child { display: none; } }
 
     /* Sticky header */
     .site-header { position: sticky; top: 0; z-index: 50; border-bottom: 1px solid transparent; transition: background 0.25s ease, border-color 0.25s ease, backdrop-filter 0.25s ease; }
@@ -98,43 +122,55 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .nav-cta { padding: 8px 20px; border-radius: 999px; background: rgba(0,200,232,0.1); border: 1px solid rgba(0,200,232,0.25); color: var(--cyan); font-size: 13px; font-weight: 600; transition: all 0.2s; }
     .nav-cta:hover { background: rgba(0,200,232,0.18); border-color: rgba(0,200,232,0.4); }
 
-    /* Hero */
-    .hero { padding: 80px 0 50px; text-align: center; }
-    .hero-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 16px; border-radius: 999px; background: rgba(0,200,232,0.08); border: 1px solid rgba(0,200,232,0.2); font-size: 11px; font-weight: 700; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 20px; }
-    .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 0 rgba(0,200,122,0.5); animation: pulseDot 2.4s ease-out infinite; }
+    /* Hero — split editorial layout */
+    .hero { padding: 60px 0 56px; }
+    .hero-grid { display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 52px; align-items: center; }
+    .hero-kicker { font-family: "IBM Plex Mono", monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.13em;
+                   text-transform: uppercase; color: var(--cyan); margin-bottom: 20px; display: flex; align-items: center; gap: 9px; }
+    .hero-kicker .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 0 rgba(0,200,122,0.5); animation: pulseDot 2.4s ease-out infinite; flex-shrink: 0; }
     @keyframes pulseDot { 0% { box-shadow: 0 0 0 0 rgba(0,200,122,0.5); } 70% { box-shadow: 0 0 0 7px rgba(0,200,122,0); } 100% { box-shadow: 0 0 0 0 rgba(0,200,122,0); } }
-    .hero-title { font-size: clamp(34px, 5.5vw, 54px); line-height: 1.07; color: var(--white); margin-bottom: 18px; min-height: 2.2em; }
+    .hero-title { font-size: clamp(34px, 4.6vw, 52px); line-height: 1.07; color: var(--white); margin-bottom: 18px; min-height: 2.2em; }
     .hero-title em { font-style: italic; color: var(--cyan); }
-    .hero-sub { font-size: 17px; color: var(--text-secondary); max-width: 660px; margin: 0 auto 28px; line-height: 1.7; }
-    .hero-stats { display: flex; justify-content: center; gap: 36px; flex-wrap: wrap; margin-bottom: 32px; }
-    .hero-stat { text-align: center; }
-    .hero-stat-val { font-family: "DM Serif Display", serif; font-size: 26px; color: var(--cyan); white-space: nowrap; }
-    .hero-stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
-    .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .hero-sub { font-size: 16px; color: var(--text-secondary); max-width: 56ch; margin-bottom: 26px; line-height: 1.7; }
+    .hero-sub strong { color: var(--text-primary); font-weight: 600; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 34px; }
     .btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border-radius: 999px; background: var(--cyan); color: var(--navy-0); font-size: 14px; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; text-decoration: none; }
     .btn-primary:hover { background: #00daf8; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,200,232,0.25); color: var(--navy-0); }
     .btn-ghost { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border-radius: 999px; background: transparent; border: 1px solid rgba(255,255,255,0.15); color: var(--text-primary); font-size: 14px; font-weight: 600; transition: all 0.2s; text-decoration: none; }
     .btn-ghost:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.04); }
 
-    /* Hero call-log card (illustrative — not a live screenshot) */
-    .hero-card-wrap { margin-top: 48px; max-width: 480px; margin-left: auto; margin-right: auto; perspective: 1200px; position: relative; }
-    .hero-card-wrap::before { content: ""; position: absolute; inset: -40px -10px; background: radial-gradient(60% 55% at 50% 45%, rgba(0,200,232,0.16), transparent 70%); filter: blur(20px); z-index: -1; pointer-events: none; }
-    .sample-card { text-align: left; background: linear-gradient(160deg, rgba(15,32,68,0.9), rgba(10,22,40,0.95)); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 20px 22px; box-shadow: 0 30px 70px rgba(0,0,0,0.5); animation: cardFloat 7s ease-in-out infinite; position: relative; }
-    @keyframes cardFloat { 0%, 100% { transform: translateY(0) rotateX(0); } 50% { transform: translateY(-7px) rotateX(1.2deg); } }
-    .sample-tag { position: absolute; top: -10px; right: 18px; font-size: 9px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--navy-0); background: var(--cyan-soft); padding: 4px 9px; border-radius: 999px; }
-    .sample-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-bottom: 6px; }
-    .sample-head-title { font-size: 13px; font-weight: 700; color: var(--white); letter-spacing: 0.01em; }
-    .sample-head-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
-    .live-dot { display:inline-flex; align-items:center; gap:6px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--green); }
-    .live-dot .d { width:7px; height:7px; border-radius:50%; background:var(--green); animation: pulseDot 2.4s ease-out infinite; }
-    .cl-row { display: flex; align-items: center; gap: 11px; padding: 11px 0; border-bottom: 1px solid var(--border); }
-    .cl-row:last-child { border-bottom: none; }
-    .cl-ico { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; background: rgba(0,200,232,0.08); border: 1px solid rgba(0,200,232,0.18); flex-shrink: 0; }
-    .cl-main { flex: 1; min-width: 0; }
-    .cl-type { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); }
-    .cl-text { font-size: 13px; color: var(--text-primary); line-height: 1.35; }
-    .cl-row.clinical .cl-ico { background: rgba(0,200,122,0.1); border-color: rgba(0,200,122,0.25); }
-    .reviewed-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; color: var(--green); background: rgba(0,200,122,0.1); border: 1px solid rgba(0,200,122,0.25); padding: 4px 9px; border-radius: 999px; white-space: nowrap; flex-shrink: 0; }
+    /* Dominant stat band */
+    .stat-band { border-top: 1px solid var(--border); padding-top: 22px; }
+    .stat-hero { display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; margin-bottom: 8px; }
+    .stat-hero-val { font-family: "DM Serif Display", serif; font-size: clamp(52px, 6vw, 74px); line-height: 0.95; color: var(--cyan); letter-spacing: -0.01em; white-space: nowrap; }
+    .stat-hero-label { font-size: 15px; color: var(--text-primary); font-weight: 600; line-height: 1.45; max-width: 30ch; }
+    .stat-hero-label .src { display: block; font-size: 11px; font-weight: 500; color: var(--text-muted); margin-top: 3px; }
+    .stat-hook { font-size: 14px; color: var(--text-secondary); line-height: 1.6; max-width: 58ch; }
+    .stat-hook strong { color: var(--orange); font-weight: 700; }
+    .hero-stats { display: flex; gap: 0; flex-wrap: wrap; margin-top: 20px; }
+    .hero-stat { padding: 4px 22px 0 0; margin-right: 22px; border-right: 1px solid var(--border); }
+    .hero-stat:last-child { border-right: none; }
+    .hero-stat-val { font-family: "IBM Plex Mono", monospace; font-size: 16px; font-weight: 600; color: var(--text-primary); white-space: nowrap; }
+    .hero-stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
+
+    /* Night ledger */
+    .ledger { background: linear-gradient(160deg, rgba(15,32,68,0.92), rgba(10,22,40,0.96)); border: 1px solid rgba(0,200,232,0.22);
+              border-radius: 16px; box-shadow: 0 30px 70px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,200,232,0.04); position: relative; overflow: hidden; }
+    .ledger::before { content: ""; position: absolute; inset: 0; background: radial-gradient(120% 90% at 100% 0%, rgba(0,200,232,0.07), transparent 55%); pointer-events: none; }
+    .ledger-head { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid rgba(0,200,232,0.18); position: relative; }
+    .ledger-title { font-family: "IBM Plex Mono", monospace; font-size: 10.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan-soft); }
+    .ledger-tag { font-family: "IBM Plex Mono", monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--navy-0); background: var(--cyan-soft); padding: 3px 8px; border-radius: 3px; }
+    .ledger-row { display: grid; grid-template-columns: 72px 1fr; gap: 13px; padding: 13px 20px; border-bottom: 1px solid var(--border); align-items: baseline; position: relative; }
+    .ledger-row:last-of-type { border-bottom: none; }
+    .ledger-time { font-family: "IBM Plex Mono", monospace; font-size: 11.5px; font-weight: 600; color: var(--orange); white-space: nowrap; }
+    .ledger-type { font-size: 9px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 2px; }
+    .ledger-text { font-size: 13px; color: var(--text-primary); line-height: 1.45; }
+    .ledger-row.crit { border-left: 3px solid var(--red); background: linear-gradient(90deg, rgba(232,69,69,0.07), transparent 65%); }
+    .ledger-row.crit .ledger-time { color: var(--red); }
+    .ledger-chip { display: inline-block; font-family: "IBM Plex Mono", monospace; font-size: 9px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--green); border: 1px solid rgba(0,200,122,0.4); background: rgba(0,200,122,0.08); padding: 2px 7px; border-radius: 3px; margin-top: 6px; }
+    .ledger-row.open { background: rgba(0,200,122,0.06); border-top: 1px solid rgba(0,200,122,0.25); }
+    .ledger-row.open .ledger-time { color: var(--green); }
+    .ledger-row.open .ledger-text { color: #d9ffe9; font-weight: 600; }
 
     /* Generic section heads */
     .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--cyan-dim); margin-bottom: 10px; }
@@ -143,7 +179,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .section-sub { font-size: 14px; color: var(--text-secondary); max-width: 620px; margin: 0 auto 28px; line-height: 1.65; }
 
     /* What Sam handles */
-    .handles { padding: 72px 0; }
+    .handles { padding: 72px 0; border-top: 1px solid var(--border); }
     .handles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 36px; }
     .handle { padding: 24px 22px; border-radius: 14px; background: var(--surface); border: 1px solid var(--border); text-align: left; position: relative; }
     .handle-ico { width: 40px; height: 40px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: rgba(0,200,232,0.08); border: 1px solid rgba(0,200,232,0.18); margin-bottom: 14px; }
@@ -169,8 +205,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .feat-list { list-style: none; display: flex; flex-direction: column; gap: 9px; position: relative; }
     .feat-list li { display: flex; gap: 10px; font-size: 12.5px; color: var(--text-primary); line-height: 1.5; }
     .feat-list li::before { content: ""; flex-shrink: 0; margin-top: 6px; width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 0 3px rgba(0,200,232,0.12); }
-    .feat-foot { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-muted); letter-spacing: 0.02em; position: relative; display: flex; align-items: center; gap: 8px; }
-    .feat-foot svg { width: 13px; height: 13px; color: var(--cyan-dim); flex-shrink: 0; }
     .cov { margin-top: 18px; padding-top: 15px; border-top: 1px solid var(--border); position: relative; }
     .cov-label { font-size: 11px; color: var(--text-muted); margin-bottom: 11px; }
     .cov-strip { display: flex; flex-wrap: wrap; gap: 7px; }
@@ -198,10 +232,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .lang-pill.active { border-color: var(--cyan); color: var(--white); background: rgba(0,200,232,0.1); }
     .lang-demo-note { font-size: 11px; color: var(--text-muted); margin-top: 18px; max-width: 580px; margin-left: auto; margin-right: auto; line-height: 1.6; }
 
-    /* Typewriter */
-    .tw-cursor { animation: blink 0.7s step-end infinite; color: var(--cyan); font-weight: 300; }
-    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
     /* Capabilities */
     .caps { padding: 72px 0; border-top: 1px solid var(--border); }
     .caps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 36px; }
@@ -209,6 +239,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .cap-icon { font-size: 22px; margin-bottom: 10px; }
     .cap-title { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 6px; line-height: 1.3; }
     .cap-body { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+
+    /* Pricing */
+    .pricing { padding: 76px 0; border-top: 1px solid var(--border); }
+    .price-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 36px; max-width: 860px; margin-left: auto; margin-right: auto; }
+    .price-card { padding: 30px 28px; border-radius: 18px; background: var(--surface); border: 1px solid var(--border); text-align: left; position: relative; transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease; }
+    .price-card:hover { transform: translateY(-3px); box-shadow: 0 16px 44px rgba(0,0,0,0.30); }
+    .price-card.lead { border-color: rgba(0,200,232,0.35); background: linear-gradient(160deg, rgba(0,200,232,0.07), rgba(255,255,255,0.02)); }
+    .price-flag { position: absolute; top: -11px; left: 24px; font-size: 9px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--navy-0); background: var(--cyan-soft); padding: 4px 10px; border-radius: 999px; }
+    .price-name { font-size: 17px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+    .price-for { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; }
+    .price-val { font-family: "DM Serif Display", serif; font-size: 40px; color: var(--white); line-height: 1; }
+    .price-val small { font-size: 14px; color: var(--text-muted); font-family: "DM Sans", sans-serif; }
+    .price-note { font-size: 11px; color: var(--cyan-soft); font-weight: 600; margin: 6px 0 18px; letter-spacing: 0.02em; }
+    .price-list { list-style: none; display: flex; flex-direction: column; gap: 9px; margin-bottom: 22px; }
+    .price-list li { display: flex; gap: 10px; font-size: 13px; color: var(--text-primary); line-height: 1.5; }
+    .price-list li::before { content: "\2713"; flex-shrink: 0; color: var(--green); font-weight: 700; }
+    .price-fine { text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 22px; line-height: 1.7; max-width: 640px; margin-left: auto; margin-right: auto; }
 
     /* Onboarding */
     .onboard { padding: 76px 0; border-top: 1px solid var(--border); }
@@ -227,17 +274,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .footer { padding: 30px 24px; border-top: 1px solid var(--border); text-align: center; }
     .footer-line { font-size: 11px; color: var(--text-muted); line-height: 1.65; margin-bottom: 4px; max-width: 720px; margin-left: auto; margin-right: auto; }
 
+    @media (max-width: 960px) {
+      .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+      .hero { padding: 44px 0 44px; }
+    }
     @media (max-width: 768px) {
       .handles-grid { grid-template-columns: 1fr; }
       .caps-grid { grid-template-columns: 1fr; }
       .stack-grid { grid-template-columns: 1fr; }
+      .price-grid { grid-template-columns: 1fr; }
       .onboard-inner { grid-template-columns: 1fr; }
-      .hero { padding: 50px 0 36px; }
-      .hero-stats { gap: 22px; }
+      .hero-stats { gap: 14px 0; }
       .nav-links { display: none; }
       .stack { padding: 64px 0; }
+      .stat-hero-val { font-size: 56px; }
     }
-
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
       .fade-up { opacity: 1 !important; transform: none !important; }
@@ -254,6 +305,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <div class="ambient"><div class="orb orb-1"></div><div class="orb orb-2"></div><div class="orb orb-3"></div></div>
 
+<div class="prov">
+  <div class="prov-inner">
+    <span><span class="dotgrn">&#9679;</span>&nbsp; Built for dentists</span>
+    <span>After-hours &amp; overflow AI for dental practices &middot; Canada</span>
+  </div>
+</div>
+
 <header class="site-header" id="siteHeader">
 <nav class="nav">
   <a href="/" class="nav-logo">
@@ -267,7 +325,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="nav-links">
     <a href="#handles" class="nav-link">What Sam does</a>
     <a href="#insurance" class="nav-link">Insurance</a>
-    <a href="#platform" class="nav-link">Platform</a>
+    <a href="#pricing" class="nav-link">Pricing</a>
     <a href="#contact" class="nav-cta">Get in touch</a>
   </div>
 </nav>
@@ -276,47 +334,55 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- HERO -->
 <section class="hero">
   <div class="container">
-    <div class="hero-badge"><span class="dot"></span>AI receptionist for your practice</div>
-    <h1 class="hero-title serif"><span id="typewriter">Your front desk.<br><em>Covered by Sam.</em></span><span class="tw-cursor" aria-hidden="true">|</span></h1>
-    <p class="hero-sub">Sam answers your practice's calls around the clock &mdash; questions, bookings, transfers, messages &mdash; by voice or text, in your patients' languages. Sam checks insurance coverage before the visit, and every call lands as a handled case in your dashboard. Clinical concerns arrive structured and routed to your team &mdash; Sam never makes the clinical call itself.</p>
-    <div class="hero-stats">
-      <div class="hero-stat"><div class="hero-stat-val">24/7</div><div class="hero-stat-label">Coverage</div></div>
-      <div class="hero-stat"><div class="hero-stat-val">Every call</div><div class="hero-stat-label">Captured</div></div>
-      <div class="hero-stat"><div class="hero-stat-val">Voice / Text</div><div class="hero-stat-label">Patient's choice</div></div>
-      <div class="hero-stat"><div class="hero-stat-val">Your team</div><div class="hero-stat-label">Stays in control</div></div>
-    </div>
-    <div class="hero-actions">
-      <a href="#handles" class="btn-primary">See what Sam does</a>
-      <a href="#contact" class="btn-ghost">Get in touch</a>
-    </div>
-
-    <!-- Illustrative call log (not a live screenshot) -->
-    <div class="hero-card-wrap">
-      <div class="sample-card">
-        <span class="sample-tag">Sample</span>
-        <div class="sample-head">
-          <div>
-            <div class="sample-head-title">Calls Sam handled</div>
-            <div class="sample-head-sub">Overnight &middot; while the office was closed</div>
+    <div class="hero-grid">
+      <div>
+        <div class="hero-kicker"><span class="dot"></span>After-hours &amp; overflow coverage for dental practices</div>
+        <h1 class="hero-title serif"><span id="typewriter">Your team answers first.<br><em>Sam catches the rest.</em></span><span class="tw-cursor" aria-hidden="true">|</span></h1>
+        <p class="hero-sub">When the line is busy, it's lunch, or it's 9pm on a Sunday, your callers hear voicemail &mdash; <strong>and many book with whoever answers next.</strong> Sam picks up instead &mdash; by phone, text, or chat on your website: questions answered, appointments booked, insurance checked, and anything clinical organized for your team by morning.</p>
+        <div class="hero-actions">
+          <a href="#pricing" class="btn-primary">See pricing &rarr;</a>
+          <a href="#handles" class="btn-ghost">What Sam handles</a>
+        </div>
+        <div class="stat-band">
+          <div class="stat-hero">
+            <div class="stat-hero-val">1 in 5</div>
+            <div class="stat-hero-label">calls arrives when no one can answer &mdash; evenings, weekends, lunch, busy lines<span class="src">measured in live production&dagger;</span></div>
           </div>
-          <span class="live-dot"><span class="d"></span>Live</span>
+          <p class="stat-hook">A voicemail box books almost none of those callers. Sam answers every one &mdash; and at $499 a month, flat, <strong>one saved patient covers the cost.</strong></p>
+          <div class="hero-stats">
+            <div class="hero-stat"><div class="hero-stat-val">$499/mo</div><div class="hero-stat-label">Flat &middot; no minute meters</div></div>
+            <div class="hero-stat"><div class="hero-stat-val">~2 weeks</div><div class="hero-stat-label">To go live &middot; no hardware</div></div>
+            <div class="hero-stat"><div class="hero-stat-val">Canada</div><div class="hero-stat-label">Patient data stays here</div></div>
+          </div>
         </div>
-        <div class="cl-row">
-          <div class="cl-ico">&#128197;</div>
-          <div class="cl-main"><div class="cl-type">Booking</div><div class="cl-text">Cleaning &mdash; link texted, Tue 2:00 PM requested</div></div>
+      </div>
+
+      <!-- Night ledger (illustrative sample) -->
+      <div class="ledger" aria-label="Sample overnight call log">
+        <div class="ledger-head">
+          <span class="ledger-title">Overnight &mdash; while the office was closed</span>
+          <span class="ledger-tag">Sample</span>
         </div>
-        <div class="cl-row">
-          <div class="cl-ico">&#128179;</div>
-          <div class="cl-main"><div class="cl-type">Coverage</div><div class="cl-text">Insurance eligibility checked &mdash; details ready for the front desk</div></div>
+        <div class="ledger-row">
+          <span class="ledger-time">9:47 PM</span>
+          <div><div class="ledger-type">Booking</div><div class="ledger-text">Cleaning &mdash; booking link texted; Tue 2:00 PM requested.</div></div>
         </div>
-        <div class="cl-row">
-          <div class="cl-ico">&#9993;</div>
-          <div class="cl-main"><div class="cl-type">Message</div><div class="cl-text">Callback requested re: a billing question</div></div>
+        <div class="ledger-row">
+          <span class="ledger-time">11:32 PM</span>
+          <div><div class="ledger-type">Coverage</div><div class="ledger-text">Insurance eligibility checked (CDCP) &mdash; details ready for the front desk.</div></div>
         </div>
-        <div class="cl-row clinical">
-          <div class="cl-ico">&#129701;</div>
-          <div class="cl-main"><div class="cl-type">Clinical concern</div><div class="cl-text">Toothache &rarr; structured intake</div></div>
-          <span class="reviewed-badge"><span style="font-size:11px;">&#10003;</span> To your team</span>
+        <div class="ledger-row crit">
+          <span class="ledger-time">2:13 AM</span>
+          <div><div class="ledger-type">Clinical concern</div><div class="ledger-text">Facial swelling reported &mdash; structured intake captured and routed.</div>
+          <span class="ledger-chip">&#10003; Routed to your team</span></div>
+        </div>
+        <div class="ledger-row">
+          <span class="ledger-time">6:05 AM</span>
+          <div><div class="ledger-type">Message</div><div class="ledger-text">Billing question &mdash; callback requested, details logged.</div></div>
+        </div>
+        <div class="ledger-row open">
+          <span class="ledger-time">7:58 AM</span>
+          <div><div class="ledger-type">Your team opens</div><div class="ledger-text">Four calls handled overnight &mdash; every one waiting in your dashboard.</div></div>
         </div>
       </div>
     </div>
@@ -326,19 +392,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- WHAT SAM HANDLES -->
 <section class="handles fade-up" id="handles">
   <div class="container">
-    <div class="section-label" style="text-align:center">One assistant, every call</div>
-    <h2 class="section-title serif" style="text-align:center">Sam covers your front desk.</h2>
-    <p class="section-sub" style="text-align:center">From a quick question to a clinical concern, Sam takes the call, works out what's needed, and gets the patient to the right outcome &mdash; then logs it for your team. No call goes unanswered, day or night.</p>
+    <div class="section-label" style="text-align:center">The calls you're losing today</div>
+    <h2 class="section-title serif" style="text-align:center">Answered &mdash; not sent to voicemail.</h2>
+    <p class="section-sub" style="text-align:center">Every practice misses calls: both lines busy, the desk swamped at check-in, lunch, evenings, weekends. Today those callers hit voicemail &mdash; and many simply dial the next practice. With Sam behind your team, every one of those calls gets answered, handled, and logged for the morning.</p>
     <div class="handles-grid">
       <div class="handle">
         <div class="handle-ico">&#128172;</div>
         <div class="handle-title">Answers questions</div>
-        <div class="handle-body">Hours, location, services, insurance &mdash; the calls that used to pull your front desk away from the patient in the chair.</div>
+        <div class="handle-body">Hours, location, services, insurance &mdash; answered on the spot, at 1pm or 1am, instead of ringing out.</div>
       </div>
       <div class="handle">
         <div class="handle-ico">&#128197;</div>
         <div class="handle-title">Books appointments</div>
-        <div class="handle-body">Captures what the patient needs and texts them a link to book &mdash; so the request is in your hands, not lost on voicemail.</div>
+        <div class="handle-body">Captures what the patient needs and texts them a link to book &mdash; so the request is in your hands by morning, not lost on voicemail.</div>
       </div>
       <div class="handle">
         <div class="handle-ico">&#128179;</div>
@@ -347,18 +413,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
       <div class="handle">
         <div class="handle-ico">&#128222;</div>
-        <div class="handle-title">Transfers to your team</div>
-        <div class="handle-body">When a person is the right answer and the office is open, Sam connects the caller straight to your staff.</div>
+        <div class="handle-title">Hands back to your team</div>
+        <div class="handle-body">When the office is open and a person is the right answer, Sam connects the caller to your staff &mdash; Sam is the backstop, never the gatekeeper.</div>
       </div>
       <div class="handle">
         <div class="handle-ico">&#9993;</div>
         <div class="handle-title">Takes messages</div>
-        <div class="handle-body">Callbacks, feedback, billing questions &mdash; captured with context and passed to the office, ready when you open.</div>
+        <div class="handle-body">Callbacks, feedback, billing questions &mdash; captured with context and waiting in your dashboard when the office opens.</div>
       </div>
       <div class="handle keystone">
         <div class="handle-ico">&#129701;</div>
         <div class="handle-title">Routes clinical concerns</div>
-        <div class="handle-body">Sam never gives clinical advice or makes a clinical call. The moment a patient describes pain, swelling, or injury, Sam structures what they reported and routes it straight to your team.</div>
+        <div class="handle-body">Sam never gives clinical advice or makes a clinical call. When a patient describes pain, swelling, or injury at 2am, Sam structures what they reported and routes it to your team &mdash; with notifications for the cases that shouldn't wait for morning.</div>
         <span class="handle-tag"><a href="#review">Where Sam stops &rarr;</a></span>
       </div>
     </div>
@@ -418,7 +484,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
     <div class="section-label">Your team stays in control</div>
     <h2 class="section-title serif">Sam structures the call. <em>Your team makes the calls.</em></h2>
-    <p class="pillar-body">Coverage is only worth having if you can trust it. So Sam stays inside a hard boundary: <strong>it never diagnoses, never assesses urgency, and never makes a clinical decision.</strong> When a patient describes a clinical concern, Sam captures what they reported, structures it, and routes it to your practice &mdash; and your dentist and staff decide what happens next, with a clear picture already in front of them. The software does the gathering; the clinical judgment stays with the people licensed to make it. That's what lets you put Sam in front of your practice and stand behind it.</p>
+    <p class="pillar-body">Coverage is only worth having if you can trust it. So Sam stays inside a hard boundary: <strong>it never diagnoses, never assesses urgency, and never makes a clinical decision.</strong> When a patient describes a clinical concern, Sam captures what they reported, structures it, and routes it to your practice &mdash; and your dentist and staff decide what happens next, with a clear picture already in front of them. The software does the gathering; the clinical judgment stays with the people licensed to make it. That's what lets you put Sam behind your practice and stand behind it.</p>
   </div>
 </section>
 
@@ -468,8 +534,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
       <div class="cap">
         <div class="cap-icon">&#128279;</div>
-        <div class="cap-title">Many front doors, one platform</div>
-        <div class="cap-body">Sam takes the phone calls, and answers from your website, an embedded widget, ad-campaign landing pages, and QR codes in your office. Patients reach Sam from wherever they find you.</div>
+        <div class="cap-title">Phone, text, and website chat &mdash; one platform</div>
+        <div class="cap-body">Sam catches the phone calls your team can't take, and answers from your website, an embedded widget, ad-campaign landing pages, and QR codes in your office. Patients reach Sam from wherever they find you.</div>
       </div>
       <div class="cap">
         <div class="cap-icon">&#128202;</div>
@@ -485,23 +551,66 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 </section>
 
+<!-- PRICING -->
+<section class="pricing fade-up" id="pricing">
+  <div class="container">
+    <div class="section-label" style="text-align:center">Pricing</div>
+    <h2 class="section-title serif" style="text-align:center">Flat price. <em>No minute meters.</em></h2>
+    <p class="section-sub" style="text-align:center">One number, all-in. No per-minute charges, no overage fees, no counting AI minutes &mdash; a busy month costs you nothing extra. One recovered patient a month more than covers it.</p>
+    <p class="section-sub" style="text-align:center;color:var(--orange);font-weight:600;">Founding practice program now open &mdash; we onboard a limited number of practices at a time, each set up personally by the team that built Sam. 60&ndash;90 day pilot terms available.</p>
+    <div class="price-grid">
+      <div class="price-card lead">
+        <span class="price-flag">Start here</span>
+        <div class="price-name">After-Hours &amp; Overflow</div>
+        <div class="price-for">Your team answers first &mdash; Sam catches missed, busy, after-hours, and weekend calls.</div>
+        <div class="price-val">C$499<small> /mo</small></div>
+        <div class="price-note">Flat &middot; unmetered &middot; per practice</div>
+        <ul class="price-list">
+          <li>24/7 coverage behind your existing phone line &mdash; a routing setting, not new hardware</li>
+          <li>Unlimited calls and minutes &mdash; voice, text, and web chat</li>
+          <li>Booking links, messages, and insurance eligibility checks</li>
+          <li>Structured clinical intake routed to your team, with notifications for cases that shouldn't wait</li>
+          <li>Office dashboard &mdash; every overnight call handled and waiting at open</li>
+          <li>Multilingual, configured to your community</li>
+        </ul>
+        <a href="#contact" class="btn-primary" style="width:100%; justify-content:center;">Get started</a>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Full Front Desk</div>
+        <div class="price-for">When you're ready: Sam answers first line, around the clock &mdash; your team's capacity freed for patients in the office.</div>
+        <div class="price-val">C$1,000<small> /mo</small></div>
+        <div class="price-note">Flat &middot; unmetered &middot; per practice</div>
+        <ul class="price-list">
+          <li>Everything in After-Hours &amp; Overflow</li>
+          <li>Sam answers every inbound call first, 24/7</li>
+          <li>Your staff take the conversations that need a person &mdash; Sam handles the rest</li>
+          <li>Graduating is a phone-routing change &mdash; same platform, zero migration</li>
+        </ul>
+        <a href="#contact" class="btn-ghost" style="width:100%; justify-content:center;">Talk to us</a>
+      </div>
+    </div>
+    <p class="price-fine"><strong>Zero risk to try:</strong> no long-term contract &middot; cancel anytime &middot; your phone routing reverts in minutes &middot; setup and configuration included. Prices in CAD per practice location; multi-location groups: custom pricing.</p>
+  </div>
+</section>
+
 <!-- ONBOARDING -->
 <section class="onboard fade-up" id="contact">
   <div class="container">
     <div class="onboard-inner">
       <div class="onboard-copy">
         <div class="section-label">For dental practices</div>
-        <h2 class="section-title serif">Ready to put Sam<br><em>at your front desk?</em></h2>
-        <p class="onboard-sub">We handle everything &mdash; integration, onboarding, and configuration. There's no setup work on your end and nothing to wire up yourself; you get a working AI receptionist on your phone and embedded in your site, tuned to your practice, often live within a week or two.</p>
+        <h2 class="section-title serif">Ready to stop<br><em>losing calls?</em></h2>
+        <p class="onboard-sub">We handle everything &mdash; setup, onboarding, and configuration. Your team keeps answering the phone exactly as they do today; we add the safety net behind them. No hardware, no rip-and-replace, nothing new for your staff to learn &mdash; often live within a week or two. Sam was built for dental practices and runs live in a working practice every day &mdash; refined on real front-desk calls, not demos.</p>
         <div class="onboard-checklist">
-          <div class="onboard-check"><span class="onboard-check-icon">&#10003;</span>No hardware or IT team required</div>
+          <div class="onboard-check"><span class="onboard-check-icon">&#10003;</span>Your team answers first &mdash; Sam only takes what they can't</div>
           <div class="onboard-check"><span class="onboard-check-icon">&#10003;</span>Works with your existing phone and website</div>
+          <div class="onboard-check"><span class="onboard-check-icon">&#10003;</span>Works alongside any practice management system &mdash; no integration required to start, optional PMS connections rolling out</div>
+          <div class="onboard-check"><span class="onboard-check-icon">&#10003;</span>No hardware or IT team required</div>
           <div class="onboard-check"><span class="onboard-check-icon">&#10003;</span>Insurance verification set up for you</div>
-          <div class="onboard-check"><span class="onboard-check-icon">&#10003;</span>Configured for how your practice runs</div>
           <div class="onboard-check"><span class="onboard-check-icon">&#10003;</span>Multilingual from day one</div>
         </div>
-        <a href="mailto:admin@virtualdentist.ai" class="btn-primary" style="margin-top:22px;">Get in touch</a>
-        <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">admin@virtualdentist.ai</div>
+        <a href="mailto:admin@virtualdentist.ai" class="btn-primary" style="margin-top:22px;">Book a 15-minute walkthrough</a>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:8px;">admin@virtualdentist.ai &mdash; you'll hear back from the team that built Sam, usually same day.</div>
       </div>
       <div class="onboard-visual">
         <div class="onboard-card">
@@ -512,12 +621,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="onboard-card">
           <div class="onboard-card-step">Week 2</div>
           <div class="onboard-card-title">Connect &amp; test</div>
-          <div class="onboard-card-body">Sam goes on your phone line and into your website, with insurance checks set up. Staff walkthrough, test calls, everything verified before patients reach it.</div>
+          <div class="onboard-card-body">Sam goes behind your phone line &mdash; no-answer, busy, and after-hours calls forward to Sam &mdash; and into your website, with insurance checks set up. Staff walkthrough, test calls, everything verified before patients reach it.</div>
         </div>
         <div class="onboard-card">
           <div class="onboard-card-step">Ongoing</div>
           <div class="onboard-card-title">Live &amp; supported</div>
-          <div class="onboard-card-body">Calls and cases flow into your dashboard. We monitor, refine, and expand as your practice grows.</div>
+          <div class="onboard-card-body">Caught calls and cases flow into your dashboard. We monitor, refine, and expand as your practice grows &mdash; and when you're ready for Sam to answer first line, it's a routing change, not a project.</div>
         </div>
       </div>
     </div>
@@ -528,6 +637,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="footer">
   <div class="footer-line">&copy; 2026 VirtualDentist.ai Inc. &middot; Patient data stays in Canada.</div>
   <div class="footer-line">VirtualDentist.ai is an AI receptionist and structured intake software for dental practices. It does not provide clinical advice, diagnosis, or treatment, and does not make clinical decisions. Clinical concerns are structured and routed to the practice's own clinical team, who make all clinical decisions. The software does not replace emergency medical care or an in-person dental examination.</div>
+  <div class="footer-line">&dagger; "1 in 5" is measured from production call data at a live Canadian dental practice: 12.8% of calls arrive outside open hours, and a further ~5% arrive while another call is already underway (open 45 of the week's 168 hours). The overnight log shown above is an illustrative sample.</div>
 </div>
 
 <script>
@@ -570,8 +680,8 @@ document.addEventListener("DOMContentLoaded", function() {
   var el = document.getElementById("typewriter");
   var cursor = document.querySelector(".tw-cursor");
   var lines = [
-    { text: "Your front desk.", tag: null },
-    { text: "Covered by Sam.", tag: "em" }
+    { text: "Your team answers first.", tag: null },
+    { text: "Sam catches the rest.", tag: "em" }
   ];
   var lineIdx = 0, charIdx = 0;
   var typeSpeed = 52, pauseBetween = 420;
