@@ -237,12 +237,6 @@
     .lg-lab{flex:1;color:var(--text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
     .lg-val{color:var(--text-primary);font-weight:600;font-variant-numeric:tabular-nums;}
     .ops-eyebrow{font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--cyan);font-weight:700;margin:0 0 8px;}
-    .ops-eyebrow-row{display:flex;align-items:center;gap:10px;margin:0 0 8px;}
-    .ops-eyebrow-row .ops-eyebrow{margin:0;}
-    .ops-copy{margin-left:auto;border:1px solid var(--border);background:transparent;color:var(--cyan);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;font-weight:700;padding:4px 11px;border-radius:7px;cursor:pointer;}
-    .ops-copy:hover:not(:disabled){border-color:rgba(0,200,232,0.45);}
-    .ops-copy:disabled{opacity:.4;cursor:default;}
-    .ops-copy.ok{color:#00c87a;border-color:rgba(0,200,122,0.5);}
     .ops-body{font-size:14.5px;line-height:1.62;color:var(--text-secondary);max-width:760px;}
     .ops-body h3{font-size:17px;color:var(--text-primary);margin:0 0 8px;font-weight:700;letter-spacing:-0.01em;}
     .ops-body h4{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);margin:20px 0 5px;font-weight:700;}
@@ -355,25 +349,6 @@
     function fmtDur(s){if(s==null)return "—";s=Math.round(s);return Math.floor(s/60)+"m "+(s%60)+"s";}
     function fmtMins(m){if(m==null)return "—";if(m<1)return "<1 min";if(m>=60)return Math.floor(m/60)+"h "+Math.round(m%60)+"m";return Math.round(m)+" min";}
     function getSO(c){var so=c.structured_output;if(!so)return {};if(typeof so==="string"){try{return JSON.parse(so);}catch(e){return {};}}return so;}
-    // Thin chief-complaint detector — IDENTICAL logic to the dentist dashboard's
-    // amber INCOMPLETE flag, so this rate equals the count of flags a reviewer
-    // sees. Empty/placeholder, a single generic word, or an all-generic <=2-word
-    // phrase => thin; any specific symptom word => not thin. Tune the two lists.
-    function isThinComplaint(text){
-      if(text==null)return true;
-      var t=String(text).trim().toLowerCase();
-      if(t===""||t==="-"||t==="n/a"||t==="na"||t==="none"||t==="unknown"||t==="null")return true;
-      var SPECIFIC=/(swell|bleed|abscess|infect|broke|broken|crack|fractur|knock|avuls|lost|fell|filling|crown|bridge|chip|loose|sensitiv|throbb|sharp|shoot|pulsat|gum|jaw|cheek|lip|tongue|wisdom|root canal|extraction|implant|denture|pus|drain|numb|trauma|fever|pop|hole|cavit|grind|clench|tmj|when |can.?t )/;
-      if(SPECIFIC.test(t))return false;
-      var cleaned=t.replace(/[^a-z0-9\s]/g," ").replace(/\b(a|an|the|my|some|bad|really|very|just|got|have|having|feel|feeling|felt|little|bit|of|in|on|with|and|to|is|it|i)\b/g," ").replace(/\s+/g," ").trim();
-      if(cleaned==="")return true;
-      var words=cleaned.split(" ");
-      var GENERIC=["concern","problem","issue","pain","ache","aching","discomfort","help","emergency","urgent","tooth","teeth","dental","mouth","question","sore","hurt","hurts","hurting","painful"];
-      if(words.length<=2&&words.every(function(w){return GENERIC.indexOf(w)!==-1;}))return true;
-      return false;
-    }
-    // Resolve the displayed chief complaint exactly as the dashboard card does.
-    function resolveComplaint(c){var so=getSO(c);var inc=!c.severity||c.triage_tag==='incomplete_call'||c.triage_tag==='no_complaint_reported';return inc?(c.chief_complaint||so.chief_complaint||"-"):(so.chief_complaint||so.chief_complaint_quote||c.chief_complaint||"-");}
     function getContras(c){var r=c.contradictions;if(!r)return [];if(typeof r==="string"){try{r=JSON.parse(r);}catch(e){return [];}}return Array.isArray(r)?r:[];}
     var CONTRA_LABELS={fever:"Fever",feeling_unwell:"Feeling unwell",swelling:"Swelling",trauma:"Trauma",bleeding:"Bleeding",uncontrolled_bleeding:"Uncontrolled bleeding",breathing_swallowing:"Airway / swallowing",difficulty_breathing_or_swallowing:"Airway / swallowing",immunocompromised:"Immunocompromised",pregnant:"Pregnancy",anticoagulant:"Blood thinners",recent_extraction:"Recent extraction"};
     function laneOf(c){if(c.source==="vapi"&&GENERAL_INBOUND_SOURCES[c.intake_source])return "general";if(c.source==="vapi")return "emergency";return "form_only";}
@@ -382,6 +357,7 @@
     if(!window.supabase||!window.supabase.createClient){document.getElementById("auth-error").style.display="block";document.getElementById("auth-error").textContent="Supabase library failed to load.";throw new Error("supabase missing");}
     var sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
     var currentPeriod=0; // 1/7/30 days, 0 = all time, -1 = custom from/to range
+    var loadSeq=0; // RACE_FIX_2026_07_07: request token — responses from a superseded window are discarded, not rendered
 
     document.getElementById("auth-btn").addEventListener("click",handleLogin);
     document.getElementById("signout-btn").addEventListener("click",function(){sb.auth.signOut().finally(function(){location.reload();});});
@@ -476,7 +452,7 @@
 
     async function runQueries(range){
       var ctq=sb.from("call_transcripts").select("id,vapi_call_id,ended_reason,duration_seconds,intake_source,created_at,outcome_bucket,topic,capability_gap_detail,needs_review,failure_reason,transfer_reason,transfer_subreason");
-      var tcq=sb.from("triage_cases").select("id,created_at,severity,triage_tag,intake_source,source,extraction_source,duration_seconds,ended_reason,structured_output,chief_complaint,triage_completed_at,reviewed_at,final_disposition,appointment_booked,subsequent_appointment_booked,revenue_generated,nps_score,nps_submitted_at,sam_satisfaction_score,timely_response,contradictions,patient_language,vapi_call_id,patient_phone,review_status");
+      var tcq=sb.from("triage_cases").select("id,created_at,severity,triage_tag,intake_source,source,extraction_source,duration_seconds,ended_reason,structured_output,triage_completed_at,reviewed_at,final_disposition,appointment_booked,subsequent_appointment_booked,revenue_generated,nps_score,nps_submitted_at,sam_satisfaction_score,timely_response,contradictions,patient_language,vapi_call_id,patient_phone,review_status");
       var smsq=sb.from("sms_log").select("case_id,direction,sender_email,sender_name,sent_at,created_at");
       if(range.since){ctq=ctq.gte("created_at",range.since);tcq=tcq.gte("created_at",range.since);smsq=smsq.gte("sent_at",range.since);}
       if(range.until){ctq=ctq.lt("created_at",range.until);tcq=tcq.lt("created_at",range.until);smsq=smsq.lt("sent_at",range.until);}
@@ -629,16 +605,6 @@
         loadQaPanel();
       }).catch(function(e){var el=document.getElementById("qa-panel");if(el)el.innerHTML='<div class="qa-card alert"><div class="qa-top"><span class="qa-dot alert"></span><span class="qa-title">Pipeline integrity</span><span class="qa-sub">run failed</span><button class="qa-run" id="qa-run" type="button">\u21bb</button></div><div class="qa-empty">Could not run the QA checks \u2014 '+escHtml((e&&e.message)||"error")+'</div></div>';wireQaRun();});
     }
-    var lastNarrativeMd="";
-    function fallbackCopy(text,done){
-      try{var ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.top="-9999px";ta.style.opacity="0";document.body.appendChild(ta);ta.focus();ta.select();var ok=document.execCommand("copy");document.body.removeChild(ta);done(!!ok);}catch(e){done(false);}
-    }
-    function copyOpsRead(){
-      var cb=document.getElementById("ops-copy");var text=lastNarrativeMd||"";if(!text)return;
-      function done(ok){if(!cb)return;cb.textContent=ok?"Copied":"Copy failed";cb.classList.toggle("ok",!!ok);setTimeout(function(){cb.textContent="Copy";cb.classList.remove("ok");},1500);}
-      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(function(){done(true);},function(){fallbackCopy(text,done);});}
-      else{fallbackCopy(text,done);}
-    }
     function loadOpsRead(force,st){
       var el=document.getElementById("ops-read");if(!el)return;
       st=st||{};
@@ -681,7 +647,7 @@
       var viz='<div class="ops-viz">'+donutBlock("Where engaged calls went",engSegs,"engaged")+
         (hasTr?donutBlock("Why callers chose a person",trSegs,"transfers"):'')+
         (hasGap?donutBlock("Capability gaps \u2014 what Sam can\u2019t do yet",gapSegs,"gaps"):'')+'</div>';
-      var body='<div class="ops-eyebrow-row"><div class="ops-eyebrow">Operations read</div><button class="ops-copy" id="ops-copy" type="button" disabled title="Copy the full report as markdown">Copy</button></div><div class="ops-body" id="ops-body"><div class="ops-loading">'+(force?"Re-reading the calls\u2026":"Reading the calls\u2026")+'</div></div>';
+      var body='<div class="ops-eyebrow">Operations read</div><div class="ops-body" id="ops-body"><div class="ops-loading">'+(force?"Re-reading the calls\u2026":"Reading the calls\u2026")+'</div></div>';
       var tsr=st.transfer_subreasons||{};var genTot=(tr.genuine_human||0);
       var subt=genTot>0?('<div class="ops-subt"><div class="ops-subt-h">Of the '+genTot+' who chose a person:</div>'+
         '<div class="ops-subt-row"><b>'+(tsr.no_reason_given||0)+'</b> gave no reason \u2014 reducible via the opener</div>'+
@@ -714,15 +680,14 @@
         '<div class="ops-goal-sub">Of '+adoptDen+' genuine callers (misdials/robocalls excluded), '+adoptNum+' let Sam handle the call instead of asking for a person. VOICE channel only \u2014 the full cross-channel Sam-usage rate needs the intake-funnel events instrumented, and is NOT the same number as the cross-channel ~52% headline.</div></div>';
       el.classList.remove("ops-refreshing");el.innerHTML=nav+goal+adopt+stats+viz+subt+body;
       var rb=document.getElementById("ops-refresh");if(rb)rb.addEventListener("click",function(){loadMetrics(true);});
-      var cpb=document.getElementById("ops-copy");if(cpb)cpb.addEventListener("click",copyOpsRead);
       el.querySelectorAll(".donut").forEach(wireDonut);
+      var mySeq=loadSeq; // RACE_FIX_2026_07_07: narrative from a superseded window must not overwrite the current one
       sb.functions.invoke("analyze-window",{body:{since:range.since,until:range.until,label:label,force:!!force}}).then(function(res){
         var bodyEl=document.getElementById("ops-body");if(!bodyEl)return;
+        if(mySeq!==loadSeq)return;
         if(res&&res.error){bodyEl.innerHTML='<div class="empty">Could not generate the written read \u2014 '+escHtml((res.error&&res.error.message)||"analysis failed")+'. The numbers above are live and unaffected.</div>';return;}
         var d=(res&&res.data)||{};
         if(!d.narrative_md){bodyEl.innerHTML='<div class="empty">Could not generate the written read \u2014 '+escHtml(d.error||"no analysis returned")+'. The numbers above are live and unaffected.</div>';return;}
-        lastNarrativeMd=String(d.narrative_md||"");
-        var cpb2=document.getElementById("ops-copy");if(cpb2)cpb2.disabled=!lastNarrativeMd;
         var md=String(d.narrative_md).replace(/^\s*##\s*Operations read[^\n]*\n+/i,"");
         bodyEl.innerHTML=mdToHtml(md);
         var when=d.generated_at?new Date(d.generated_at).toLocaleString([],{month:"short",day:"numeric",hour:"numeric",minute:"2-digit"}):"";
@@ -730,6 +695,7 @@
       }).catch(function(e){var bodyEl=document.getElementById("ops-body");if(bodyEl)bodyEl.innerHTML='<div class="empty">Could not generate the written read \u2014 '+escHtml((e&&e.message)||"error")+'. The numbers above are live and unaffected.</div>';});
     }
     async function loadMetrics(force){
+      var seq=++loadSeq;
       updateDayLabel();
       var ore=document.getElementById("ops-read");
       if(ore&&ore.querySelector(".ops-nav")){if(!document.getElementById("ops-scrim")){var osc=document.createElement("div");osc.className="ops-scrim";osc.id="ops-scrim";osc.innerHTML='<div class="ops-progress"><span class="ops-spinner"></span>Updating\u2026</div>';ore.appendChild(osc);}}
@@ -742,6 +708,7 @@
           try{await sb.auth.refreshSession();}catch(e){}
           res=await runQueries(range);
         }
+        if(seq!==loadSeq)return; // stale response: a newer window was requested while this one was in flight
         var errs=[res[0].error,res[1].error,res[2].error].filter(Boolean);
         if(errs.length){main.innerHTML='<div class="panel"><div class="panel-title">Could not load some data</div><div class="empty">'+errs.map(function(e){return escHtml(e.message);}).join("<br>")+'</div><div class="note-line">If this mentions permission/RLS on a table, it needs an authenticated SELECT policy + grant. If it mentions JWT/token, sign out and back in.</div></div>';var oscE=document.getElementById("ops-scrim");if(oscE&&oscE.parentNode)oscE.parentNode.removeChild(oscE);return;}
         var rawCalls=(res[0].data||[]);
@@ -1205,18 +1172,6 @@
       if(!contraCases)html+='<div class="empty">No discrepancies recorded in this window.</div>';
       else{var ck=Object.keys(contraFields).sort(function(a,b){return contraFields[b]-contraFields[a];});ck.forEach(function(fld){html+=bar(CONTRA_LABELS[fld]||fld.replace(/_/g," "),contraFields[fld],contraCases,"var(--urgent)");});}
       html+='<div class="note-line">Mismatches between the patient\u2019s intake form and what Sam found on the call or text \u2014 e.g. swelling that emerged in conversation but was not on the form. This is the case for live triage over a static form, and the clearest evidence for the deterministic-safety layer.</div></div>';
-
-      // Chief-complaint completeness — extraction-quality signal, computed the
-      // SAME way as the dentist dashboard's amber INCOMPLETE flag (read-time, no
-      // persisted column). Denominator = the dashboard's review-queue scope:
-      // non-test clinical cases minus admin inquiries / no-complaint / no-action.
-      var ccReviewable=cases.filter(function(c){return c.triage_tag!=="non_emergent_inquiry"&&c.triage_tag!=="no_complaint_reported"&&c.review_status!=="no_action_needed";});
-      var ccThin=ccReviewable.filter(function(c){return isThinComplaint(resolveComplaint(c));}).length;
-      var ccPct=pct(ccThin,ccReviewable.length);
-      html+='<div class="panel"><div class="panel-title">Chief-complaint completeness ('+ccThin+' of '+ccReviewable.length+' clinical cases flagged thin)</div>';
-      if(!ccReviewable.length)html+='<div class="empty">No clinical cases in this window.</div>';
-      else html+='<div class="why-row"><div class="why-num" style="color:#f0a500">'+ccPct+'%</div><div class="why-body"><b>have a chief complaint too thin to triage from</b><div class="why-sub">Missing, or a single vague word like \u201cconcern\u201d or \u201cpain\u201d \u2014 the reviewer has to open the transcript. These are exactly the cases the amber INCOMPLETE flag marks on the dentist dashboard. A rising rate means extraction is degrading or callers are giving less detail up front; it does not change severity (the deterministic gates run on structured fields, not this free text).</div></div></div>';
-      html+='</div>';
 
       // Deterministic safety gate vs LLM — the regulatory centerpiece. The model
       // proposes sam_severity; the rule-based computeSeverity() gate sets the
