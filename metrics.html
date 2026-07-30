@@ -450,13 +450,29 @@
 
     function isAuthErr(e){if(!e)return false;var m=((e.message||"")+" "+(e.code||"")).toLowerCase();return m.indexOf("jwt")!==-1||m.indexOf("token")!==-1||m.indexOf("expired")!==-1||m.indexOf("not authenticated")!==-1;}
 
+    // PAGING_FIX_2026_07_29: Supabase caps any select at 1,000 rows by default. Every query that can
+    // exceed that must be ordered and paged, or wide windows silently truncate (the frozen-887 bug:
+    // first 1,000 rows minus ~113 test rows = constant 887 while the table keeps growing).
+    async function fetchAllRows(q,orderCol){
+      q=q.order(orderCol,{ascending:true});
+      var PAGE=1000,from=0,all=[];
+      for(;;){
+        var res=await q.range(from,from+PAGE-1);
+        if(res.error)return res;
+        all=all.concat(res.data||[]);
+        if(!res.data||res.data.length<PAGE)return {data:all,error:null};
+        from+=PAGE;
+        if(from>50000)return {data:all,error:null}; // hard safety cap
+      }
+    }
+
     async function runQueries(range){
       var ctq=sb.from("call_transcripts").select("id,vapi_call_id,ended_reason,duration_seconds,intake_source,created_at,outcome_bucket,topic,capability_gap_detail,needs_review,failure_reason,transfer_reason,transfer_subreason");
       var tcq=sb.from("triage_cases").select("id,created_at,severity,triage_tag,intake_source,source,extraction_source,duration_seconds,ended_reason,structured_output,triage_completed_at,reviewed_at,final_disposition,appointment_booked,subsequent_appointment_booked,revenue_generated,nps_score,nps_submitted_at,sam_satisfaction_score,timely_response,contradictions,patient_language,vapi_call_id,patient_phone,review_status");
       var smsq=sb.from("sms_log").select("case_id,direction,sender_email,sender_name,sent_at,created_at");
       if(range.since){ctq=ctq.gte("created_at",range.since);tcq=tcq.gte("created_at",range.since);smsq=smsq.gte("sent_at",range.since);}
       if(range.until){ctq=ctq.lt("created_at",range.until);tcq=tcq.lt("created_at",range.until);smsq=smsq.lt("sent_at",range.until);}
-      return Promise.all([ctq,tcq,smsq]);
+      return Promise.all([fetchAllRows(ctq,"created_at"),fetchAllRows(tcq,"created_at"),fetchAllRows(smsq,"sent_at")]);
     }
 
     function currentWindowLabel(){
